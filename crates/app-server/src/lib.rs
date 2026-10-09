@@ -137,10 +137,13 @@ fn connection_response_all(state: &AppState, from: Option<&str>, to: Option<&str
     if !state.graph.contains_player(from) || !state.graph.contains_player(to) {
         return player_not_found(from, to);
     }
+    // Both players exist, but the pair may be unreachable (`None`), e.g.
+    // spec fixture A–D: same franchise, non-overlapping tenures. A missing
+    // reachability answer is a defined empty result, not a panic.
     let chains = state
         .graph
         .all_shortest_chains(from, to)
-        .expect("players exist");
+        .unwrap_or_default();
     let paths: Vec<api_types::PathDto> = chains
         .into_iter()
         .map(|chain| api_types::PathDto {
