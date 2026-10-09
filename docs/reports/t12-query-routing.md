@@ -37,15 +37,16 @@ Thresholds default to 0.9 top probability, 0.9 confidence and 0.25 margin. They 
 
 Nine tests in `crates/app-server/tests/query_routing.rs` cover the eight HTTP behavior slices plus the public evaluation seam's actual criteria/order perturbation and per-call receipt retention. Each slice recorded a failing result before its implementation; red/green logs are retained under `/Users/Nicolas/Documents/7-degrees-review-notes/t12/`. An initial fake-provider script incorrectly assumed a misspelling returned only one lexical candidate; that failure was retained and the script corrected to choose Player A from the actual bounded shortlist.
 
-Against integration `472102f40fe966376df265063d5a13c6598891a8`:
+Against integration `e8ad6a7ebf12bb50eb44f43023cea063ea3966b4` (browser assets built before workspace tests):
 
 ```sh
+scripts/build-canvas.sh
 cargo test --workspace --all-features
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets --all-features -- -D warnings
 ```
 
-Workspace: **88 passed, 0 failed, 3 ignored** (two opt-in live provider tests and the explicit browser test). Formatting, Clippy and whitespace checks passed. Full outputs: `workspace-tests.log`, `fmt.log`, `clippy.log`, `whitespace.log` in the retained T12 log directory. Browser E2E for natural-language queries is assigned to the later shared browser-test work; it is not claimed here.
+Workspace: **88 passed, 0 failed, 3 ignored** (two opt-in live provider tests and the explicit browser test). Formatting, Clippy and whitespace checks passed. Full outputs: `latest-wasm-build.log`, `latest-workspace-tests.log`, `latest-fmt.log`, `latest-clippy.log`, `latest-whitespace.log` in the retained T12 log directory. Browser E2E for natural-language queries is assigned to the later shared browser-test work; it is not claimed here.
 
 A single bounded real-provider smoke check used the same public service and the synthetic roster fixture: `connect Player A to Player C` executed with degree 2. [The retained receipt](t12-live-smoke.json) records model `typesafe/jev-1.13-20260917`, provider TypeSafe, 1,686 input/584 output tokens, actual cost USD **0.000070812**, measured inference **459.800292 ms** and end-to-end **463.910458 ms**. This verifies this runtime path, not general routing accuracy or real historical connectivity.
 
