@@ -5,6 +5,7 @@ pub mod chain_view;
 mod fixture_data;
 pub mod graph_view;
 mod jev;
+pub mod ranking;
 pub mod report_data;
 pub mod resolution;
 pub mod search;
@@ -93,6 +94,8 @@ fn app(state: AppState) -> Router {
         .route("/api/players", get(players))
         .route("/api/search", get(search::api))
         .route("/api/resolve", get(resolution::api))
+        .route("/api/rank", get(ranking::api))
+        .route("/rank", get(ranking::page))
         .route("/resolve", get(resolution::page))
         .route("/search", get(search::page))
         .route("/players/{id}", get(search::profile))

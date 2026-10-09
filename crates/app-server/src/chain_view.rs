@@ -255,11 +255,18 @@ pub fn page(
     let next = page.next_cursor.as_deref().map(|cursor| format!("<a id=\"next-shortest-page\" href=\"{}\" rel=\"next\">Next shortest alternatives</a>", link(cursor, 0))).unwrap_or_default();
     let selected = SelectedChain::from_chain(graph, chain);
     let selected_number = query.selected.unwrap_or(0) + 1;
+    let rank_link = format!(
+        "<p><a href=\"/rank?from={}&amp;to={}&amp;cursor={}&amp;limit={}\">Rank up to 20 alternatives from this page by interest</a></p>",
+        ui::url_encode(from),
+        ui::url_encode(to),
+        ui::url_encode(&current_cursor),
+        limit.min(20)
+    );
     ui::document(
         StatusCode::OK,
         "7 Degrees — Teammate Explorer",
         &format!(
-            "{shell}<p><a href=\"{}\">Explore selected chain in the graph</a></p><p>Selected alternative {selected_number} on this page.</p><div data-selected-index=\"{}\" data-cursor=\"{}\">{}</div><section class=\"alternatives\" data-total-shortest=\"{}\"><h2>Equally short alternatives</h2><p>{} shortest chain(s); each has degree {}.</p><p>Showing {} alternative(s) on this page.</p><ol>{alternatives}</ol>{next}<p><a href=\"{}\">First shortest alternatives</a></p></section>",
+            "{shell}{rank_link}<p><a href=\"{}\">Explore selected chain in the graph</a></p><p>Selected alternative {selected_number} on this page.</p><div data-selected-index=\"{}\" data-cursor=\"{}\">{}</div><section class=\"alternatives\" data-total-shortest=\"{}\"><h2>Equally short alternatives</h2><p>{} shortest chain(s); each has degree {}.</p><p>Showing {} alternative(s) on this page.</p><ol>{alternatives}</ol>{next}<p><a href=\"{}\">First shortest alternatives</a></p></section>",
             link(&current_cursor, query.selected.unwrap_or(0)).replacen("/chain?", "/graph?", 1),
             query.selected.unwrap_or(0),
             ui::escape(&current_cursor),
