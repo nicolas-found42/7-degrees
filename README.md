@@ -33,7 +33,9 @@ establish the full historical teammate graph. See [T5 graph report](docs/reports
 - `/api/edges`, `/api/edges/{player}` — edges with overlapping source records and dates
 - `/api/connection?from=acyqu01&to=bogutan01` — exact shortest chain and coverage status
 - `/api/paths?from=acyqu01&to=bogutan01&limit=100&offset=0` — equally short alternatives,
-  deterministic ID order, `total` count and `next_offset`; maximum page size 500
+  deterministic ID order, exact decimal `total_exact` and resumable `next_cursor`;
+  pass the returned cursor unchanged as `cursor=...` to fetch the next page.
+  Numeric `offset`/`next_offset` remain compatible; maximum page size 500
 - `/api/stats` — cached exact finite separation statistics over unordered pairs
 - `/api/coverage`, `/api/coverage/{player}` — coverage counts and individual excluded records
 - `/api/semantic-status` — whether semantic (Jev) features are available
