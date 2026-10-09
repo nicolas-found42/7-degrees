@@ -1,6 +1,5 @@
-    Blocking waiting for file lock on build directory
    Compiling app-server v0.1.0 (<checkout>/crates/app-server)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 51s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.90s
      Running unittests src/lib.rs (target/debug/deps/api_types-91b4fe5fcef7253e)
 
 running 0 tests
@@ -29,36 +28,36 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 running 29 tests
 test chain_page_reports_unknown_players ... ok
-test all_paths_returns_alternative_shortest_chains ... ok
-test chain_page_shows_direct_and_disconnected_results ... ok
 test chain_page_defaults_to_the_fixture_demo_pair ... ok
-test credential_canary_never_reaches_served_surfaces ... ok
-test all_paths_for_disconnected_pair_returns_no_chains ... ok
-test chain_page_orders_players_and_links_with_degree ... ok
 test direct_teammates_report_degree_one ... ok
+test chain_page_orders_players_and_links_with_degree ... ok
+test all_paths_returns_alternative_shortest_chains ... ok
+test all_paths_for_disconnected_pair_returns_no_chains ... ok
+test chain_page_shows_direct_and_disconnected_results ... ok
+test credential_canary_never_reaches_served_surfaces ... ok
 test fixture_summary_lists_all_players_and_edges ... ok
-test jev_answers_surface_only_through_the_seam_not_the_graph ... ok
-test home_page_shows_connect_form_and_fixture_edges ... ok
 test jev_unavailable_outcome_is_deterministic_across_calls ... ok
-test graph_and_search_features_work_with_jev_unconfigured ... ok
+test home_page_shows_connect_form_and_fixture_edges ... ok
+test jev_answers_surface_only_through_the_seam_not_the_graph ... ok
+test non_overlapping_same_franchise_tenures_create_no_edge ... ok
+test overlap_tenures_on_same_team_create_edge ... ok
+test missing_query_parameters_are_a_bad_request ... ok
 test mid_season_move_links_only_overlapping_stints ... ok
 test semantic_status_reports_available_with_a_provider ... ok
 test semantic_status_reports_unavailable_without_configuration ... ok
-test missing_query_parameters_are_a_bad_request ... ok
-test overlap_tenures_on_same_team_create_edge ... ok
-test non_overlapping_same_franchise_tenures_create_no_edge ... ok
-test ui_reports_semantic_features_available_with_a_provider ... ok
+test graph_and_search_features_work_with_jev_unconfigured ... ok
 test shortest_chain_reaches_second_degree_through_b ... ok
+test statistics_report_components_diameter_and_unreachable_pairs ... ok
 test repeated_overlaps_collapse_to_one_edge ... ok
 test stylesheet_is_served ... ok
-test statistics_report_components_diameter_and_unreachable_pairs ... ok
-test unknown_ui_route_is_a_html_not_found_page ... ok
+test ui_reports_semantic_features_available_with_a_provider ... ok
 test unknown_player_is_a_not_found_result ... ok
 test ui_reports_semantic_features_unavailable_by_default ... ok
+test unknown_ui_route_is_a_html_not_found_page ... ok
 test unreachable_provider_fails_soft_and_features_keep_working ... ok
 test served_responses_and_assets_never_contain_credentials ... ok
 
-test result: ok. 29 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+test result: ok. 29 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
 
      Running tests/browser_e2e.rs (target/debug/deps/browser_e2e-dee67f08adee56df)
 
@@ -80,39 +79,39 @@ test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; fini
 
 running 9 tests
 test live_ranking_smoke_uses_the_same_service_with_declared_synthetic_chains ... ignored, requires an explicitly requested live OpenRouter call
-test ranked_page_labels_suggestions_and_selects_original_chain_with_preserved_cursor ... ok
 test a_zero_weight_dimension_does_not_block_a_certain_interest_preference ... ok
 test weighted_scores_reorder_only_equal_shortest_chains_and_preserve_exact_facts ... ok
-test multi_batch_ranking_is_bounded_and_any_later_failure_restores_the_entire_page ... ok
+test ranked_page_labels_suggestions_and_selects_original_chain_with_preserved_cursor ... ok
 test frozen_calibration_accepts_point_three_scores_but_keeps_point_two_uncertain ... ok
-test low_confidence_ties_boundaries_and_no_path_preserve_deterministic_behavior ... ok
+test multi_batch_ranking_is_bounded_and_any_later_failure_restores_the_entire_page ... ok
 test public_rank_service_reuses_real_wire_scores_order_variants_and_code_weights ... ok
+test low_confidence_ties_boundaries_and_no_path_preserve_deterministic_behavior ... ok
 test invalid_provider_cannot_change_paths_and_fallback_is_visible_and_escaped ... ok
 
-test result: ok. 8 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.05s
+test result: ok. 8 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.01s
 
      Running tests/chain_view_integration.rs (target/debug/deps/chain_view_integration-acd035e10d14b91c)
 
 running 6 tests
+test incomplete_selection_and_invalid_pages_never_substitute_a_chain ... ok
 test hostile_query_text_is_escaped_and_cannot_become_a_selected_chain ... ok
 test direct_indirect_and_self_chains_explain_and_export_the_exact_link_count ... ok
-test incomplete_selection_and_invalid_pages_never_substitute_a_chain ... ok
-test equally_short_chains_have_visible_selection_and_keep_the_minimum_degree ... ok
 test browsing_pages_keeps_the_cursor_and_selected_shortest_chain ... ok
 test disconnected_fixture_and_incomplete_history_have_distinct_visible_outcomes ... ok
+test equally_short_chains_have_visible_selection_and_keep_the_minimum_degree ... ok
 
-test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
      Running tests/graph_view.rs (target/debug/deps/graph_view-39f3de0a219a9779)
 
 running 5 tests
+test direct_and_nearby_neighborhoods_expose_only_evidenced_fixture_connections ... ok
 test graph_exploration_retains_the_selected_chain_and_exact_alternative_cursor ... ok
 test present_and_missing_canvas_assets_are_isolated_and_preserve_binary_bytes_and_accessible_fallback ... ok
-test direct_and_nearby_neighborhoods_expose_only_evidenced_fixture_connections ... ok
 test bounded_exploration_reports_truncation_and_rejects_invalid_graph_arguments ... ok
 test real_report_neighborhood_retains_source_context_and_coverage_without_expanding_the_full_graph ... ok
 
-test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.51s
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
 
      Running tests/log_capture.rs (target/debug/deps/log_capture-51ae167d316f3ff3)
 
@@ -124,15 +123,15 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 running 8 tests
 test live_resolution_smoke_uses_the_runtime_service_and_pinned_catalog ... ignored, requires an explicitly requested live OpenRouter call
-test calibrated_identity_policy_keeps_a_point_nine_four_choice_for_clarification ... ok
 test exact_identity_resolution_remains_available_without_semantics ... ok
+test calibrated_identity_policy_keeps_a_point_nine_four_choice_for_clarification ... ok
+test runtime_service_uses_real_wire_choice_and_noul_order_variants_and_per_call_metrics ... ok
 test semantic_nickname_alias_and_typo_copy_the_canonical_shortlisted_player ... ok
 test stated_context_can_disambiguate_namesakes_but_uncertain_existence_cannot ... ok
-test runtime_service_uses_real_wire_choice_and_noul_order_variants_and_per_call_metrics ... ok
-test ambiguity_low_confidence_no_match_and_unavailable_are_selectable_without_a_path ... ok
 test malformed_answers_cannot_select_unlisted_ids_and_status_falls_back ... ok
+test ambiguity_low_confidence_no_match_and_unavailable_are_selectable_without_a_path ... ok
 
-test result: ok. 7 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.04s
+test result: ok. 7 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.01s
 
      Running tests/player_search.rs (target/debug/deps/player_search-c148d7a52ae37479)
 
@@ -145,7 +144,7 @@ test empty_no_match_and_invalid_profile_are_visible_and_query_text_is_escaped ..
 test source_aliases_and_curated_nicknames_return_ranked_canonical_candidates ... ok
 test bounded_queries_do_not_hide_ambiguity_or_expand_an_empty_query ... ok
 
-test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
 
      Running tests/provenance.rs (target/debug/deps/provenance-e8bb5350f383803d)
 
@@ -155,39 +154,38 @@ test opening_a_fixture_teammate_link_shows_both_stints_and_explicit_synthetic_ov
 test canvas_has_an_accessible_selected_edge_panel_and_allowlisted_source_routes ... ok
 test real_acy_bogut_overlap_has_calendar_dates_both_source_records_anchors_and_versions ... ok
 
-test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.25s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.21s
 
      Running tests/query_routing.rs (target/debug/deps/query_routing-322b2fea4ddbef0b)
 
 running 11 tests
 test evaluation_config_changes_actual_provider_criteria_and_keeps_per_call_receipts ... ok
-test a_copied_misspelling_uses_shared_guarded_resolution_before_connection ... ok
-test frozen_routing_policy_clarifies_a_point_nine_four_operation ... ok
 test a_profile_filter_limits_sourced_team_and_era_context_without_changing_identity ... ok
+test frozen_routing_policy_clarifies_a_point_nine_four_operation ... ok
+test a_copied_misspelling_uses_shared_guarded_resolution_before_connection ... ok
 test ordinary_language_connection_executes_the_deterministic_graph_and_shows_its_chain ... ok
-test filtered_connection_is_scoped_and_links_explicitly_open_the_unfiltered_network ... ok
-test malformed_packets_degrade_and_uncertain_valid_packets_clarify_without_execution ... ok
-test stated_team_and_era_filters_change_the_view_and_leave_underlying_edges_unchanged ... ok
 test ambiguous_names_show_context_and_explicit_choice_continues_original_request ... ok
+test filtered_connection_is_scoped_and_links_explicitly_open_the_unfiltered_network ... ok
+test stated_team_and_era_filters_change_the_view_and_leave_underlying_edges_unchanged ... ok
+test malformed_packets_degrade_and_uncertain_valid_packets_clarify_without_execution ... ok
 test profile_neighbors_and_comparison_have_distinct_grounded_visible_outcomes ... ok
 test unsupported_missing_arguments_and_provider_failure_never_guess_a_graph_action ... ok
 
-test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
 
      Running tests/real_data_integration.rs (target/debug/deps/real_data_integration-43b4cf7f24fc86d2)
 
-running 9 tests
-test in_memory_and_file_import_share_strict_uncertainty_rules ... ok
+running 8 tests
 test coverage_gaps_remain_inspectable_for_the_affected_player ... ok
-test alternative_shortest_chains_are_deterministic_and_paginated ... ok
 test season_brackets_are_uncertainty_and_never_teammate_facts ... ok
 test legacy_repeat_signing_continuity_note_blocks_a_runtime_edge ... ok
-test canonical_import_returns_real_paths_and_record_provenance ... ok
+test alternative_shortest_chains_are_deterministic_and_paginated ... ok
 test repeated_source_rows_never_create_a_self_teammate_or_double_overlap ... ok
+test canonical_import_returns_real_paths_and_record_provenance ... ok
 test the_final_shortest_chain_survives_the_u64_boundary ... ok
 test continuation_cursors_reach_shortest_chains_beyond_fixed_integer_limits ... ok
 
-test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
 
      Running tests/stats_view.rs (target/debug/deps/stats_view-8fc53fa638741de7)
 
@@ -197,7 +195,7 @@ test statistics_page_explains_pair_scope_and_is_reachable_without_semantic_servi
 test multiple_nontrivial_components_and_isolates_keep_coverage_warning_visible ... ok
 test isolate_only_and_empty_snapshots_show_zero_diameter_and_an_empty_histogram_message ... ok
 
-test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
      Running unittests src/lib.rs (target/debug/deps/canvas_view-0dbde3bde30f01af)
 
@@ -225,7 +223,7 @@ test tests::env_config_prefers_typesafe_then_openrouter_then_no_config ... ok
 test tests::debug_output_redacts_the_api_key ... ok
 test tests::question_and_request_types_stay_small_and_typed ... ok
 
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
      Running tests/live_smoke.rs (target/debug/deps/live_smoke-205f7f647f3996c0)
 
@@ -239,16 +237,16 @@ test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; fini
 running 10 tests
 test evaluate_panics_never_escape_a_current_thread_runtime ... ok
 test an_unreachable_provider_fails_soft ... ok
-test a_malformed_envelope_fails_soft ... ok
 test non_retryable_statuses_fail_immediately ... ok
-test a_retryable_status_retries_once_and_recovers ... ok
+test a_malformed_envelope_fails_soft ... ok
 test measured_judgments_keep_metadata_local_to_each_call_and_missing_values_unknown ... ok
 test a_retryable_status_exhausting_its_retry_fails_soft ... ok
+test a_retryable_status_retries_once_and_recovers ... ok
 test transport_error_then_retryable_status_does_not_create_a_third_attempt ... ok
 test all_attempts_and_response_reads_share_one_call_deadline ... ok
 test a_provider_timeout_fails_soft ... ok
 
-test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.08s
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.06s
 
    Doc-tests api_types
 

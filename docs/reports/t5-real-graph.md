@@ -55,8 +55,8 @@ input hashes and full histogram: `t5/graph-statistics.json`.
 | connected components (including isolates) | 4,176 |
 | maximum finite degree in this evidenced graph | 20 |
 | unreachable unordered pairs | 12,977,223 |
-| cold exact statistics HTTP call (debug build) | 0.504797 s |
-| cached statistics HTTP call | 0.000686 s |
+| cold exact statistics HTTP call (debug build) | 1.210278 s |
+| cached statistics HTTP call | 0.001317 s |
 
 Luca Vildoza (`nba:1630492`) remains a node based on his official postseason appearance. His T4 inferred tenure is visible as a coverage gap and creates no edge.
 

@@ -1,7 +1,7 @@
 {
   "cold_stats": {
     "url": "/api/stats",
-    "elapsed_seconds": 1.2102782079964527,
+    "elapsed_seconds": 0.5047971669991966,
     "body": {
       "components": 4176,
       "diameter": 20,
@@ -33,7 +33,7 @@
   },
   "cached_stats": {
     "url": "/api/stats",
-    "elapsed_seconds": 0.0013170409947633743,
+    "elapsed_seconds": 0.0006861669971840456,
     "body": {
       "components": 4176,
       "diameter": 20,
@@ -65,16 +65,16 @@
   },
   "graph": {
     "url": "/api/graph",
-    "elapsed_seconds": 0.7531594999964,
+    "elapsed_seconds": 0.38964908300113166,
     "body": {
       "node_count": 5106,
       "edge_count": 1501
     },
-    "raw_response_capture_sha256": "297b7d4a7a704e8cb3f0d31bfcfed0bad27fcd369b4230251db901c093830e8a"
+    "raw_response_capture_sha256": "4be02a5d615735f163ba7dd1abbf31323c8d7ab613d7b408a74fa0df6dfb7abb"
   },
   "coverage": {
     "url": "/api/coverage",
-    "elapsed_seconds": 0.0014673750047222711,
+    "elapsed_seconds": 0.0008961659987107851,
     "body": {
       "certified_tenures": 2227,
       "complete": false,
@@ -89,7 +89,7 @@
   },
   "connection": {
     "url": "/api/connection?from=acyqu01&to=bogutan01",
-    "elapsed_seconds": 0.0016625830030534416,
+    "elapsed_seconds": 0.0006122499980847351,
     "body": {
       "coverage": {
         "certified_tenures": 2227,
@@ -120,7 +120,7 @@
   },
   "evidence": {
     "url": "/api/edges/acyqu01",
-    "elapsed_seconds": 0.004083208004885819,
+    "elapsed_seconds": 0.0019739589988603257,
     "body": {
       "edges": [
         {
@@ -214,7 +214,7 @@
   },
   "postseason_only_coverage": {
     "url": "/api/coverage/nba:1630492",
-    "elapsed_seconds": 0.0015054579998832196,
+    "elapsed_seconds": 0.0005080420014564879,
     "body": {
       "complete": false,
       "coverage": {
@@ -245,7 +245,7 @@
   },
   "semantic_status": {
     "url": "/api/semantic-status",
-    "elapsed_seconds": 0.0008839590009301901,
+    "elapsed_seconds": 0.0004207500023767352,
     "body": {
       "available": false,
       "reason": "unconfigured"
@@ -253,7 +253,7 @@
   },
   "repeat_contract_connection": {
     "url": "/api/connection?from=willire02&to=shakumu01",
-    "elapsed_seconds": 0.0020560000048135407,
+    "elapsed_seconds": 0.00088658400636632,
     "body": {
       "certainty": "unresolved_coverage",
       "coverage": {
@@ -272,7 +272,7 @@
   },
   "repeat_contract_coverage": {
     "url": "/api/coverage/willire02",
-    "elapsed_seconds": 0.00102583400439471,
+    "elapsed_seconds": 0.0005984160015941598,
     "body": {
       "complete": false,
       "coverage": {

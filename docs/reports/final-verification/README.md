@@ -9,7 +9,7 @@ The complete Rust application was started through `./scripts/run-app.sh` against
 | Check | Actual result / receipt |
 |---|---|
 | Release canvas build before workspace suite | Passed; [01](logs/01-wasm-build.log) |
-| Rust workspace | **103 passed, 7 intentionally ignored**, zero failures; [02](logs/02-rust-workspace.log) |
+| Rust workspace | **104 passed, 7 intentionally ignored**, zero failures; [02](logs/02-rust-workspace.log) |
 | Source-preparation Python suite | **92 passed**; [03](logs/03-python-source.log) |
 | Rust formatting | Passed; [04](logs/04-format.log) |
 | Host and wasm32 Clippy, warnings denied | Passed; [05](logs/05-clippy-host.log), [06](logs/06-clippy-wasm.log) |
@@ -52,7 +52,7 @@ Fresh `/api/graph`, `/api/stats` and `/api/coverage` agreed: **5,106 nodes, 2,22
 | 9 | 5,404 | 19 | 88 |
 | 10 | 4,572 | 20 | 40 |
 
-Measured cold statistics HTTP wall time was **0.504797 s**, followed by **0.000686 s** cached. These single samples came from a localhost debug server on Darwin/arm64, not a general performance guarantee. OS/Python versions and exact timings are in the API receipts.
+Measured cold statistics HTTP wall time was **1.210278 s**, followed by **0.001317 s** cached. These single samples came from a localhost debug server on Darwin/arm64, not a general performance guarantee. OS/Python versions and exact timings are in the API receipts.
 
 Only positive intervals with both dated transaction anchors, stable identity and no blocking unresolved flags enter the graph. Excluded tenure counts are 10,170 cross-checked, 13,445 inferred and 4,215 unresolved. **3,537 players have no certified tenure**, coverage is `complete: false`, and unresolved 1946–1950 BAA evidence remains explicit. The real Acy/Bogut edge is Dallas/MAVERICKS for 121 days; current full snapshot source references are `t4/tenures.csv:123` and `:2602`. Postseason-only Luca Vildoza (`nba:1630492`) is included as an evidenced person; his inferred 2022 stint (`:19618`) does not create edges. Five nameless S1 play-by-play references (471, 775, 1277, 1787, 2794) remain unresolved identity candidates. Other source disagreements are retained in the T3 register; the build does not claim every historical identity is fully reconciled.
 
@@ -76,7 +76,7 @@ These screenshots were recaptured and visually inspected after the final review 
 
 [The 38-criterion matrix](acceptance-matrix.md) links each requirement to observable evidence and states its limitations. It does not turn unresolved source coverage or low ranking accuracy into a success claim. Final Jev gate scope/result and stronger independent review are separate review artifacts; this report alone does not assert PR readiness, remote green checks, integration merge or issue closure.
 
-## Final completion gate
+## Prior completion gate before source correction
 
 The valid [Jev gate result](final-gate-result.json) is **`escalate`**, retained without retry: composite **0.7617**, minimum `safe_to_apply` **0.34**, with low-confidence/test-gap/blast-radius review signals. It checked the actual base `f8e743ca30939476433c680e7a29169d70c3fa41` through reviewed HEAD `5683a2f99c5d292554815d64ea42f285c7ad57c1`. [Scope](final-gate-scope.json) lists the **five complete raw file diffs** (39,905 characters) and 16,249 characters of actual bounded evidence. The [input](final-gate-input.json) includes the correctly named changed `crates/app-server/tests/log_capture.rs`; other test/code/data paths are explicitly excluded from this scoped patch judgment and require independent full-diff review. A first larger input returned operational `400 max_tokens_exceeded`, which had no verdict; only its input was bounded before the valid call.
 
@@ -89,6 +89,16 @@ This evidence-only addition records the already completed gate and arithmetic re
 
 The new source revision `59780ce8cbe2b65e45a966879408866403c2d17d` received one [valid gate](review-corrections-gate-result.json), retained without retry. It escalated: composite **0.7576**, minimum `safe_to_apply` **0.30**. [Input](review-corrections-gate-input.json) retains ten complete actual raw source/test diffs (32,469 characters) and 12,785 characters of bounded evidence; generated source/audit CSV changes and browser test diff require independent full-diff review.
 
-Two claims were verified, three unsupported, and the aggregated check-count claim was labeled contradicted at confidence **0.13** (verified 0.29 / contradicted 0.42 / unsupported 0.29). Exact [current recount](workspace-result-recount.json) gives **103 passed, zero failed, seven ignored**; [Python stdout](logs/03-python-source.log) gives **92 tests and OK**, and [actual browser stdout](logs/07-browser.log) gives **3 + 1 passed**. The gate's uncertainty remains an escalation for independent stronger review of the actual code and receipts; it is not claimed as automatic acceptance. It reported 22,865 input and 1,156 output tokens, with no provider cost metadata. Original prior gate/results and previous manifest/runtime/recount remain retained.
+Two claims were verified, three unsupported, and the aggregated check-count claim was labeled contradicted at confidence **0.13** (verified 0.29 / contradicted 0.42 / unsupported 0.29). Exact [then-current recount](before-isolation/workspace-result-recount.json) gives **103 passed, zero failed, seven ignored**; [then-current Python stdout](before-isolation/logs/03-python-source.log) gives **92 tests and OK**, and [then-current browser stdout](before-isolation/logs/07-browser.log) gives **3 + 1 passed**. The gate's uncertainty remains an escalation for independent stronger review of the actual code and receipts; it is not claimed as automatic acceptance. It reported 22,865 input and 1,156 output tokens, with no provider cost metadata. Original prior gate/results and previous manifest/runtime/recount remain retained.
 
 [Correction details](final-review-corrections.md) describe the source witness, runtime defense, validated query continuation, shared mappings and historical experiment qualification. Receipt publication after the reviewed source commit changes no app behavior; final independent review must also cover these documents and receipts.
+
+
+## In-memory historical replay isolation
+
+A follow-up Standards review identified that the initial adapter wrote cleaned historical CSVs which normal report-directory startup could import. The source revision `dbc4c78533c97052bc62b72a6cf5c09961a12c6c` removes that export: production file import and memory import share the same strict reader, while historical transformation stays in an offline binary's private memory buffers. Existing legacy directories were quarantined outside project checkouts; no raw sources changed.
+
+The new public reader regression independently checks file and memory import both exclude the legacy uncertain row and keep the supported other pair. The actual offline replay reproduced all 132 frozen outcomes; [target CSV inventory](isolation-artifact-check.json) was unchanged before/after and the old generated report path stayed absent. [Measured/source artifact hashes](isolation-unchanged-artifacts.json) show the T4 source, labels, measured outcomes, policy, manifest and summary unchanged. The [prior 103-test receipt set](before-isolation/commands-and-hashes.json) remains preserved with its own logs/runtime/recount; current final logs contain **104 Rust tests**, **92 Python**, the same four actual browser checks, and the full replay/audit/startup checks.
+
+
+The [isolation gate](isolation-gate-result.json) was called exactly once on the actual `dbc4c78` patch against `3783bb1`; [input](isolation-gate-input.json) contains three complete source/test diffs and real check/no-export/hash evidence. The implementer's Jev tool became unavailable before any request; the parent used the same prepared payload through its available tool, producing the sole valid verdict. It **escalated**, composite **0.8384167**, minimum `safe_to_apply` **0.55**, with low-confidence test-gap signals. All **four claims were verified** (confidences 0.95, 0.97, 0.91 and 0.67), none contradicted or unsupported. The aggregate check claim still needs review at 0.67. Usage was 13,398 input and 436 output tokens; no provider cost metadata supplied. This result is retained without retry. Stronger independent review of the merged actual patch and final documents remains pending; the gate is not automatic acceptance.

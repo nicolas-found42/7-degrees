@@ -1,0 +1,34 @@
+{
+  "method": "Exact CSV path+SHA256 inventory of target before and after actual offline replay after legacy directory quarantine.",
+  "before_csvs": {
+    "browser-e2e-inputs/real-slice/t3/player-universe.csv": "691c1003aefc9b9b992a0833c40a4547d68efecae5f4ed4eb956fc5bb5f9b6e7",
+    "browser-e2e-inputs/real-slice/t4/tenures.csv": "2d4400d43b3f41b10adeacf3be2f088ebee5d2335e57cd6e94cacbc0d3dabab1",
+    "browser-e2e-inputs/synthetic-diamond/t3/player-universe.csv": "a843f7bdd12fae7036f89063b13d340fbb02d62fd71833a34a1c9173d592996f",
+    "browser-e2e-inputs/synthetic-diamond/t4/tenures.csv": "4911c5c6d2d3007560ed13e89e4c8ca3e66262224255a46bab5cbfa2cccd4816",
+    "provenance-fixture/10072-0/t3/player-universe.csv": "ebc326c58e8565b660161dc86bc3267f0707ccf6a3c33fd74272710317b68403",
+    "provenance-fixture/10072-0/t4/tenures.csv": "254c93d5cf336029eaead1e0468118df377b7b41424cd239a2211a0ed62dadc6",
+    "provenance-fixture/11854-0/t3/player-universe.csv": "ebc326c58e8565b660161dc86bc3267f0707ccf6a3c33fd74272710317b68403",
+    "provenance-fixture/11854-0/t4/tenures.csv": "254c93d5cf336029eaead1e0468118df377b7b41424cd239a2211a0ed62dadc6",
+    "provenance-fixture/13189-0/t3/player-universe.csv": "ebc326c58e8565b660161dc86bc3267f0707ccf6a3c33fd74272710317b68403",
+    "provenance-fixture/13189-0/t4/tenures.csv": "254c93d5cf336029eaead1e0468118df377b7b41424cd239a2211a0ed62dadc6",
+    "provenance-fixture/14236-0/t3/player-universe.csv": "ebc326c58e8565b660161dc86bc3267f0707ccf6a3c33fd74272710317b68403",
+    "provenance-fixture/14236-0/t4/tenures.csv": "254c93d5cf336029eaead1e0468118df377b7b41424cd239a2211a0ed62dadc6"
+  },
+  "after_csvs": {
+    "browser-e2e-inputs/real-slice/t3/player-universe.csv": "691c1003aefc9b9b992a0833c40a4547d68efecae5f4ed4eb956fc5bb5f9b6e7",
+    "browser-e2e-inputs/real-slice/t4/tenures.csv": "2d4400d43b3f41b10adeacf3be2f088ebee5d2335e57cd6e94cacbc0d3dabab1",
+    "browser-e2e-inputs/synthetic-diamond/t3/player-universe.csv": "a843f7bdd12fae7036f89063b13d340fbb02d62fd71833a34a1c9173d592996f",
+    "browser-e2e-inputs/synthetic-diamond/t4/tenures.csv": "4911c5c6d2d3007560ed13e89e4c8ca3e66262224255a46bab5cbfa2cccd4816",
+    "provenance-fixture/10072-0/t3/player-universe.csv": "ebc326c58e8565b660161dc86bc3267f0707ccf6a3c33fd74272710317b68403",
+    "provenance-fixture/10072-0/t4/tenures.csv": "254c93d5cf336029eaead1e0468118df377b7b41424cd239a2211a0ed62dadc6",
+    "provenance-fixture/11854-0/t3/player-universe.csv": "ebc326c58e8565b660161dc86bc3267f0707ccf6a3c33fd74272710317b68403",
+    "provenance-fixture/11854-0/t4/tenures.csv": "254c93d5cf336029eaead1e0468118df377b7b41424cd239a2211a0ed62dadc6",
+    "provenance-fixture/13189-0/t3/player-universe.csv": "ebc326c58e8565b660161dc86bc3267f0707ccf6a3c33fd74272710317b68403",
+    "provenance-fixture/13189-0/t4/tenures.csv": "254c93d5cf336029eaead1e0468118df377b7b41424cd239a2211a0ed62dadc6",
+    "provenance-fixture/14236-0/t3/player-universe.csv": "ebc326c58e8565b660161dc86bc3267f0707ccf6a3c33fd74272710317b68403",
+    "provenance-fixture/14236-0/t4/tenures.csv": "254c93d5cf336029eaead1e0468118df377b7b41424cd239a2211a0ed62dadc6"
+  },
+  "new_or_changed_csvs": 0,
+  "legacy_directory_absent": true,
+  "replay_exit": 0
+}
