@@ -12,7 +12,7 @@ Sources (pinned snapshot, see the manifest for versions/checksums):
 - **S3** — Kaggle `romainmorleghem/nba-players-info-and-headlinestats-up-to-2025` v1,
   `data/romainmorleghem/CommonPlayerInfo_ALL.csv` (NBA API `commonplayerinfo` ids).
 
-Report generated 2026-10-09 07:51 UTC by `scripts/t3_reconcile.py` + `scripts/t3_report.py`
+Report generated 2026-10-09 07:58 UTC by `scripts/t3_reconcile.py` + `scripts/t3_report.py`
 (reproduce: `python3 scripts/t3_reconcile.py [data_dir] && python3 scripts/t3_report.py`).
 All artifacts referenced below are retained under `docs/reports/t3/`.
 
@@ -29,7 +29,7 @@ All artifacts referenced below are retained under `docs/reports/t3/`.
 | question | result |
 |---|---|
 | canonical NBA/BAA player universe (S2, seasons 1947–2026) | **5,105 players** (31,701 NBA/BAA player-season rows; BAA 582 + NBA 31,119, minus 2,875 duplicate `nTM` summary rows already excluded from the 31,701) |
-| S1 (NBA API) players bridged into the universe | 4,793 of 4,815 |
+| S1-evidenced person IDs bridged into the universe (player table + recovered PBP-only IDs) | 4,793 of 4,824 |
 | S1-only people (no S2 row at all; not in the universe) | 31 (S1 pbp-only ids: 9; detailed in the register) |
 | ABA-only classifications (excluded from the universe) | 311 S2 players are ABA-only; 0 S1 people match an ABA-only S2 player |
 | S2↔S3 identity bridge | 5075 of 5105 universe players carry an S3 NBA-API id (99.4%) |
@@ -64,7 +64,7 @@ and S3 (NBA API ids) bridge into it by name + birth date; see §3.
 |---|---|
 | universe size (S2 NBA/BAA players, seasons 1947–2026) | **5,105** |
 | S1 people inside the universe (bridged) | 4,793 |
-| S1 people outside it | 22 |
+| S1 people outside it | 31 |
 | S2 universe players with an S3 id | 5,075 |
 | S2 universe players with no S1 row | 313 (of which 9 debut ≤2023) |
 | S2 universe players with no S3 id | 30 |

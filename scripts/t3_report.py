@@ -118,12 +118,12 @@ def main():
     A("")
     A("## Verdict at a glance")
     A("")
-    total_s1 = R["s1_players"]
+    total_s1 = R["s1_players"] + R["s1_pbp_ids_missing_from_player_table"]
     A(md_table(["question", "result"], [
         ["canonical NBA/BAA player universe (S2, seasons 1947–2026)",
          "**%s players** (31,701 NBA/BAA player-season rows; BAA 582 + NBA 31,119, minus"
          " 2,875 duplicate `nTM` summary rows already excluded from the 31,701)" % f"{R['universe_size']:,}"],
-        ["S1 (NBA API) players bridged into the universe",
+        ["S1-evidenced person IDs bridged into the universe (player table + recovered PBP-only IDs)",
          "%s of %s" % (f"{R.get('s1_universe_members', 0):,}", f"{total_s1:,}")],
         ["S1-only people (no S2 row at all; not in the universe)",
          "%s (S1 pbp-only ids: %s; detailed in the register)" % (R["s1_no-match"], R["s1_pbp_ids_missing_from_player_table"])],
