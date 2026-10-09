@@ -29,12 +29,12 @@ COMMANDS = [
 def publish(raw):
     output = ROOT / 'docs/reports/final-verification'; logs = output / 'logs'; logs.mkdir(parents=True, exist_ok=True)
     manifest = dict(source_base_commit='c63edd0437249c0b57b999e5ca9e02f11edb13c9', origin_main_review_base='f8e743ca30939476433c680e7a29169d70c3fa41',
-                    method='Actual stdout/stderr from ordered checks; only machine path prefixes sanitized. External raw logs retained. Source/UI implementation unchanged during check pipeline except corrected docs header.',
+                    method='Actual stdout/stderr from ordered checks; machine path prefixes sanitized and redundant trailing empty lines normalized. External raw logs retained. Source/UI implementation unchanged during check pipeline except corrected docs header.',
                     checks=[], source_sha256={})
     for name, command in COMMANDS:
         data = (raw / name).read_bytes(); text = data.decode().replace(str(ROOT), '<checkout>')
         text = re.sub(r'/Users/[^/\s]+', '<user-home>', text)
-        dest = logs / name; dest.write_text(text)
+        dest = logs / name; dest.write_text(text.rstrip('\n') + '\n' if text else '')
         manifest['checks'].append(dict(order=len(manifest['checks']) + 1, command=command, result=('server started and APIs queried' if name.startswith('15') else 'exit 0'),
                                        log='logs/' + name, raw_sha256=hashlib.sha256(data).hexdigest(), published_sha256=hashlib.sha256(dest.read_bytes()).hexdigest()))
     runtime = json.loads((raw / 'runtime-apis.json').read_text())

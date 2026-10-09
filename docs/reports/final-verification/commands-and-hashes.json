@@ -1,7 +1,7 @@
 {
   "source_base_commit": "c63edd0437249c0b57b999e5ca9e02f11edb13c9",
   "origin_main_review_base": "f8e743ca30939476433c680e7a29169d70c3fa41",
-  "method": "Actual stdout/stderr from ordered checks; only machine path prefixes sanitized. External raw logs retained. Source/UI implementation unchanged during check pipeline except corrected docs header.",
+  "method": "Actual stdout/stderr from ordered checks; machine path prefixes sanitized and redundant trailing empty lines normalized. External raw logs retained. Source/UI implementation unchanged during check pipeline except corrected docs header.",
   "checks": [
     {
       "order": 1,
@@ -17,7 +17,7 @@
       "result": "exit 0",
       "log": "logs/02-rust-workspace.log",
       "raw_sha256": "7935eb90350508c3de6b7bb30e7edf92c8b077963dbdbbef5a6cf1f3ebda006d",
-      "published_sha256": "aedccb89de65090e0b032ce3aaf0297341603de8690a65185157ae3652444e3c"
+      "published_sha256": "dd95d2003a16af0f3c366afde93b4dcd58c0f089164fe83a4368862671dcee65"
     },
     {
       "order": 3,
@@ -57,7 +57,7 @@
       "result": "exit 0",
       "log": "logs/07-browser.log",
       "raw_sha256": "d7771882775ada4bfd67208789dc279686dd124078b27d69be32406324037d5d",
-      "published_sha256": "8010734ac4f06dbdb1a9991d60be985e7e5278b300b742ea344067a0d92ecc3a"
+      "published_sha256": "a3eba9076c60c6e5477aaaa43ec1346554250e855e37b381b89434b3e853947d"
     },
     {
       "order": 8,
@@ -65,7 +65,7 @@
       "result": "exit 0",
       "log": "logs/08-credential-logs.log",
       "raw_sha256": "d5e916fc05b9d467aa4db381af88ba6dccc992afee577a88c2d4d756a59e54a0",
-      "published_sha256": "fd393e0b19aa623b4325ccab37eccab79739ce02301e2dac035e72342a63be94"
+      "published_sha256": "4b2cd1efdfe17f04ddef0c1c458a7ddf21c8179a89d7c4fd2f23624412eacdde"
     },
     {
       "order": 9,

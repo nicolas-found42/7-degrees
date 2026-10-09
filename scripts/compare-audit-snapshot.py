@@ -27,7 +27,7 @@ def compare(audit_dir, tenures):
                           graph_eligible_csv_lines='|'.join(str(x['current_csv_line']) for x in eligible)))
     path = audit_dir / 'corrected-delta.csv'
     with path.open('w', newline='') as f:
-        w = csv.DictWriter(f, list(delta[0])); w.writeheader(); w.writerows(delta)
+        w = csv.DictWriter(f, list(delta[0]), lineterminator='\n'); w.writeheader(); w.writerows(delta)
     manifest = json.loads((audit_dir / 'export-manifest.json').read_text())
     summary = dict(original_t4_sha256=manifest['original_t4_sha256'], current_path='docs/reports/t4/tenures.csv',
                    current_sha256=hashlib.sha256(tenures.read_bytes()).hexdigest(),

@@ -26,7 +26,7 @@ def jsonlines(path):
 
 def csvwrite(path, rows, fields):
     with path.open('w', newline='') as f:
-        writer = csv.DictWriter(f, fields, extrasaction='ignore')
+        writer = csv.DictWriter(f, fields, extrasaction='ignore', lineterminator='\n')
         writer.writeheader()
         writer.writerows(rows)
 

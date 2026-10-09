@@ -2,7 +2,7 @@
 
 The complete Rust application was started through `./scripts/run-app.sh` against the full committed report snapshot, with release WASM built first, no database service and semantic credentials removed from the launching environment. Actual HTTP responses and browser journeys confirm the implemented behavior. This is local evidence; no remote CI result or complete historical graph is claimed.
 
-[Ordered commands, results and hashes](commands-and-hashes.json) link the actual [raw check output](logs/). Only machine-specific path prefixes were removed from published logs; hashes of the unchanged external originals are retained. Checks used integration source base `c63edd0437249c0b57b999e5ca9e02f11edb13c9`, with the T17 documentation/header correction. Final review base is origin/main `f8e743ca30939476433c680e7a29169d70c3fa41`. Generated audit utilities were also executed against retained artifacts after the application test pipeline. No raw source data, ignored cache or checkpoint was changed.
+[Ordered commands, results and hashes](commands-and-hashes.json) link the actual [raw check output](logs/). Machine-specific path prefixes were removed and redundant trailing empty lines normalized in published logs; hashes of the unchanged external originals are retained. Checks used integration source base `c63edd0437249c0b57b999e5ca9e02f11edb13c9`, with the T17 documentation/header correction. Final review base is origin/main `f8e743ca30939476433c680e7a29169d70c3fa41`. Generated audit utilities were also executed against retained artifacts after the application test pipeline. No raw source data, ignored cache or checkpoint was changed.
 
 ## Actual checks
 
