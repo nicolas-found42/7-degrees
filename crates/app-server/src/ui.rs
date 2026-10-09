@@ -209,7 +209,8 @@ pub fn home(
             coverage_line(coverage)
         ),
         format_args!(
-            "{}{}",
+            "{}{}{}",
+            crate::query::form(""),
             crate::search::form(""),
             connect_form(players, Some(demo_from), Some(demo_to))
         ),

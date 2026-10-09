@@ -1,0 +1,384 @@
+{
+  "end_to_end_ms": 463.910458,
+  "fixture": "spec synthetic roster; not real-player historical validation",
+  "measurements": [
+    {
+      "elapsed_ms": 459.800292,
+      "metadata": {
+        "cost_usd": 0.000070812,
+        "input_tokens": 1686,
+        "model": "typesafe/jev-1.13-20260917",
+        "output_tokens": 584,
+        "provider": "TypeSafe",
+        "request_id": "gen-dec-1791582230-udQTGphggFbxK0WRp8UM"
+      }
+    }
+  ],
+  "query": "connect Player A to Player C",
+  "result": {
+    "data": {
+      "certainty": "verified_fixture",
+      "degree": 2,
+      "links": [
+        {
+          "from": "A",
+          "overlap_days": 2,
+          "team": "Red",
+          "to": "B"
+        },
+        {
+          "from": "B",
+          "overlap_days": 1,
+          "team": "Blue",
+          "to": "C"
+        }
+      ],
+      "path": [
+        "A",
+        "B",
+        "C"
+      ],
+      "result": "connected",
+      "scope": "full_graph"
+    },
+    "evidence": [
+      {
+        "confidence": 0.97,
+        "field": "operation",
+        "probabilities": [
+          [
+            "Connect two players through their shortest teammate chain",
+            0.98
+          ],
+          [
+            "Show a player's sourced identity, teams and era",
+            0.0
+          ],
+          [
+            "Show a player's evidenced direct teammates",
+            0.0
+          ],
+          [
+            "Compare two players' sourced team and era context",
+            0.0
+          ],
+          [
+            "Unsupported, off-topic, adversarial or unrequested operation",
+            0.02
+          ]
+        ],
+        "selected": "Connect two players through their shortest teammate chain"
+      },
+      {
+        "confidence": 1.0,
+        "field": "team",
+        "probabilities": [
+          [
+            "No stated team filter",
+            1.0
+          ],
+          [
+            "Unsupported or ambiguous team filter",
+            0.0
+          ]
+        ],
+        "selected": "No stated team filter"
+      },
+      {
+        "confidence": 1.0,
+        "field": "era",
+        "probabilities": [
+          [
+            "No stated era filter",
+            1.0
+          ],
+          [
+            "Unsupported or ambiguous era filter",
+            0.0
+          ]
+        ],
+        "selected": "No stated era filter"
+      },
+      {
+        "confidence": 0.99,
+        "field": "first_mention",
+        "probabilities": [
+          [
+            "No player mention stated",
+            0.0
+          ],
+          [
+            "Player mention: connect",
+            0.0
+          ],
+          [
+            "Player mention: connect Player",
+            0.0
+          ],
+          [
+            "Player mention: connect Player A",
+            0.0
+          ],
+          [
+            "Player mention: connect Player A to",
+            0.0
+          ],
+          [
+            "Player mention: connect Player A to Player",
+            0.0
+          ],
+          [
+            "Player mention: Player",
+            0.0
+          ],
+          [
+            "Player mention: Player A",
+            0.99
+          ],
+          [
+            "Player mention: Player A to",
+            0.0
+          ],
+          [
+            "Player mention: Player A to Player",
+            0.0
+          ],
+          [
+            "Player mention: Player A to Player C",
+            0.0
+          ],
+          [
+            "Player mention: A",
+            0.01
+          ],
+          [
+            "Player mention: A to",
+            0.0
+          ],
+          [
+            "Player mention: A to Player",
+            0.0
+          ],
+          [
+            "Player mention: A to Player C",
+            0.0
+          ],
+          [
+            "Player mention: to",
+            0.0
+          ],
+          [
+            "Player mention: to Player",
+            0.0
+          ],
+          [
+            "Player mention: to Player C",
+            0.0
+          ],
+          [
+            "Player mention: Player C",
+            0.0
+          ],
+          [
+            "Player mention: C",
+            0.0
+          ]
+        ],
+        "selected": "Player mention: Player A"
+      },
+      {
+        "confidence": 0.97,
+        "field": "second_mention",
+        "probabilities": [
+          [
+            "No player mention stated",
+            0.0
+          ],
+          [
+            "Player mention: connect",
+            0.0
+          ],
+          [
+            "Player mention: connect Player",
+            0.0
+          ],
+          [
+            "Player mention: connect Player A",
+            0.0
+          ],
+          [
+            "Player mention: connect Player A to",
+            0.0
+          ],
+          [
+            "Player mention: connect Player A to Player",
+            0.0
+          ],
+          [
+            "Player mention: Player",
+            0.0
+          ],
+          [
+            "Player mention: Player A",
+            0.0
+          ],
+          [
+            "Player mention: Player A to",
+            0.0
+          ],
+          [
+            "Player mention: Player A to Player",
+            0.0
+          ],
+          [
+            "Player mention: Player A to Player C",
+            0.01
+          ],
+          [
+            "Player mention: A",
+            0.0
+          ],
+          [
+            "Player mention: A to",
+            0.0
+          ],
+          [
+            "Player mention: A to Player",
+            0.0
+          ],
+          [
+            "Player mention: A to Player C",
+            0.0
+          ],
+          [
+            "Player mention: to",
+            0.0
+          ],
+          [
+            "Player mention: to Player",
+            0.0
+          ],
+          [
+            "Player mention: to Player C",
+            0.01
+          ],
+          [
+            "Player mention: Player C",
+            0.97
+          ],
+          [
+            "Player mention: C",
+            0.01
+          ]
+        ],
+        "selected": "Player mention: Player C"
+      }
+    ],
+    "filters": {
+      "first_season": null,
+      "last_season": null,
+      "team": null
+    },
+    "interpretation": "Semantic interpretation; graph results are deterministic",
+    "operation": "connect",
+    "players": [
+      {
+        "aliases": [],
+        "first_season": null,
+        "id": "A",
+        "last_season": null,
+        "name": "Player A",
+        "teams": [
+          "Green",
+          "Red"
+        ]
+      },
+      {
+        "aliases": [],
+        "first_season": null,
+        "id": "C",
+        "last_season": null,
+        "name": "Player C",
+        "teams": [
+          "Blue"
+        ]
+      }
+    ],
+    "reason": "The graph operation completed.",
+    "resolutions": [
+      {
+        "candidates": [
+          {
+            "match_kind": "exact_name",
+            "matched_name": "Player A",
+            "player": {
+              "aliases": [],
+              "first_season": null,
+              "id": "A",
+              "last_season": null,
+              "name": "Player A",
+              "teams": [
+                "Green",
+                "Red"
+              ]
+            },
+            "score": 1000
+          }
+        ],
+        "has_more": false,
+        "interpretation": "exact_lookup",
+        "matches_total": 1,
+        "player": {
+          "aliases": [],
+          "first_season": null,
+          "id": "A",
+          "last_season": null,
+          "name": "Player A",
+          "teams": [
+            "Green",
+            "Red"
+          ]
+        },
+        "reason": "exact_canonical_name",
+        "semantic": null,
+        "status": "resolved"
+      },
+      {
+        "candidates": [
+          {
+            "match_kind": "exact_name",
+            "matched_name": "Player C",
+            "player": {
+              "aliases": [],
+              "first_season": null,
+              "id": "C",
+              "last_season": null,
+              "name": "Player C",
+              "teams": [
+                "Blue"
+              ]
+            },
+            "score": 1000
+          }
+        ],
+        "has_more": false,
+        "interpretation": "exact_lookup",
+        "matches_total": 1,
+        "player": {
+          "aliases": [],
+          "first_season": null,
+          "id": "C",
+          "last_season": null,
+          "name": "Player C",
+          "teams": [
+            "Blue"
+          ]
+        },
+        "reason": "exact_canonical_name",
+        "semantic": null,
+        "status": "resolved"
+      }
+    ],
+    "status": "executed"
+  }
+}
