@@ -35,7 +35,7 @@ Query thresholds all achieved 6/7 calibration decisions with no wrong automatic 
 
 ## Wording, order and component measurements
 
-Counts below are exact full decision labels, not confidence estimates. Latency is end-to-end service wall time; it includes retrieval, all provider calls and the resulting deterministic operation. Medians include cases that require no inference. The maximum is the observed maximum, not a p95 guarantee. Cost is per group; raw per-call metadata and transport latency are retained in [measurements](measurements.json). A null metadata field means unknown, never zero; all final frozen provider receipts supplied usage and cost.
+Counts below are exact full decision labels, not confidence estimates. Latency is end-to-end service wall time; it includes retrieval, all provider calls and the resulting deterministic operation. Medians include cases that require no inference. The capture wrapper creates fresh HTTP transports, so these are cold request measurements rather than a warmed long-running-server benchmark. The maximum is the observed maximum, not a p95 guarantee. Cost is per group; raw per-call metadata and transport latency are retained in [measurements](measurements.json). A null metadata field means unknown, never zero; all final frozen provider receipts supplied usage and cost.
 
 | Split/component | Variant | Correct | Wrong automatic | Clarify/abstain | Median / max ms | Input / output tokens | Cost USD |
 |---|---|---:|---:|---:|---:|---:|---:|
