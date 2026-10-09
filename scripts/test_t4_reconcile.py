@@ -13,10 +13,14 @@ Covers the four acceptance-critical behaviors:
   * fuzzy/flagged transaction legs never anchor a boundary
 """
 
+import csv
+import json
 import os
 import sys
+import tempfile
 import unittest
 from datetime import date
+from unittest.mock import patch
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -39,6 +43,7 @@ from t4_reconcile import (  # noqa: E402
     leg_season_bucket,
     load_transaction_legs,
     offseason_arrivals_by_membership,
+    reconstruct,
     walk_stints,
 )
 
@@ -359,6 +364,85 @@ class TestOffseasonArrivalLinkage(unittest.TestCase):
             ("CELTICS", 2002): win("2001-10-30", "2002-04-18"),
         }
         self.assertEqual(offseason_arrivals_by_membership(membership, legs, windows), {})
+
+
+class TestReconstructEarlyContinueCoverage(unittest.TestCase):
+    def test_no_stint_early_continue_rows_are_in_final_coverage_counts(self):
+        """Exercise the actual no-stint early-continue branches end to end.
+
+        Inline membership/transaction rows make the regression independent of
+        the multi-gigabyte source snapshot. The three cases hit: membership
+        without a window, same-day arrivals to two franchises (ordering
+        ambiguous), and a same-day arrival/departure that yields no interval.
+        Every emitted row must be reflected in the CSV-derived JSON totals.
+        """
+        membership = [
+            {"bbr_player_id": "no-window", "display_name": "No Window",
+             "season": 2025, "lg": "NBA", "era": "2000-2025/26",
+             "franchise": "TEAM_NONE", "membership_source": "S2"},
+            {"bbr_player_id": "ambiguous", "display_name": "Ambiguous",
+             "season": 2025, "lg": "NBA", "era": "2000-2025/26",
+             "franchise": "TEAM_EAST", "membership_source": "S2"},
+            {"bbr_player_id": "ambiguous", "display_name": "Ambiguous",
+             "season": 2025, "lg": "NBA", "era": "2000-2025/26",
+             "franchise": "TEAM_WEST", "membership_source": "S2"},
+            {"bbr_player_id": "same-day", "display_name": "Same Day",
+             "season": 2025, "lg": "NBA", "era": "2000-2025/26",
+             "franchise": "TEAM_SAME", "membership_source": "S2"},
+        ]
+        day = "2024-10-01"
+        legs = [
+            {"slug": "ambiguous", "season": 2025, "date_iso": day,
+             "depart": "", "arrive": "TEAM_EAST", "leg_flags": ""},
+            {"slug": "ambiguous", "season": 2025, "date_iso": day,
+             "depart": "", "arrive": "TEAM_WEST", "leg_flags": ""},
+            {"slug": "same-day", "season": 2025, "date_iso": day,
+             "depart": "", "arrive": "TEAM_SAME", "leg_flags": ""},
+            {"slug": "same-day", "season": 2025, "date_iso": day,
+             "depart": "TEAM_SAME", "arrive": "", "leg_flags": ""},
+        ]
+        diag = {
+            "membership_rows": len(membership),
+            "rows_S2": len(membership),
+            "rows_S1_only_supplement": 0,
+        }
+        with tempfile.TemporaryDirectory() as td:
+            data_dir = os.path.join(td, "data")
+            output_dir = os.path.join(td, "report", "t4")
+            os.makedirs(os.path.join(data_dir, "t4"))
+            with patch("t4_reconcile.T4_DIR", output_dir), \
+                 patch("t4_reconcile.load_s1_season_windows",
+                       return_value=({}, {}, [], 0)), \
+                 patch("t4_reconcile.load_membership",
+                       return_value=(membership, diag, [])), \
+                 patch("t4_reconcile.load_transaction_legs",
+                       return_value=(legs, [], {}, {})):
+                reconstruct(data_dir)
+
+            with open(os.path.join(output_dir, "tenures.csv"), newline="",
+                      encoding="utf-8") as f:
+                tenure_rows = list(csv.DictReader(f))
+            with open(os.path.join(output_dir, "coverage-counts.json"),
+                      encoding="utf-8") as f:
+                counts = json.load(f)["R"]
+
+        self.assertEqual(len(tenure_rows), 4)
+        self.assertEqual(counts["tenures"], 4)
+        self.assertEqual(counts["tenures-unresolved"], 4)
+        self.assertEqual(counts["intervals-absent"], 4)
+        self.assertEqual(counts["intervals-present"], 0)
+        self.assertTrue(all(row["evidence_class"] == CLASS_UNRESOLVED
+                            for row in tenure_rows))
+        reasons_by_player = {
+            row["bbr_player_id"]: row["unresolved_reasons"]
+            for row in tenure_rows
+        }
+        self.assertIn("no-dated-evidence",
+                      reasons_by_player["no-window"])
+        self.assertIn("same-day-arrival-to-multiple-franchises",
+                      reasons_by_player["ambiguous"])
+        self.assertIn("same-day-arrival-and-departure",
+                      reasons_by_player["same-day"])
 
 
 class TestAuthoritativeCoverage(unittest.TestCase):

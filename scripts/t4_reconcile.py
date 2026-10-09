@@ -792,6 +792,8 @@ def reconstruct(data_dir):
 
             if not stints:
                 reasons = []
+                if same_day_flags:
+                    reasons.append("same-day-arrival-and-departure(ordering-flagged)")
                 if not ws_we:
                     reasons.append("no-season-window(S1-game-table-ends-2022-23-"
                                    "or-season-absent-from-S1)")
