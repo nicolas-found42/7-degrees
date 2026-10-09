@@ -5,6 +5,7 @@ members = [
     "crates/app-server",
     "crates/fixture",
     "crates/graph-core",
+    "crates/jev-client",
 ]
 
 [workspace.package]
@@ -17,6 +18,7 @@ api-types = { path = "crates/api-types" }
 app-server = { path = "crates/app-server" }
 fixture = { path = "crates/fixture" }
 graph-core = { path = "crates/graph-core" }
+jev-client = { path = "crates/jev-client" }
 
 # Server side
 axum = "0.8.9"
