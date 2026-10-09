@@ -1,5 +1,6 @@
 [package]
 name = "app-server"
+default-run = "app-server"
 version.workspace = true
 edition.workspace = true
 
