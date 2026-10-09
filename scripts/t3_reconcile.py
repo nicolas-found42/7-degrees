@@ -93,6 +93,12 @@ def dob_tuple(d):
     return (int(d[0:4]), int(d[5:7]), int(d[8:10])) if dob_ok(d) else None
 
 
+def dob_corroborates(d1, d2):
+    """Require a shared birth year or an exact month/day beyond a ±2-year window."""
+    t1, t2 = dob_tuple(d1), dob_tuple(d2)
+    return bool(t1 and t2 and (t1[0] == t2[0] or t1[1:] == t2[1:]))
+
+
 def levenshtein1(a, b):
     """True when a and b differ by exactly one character edit (substitution)."""
     if a == b or abs(len(a) - len(b)) > 1:
@@ -311,7 +317,7 @@ class Bridge:
         """Return (class, s2_pid|None, detail). dob is the S1-side birthdate;
         s1_span is the S1 person's (from+1, to+1) season span when known."""
         # 1) exact (name-form, dob)
-        for f in name_forms:
+        for f in sorted(name_forms):
             u = self.idx_name_dob.get((f, dob))
             if u and len(u) == 1:
                 return ("name+dob", next(iter(u)), f)
@@ -319,12 +325,12 @@ class Bridge:
         #    b.1969 vs b.1983; "Glen Rice" senior vs junior), so (lastname, dob)
         #    uniqueness is checked before any conflict-prone full-name fallback;
         #    S2 may also spell the same person differently ("Steve Smith").
-        for f in name_forms:
+        for f in sorted(name_forms):
             u = self.idx_last_dob.get((f.split()[-1], dob))
             if u and len(u) == 1:
                 return ("lastname+dob", next(iter(u)), f)
         # 3) unique full-name match with S2 DOB missing
-        for f in name_forms:
+        for f in sorted(name_forms):
             u = self.idx_name.get(f)
             if u and len(u) == 1:
                 pid = next(iter(u))
@@ -335,21 +341,28 @@ class Bridge:
                     return ("DOB-conflict", pid, f)
                 return ("name-only", pid, f)
         # 4) bounded fuzzy window: same first-initial + surname, DOB within ±2
-        #    years, unique — accepted but flagged (day/month swap or year-rounding)
+        #    years; require corroboration by birth year or an exact month/day.
+        dob_window_unconfirmed = False
         if dob_ok(dob):
-            dt = dob_tuple(dob)
-            for f in name_forms:
+            dt = dob_tuple(dob) or (0, 0, 0)
+            for f in sorted(name_forms):
                 toks = f.split()
                 if len(toks) >= 2:
-                    hits = [p for p, dd in
-                            {(p, dd) for p, dd in self.idx_initlast.get((toks[0][0], toks[-1]), [])
-                             if abs(dd[0] - dt[0]) <= 2}]
-                    u = set(hits)
-                    if len(u) == 1:
-                        return ("initial-surname+dob-window", next(iter(u)), f)
+                    nearby = {
+                        (p, dd) for p, dd in self.idx_initlast.get((toks[0][0], toks[-1]), [])
+                        if abs(dd[0] - dt[0]) <= 2
+                    }
+                    corroborated = {
+                        p for p, dd in nearby
+                        if dob_corroborates(dob, "%04d-%02d-%02d" % dd)
+                    }
+                    if nearby and not corroborated:
+                        dob_window_unconfirmed = True
+                    if len(corroborated) == 1:
+                        return ("initial-surname+dob-window", next(iter(corroborated)), f)
             # 4a) near-surname (one-character difference, surname ≥ 6 chars) with the
             #     same first-initial and a matching/near DOB — flagged, not trusted
-            for f in name_forms:
+            for f in sorted(name_forms):
                 toks = f.split()
                 if len(toks) >= 2 and len(toks[-1]) >= 6:
                     cands = set()
@@ -362,7 +375,7 @@ class Bridge:
                         return ("surname-fuzzy+dob-window", next(iter(cands)), f)
         # 4b) exact/near surname unique in S2 with S2 birth date missing — flagged,
         #     not trusted (S2 'Player Career Info.csv' has NA birth dates)
-        for f in name_forms:
+        for f in sorted(name_forms):
             toks = f.split()
             if len(toks) >= 2 and toks[-1] in self.unique_lastnames:
                 na = [p for p in self.idx_name.get(f, set())
@@ -371,7 +384,7 @@ class Bridge:
                     return ("lastname-s2dob-NA", na[0], f)
         # 4c) one-letter-first-name forms: S2 "F Crossin"-style rows match
         #     (initial, surname) via idx_initial_surname
-        for f in name_forms:
+        for f in sorted(name_forms):
             toks = f.split()
             if len(toks) >= 2 and len(toks[0]) >= 1 and len(toks[0]) <= 2 and len(toks[-1]) >= 5:
                 ini = toks[0][0]
@@ -379,20 +392,21 @@ class Bridge:
                 if len(ps) == 1:
                     return ("initial+surname", next(iter(ps)), f)
         # 4d) career-era rule: no unique surname match — if this S1 person is the
-        #     ONLY surname-holder whose career span overlaps S1's from/to years,
+        #     ONLY surname-holder whose career span fits inside S1's from/to years,
         #     bridge but flag (covers "Johnny Kerr"↔"Red Kerr", "Peter"↔"Press
-        #     Maravich" nickname/display variants in pre-pbp eras). Uses an
-        #     optional surname-index of (pid -> from/to seasons) supplied at
-        #     Bridge construction (s2_spans) and (initial, surname) S1 keys.
-        span_hits = self.span_surname_match(name_forms, s1_span)
+        #     Maravich" nickname/display variants in pre-pbp eras). A nearby same-initial
+        #     DOB candidate rejected for contradictory DOB evidence vetoes this weaker
+        #     fallback rather than being replaced by a different surname-holder.
+        #     Uses the supplied S2 spans and (initial, surname) S1 keys.
+        span_hits = [] if dob_window_unconfirmed else self.span_surname_match(name_forms, s1_span)
         if span_hits:
             return ("surname+career-span", span_hits[0], "")
         # 5) explicit ambiguity listings
-        for f in name_forms:
+        for f in sorted(name_forms):
             u = self.idx_name_dob.get((f, dob))
             if u and len(u) > 1:
                 return ("ambiguous-name+dob", None, f)
-        for f in name_forms:
+        for f in sorted(name_forms):
             u = self.idx_name.get(f)
             if u and len(u) > 1:
                 return ("ambiguous-name", None, f)
@@ -402,8 +416,8 @@ class Bridge:
         """Era-disambiguated surname rule (4d).
 
         For this S1 person (surname S; career span F..T in the S2 season
-        convention), find S2 surname-holders whose own span overlaps [F, T].
-        Bridge only when exactly ONE S2 player with that surname overlaps —
+        convention), find S2 surname-holders whose entire own span fits inside
+        [F, T]. Bridge only when exactly ONE S2 player with that surname fits —
         any name/dob signal would already have matched above.
         """
         if not s1_span:
@@ -417,14 +431,14 @@ class Bridge:
             overlaps = set()
             for p in ps:
                 sp = self.s2_spans.get(p)
-                if sp and sp[0] <= Tt and F <= sp[1]:
+                if sp and F <= sp[0] and sp[1] <= Tt:
                     overlaps.add(p)
             if len(overlaps) == 1:
                 return [next(iter(overlaps))]
         return []
 
     def match_aba(self, name_forms, dob):
-        for f in name_forms:
+        for f in sorted(name_forms):
             u = self.idx_aba_name.get(f)
             if u and len(u) == 1:
                 pid = next(iter(u))
@@ -481,12 +495,15 @@ def main():
     s2_cname = {r["player_id"]: r["player"] for r in s2_career}
     s2_rowcount = Counter(r["player_id"] for r in s2_season if r["lg"] in ("NBA", "BAA"))
     s2_mset = set()
+    s2_membership_lg = {}
     for r in s2_season:
         if r["lg"] not in ("NBA", "BAA"):
             continue
         if re.fullmatch(r"\dTM", r["team"]) or r["team"] == "TOT":
             continue
-        s2_mset.add((int(r["season"]), r["player_id"], r["team"]))
+        membership = (int(r["season"]), r["player_id"], r["team"])
+        s2_mset.add(membership)
+        s2_membership_lg[membership] = r["lg"]
     R["s2_season_rows"] = len(s2_season)
     R["s2_nba_baa_rows"] = sum(1 for r in s2_season if r["lg"] in ("NBA", "BAA"))
     R["s2_aba_rows"] = sum(1 for r in s2_season if r["lg"] == "ABA")
@@ -504,6 +521,10 @@ def main():
 
     # ---- franchise machinery ----------------------------------------------
     era_idx = franchise_era_index()
+    franchise_leagues_by_season = defaultdict(set)
+    for (lg, season), entries in era_idx.items():
+        for cid, _era in entries:
+            franchise_leagues_by_season[(season, cid)].add(lg)
     canon_of_s2row = {}
     unresolved_f1, ambiguous_f1 = [], []
     for r in s2_teams:
@@ -713,10 +734,14 @@ def main():
     R["m1_rows_player_unbridged_named"] = len(untrans)
     # S2 membership rows canonicalized to franchise ids
     s2_mset_canon = set()
+    s2_mset_canon_lg = {}
     unresolved_s2_team_keys = Counter()
-    for (s, p, t), cid in zip(s2_mset, (canon_s2_cache.get((s, t)) for s, p, t in s2_mset)):
+    for s, p, t in s2_mset:
+        cid = canon_s2_cache.get((s, t))
         if cid:
-            s2_mset_canon.add((s, p, cid))
+            key = (s, p, cid)
+            s2_mset_canon.add(key)
+            s2_mset_canon_lg[key] = s2_membership_lg[(s, p, t)]
         else:
             unresolved_s2_team_keys[t] += 1
     R["m2_unresolved_s2_team_rows"] = sum(unresolved_s2_team_keys.values())
@@ -760,10 +785,12 @@ def main():
         return None
     samples = defaultdict(list)
     for (season, pid, team) in sorted(m1a_lte2023):
-        lg = "NBA"
+        lg = s2_mset_canon_lg[(season, pid, team)]
         samples[("membership-S2-only-vs-S1", era_label(lg, season))].append((season, pid, team))
     for (season, pid, team) in sorted(m2):
-        samples[("membership-S1-only-vs-S2", era_label("NBA", season))].append((season, pid, team))
+        leagues = franchise_leagues_by_season.get((season, team), set())
+        lg = next(iter(leagues)) if len(leagues) == 1 else None
+        samples[("membership-S1-only-vs-S2", era_label(lg, season))].append((season, pid, team))
     for row in sorted(classes["no-match"], key=lambda r: r[1]):
         pass
     # era for player classes via S2/cpi years
@@ -872,8 +899,8 @@ def main():
     write_csv(
         os.path.join(T3_DIR, "unresolved-player-cases.csv"),
         ["source", "class", "display_name", "source_id", "other_id", "other_name", "detail"],
-        [[src, cls, *row] for src, cc in (("S1", classes),) for cls, rows in cc.items()
-         for row in rows]
+        [[src, no_match_sub.get(row[1], cls) if cls == "no-match" else cls, *row]
+         for src, cc in (("S1", classes),) for cls, rows in cc.items() for row in rows]
         + [["S2", "no-S1-match-pre-2023", s2_cname[p], p, "", "", ""] for p in sorted(uni_no_s1_pre2023)]
         + [["S2", "no-S1-match-2024-plus", s2_cname[p], p, "", "", ""] for p in sorted(uni_no_s1_post2023)]
         + [["S3", "S3-only-not-in-S1", s3_by_id[p]["DISPLAY_FIRST_LAST"], p, "", "", ""]
