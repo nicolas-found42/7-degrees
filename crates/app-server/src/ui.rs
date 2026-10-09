@@ -14,7 +14,7 @@ use graph_core::{Chain, Connection, Player, TeammateGraph};
 pub const STYLE_CSS: &str = include_str!("style.css");
 
 /// Escape text for safe inclusion in HTML content and attribute values.
-fn escape(text: &str) -> String {
+pub(crate) fn escape(text: &str) -> String {
     let mut out = String::with_capacity(text.len());
     for c in text.chars() {
         match c {
@@ -31,7 +31,7 @@ fn escape(text: &str) -> String {
 
 /// Percent-encode a query-string value (RFC 3986 unreserved characters pass
 /// through; everything else is escaped).
-fn url_encode(value: &str) -> String {
+pub(crate) fn url_encode(value: &str) -> String {
     value
         .bytes()
         .map(|c| {
@@ -55,7 +55,7 @@ fn display_name<'a>(players: &'a [Player], id: &'a str) -> &'a str {
 }
 
 /// The document shell: status, escaped title, stylesheet link, and body.
-fn document(status: StatusCode, title: &str, body: &str) -> Response {
+pub(crate) fn document(status: StatusCode, title: &str, body: &str) -> Response {
     let html = format!(
         "<!DOCTYPE html>\n<html lang=\"en\">\n<head><meta charset=\"utf-8\"><meta \
          name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>{}</title><link \
@@ -164,7 +164,7 @@ fn chain_section(chain: &Chain, players: &[Player]) -> String {
 ///
 /// The rendered text carries only the two availability words — never a
 /// provider name, env var, or any credential material.
-fn semantic_status_line(status: (bool, &'static str)) -> String {
+pub(crate) fn semantic_status_line(status: (bool, &'static str)) -> String {
     let (available, reason) = status;
     let text = if available {
         "Semantic features (Jev): available"
@@ -177,7 +177,7 @@ fn semantic_status_line(status: (bool, &'static str)) -> String {
     )
 }
 
-fn coverage_line(coverage: Option<&str>) -> String {
+pub(crate) fn coverage_line(coverage: Option<&str>) -> String {
     coverage
         .map(|text| format!("<p class=\"coverage-warning\">{}</p>", escape(text)))
         .unwrap_or_default()
@@ -238,7 +238,11 @@ pub fn home(
             semantic_status_line(semantic_status),
             coverage_line(coverage)
         ),
-        connect_form(players, Some(demo_from), Some(demo_to)),
+        format_args!(
+            "{}{}",
+            crate::search::form(""),
+            connect_form(players, Some(demo_from), Some(demo_to))
+        ),
         edges.len(),
         edge_items,
         url_encode(demo_from),

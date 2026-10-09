@@ -4,6 +4,7 @@
 mod fixture_data;
 mod jev;
 pub mod report_data;
+pub mod search;
 mod ui;
 
 use axum::{
@@ -72,6 +73,9 @@ fn app(state: AppState) -> Router {
         .route("/api/coverage", get(coverage))
         .route("/api/coverage/{player}", get(player_coverage))
         .route("/api/players", get(players))
+        .route("/api/search", get(search::api))
+        .route("/search", get(search::page))
+        .route("/players/{id}", get(search::profile))
         .route("/api/semantic-status", get(semantic_status))
         .route("/", get(home))
         .route("/chain", get(chain_page))
