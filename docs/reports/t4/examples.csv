@@ -1,0 +1,17 @@
+evidence_class,bbr_player_id,display_name,season,era,canonical_franchise,interval_iso,reasons_or_note
+directly-evidenced,beendha01,Hank Beenders,1948,BAA 1946-49,WARRIORS,"[1948-01-15, 1948-05-01)",(clean)
+directly-evidenced,mahnkjo01,John Mahnken,1949,BAA 1946-49,JETS,"[1948-11-19, 1948-12-19)",(clean)
+directly-evidenced,youngch01,Chris Youngblood,2026,2000-2025/26,THUNDER,"[2025-09-26, 2026-02-06)",repeat-signing-continues-open-stint
+directly-evidenced,youngja05,Jahmir Young,2026,2000-2025/26,HEAT,"[2025-09-11, 2026-04-11)",repeat-signing-continues-open-stint
+cross-checked,beckemo01,Moe Becker,1947,BAA 1946-49,CELTICS,"[1946-12-12, 1947-03-31)",(clean)
+cross-checked,beckemo01,Moe Becker,1947,BAA 1946-49,IRONMEN,"[1946-11-02, 1946-12-12)",(clean)
+cross-checked,yorkga01,Gabe York,2023,2000-2025/26,PACERS,"[2023-03-30, 2023-04-10)",(clean)
+cross-checked,zelleco01,Cody Zeller,2023,2000-2025/26,HEAT,"[2023-02-20, 2023-06-13)",(clean)
+inferred,abramjo01,John Abramovic,1947,BAA 1946-49,IRONMEN,"[1946-11-02, 1947-03-27)",(clean)
+inferred,aubucch01,Chet Aubuchon,1947,BAA 1946-49,FALCONS,"[1946-11-02, 1947-03-30)",(clean)
+inferred,yurtsom01,Omer Yurtseven,2023,2000-2025/26,HEAT,"[2022-10-19, 2023-06-13)",(clean)
+inferred,zubaciv01,Ivica Zubac,2023,2000-2025/26,CLIPPERS,"[2022-10-20, 2023-04-26)",(clean)
+unresolved,beckemo01,Moe Becker,1947,BAA 1946-49,FALCONS,"[1946-11-02, 1947-03-30)",multi-team-season(ordering-unresolved): player has dated moves to other franchises this season; bracket-only stint cannot be ordered against them
+unresolved,militna01,Nat Militzok,1947,BAA 1946-49,KNICKS,,fuzzy-dated-rows-bear-on-this-tenure
+unresolved,zubaciv01,Ivica Zubac,2026,2000-2025/26,PACERS,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
+unresolved,zubaciv01,Ivica Zubac,2026,2000-2025/26,CLIPPERS,,"no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); departure-after-closed-stint(prior-spell-exit,or-source-noise)"
