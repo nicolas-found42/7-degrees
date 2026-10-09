@@ -55,12 +55,12 @@ fn display_name<'a>(players: &'a [Player], id: &'a str) -> &'a str {
 }
 
 /// The document shell: status, escaped title, stylesheet link, and body.
-fn document(status: StatusCode, title: &str, body: &str) -> Response {
+pub(crate) fn document(status: StatusCode, title: &str, body: &str) -> Response {
     let html = format!(
         "<!DOCTYPE html>\n<html lang=\"en\">\n<head><meta charset=\"utf-8\"><meta \
          name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>{}</title><link \
          rel=\"stylesheet\" href=\"/style.css\"></head>\n<body><main \
-         class=\"seven-degrees\">{}</main></body>\n</html>\n",
+         class=\"seven-degrees\"><nav aria-label=\"Main navigation\"><a href=\"/\">Explorer</a> · <a href=\"/stats\">Network statistics</a></nav>{}</main></body>\n</html>\n",
         escape(title),
         body
     );
@@ -164,7 +164,7 @@ fn chain_section(chain: &Chain, players: &[Player]) -> String {
 ///
 /// The rendered text carries only the two availability words — never a
 /// provider name, env var, or any credential material.
-fn semantic_status_line(status: (bool, &'static str)) -> String {
+pub(crate) fn semantic_status_line(status: (bool, &'static str)) -> String {
     let (available, reason) = status;
     let text = if available {
         "Semantic features (Jev): available"
@@ -177,7 +177,7 @@ fn semantic_status_line(status: (bool, &'static str)) -> String {
     )
 }
 
-fn coverage_line(coverage: Option<&str>) -> String {
+pub(crate) fn coverage_line(coverage: Option<&str>) -> String {
     coverage
         .map(|text| format!("<p class=\"coverage-warning\">{}</p>", escape(text)))
         .unwrap_or_default()
