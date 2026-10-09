@@ -138,8 +138,28 @@ fn chain_section(chain: &Chain, players: &[Player]) -> String {
     )
 }
 
+/// The semantic-features availability line, rendered at the top of every
+/// page (spec: "the UI reports semantic features as unavailable" when Jev is
+/// unconfigured or unreachable). `data-semantic-status` keeps it
+/// machine-readable for tests and E2E seams.
+///
+/// The rendered text carries only the two availability words — never a
+/// provider name, env var, or any credential material.
+fn semantic_status_line(status: (bool, &'static str)) -> String {
+    let (available, reason) = status;
+    let text = if available {
+        "Semantic features (Jev): available"
+    } else {
+        "Semantic features (Jev): unavailable"
+    };
+    format!(
+        "<p class=\"semantic-status\" data-semantic-status=\"{reason}\">{}</p>",
+        escape(text)
+    )
+}
+
 /// The home page: the connect form plus the whole fixture edge list.
-pub fn home(graph: &TeammateGraph) -> Response {
+pub fn home(graph: &TeammateGraph, semantic_status: (bool, &'static str)) -> Response {
     let players = &graph.roster.players;
     let edges = graph.edges();
     let edge_items: String = edges
@@ -163,11 +183,13 @@ pub fn home(graph: &TeammateGraph) -> Response {
         })
         .collect();
     let body = format!(
-        "<h1>7 Degrees</h1><p class=\"subtitle\">NBA teammate degrees of separation — fixture \
+        "<h1>7 Degrees</h1>{}<p class=\"subtitle\">NBA teammate degrees of separation — fixture \
          demo (Players A–D, Teams Red/Blue)</p>{}<h2>Teammate edges</h2><p>The fixture graph \
          has {} teammate edges:</p><ul class=\"edges\">{}</ul><h2>JSON \
          API</h2><p><a href=\"/api/fixture\">/api/fixture</a> · <a \
-         href=\"/api/connection?from=A&amp;to=C\">/api/connection?from=A&amp;to=C</a></p>",
+         href=\"/api/connection?from=A&amp;to=C\">/api/connection?from=A&amp;to=C</a> · <a \
+         href=\"/api/semantic-status\">/api/semantic-status</a></p>",
+        semantic_status_line(semantic_status),
         connect_form(players, None, None),
         edges.len(),
         edge_items
@@ -177,16 +199,23 @@ pub fn home(graph: &TeammateGraph) -> Response {
 
 /// The `/chain` page: the connect form plus the shortest teammate chain
 /// between the queried pair, an explanation when none exists, or an error
-/// when a player id is unknown.
-pub fn chain(graph: &TeammateGraph, from: Option<String>, to: Option<String>) -> Response {
+/// when a player id is unknown. Every variant carries the semantic-feature
+/// status line.
+pub fn chain(
+    graph: &TeammateGraph,
+    from: Option<String>,
+    to: Option<String>,
+    semantic_status: (bool, &'static str),
+) -> Response {
     let players = &graph.roster.players;
     let back = "<p><a href=\"/\">← Back to the fixture</a></p>";
     let (status, body) = match (from.as_deref(), to.as_deref()) {
         (None, None) => (
             StatusCode::OK,
             format!(
-                "<h1>7 Degrees</h1>{}<p class=\"hint\">Pick two players and connect \
+                "<h1>7 Degrees</h1>{}{}<p class=\"hint\">Pick two players and connect \
                  them.</p>",
+                semantic_status_line(semantic_status),
                 connect_form(players, None, None)
             ),
         ),
@@ -202,8 +231,9 @@ pub fn chain(graph: &TeammateGraph, from: Option<String>, to: Option<String>) ->
                 (
                     StatusCode::NOT_FOUND,
                     format!(
-                        "<h1>7 Degrees</h1>{}{}<p class=\"error\">No player node for id \
+                        "<h1>7 Degrees</h1>{}{}{}<p class=\"error\">No player node for id \
                          {:?}.</p>",
+                        semantic_status_line(semantic_status),
                         connect_form(players, Some(from_id), Some(to_id)),
                         back,
                         missing
@@ -214,7 +244,8 @@ pub fn chain(graph: &TeammateGraph, from: Option<String>, to: Option<String>) ->
                     Some(Connection::Connected(chain)) => (
                         StatusCode::OK,
                         format!(
-                            "<h1>7 Degrees</h1>{}{}",
+                            "<h1>7 Degrees</h1>{}{}{}",
+                            semantic_status_line(semantic_status),
                             back,
                             chain_section(&chain, players)
                         ),
@@ -222,9 +253,10 @@ pub fn chain(graph: &TeammateGraph, from: Option<String>, to: Option<String>) ->
                     Some(Connection::Disconnected) | None => (
                         StatusCode::OK,
                         format!(
-                            "<h1>7 Degrees</h1>{}<section class=\"chain\"><h2>Shortest \
+                            "<h1>7 Degrees</h1>{}{}<section class=\"chain\"><h2>Shortest \
                              teammate chain</h2><p class=\"hint\">No teammate chain connects {} \
                              and {}.</p></section>",
+                            semantic_status_line(semantic_status),
                             back,
                             escape(display_name(players, from_id)),
                             escape(display_name(players, to_id))

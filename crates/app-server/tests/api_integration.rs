@@ -15,6 +15,7 @@ use axum::{
     http::{Request, StatusCode},
 };
 use http_body_util::BodyExt;
+use jev_client::{JevAnswer, JevClient, JevConfig, JevOutcome, MemoryTransport};
 use serde_json::{Value, json};
 use tower::ServiceExt;
 
@@ -435,4 +436,356 @@ async fn unknown_ui_route_is_a_html_not_found_page() {
     let (status, body) = get("/api/nope").await;
     assert_eq!(status, StatusCode::NOT_FOUND);
     assert_eq!(body.expect("JSON body")["error"], "not-found");
+}
+
+// --- Jev availability: status surface, safe fallback, credential isolation.
+//
+// Spec §"Jev at runtime" + acceptance criteria: with Jev unconfigured or
+// unreachable, deterministic search/graph features keep working unchanged and
+// the UI reports semantic features as unavailable; credentials never reach
+// the browser, responses, or routine logs.
+
+use app_server::JevHandle;
+
+/// A Jev handle from a scripted in-memory transport (no network, no key).
+fn scripted_handle(outcomes: Vec<JevOutcome>) -> JevHandle {
+    let client = JevClient::new(
+        JevConfig::new("test-only-key-not-real".to_string()),
+        MemoryTransport::scripted(outcomes),
+    );
+    JevHandle::from_client(client)
+}
+
+/// Run one request against an app with an explicit Jev handle.
+async fn get_with_jev(path: &str, handle: JevHandle) -> (StatusCode, Option<Value>) {
+    let app = app_server::app_with_jev(handle);
+    let response = app
+        .oneshot(
+            Request::builder()
+                .uri(path)
+                .body(Body::empty())
+                .expect("request builds"),
+        )
+        .await
+        .expect("in-process request completes");
+    let status = response.status();
+    let body = response
+        .into_body()
+        .collect()
+        .await
+        .expect("body reads")
+        .to_bytes();
+    let json = if body.is_empty() {
+        None
+    } else {
+        Some(serde_json::from_slice(&body).expect("body is JSON"))
+    };
+    (status, json)
+}
+
+/// Run one request against an app with an explicit Jev handle, as HTML.
+async fn get_html_with_jev(path: &str, handle: JevHandle) -> (StatusCode, String) {
+    let app = app_server::app_with_jev(handle);
+    let response = app
+        .oneshot(
+            Request::builder()
+                .uri(path)
+                .body(Body::empty())
+                .expect("request builds"),
+        )
+        .await
+        .expect("in-process request completes");
+    let status = response.status();
+    let body = response
+        .into_body()
+        .collect()
+        .await
+        .expect("body reads")
+        .to_bytes();
+    (
+        status,
+        String::from_utf8(body.to_vec()).expect("body is UTF-8"),
+    )
+}
+
+#[tokio::test]
+async fn semantic_status_reports_unavailable_without_configuration() {
+    // The default fixture app is built with no env key inside tests, so the
+    // dedicated status endpoint reports semantic features unavailable.
+    let (status, body) = get("/api/semantic-status").await;
+    assert_eq!(status, StatusCode::OK);
+    let status_body = body.expect("JSON body present");
+    assert_eq!(status_body["available"], false);
+    assert_eq!(status_body["reason"], "unconfigured");
+    assert!(
+        !status_body
+            .as_object()
+            .expect("object")
+            .iter()
+            .any(|(_key, value)| {
+                value
+                    .as_str()
+                    .map(|s| s.to_ascii_lowercase())
+                    .map(|s| s.contains("api_key") || s.contains("key=") || s.contains("bearer"))
+                    .unwrap_or(false)
+            }),
+        "status body must not hint at any credential material: {status_body}"
+    );
+}
+
+#[tokio::test]
+async fn semantic_status_reports_available_with_a_provider() {
+    let handle = scripted_handle(vec![]);
+    let (status, body) = get_with_jev("/api/semantic-status", handle).await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(body.expect("JSON body")["available"], true);
+}
+
+#[tokio::test]
+async fn graph_and_search_features_work_with_jev_unconfigured() {
+    // All deterministic features through the default (unconfigured) app.
+    let (status, body) = get("/api/connection?from=A&to=C").await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(body.expect("connected")["degree"], 2, "graph degrees work");
+
+    let (status, body) = get("/api/paths?from=A&to=C").await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(
+        body.expect("paths")["paths"].as_array().map(Vec::len),
+        Some(1),
+        "path search works"
+    );
+
+    let (status, body) = get("/api/stats").await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(body.expect("stats")["players"], 6, "statistics work");
+
+    let (status, body) = get("/api/fixture").await;
+    assert_eq!(status, StatusCode::OK);
+    let fixture = body.expect("fixture");
+    let players = fixture["players"].as_array().expect("players");
+    assert_eq!(players.len(), 6, "browsing works");
+}
+
+#[tokio::test]
+async fn ui_reports_semantic_features_unavailable_by_default() {
+    // Every page carries the availability line; the default seam is
+    // deterministically unconfigured.
+    let (status, html) = get_html("/").await;
+    assert_eq!(status, StatusCode::OK);
+    assert!(
+        html.contains("Semantic features (Jev): unavailable"),
+        "home page surfaces the unavailable status: {html}"
+    );
+    assert!(
+        html.contains(r#"data-semantic-status="unconfigured""#),
+        "status is machine-readable in the HTML: {html}"
+    );
+
+    let (status, html) = get_html("/chain?from=A&to=C").await;
+    assert_eq!(status, StatusCode::OK);
+    assert!(
+        html.contains("Semantic features (Jev): unavailable"),
+        "chain page surfaces the unavailable status: {html}"
+    );
+}
+
+#[tokio::test]
+async fn ui_reports_semantic_features_available_with_a_provider() {
+    let handle = scripted_handle(vec![]);
+    let (status, html) = get_html_with_jev("/", handle).await;
+    assert_eq!(status, StatusCode::OK);
+    assert!(
+        html.contains(r#"data-semantic-status="available""#),
+        "home page surfaces the available status: {html}"
+    );
+    assert!(html.contains("Semantic features (Jev): available"));
+}
+
+#[tokio::test]
+async fn unreachable_provider_fails_soft_and_features_keep_working() {
+    // A configured client whose provider always fails transport-wise: after
+    // one judgment attempt (the recording point for semantic features), the
+    // UI must report semantic features unavailable while every deterministic
+    // feature keeps its exact behavior.
+    let handle = scripted_handle(vec![]);
+    assert!(handle.configured(), "the provider is configured");
+    let request = jev_client::JevRequest {
+        state: json!({ "candidates": ["Player B"] }),
+        questions: vec![(
+            "pick".to_string(),
+            jev_client::JevQuestion::Choice {
+                instructions: "Which candidate is intended?".to_string(),
+                criteria: vec![("b".to_string(), "Player B".to_string())],
+            },
+        )],
+    };
+    let outcome = handle.judge(&request);
+    assert_eq!(outcome, JevOutcome::Unavailable, "call fails soft");
+
+    // The chain UI keeps working and reports unavailable semantics.
+    let (status, html) = get_html_with_jev("/chain?from=A&to=C", handle.clone()).await;
+    assert_eq!(status, StatusCode::OK);
+    assert!(
+        html.contains("Semantic features (Jev): unavailable"),
+        "degraded state is surfaced: {html}"
+    );
+    assert!(
+        html.contains("Degree of separation: <strong>2</strong>"),
+        "deterministic chain result unchanged: {html}"
+    );
+
+    // The graph API keeps answering with identical deterministic bodies.
+    let (status, body) = get_with_jev("/api/connection?from=A&to=B", handle).await;
+    assert_eq!(status, StatusCode::OK);
+    let connection = body.expect("JSON body present");
+    assert_eq!(connection["result"], "connected");
+    assert_eq!(connection["degree"], 1);
+}
+
+#[tokio::test]
+async fn served_responses_and_assets_never_contain_credentials() {
+    // Serve every browser-reachable surface with a configured (fake-key) Jev
+    // client that has already attempted (and failed) a judgment, and assert
+    // the key material appears nowhere. The key is a unique canary string; it
+    // must not leak into any response or asset.
+    let canary = "sk-canary-never-serve-4451";
+    let handle = JevHandle::from_client(JevClient::new(
+        JevConfig::new(canary.to_string()),
+        MemoryTransport::scripted(vec![]),
+    ));
+    let request = jev_client::JevRequest {
+        state: json!({ "candidates": ["Player B"] }),
+        questions: vec![(
+            "pick".to_string(),
+            jev_client::JevQuestion::Choice {
+                instructions: "Which candidate is intended?".to_string(),
+                criteria: vec![("b".to_string(), "Player B".to_string())],
+            },
+        )],
+    };
+    assert_eq!(
+        handle.judge(&request),
+        JevOutcome::Unavailable,
+        "the scripted provider fails soft"
+    );
+
+    for path in [
+        "/",
+        "/chain?from=A&to=C",
+        "/style.css",
+        "/api/fixture",
+        "/api/edges",
+        "/api/connection?from=A&to=C",
+        "/api/paths?from=A&to=C",
+        "/api/stats",
+        "/api/semantic-status",
+        "/does-not-exist",
+        "/api/does-not-exist",
+    ] {
+        let app = app_server::app_with_jev(handle.clone());
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri(path)
+                    .body(Body::empty())
+                    .expect("request builds"),
+            )
+            .await
+            .expect("in-process request completes");
+        let body = response
+            .into_body()
+            .collect()
+            .await
+            .expect("body reads")
+            .to_bytes();
+        let text = String::from_utf8_lossy(&body);
+        assert!(
+            !text.contains(canary),
+            "credential canary leaked into response for {path}: {text}"
+        );
+        assert!(
+            !text.to_ascii_lowercase().contains("sk-canary"),
+            "credential prefix leaked into response for {path}"
+        );
+    }
+}
+
+#[tokio::test]
+async fn jev_unavailable_outcome_is_deterministic_across_calls() {
+    // The seam itself: repeated calls amid provider failure produce the same
+    // deterministic Unavailable outcome every time (spec: fail-soft, no
+    // nondeterminism introduced into graph behavior).
+    let handle = scripted_handle(vec![]);
+    let outcomes: Vec<JevOutcome> = (0..5)
+        .map(|_| {
+            let request = jev_client::JevRequest {
+                state: json!({ "candidates": ["Player B"] }),
+                questions: vec![(
+                    "pick".to_string(),
+                    jev_client::JevQuestion::Choice {
+                        instructions: "Which candidate is intended?".to_string(),
+                        criteria: vec![("b".to_string(), "Player B".to_string())],
+                    },
+                )],
+            };
+            handle.judge(&request)
+        })
+        .collect();
+    assert!(
+        outcomes
+            .iter()
+            .all(|outcome| *outcome == JevOutcome::Unavailable),
+        "every call is Unavailable: {outcomes:?}"
+    );
+    assert!(
+        outcomes.iter().all(|outcome| *outcome == outcomes[0]),
+        "outcomes are deterministic: {outcomes:?}"
+    );
+}
+
+#[tokio::test]
+async fn jev_answers_surface_only_through_the_seam_not_the_graph() {
+    // Even when the provider answers, graph responses must not change: Jev
+    // outcomes affect semantic features only, never graph facts.
+    let handle = scripted_handle(vec![JevOutcome::Answers(vec![(
+        "pick".to_string(),
+        JevAnswer::Choice("b".to_string(), vec![("b".to_string(), 1.0)], 1.0),
+    )])]);
+    let (status, body) = get_with_jev("/api/connection?from=A&to=C", handle).await;
+    assert_eq!(status, StatusCode::OK);
+    let connection = body.expect("connected");
+    assert_eq!(connection["degree"], 2, "graph facts are Jev-independent");
+    assert_eq!(connection["path"], json!(["A", "B", "C"]));
+}
+
+#[tokio::test]
+async fn credentials_never_reach_routine_logs() {
+    // The credential canary must never be emitted through `log` while the
+    // app serves traffic and runs a failing judgment. app-server installs no
+    // logger itself and never logs key material (see
+    // crates/app-server/tests/log_capture.rs for the captured-output proof
+    // under the same in-process seam).
+    let canary = "sk-canary-never-log-9012";
+    let handle = JevHandle::from_client(JevClient::new(
+        JevConfig::new(canary.to_string()),
+        MemoryTransport::scripted(vec![]),
+    ));
+    let request = jev_client::JevRequest {
+        state: json!({ "candidates": ["Player B"] }),
+        questions: vec![(
+            "pick".to_string(),
+            jev_client::JevQuestion::Choice {
+                instructions: "Which candidate is intended?".to_string(),
+                criteria: vec![("b".to_string(), "Player B".to_string())],
+            },
+        )],
+    };
+    assert_eq!(handle.judge(&request), JevOutcome::Unavailable);
+    let (status, _) = get_with_jev("/api/connection?from=A&to=B", handle.clone()).await;
+    assert_eq!(status, StatusCode::OK);
+    let (status, body) = get_with_jev("/api/semantic-status", handle).await;
+    assert_eq!(status, StatusCode::OK);
+    // The served status also carries no trace of the canary.
+    assert!(!body.expect("JSON body").to_string().contains("sk-canary"));
 }
