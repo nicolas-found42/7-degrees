@@ -231,14 +231,7 @@ def load_s1_membership(con):
 
 
 # ----------------------------------------------------------- franchise logic --
-def franchise_era_index():
-    """(lg, season) -> list of (canonical_id, era_tuple) covering it."""
-    idx = defaultdict(list)
-    for cid, eras in FRANCHISES.items():
-        for lg, name, ab, ab_s1, s_start, s_end in eras:
-            for ses in range(s_start, s_end + 1):
-                idx[(lg, ses)].append((cid, (lg, name, ab, ab_s1, s_start, s_end)))
-    return idx
+from t3_franchise_mapping import franchise_era_index, resolve_s1_abbr
 
 
 def resolve_s2_row(era_idx, season, lg, team, abbr):
@@ -246,15 +239,6 @@ def resolve_s2_row(era_idx, season, lg, team, abbr):
     for cid, era in era_idx.get((lg, int(season)), []):
         if era[2] == team or era[1] == team or era[2] == abbr:
             cands.add(cid)
-    return cands
-
-
-def resolve_s1_abbr(era_idx, season, abbr):
-    cands = set()
-    for lg in ("NBA", "BAA"):
-        for cid, era in era_idx.get((lg, season), []):
-            if era[3] == abbr:
-                cands.add(cid)
     return cands
 
 

@@ -17,8 +17,10 @@ certified roster interval. ABA-only rows and ABA tenures stay outside the graph.
 The T4 audit's inferred season brackets and single-bound cross-checks are not
 proof of simultaneous roster tenure. An edge requires positive overlap of two
 **directly-evidenced** tenures with both dated boundaries, no blocking flags,
-and the same canonical franchise. `repeat-signing-continues-open-stint` is a
-nonblocking T4 note and does not erase otherwise evidenced tenure. Touching
+and the same canonical franchise. A fresh signing without a departure leaves the prior spell’s end unknown;
+T4 splits the reporting brackets and excludes that uncertain prior spell.
+Legacy `repeat-signing-continues-open-stint` notes also block runtime import.
+A later independently dated signing/departure pair can still enter the graph. Touching
 intervals and self-pairs create no edge. Exact duplicate source intervals count
 once; repeated overlap evidence collapses to one undirected player-pair edge.
 
@@ -45,16 +47,16 @@ input hashes and full histogram: `t5/graph-statistics.json`.
 |---|---:|
 | canonical nodes | 5,106 |
 | admitted two-boundary tenure rows | 2,227 |
-| excluded cross-checked rows | 10,176 |
+| excluded cross-checked rows | 10,170 |
 | excluded inferred rows | 13,445 |
-| excluded unresolved rows | 3,446 |
+| excluded unresolved rows | 4,215 |
 | nodes without admitted tenure | 3,537 |
-| undirected certified teammate edges | 1,517 |
-| connected components (including isolates) | 4,168 |
+| undirected certified teammate edges | 1,501 |
+| connected components (including isolates) | 4,176 |
 | maximum finite degree in this evidenced graph | 20 |
-| unreachable unordered pairs | 12,975,882 |
-| cold exact statistics HTTP call (debug build) | 0.284 s |
-| cached statistics HTTP call | 0.000418 s |
+| unreachable unordered pairs | 12,977,223 |
+| cold exact statistics HTTP call (debug build) | 0.504797 s |
+| cached statistics HTTP call | 0.000686 s |
 
 Luca Vildoza (`nba:1630492`) remains a node based on his official postseason appearance. His T4 inferred tenure is visible as a coverage gap and creates no edge.
 
@@ -70,7 +72,7 @@ Quincy Acy → Andrew Bogut
 Degree: 1
 Team: MAVERICKS
 Overlap: [25768, 25889), 121 days
-Source records: t4/tenures.csv:120 and t4/tenures.csv:2563
+Source records: t4/tenures.csv:123 and t4/tenures.csv:2602
 ```
 
 The same query through `/chain` rendered both player names, degree 1 and the

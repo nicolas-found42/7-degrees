@@ -113,22 +113,6 @@ async fn alternative_shortest_chains_are_deterministic_and_paginated() {
 }
 
 #[tokio::test]
-async fn a_continuing_signing_note_does_not_erase_a_dated_roster_overlap() {
-    let root = snapshot();
-    let file = root.join("t4/tenures.csv");
-    let contents = std::fs::read_to_string(&file).unwrap().replace(
-        "1,5,1,1,,1,5",
-        "1,5,1,1,repeat-signing-continues-open-stint,1,5",
-    );
-    std::fs::write(file, contents).unwrap();
-    let app =
-        app_server::app_with_report_data(root, app_server::JevHandle::unconfigured()).unwrap();
-    let chain = get(app, "/api/connection?from=a&to=b").await;
-    assert_eq!(chain["result"], "connected");
-    assert_eq!(chain["degree"], 1);
-}
-
-#[tokio::test]
 async fn coverage_gaps_remain_inspectable_for_the_affected_player() {
     let app = app_server::app_with_report_data(snapshot(), app_server::JevHandle::unconfigured())
         .unwrap();
@@ -245,4 +229,22 @@ async fn continuation_cursors_reach_shortest_chains_beyond_fixed_integer_limits(
     assert_eq!(last["next_cursor"], Value::Null);
     assert_eq!(last["paths"][0]["path"][1], "l00b");
     assert_eq!(last["paths"][0]["path"][129], "l128b");
+}
+
+#[tokio::test]
+async fn legacy_repeat_signing_continuity_note_blocks_a_runtime_edge() {
+    let root = snapshot();
+    let path = root.join("t4/tenures.csv");
+    let rows = std::fs::read_to_string(&path).unwrap().replace(
+        ",1,5,1,1,,1,5",
+        ",1,5,1,1,repeat-signing-continues-open-stint,1,5",
+    );
+    std::fs::write(path, rows).unwrap();
+    let app =
+        app_server::app_with_report_data(root, app_server::JevHandle::unconfigured()).unwrap();
+    assert_eq!(
+        get(app.clone(), "/api/connection?from=a&to=b").await["result"],
+        "disconnected"
+    );
+    assert_eq!(get(app, "/api/coverage").await["certified_tenures"], 3);
 }

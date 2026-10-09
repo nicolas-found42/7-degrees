@@ -228,6 +228,9 @@ def main(argv=None):
         A("   on 2001-06-27 anchors the 2002 ATL membership at 2001-06-27 (%s; %s)."
           % (atl["evidence_class"], atl["interval_iso"]))
     A("3. **Stint walking** — arrivals/departures in day order produce stints;")
+    A("   A fresh signing while a spell is open does not establish continuous service. The prior")
+    A("   end is unknown: its reporting bracket is split with an unanchored end and blocking")
+    A("   `repeat-signing-prior-end-unknown` note. A later dated signing/departure pair remains usable.")
     A("   conventions as in §1. Ordering anomalies and same-day conflicts are flagged.")
     A("4. **Classification** — `classify_tenure`: unresolved reasons dominate;")
     A("   both bounds transaction-anchored → directly-evidenced (the clean pair;")

@@ -112,22 +112,7 @@ S1_ABBR_FIXUP = {
 }
 
 
-def franchise_era_index():
-    """(lg, season) -> list of (canonical_id, era_tuple); same shape as T3's
-    `franchise_era_index` (kept local so this module does not import the heavy
-    t3_reconcile module for one helper)."""
-    from t3_franchise_seed import FRANCHISES
-    idx = defaultdict(list)
-    for cid, eras in FRANCHISES.items():
-        for lg, name, ab, ab_s1, s_start, s_end in eras:
-            for ses in range(s_start, s_end + 1):
-                idx[(lg, ses)].append((cid, (lg, name, ab, ab_s1, s_start, s_end)))
-    return idx
-
-
-def resolve_s1_abbr(era_idx, season, abbr):
-    return {cid for lg in ("NBA", "BAA")
-            for cid, era in era_idx.get((lg, season), []) if era[3] == abbr}
+from t3_franchise_mapping import franchise_era_index, resolve_s1_abbr
 
 
 def load_s1_season_windows(data_dir):
@@ -524,9 +509,9 @@ def walk_stints(arr_days, dep_days, window):
       a departure dated BEFORE the season-window start (or before every arrival,
         with no window) is a PRIOR-spell exit (off-season cut/re-sign cycles);
         it does not bracket this season's stint and is recorded as a note.
-      a second arrival while a stint is open: the roster spell CONTINUES (BBR
-        has no intervening departure row; repeated signings/10-day cycles);
-        recorded as a note, not a fork — intervals are never invented.
+      a second arrival while a stint is open: the prior end is UNKNOWN. Split
+        the spell at the new signing for reporting, with an unanchored prior
+        end and a blocking uncertainty note; never certify continuity.
       same-day arrival+departure for one franchise -> ordering-unresolved flag;
           the open stint closes at x and nothing is opened after it.
       an open stint extends to the window end when a window exists; with no
@@ -557,9 +542,12 @@ def walk_stints(arr_days, dep_days, window):
             continue
         if day in arr_set:
             if open_at is not None:
-                # repeated signing with no intervening departure row: the spell
-                # continues under the same stint (no interval invention)
-                notes.append(("repeat-signing-continues-open-stint", day))
+                # A fresh signing is evidence of a new contract, not continuous
+                # service across an undocumented expiration. This also handles
+                # finite-to-permanent renewals without guessing NBA CBA dates.
+                close(day, False)
+                notes.append(("repeat-signing-prior-end-unknown", day))
+                open_at = day
             else:
                 open_at = day
         if day in dep_set:
@@ -932,7 +920,8 @@ def reconstruct(data_dir):
                     if not (a[0] == "open-stint-without-window" and ws_we is not None):
                         reasons.append(a[0])
                 for n_note in walk_notes:
-                    reasons.append(n_note[0])
+                    if n_note[0] != "repeat-signing-prior-end-unknown" or (e0 == n_note[1] and not e_anchor):
+                        reasons.append(n_note[0])
                 if fuzzy_touch:
                     reasons.append("fuzzy-dated-rows-bear-on-this-tenure(fuzzy-not-guessed)")
                 if flagged:
@@ -949,11 +938,7 @@ def reconstruct(data_dir):
                         "interval-construction-failed(bound-outside-season-context,"
                         "start=%d,end=%d)" % (s0, e0))
                     interval = None
-                # repeat-signing is a review NOTE, not an ordering ambiguity:
-                # the bounds are dated and ordered (spell continues), so it is
-                # recorded in reasons but does not force unresolved
-                blocking = [r for r in reasons
-                            if not r.startswith("repeat-signing-continues-open-stint")]
+                blocking = list(reasons)
                 window_iso = ""
                 agreement = False
                 if ws_we is not None and interval is not None:

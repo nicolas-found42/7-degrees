@@ -113,7 +113,7 @@ python3 scripts/t4_reconcile.py data
 python3 scripts/t4_report.py data
 ```
 
-`--no-fetch` parses the existing cache without HTTP. T3 report takes **no data-directory CLI argument**; it reads this checkout's `data/t3/.state.pkl`, falling back to sibling `../7-degrees/data` when this checkout has no data directory. The other commands take the optional positional data directory. All scripts write reports relative to their own checkout; isolated worktrees can point preparation at an existing snapshot while preserving the raw archives/cache. Reconciliation checkpoints remain ignored. The current corrected tenure hash is `5dbff2a790e87941b6bb9cd9c05c6f91414ae0f47ae1f2992d8d3c230a4fc24e`. Hash/diff the derived outputs after a rebuild and inspect disagreements before updating pins.
+`--no-fetch` parses the existing cache without HTTP. T3 report takes **no data-directory CLI argument**; it reads this checkout's `data/t3/.state.pkl`, falling back to sibling `../7-degrees/data` when this checkout has no data directory. The other commands take the optional positional data directory. All scripts write reports relative to their own checkout; isolated worktrees can point preparation at an existing snapshot while preserving the raw archives/cache. Reconciliation checkpoints remain ignored. The current corrected tenure hash is `bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04`. Hash/diff the derived outputs after a rebuild and inspect disagreements before updating pins.
 
 ## Deliberate future refresh
 

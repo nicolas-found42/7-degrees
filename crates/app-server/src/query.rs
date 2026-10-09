@@ -14,7 +14,7 @@ use jev_client::{JevAnswer, JevOutcome, JevQuestion, JevRequest};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 
-#[derive(Clone, Copy, Debug, Serialize, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum Operation {
     Connect,
@@ -107,7 +107,7 @@ impl Default for QueryConfig {
         }
     }
 }
-#[derive(Clone, Debug, Default, Serialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct Filters {
     pub team: Option<String>,
     pub first_season: Option<u32>,
@@ -494,7 +494,29 @@ pub fn execute(
         if resolution.status != "resolved" {
             out.status = resolution.status.clone();
             out.reason=match resolution.status.as_str(){"no_match"=>"No candidate matches this player mention. Try another name.","unavailable"=>"Player resolution is unavailable. Use deterministic search and choose a player.",_=>"The player mention is ambiguous or uncertain. Use a full name or add a supported era/team clue."}.into();
-            out.data = json!({"candidates":resolution.candidates,"mention":span});
+            let spans: Vec<String> = ["first_mention", "second_mention"]
+                .iter()
+                .take(required)
+                .filter_map(|field| accepted(&answers, field, &mentions, config))
+                .filter_map(|choice| {
+                    choice
+                        .selected
+                        .strip_prefix("Player mention: ")
+                        .map(str::to_owned)
+                })
+                .collect();
+            if spans.len() == required {
+                if !resolution.candidates.is_empty() {
+                    out.reason =
+                        "Choose the intended player below to continue the original request.".into();
+                }
+                let mut selections = vec![None; required];
+                for (index, player) in out.players.iter().enumerate() {
+                    selections[index] = Some(player.id.clone());
+                }
+                out.data = json!({"candidates":resolution.candidates,"mention":span,
+                    "continuation":Continuation { operation: op, mentions: spans, filters: out.filters.clone(), selections, pending: out.players.len() }});
+            }
             return Ok(QueryCall {
                 result: out,
                 measurements,
@@ -504,6 +526,18 @@ pub fn execute(
             .push(resolution.player.expect("resolver's resolved contract"));
         out.evidence.push(mention);
     }
+    finish(graph, catalog, reports, &mut out);
+    Ok(QueryCall {
+        result: out,
+        measurements,
+    })
+}
+fn finish(
+    graph: &TeammateGraph,
+    catalog: &PlayerCatalog,
+    reports: Option<&ReportMetadata>,
+    out: &mut QueryResult,
+) {
     let original_graph = graph;
     let view = filtered_graph(graph, reports, &out.filters);
     let graph = view.as_ref().unwrap_or(graph);
@@ -516,7 +550,7 @@ pub fn execute(
     }
     let from = &out.players[0].id;
     let to = out.players.get(1).map(|p| p.id.as_str());
-    out.data = match op {
+    out.data = match out.operation.unwrap() {
         Operation::Connect => connection_data(graph, from, to.unwrap()),
         Operation::Profile => json!({"player":out.players[0]}),
         Operation::Neighbors => {
@@ -552,7 +586,7 @@ pub fn execute(
         "verified_fixture"
     });
     if view.is_some() {
-        if op == Operation::Connect {
+        if out.operation == Some(Operation::Connect) {
             out.data["unfiltered_degree"] =
                 connection_data(original_graph, from, to.unwrap())["degree"].clone();
         }
@@ -565,10 +599,130 @@ pub fn execute(
     }
     out.status = "executed".into();
     out.reason = "The graph operation completed.".into();
+}
+
+/// Explicit continuation controls: all selected identities must belong to the
+/// deterministic shortlist of a literal mention in the original request.
+#[derive(Clone, Serialize, Deserialize)]
+struct Continuation {
+    operation: Operation,
+    mentions: Vec<String>,
+    filters: Filters,
+    selections: Vec<Option<String>>,
+    pending: usize,
+}
+fn continue_query(
+    state: &AppState,
+    q: &str,
+    encoded: &str,
+    pick: &str,
+) -> Result<QueryCall, QueryError> {
+    let invalid = || QueryError {
+        error: "Invalid query continuation or player selection",
+    };
+    if encoded.len() > 4096 || q.chars().count() > 320 || q.split_whitespace().count() > 32 {
+        return Err(invalid());
+    }
+    let mut continuation: Continuation = serde_json::from_str(encoded).map_err(|_| invalid())?;
+    let required = if matches!(
+        continuation.operation,
+        Operation::Connect | Operation::Compare
+    ) {
+        2
+    } else {
+        1
+    };
+    if continuation.operation == Operation::Unsupported
+        || continuation.mentions.len() != required
+        || continuation.selections.len() != required
+        || continuation.pending >= required
+    {
+        return Err(invalid());
+    }
+    if continuation
+        .filters
+        .team
+        .as_ref()
+        .is_some_and(|team| !state.graph.roster.teams.iter().any(|t| t.id == *team))
+    {
+        return Err(invalid());
+    }
+    match (
+        continuation.filters.first_season,
+        continuation.filters.last_season,
+    ) {
+        (None, None) => {}
+        (Some(a), Some(b)) if state.reports.is_some() && a >= 1946 && a <= b && b <= 3000 => {}
+        _ => return Err(invalid()),
+    }
+    continuation.selections[continuation.pending] = Some(pick.into());
+    let catalog = PlayerCatalog::from_graph(&state.graph, state.reports.as_deref());
+    let mut out = result(
+        "clarify",
+        "Choose the intended player to continue this request.",
+    );
+    out.operation = Some(continuation.operation);
+    out.filters = continuation.filters.clone();
+    out.interpretation = "Explicit player selection; graph results are deterministic".into();
+    for index in 0..required {
+        let mention = &continuation.mentions[index];
+        if mention.is_empty() || !q.contains(mention) {
+            return Err(invalid());
+        }
+        let shortlist = catalog
+            .lexical_shortlist(mention, QueryConfig::default().resolution.candidate_limit)
+            .map_err(|_| invalid())?;
+        let player = if let Some(selected) = &continuation.selections[index] {
+            Some(
+                shortlist
+                    .candidates
+                    .iter()
+                    .find(|c| c.player.id == *selected)
+                    .ok_or_else(invalid)?
+                    .player
+                    .clone(),
+            )
+        } else if shortlist.status == "exact_match" && shortlist.matches_total == 1 {
+            Some(shortlist.candidates[0].player.clone())
+        } else {
+            None
+        };
+        if let Some(player) = player {
+            continuation.selections[index] = Some(player.id.clone());
+            out.players.push(player);
+        } else {
+            continuation.pending = index;
+            out.data = json!({"candidates":shortlist.candidates,"mention":mention,"continuation":continuation});
+            return Ok(QueryCall {
+                result: out,
+                measurements: vec![],
+            });
+        }
+    }
+    finish(&state.graph, &catalog, state.reports.as_deref(), &mut out);
     Ok(QueryCall {
         result: out,
-        measurements,
+        measurements: vec![],
     })
+}
+fn render_candidates(q: &str, r: &QueryResult) -> String {
+    let Some(continuation) = r.data.get("continuation") else {
+        return String::new();
+    };
+    let mut body = format!(
+        "<section data-query-candidates><h2>Choose the intended player</h2><p>Ambiguous mention: {}</p>",
+        crate::ui::escape(r.data["mention"].as_str().unwrap_or(""))
+    );
+    for candidate in r.data["candidates"].as_array().into_iter().flatten() {
+        let player = &candidate["player"];
+        body.push_str(&format!("<article><h3>{}</h3><p>Seasons: {}–{} · Teams: {}</p><form method=\"get\" action=\"/query\"><input type=\"hidden\" name=\"q\" value=\"{}\"><input type=\"hidden\" name=\"continuation\" value=\"{}\"><button name=\"pick\" value=\"{}\">Choose {} ({})</button></form></article>",
+            crate::ui::escape(player["name"].as_str().unwrap_or("")), player["first_season"], player["last_season"],
+            crate::ui::escape(&player["teams"].as_array().into_iter().flatten().filter_map(Value::as_str).collect::<Vec<_>>().join(", ")),
+            crate::ui::escape(q), crate::ui::escape(&continuation.to_string()), crate::ui::escape(player["id"].as_str().unwrap_or("")),
+            crate::ui::escape(player["name"].as_str().unwrap_or("")), crate::ui::escape(player["id"].as_str().unwrap_or(""))));
+    }
+    body.push_str("</section>");
+    body
 }
 fn connection_data(graph: &TeammateGraph, from: &str, to: &str) -> Value {
     match graph
@@ -584,6 +738,8 @@ fn connection_data(graph: &TeammateGraph, from: &str, to: &str) -> Value {
 #[derive(Deserialize)]
 pub(crate) struct QueryInput {
     q: Option<String>,
+    continuation: Option<String>,
+    pick: Option<String>,
 }
 fn run(state: &AppState, q: &str) -> Result<QueryCall, QueryError> {
     execute(
@@ -600,7 +756,15 @@ pub(crate) async fn api(
     Query(input): Query<QueryInput>,
 ) -> Response {
     let q = input.q.unwrap_or_default();
-    match tokio::task::spawn_blocking(move || run(&state, &q)).await {
+    match tokio::task::spawn_blocking(move || match (input.continuation, input.pick) {
+        (Some(c), Some(p)) => continue_query(&state, &q, &c, &p),
+        (None, None) => run(&state, &q),
+        _ => Err(QueryError {
+            error: "Incomplete continuation",
+        }),
+    })
+    .await
+    {
         Ok(Ok(call)) => Json(call.result).into_response(),
         Ok(Err(error)) => (StatusCode::BAD_REQUEST, Json(error)).into_response(),
         Err(_) => (
@@ -623,18 +787,27 @@ pub(crate) async fn page(
     let q = input.q.unwrap_or_default();
     let worker = state.clone();
     let text = q.clone();
-    let outcome = tokio::task::spawn_blocking(move || run(&worker, &text)).await;
+    let outcome = tokio::task::spawn_blocking(move || match (input.continuation, input.pick) {
+        (Some(c), Some(p)) => continue_query(&worker, &text, &c, &p),
+        (None, None) => run(&worker, &text),
+        _ => Err(QueryError {
+            error: "Incomplete continuation",
+        }),
+    })
+    .await;
     let (status, body) = match outcome {
         Ok(Ok(call)) => {
             let r = call.result;
             let mut body = format!(
-                "<h1>Query result</h1>{}<p data-query-status=\"{}\">{}</p><p>{}</p>",
+                "<h1>Query result</h1>{}<p>Original request: {}</p><p data-query-status=\"{}\">{}</p><p>{}</p>",
                 form(&q),
+                crate::ui::escape(&q),
                 crate::ui::escape(&r.status),
                 crate::ui::escape(&r.reason),
                 crate::ui::escape(&r.interpretation)
             );
             body.push_str(&render_filters(&r.filters));
+            body.push_str(&render_candidates(&q, &r));
             if r.status == "unavailable" {
                 body.push_str("<p><a href=\"/search\">Search players</a> · <a href=\"/chain\">Connect known players</a></p>");
             }

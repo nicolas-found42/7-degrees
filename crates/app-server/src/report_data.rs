@@ -151,7 +151,7 @@ pub fn load(root: &Path) -> Result<(TeammateGraph, ReportMetadata), String> {
             || row
                 .unresolved_reasons
                 .split(';')
-                .any(|reason| !matches!(reason.trim(), "" | "repeat-signing-continues-open-stint"))
+                .any(|reason| !reason.trim().is_empty())
         {
             metadata
                 .gaps

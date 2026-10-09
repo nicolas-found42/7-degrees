@@ -55,7 +55,7 @@ for c in cases:
 current = (ROOT / 'docs/reports/t4/tenures.csv').read_bytes()
 summary = json.loads((B / 'corrected-delta-summary.json').read_text())
 assert hashlib.sha256(current).hexdigest() == summary['current_sha256']
-assert [summary[k] for k in ('same_membership_groups','exact_interval_rows','old_direct_cases','old_direct_same_interval_still_direct','cases_with_corrected_graph_eligible_interval')] == [6246,2523,1812,525,1053]
+assert [summary[k] for k in ('same_membership_groups','exact_interval_rows','old_direct_cases','old_direct_same_interval_still_direct','cases_with_corrected_graph_eligible_interval')] == [6246,2364,1812,503,1053]
 for p in B.iterdir():
     if p.suffix in ('.csv','.json'):
         content = p.read_text()
