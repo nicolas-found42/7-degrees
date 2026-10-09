@@ -1,8 +1,9 @@
-//! The 7-degrees local app server: Axum routes over the fixture-backed
+//! The 7-degrees local app server: Axum routes over a deterministic
 //! teammate graph, plus the minimal server-rendered UI.
 
 mod fixture_data;
 mod jev;
+pub mod report_data;
 mod ui;
 
 use axum::{
@@ -36,14 +37,14 @@ pub use jev::install_capture_logger;
 pub struct AppState {
     graph: std::sync::Arc<graph_core::TeammateGraph>,
     jev: JevHandle,
+    reports: Option<std::sync::Arc<report_data::ReportMetadata>>,
 }
 
 /// The router with the fixture graph preloaded and Jev deterministically
 /// unconfigured. Integration tests drive this directly through
 /// `tower::ServiceExt`. Tests must not depend on the developer shell's
 /// `OPENROUTER_API_KEY`, so this builder never reads the environment; the
-/// binary's `main()` builds the env-driven state via
-/// `app_with_jev(JevHandle::from_env())`.
+/// binary's `main()` uses canonical reports and an env-driven Jev handle.
 pub fn app_with_fixture_data() -> Router {
     app_with_jev(JevHandle::unconfigured())
 }
@@ -54,6 +55,7 @@ pub fn app_with_jev(jev: JevHandle) -> Router {
     let state = AppState {
         graph: std::sync::Arc::new(fixture_data::fixture_graph()),
         jev,
+        reports: None,
     };
     app(state)
 }
@@ -61,11 +63,15 @@ pub fn app_with_jev(jev: JevHandle) -> Router {
 fn app(state: AppState) -> Router {
     Router::new()
         .route("/api/fixture", get(fixture_summary))
+        .route("/api/graph", get(fixture_summary))
         .route("/api/edges", get(all_edges))
         .route("/api/edges/{player}", get(player_edges))
         .route("/api/connection", get(connection))
         .route("/api/paths", get(all_paths))
         .route("/api/stats", get(stats))
+        .route("/api/coverage", get(coverage))
+        .route("/api/coverage/{player}", get(player_coverage))
+        .route("/api/players", get(players))
         .route("/api/semantic-status", get(semantic_status))
         .route("/", get(home))
         .route("/chain", get(chain_page))
@@ -89,32 +95,77 @@ async fn not_found(uri: Uri) -> Response {
     ui::not_found_page()
 }
 
-async fn fixture_summary(State(_state): State<AppState>) -> Json<api_types::FixtureSummary> {
-    Json(fixture_data::fixture_summary())
+/// Supported real-data import seam; `root` contains T3 and T4 report folders.
+pub fn app_with_report_data(
+    root: impl AsRef<std::path::Path>,
+    jev: JevHandle,
+) -> Result<Router, String> {
+    let (graph, reports) = report_data::load(root.as_ref())?;
+    Ok(app(AppState {
+        graph: std::sync::Arc::new(graph),
+        jev,
+        reports: Some(std::sync::Arc::new(reports)),
+    }))
 }
 
-async fn all_edges(State(_state): State<AppState>) -> Json<serde_json::Value> {
-    Json(serde_json::json!({ "edges": fixture_data::fixture_edges() }))
+fn edge_json(state: &AppState, edge: graph_core::TeammateEdge) -> serde_json::Value {
+    let evidence: Vec<_> = edge.evidence.iter().map(|e| {
+        let mut overlaps = Vec::new();
+        if let Some(reports) = &state.reports {
+            let a = reports.records.get(&(edge.a.clone(), e.team.clone()));
+            let b = reports.records.get(&(edge.b.clone(), e.team.clone()));
+            for ra in a.into_iter().flatten() {
+                for rb in b.into_iter().flatten() {
+                    let start = ra.start_day.max(rb.start_day);
+                    let end = ra.end_day.min(rb.end_day);
+                    if start < end { overlaps.push(serde_json::json!({"start_day":start, "end_day":end, "records":[ra,rb]})); }
+                }
+            }
+        }
+        // Each evidence item identifies a precise overlapping record pair.
+        serde_json::json!({"team":e.team, "overlap_days":e.overlap_days,
+            "records": overlaps.first().and_then(|v| v.get("records")).cloned().unwrap_or_else(|| serde_json::json!([])),
+            "overlaps":overlaps})
+    }).collect();
+    serde_json::json!({"a":edge.a,"b":edge.b,"overlap_days":edge.overlap_days(),"evidence":evidence})
+}
+async fn fixture_summary(State(state): State<AppState>) -> Json<serde_json::Value> {
+    let players: Vec<_> = state
+        .graph
+        .roster
+        .players
+        .iter()
+        .map(|p| serde_json::json!({"id":p.id,"name":p.name}))
+        .collect();
+    let edges: Vec<_> = state
+        .graph
+        .edges()
+        .into_iter()
+        .map(|e| edge_json(&state, e))
+        .collect();
+    Json(serde_json::json!({"players":players,"edges":edges}))
+}
+async fn all_edges(State(state): State<AppState>) -> Json<serde_json::Value> {
+    let edges: Vec<_> = state
+        .graph
+        .edges()
+        .into_iter()
+        .map(|e| edge_json(&state, e))
+        .collect();
+    Json(serde_json::json!({"edges":edges}))
 }
 
 /// The teammate edges of one player, by id.
 async fn player_edges(State(state): State<AppState>, Path(player): Path<String>) -> Response {
     if !state.graph.contains_player(&player) {
-        return player_not_found(&player, &player);
+        return player_not_found(&state.graph, &player, &player);
     }
-    let edges: Vec<api_types::TeammateEdgeDto> = state
+    let edges: Vec<_> = state
         .graph
         .edges()
         .into_iter()
         .filter(|edge| edge.a == player || edge.b == player)
-        .map(|edge| {
-            let overlap_days = edge.overlap_days();
-            api_types::TeammateEdgeDto {
-                a: edge.a,
-                b: edge.b,
-                overlap_days,
-            }
-        })
+        .map(|edge| edge_json(&state, edge))
         .collect();
     Json(serde_json::json!({ "edges": edges })).into_response()
 }
@@ -123,6 +174,8 @@ async fn player_edges(State(state): State<AppState>, Path(player): Path<String>)
 struct ConnectQuery {
     from: Option<String>,
     to: Option<String>,
+    offset: Option<u64>,
+    limit: Option<usize>,
 }
 
 async fn connection(State(state): State<AppState>, Query(query): Query<ConnectQuery>) -> Response {
@@ -131,7 +184,24 @@ async fn connection(State(state): State<AppState>, Query(query): Query<ConnectQu
 
 /// All shortest chains between the queried pair (alternative connections).
 async fn all_paths(State(state): State<AppState>, Query(query): Query<ConnectQuery>) -> Response {
-    connection_response_all(&state, query.from.as_deref(), query.to.as_deref())
+    let limit = query.limit.unwrap_or(100);
+    if !(1..=500).contains(&limit) {
+        return (
+            StatusCode::BAD_REQUEST,
+            Json(ErrorResponse {
+                error: "invalid-limit".into(),
+                message: "limit must be between 1 and 500".into(),
+            }),
+        )
+            .into_response();
+    }
+    connection_response_all(
+        &state,
+        query.from.as_deref(),
+        query.to.as_deref(),
+        query.offset.unwrap_or(0),
+        limit,
+    )
 }
 
 fn connection_response(state: &AppState, from: Option<&str>, to: Option<&str>) -> Response {
@@ -146,13 +216,30 @@ fn connection_response(state: &AppState, from: Option<&str>, to: Option<&str>) -
             .into_response();
     };
     if !state.graph.contains_player(from) || !state.graph.contains_player(to) {
-        return player_not_found(from, to);
+        return player_not_found(&state.graph, from, to);
     }
-    let response = fixture_data::fixture_connection(from, to).expect("players exist");
-    Json(response).into_response()
+    match state.graph.shortest_chain(from, to).expect("players exist") {
+        graph_core::Connection::Connected(chain) => {
+            let degree = chain.links.len();
+            Json(serde_json::json!({"result":"connected", "path":chain.path,
+                "degree":degree, "links": chain.links.into_iter().map(|l| api_types::LinkDto {
+                    from:l.from,to:l.to,team:l.team,overlap_days:l.overlap_days,
+                }).collect::<Vec<_>>(), "coverage": state.reports.as_ref().map(|r| &r.coverage)})).into_response()
+        }
+        graph_core::Connection::Disconnected => {
+            Json(serde_json::json!({"result":"disconnected", "coverage":state.reports.as_ref().map(|r| &r.coverage),
+                "certainty":if state.reports.is_some() {"unresolved_coverage"} else {"verified_disconnected"}})).into_response()
+        }
+    }
 }
 
-fn connection_response_all(state: &AppState, from: Option<&str>, to: Option<&str>) -> Response {
+fn connection_response_all(
+    state: &AppState,
+    from: Option<&str>,
+    to: Option<&str>,
+    offset: u64,
+    limit: usize,
+) -> Response {
     let (Some(from), Some(to)) = (from, to) else {
         return (
             StatusCode::BAD_REQUEST,
@@ -164,16 +251,17 @@ fn connection_response_all(state: &AppState, from: Option<&str>, to: Option<&str
             .into_response();
     };
     if !state.graph.contains_player(from) || !state.graph.contains_player(to) {
-        return player_not_found(from, to);
+        return player_not_found(&state.graph, from, to);
     }
     // Both players exist, but the pair may be unreachable (`None`), e.g.
     // spec fixture A–D: same franchise, non-overlapping tenures. A missing
     // reachability answer is a defined empty result, not a panic.
-    let chains = state
+    let page = state
         .graph
-        .all_shortest_chains(from, to)
-        .unwrap_or_default();
-    let paths: Vec<api_types::PathDto> = chains
+        .shortest_chains_page(from, to, offset, limit)
+        .expect("players exist");
+    let paths: Vec<api_types::PathDto> = page
+        .chains
         .into_iter()
         .map(|chain| api_types::PathDto {
             path: chain.path,
@@ -190,11 +278,12 @@ fn connection_response_all(state: &AppState, from: Option<&str>, to: Option<&str
             degree: chain.degree,
         })
         .collect();
-    Json(serde_json::json!({ "paths": paths })).into_response()
+    Json(serde_json::json!({ "paths": paths, "total":page.total, "total_saturated":page.total_saturated,
+        "next_offset":page.next_offset, "coverage":state.reports.as_ref().map(|r| &r.coverage) })).into_response()
 }
 
-fn player_not_found(from: &str, to: &str) -> Response {
-    let missing = if fixture_data::FIXTURE_PLAYERS.contains(&from) {
+fn player_not_found(graph: &graph_core::TeammateGraph, from: &str, to: &str) -> Response {
+    let missing = if graph.contains_player(from) {
         to
     } else {
         from
@@ -225,6 +314,45 @@ async fn stats(State(state): State<AppState>) -> Json<serde_json::Value> {
     }))
 }
 
+/// Historical uncertainty is served independently of graph facts.
+async fn coverage(State(state): State<AppState>) -> Json<serde_json::Value> {
+    Json(match &state.reports {
+        Some(reports) => serde_json::to_value(&reports.coverage).expect("coverage serializes"),
+        None => serde_json::json!({"complete":true,"warning":"Synthetic fixture coverage only"}),
+    })
+}
+async fn player_coverage(State(state): State<AppState>, Path(player): Path<String>) -> Response {
+    if !state.graph.contains_player(&player) {
+        return player_not_found(&state.graph, &player, &player);
+    }
+    let gaps = state
+        .reports
+        .as_ref()
+        .and_then(|r| r.gaps.get(&player))
+        .cloned()
+        .unwrap_or_default();
+    Json(serde_json::json!({"player":player,"records":gaps,
+        "complete":state.reports.is_none(),"coverage":state.reports.as_ref().map(|r| &r.coverage)}))
+    .into_response()
+}
+async fn players(State(state): State<AppState>) -> Json<serde_json::Value> {
+    let players: Vec<_> = match &state.reports {
+        Some(reports) => reports
+            .players
+            .values()
+            .map(|p| serde_json::to_value(p).expect("player serializes"))
+            .collect(),
+        None => state
+            .graph
+            .roster
+            .players
+            .iter()
+            .map(|p| serde_json::json!({"id":p.id,"name":p.name,"aliases":[],"teams":[]}))
+            .collect(),
+    };
+    Json(serde_json::json!({"players":players}))
+}
+
 /// Semantic-feature availability (acceptance criterion: the UI reports
 /// semantic features as unavailable when Jev is unconfigured/unreachable).
 /// The body carries only the availability tuple — never any credential
@@ -240,7 +368,11 @@ async fn semantic_status(State(state): State<AppState>) -> Json<serde_json::Valu
 /// The minimal UI home page: the connect form and the fixture edge list,
 /// rendered server-side in Rust.
 async fn home(State(state): State<AppState>) -> Response {
-    ui::home(&state.graph, state.jev.status())
+    ui::home(
+        &state.graph,
+        state.jev.status(),
+        state.reports.as_ref().map(|r| r.coverage.warning.as_str()),
+    )
 }
 
 /// The `/chain` UI page: the shortest teammate chain between the queried pair
@@ -252,7 +384,13 @@ struct ChainQuery {
 }
 
 async fn chain_page(State(state): State<AppState>, Query(query): Query<ChainQuery>) -> Response {
-    ui::chain(&state.graph, query.from, query.to, state.jev.status())
+    ui::chain(
+        &state.graph,
+        query.from,
+        query.to,
+        state.jev.status(),
+        state.reports.as_ref().map(|r| r.coverage.warning.as_str()),
+    )
 }
 
 /// The UI stylesheet, authored in the server crate and served as a static
@@ -266,20 +404,28 @@ async fn style_css() -> Response {
         .into_response()
 }
 
-/// Serve the fixture-backed app on localhost. Exposed for the binary entry
+/// Serve the canonical NBA/BAA graph on localhost (explicit fixture mode for tests). Exposed for the binary entry
 /// point (`src/main.rs`). Jev reads its key from the process env at startup
 /// (fail-soft: unconfigured runs keep every deterministic feature).
 pub async fn main() {
     jev::install_capture_logger();
     jev::init_logging();
-    let state = AppState {
-        graph: std::sync::Arc::new(fixture_data::fixture_graph()),
-        jev: JevHandle::from_env(),
+    let jev = JevHandle::from_env();
+    let router = if std::env::var("NBA_DATA_MODE").as_deref() == Ok("fixture") {
+        app_with_jev(jev)
+    } else {
+        let root = std::env::var("NBA_REPORT_DIR").unwrap_or_else(|_| "docs/reports".into());
+        app_with_report_data(root, jev).expect("load canonical T3/T4 report data")
     };
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
+    let port: u16 = std::env::var("NBA_PORT")
+        .unwrap_or_else(|_| "3000".into())
+        .parse()
+        .expect("valid NBA_PORT");
+    let address = format!("127.0.0.1:{port}");
+    let listener = tokio::net::TcpListener::bind(&address)
         .await
-        .expect("bind 127.0.0.1:3000");
-    let router = app(state).into_make_service();
-    println!("7-degrees listening on http://127.0.0.1:3000");
+        .expect("bind local app port");
+    let router = router.into_make_service();
+    println!("7-degrees listening on http://{address}");
     axum::serve(listener, router).await.expect("server runs");
 }

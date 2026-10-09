@@ -33,8 +33,9 @@ fn escape(text: &str) -> String {
 /// through; everything else is escaped).
 fn url_encode(value: &str) -> String {
     value
-        .chars()
+        .bytes()
         .map(|c| {
+            let c = c as char;
             if c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '.' | '~') {
                 c.to_string()
             } else {
@@ -103,8 +104,26 @@ fn connect_form(players: &[Player], from: Option<&str>, to: Option<&str>) -> Str
     format!(
         "<form method=\"get\" action=\"/chain\" \
          class=\"controls\">{}{}<button type=\"submit\">Connect</button></form>",
-        player_select(players, "from", "Player from", from.unwrap_or("A")),
-        player_select(players, "to", "Player to", to.unwrap_or("C")),
+        player_select(
+            players,
+            "from",
+            "Player from",
+            from.unwrap_or_else(|| if players.iter().any(|p| p.id == "A") {
+                "A"
+            } else {
+                players.first().map(|p| p.id.as_str()).unwrap_or("")
+            })
+        ),
+        player_select(
+            players,
+            "to",
+            "Player to",
+            to.unwrap_or_else(|| if players.iter().any(|p| p.id == "C") {
+                "C"
+            } else {
+                players.get(1).map(|p| p.id.as_str()).unwrap_or("")
+            })
+        ),
     )
 }
 
@@ -158,12 +177,23 @@ fn semantic_status_line(status: (bool, &'static str)) -> String {
     )
 }
 
+fn coverage_line(coverage: Option<&str>) -> String {
+    coverage
+        .map(|text| format!("<p class=\"coverage-warning\">{}</p>", escape(text)))
+        .unwrap_or_default()
+}
+
 /// The home page: the connect form plus the whole fixture edge list.
-pub fn home(graph: &TeammateGraph, semantic_status: (bool, &'static str)) -> Response {
+pub fn home(
+    graph: &TeammateGraph,
+    semantic_status: (bool, &'static str),
+    coverage: Option<&str>,
+) -> Response {
     let players = &graph.roster.players;
     let edges = graph.edges();
     let edge_items: String = edges
         .iter()
+        .take(100)
         .map(|edge| {
             let evidence: String = edge
                 .evidence
@@ -182,17 +212,37 @@ pub fn home(graph: &TeammateGraph, semantic_status: (bool, &'static str)) -> Res
             )
         })
         .collect();
+    let source = if coverage.is_some() {
+        "NBA/BAA canonical report snapshot"
+    } else {
+        "fixture demo (Players A–D, Teams Red/Blue)"
+    };
+    let demo_from = if coverage.is_some() {
+        edges.first().map(|e| e.a.as_str()).unwrap_or("")
+    } else {
+        "A"
+    };
+    let demo_to = if coverage.is_some() {
+        edges.first().map(|e| e.b.as_str()).unwrap_or("")
+    } else {
+        "C"
+    };
     let body = format!(
-        "<h1>7 Degrees</h1>{}<p class=\"subtitle\">NBA teammate degrees of separation — fixture \
-         demo (Players A–D, Teams Red/Blue)</p>{}<h2>Teammate edges</h2><p>The fixture graph \
-         has {} teammate edges:</p><ul class=\"edges\">{}</ul><h2>JSON \
+        "<h1>7 Degrees</h1>{}<p class=\"subtitle\">NBA teammate degrees of separation — {source}</p>{}<h2>Teammate edges</h2><p>The graph \
+         has {} teammate edges (showing at most 100):</p><ul class=\"edges\">{}</ul><h2>JSON \
          API</h2><p><a href=\"/api/fixture\">/api/fixture</a> · <a \
-         href=\"/api/connection?from=A&amp;to=C\">/api/connection?from=A&amp;to=C</a> · <a \
+         href=\"/api/connection?from={}&amp;to={}\">Example connection</a> · <a \
          href=\"/api/semantic-status\">/api/semantic-status</a></p>",
-        semantic_status_line(semantic_status),
-        connect_form(players, None, None),
+        format_args!(
+            "{}{}",
+            semantic_status_line(semantic_status),
+            coverage_line(coverage)
+        ),
+        connect_form(players, Some(demo_from), Some(demo_to)),
         edges.len(),
-        edge_items
+        edge_items,
+        url_encode(demo_from),
+        url_encode(demo_to)
     );
     document(StatusCode::OK, "7 Degrees — Teammate Explorer", &body)
 }
@@ -206,22 +256,40 @@ pub fn chain(
     from: Option<String>,
     to: Option<String>,
     semantic_status: (bool, &'static str),
+    coverage: Option<&str>,
 ) -> Response {
     let players = &graph.roster.players;
-    let back = "<p><a href=\"/\">← Back to the fixture</a></p>";
+    let status_line = format!(
+        "{}{}",
+        semantic_status_line(semantic_status),
+        coverage_line(coverage)
+    );
+    let back = "<p><a href=\"/\">← Back to the explorer</a></p>";
     let (status, body) = match (from.as_deref(), to.as_deref()) {
         (None, None) => (
             StatusCode::OK,
             format!(
                 "<h1>7 Degrees</h1>{}{}<p class=\"hint\">Pick two players and connect \
                  them.</p>",
-                semantic_status_line(semantic_status),
+                status_line,
                 connect_form(players, None, None)
             ),
         ),
         (from, to) => {
-            let from_id = from.unwrap_or("A");
-            let to_id = to.unwrap_or("C");
+            let from_id = from.unwrap_or_else(|| {
+                if players.iter().any(|p| p.id == "A") {
+                    "A"
+                } else {
+                    players.first().map(|p| p.id.as_str()).unwrap_or("")
+                }
+            });
+            let to_id = to.unwrap_or_else(|| {
+                if players.iter().any(|p| p.id == "C") {
+                    "C"
+                } else {
+                    players.get(1).map(|p| p.id.as_str()).unwrap_or("")
+                }
+            });
             if !graph.contains_player(from_id) || !graph.contains_player(to_id) {
                 let missing = if graph.contains_player(from_id) {
                     to_id
@@ -233,10 +301,10 @@ pub fn chain(
                     format!(
                         "<h1>7 Degrees</h1>{}{}{}<p class=\"error\">No player node for id \
                          {:?}.</p>",
-                        semantic_status_line(semantic_status),
+                        status_line,
                         connect_form(players, Some(from_id), Some(to_id)),
                         back,
-                        missing
+                        escape(missing)
                     ),
                 )
             } else {
@@ -245,7 +313,7 @@ pub fn chain(
                         StatusCode::OK,
                         format!(
                             "<h1>7 Degrees</h1>{}{}{}",
-                            semantic_status_line(semantic_status),
+                            status_line,
                             back,
                             chain_section(&chain, players)
                         ),
@@ -256,7 +324,7 @@ pub fn chain(
                             "<h1>7 Degrees</h1>{}{}<section class=\"chain\"><h2>Shortest \
                              teammate chain</h2><p class=\"hint\">No teammate chain connects {} \
                              and {}.</p></section>",
-                            semantic_status_line(semantic_status),
+                            status_line,
                             back,
                             escape(display_name(players, from_id)),
                             escape(display_name(players, to_id))
