@@ -179,3 +179,98 @@ async fn a_provider_timeout_fails_soft() {
         "a request exceeding the 2s config timeout fails soft"
     );
 }
+#[tokio::test]
+async fn measured_judgments_keep_metadata_local_to_each_call_and_missing_values_unknown() {
+    let routes=Router::new().route("/v1/systemone",post(|Json(payload):Json<serde_json::Value>|async move {
+        let label=payload["state"]["label"].as_str().unwrap_or("unknown");
+        Json(json!({"id":label,"model":"stub-jev","provider":"stub","usage":{"input_tokens":123,"output_tokens":17,"cost":0.000021},"answers":{"pick":{"type":"noul","noul":0.9}}}))
+    }));
+    let port = stub(routes).await;
+    let (a, b) = tokio::join!(
+        tokio::task::spawn_blocking(move || {
+            let mut r = request();
+            r.state = json!({"label":"a"});
+            JevClient::new(config_at(port), HttpJevTransport::new()).evaluate_measured(&r)
+        }),
+        tokio::task::spawn_blocking(move || {
+            let mut r = request();
+            r.state = json!({"label":"b"});
+            JevClient::new(config_at(port), HttpJevTransport::new()).evaluate_measured(&r)
+        })
+    );
+    let a = a.unwrap();
+    let b = b.unwrap();
+    assert!(a.outcome.is_available());
+    assert!(a.elapsed_ms >= 0.0);
+    let metadata = a.metadata.unwrap();
+    assert_eq!(metadata.request_id.as_deref(), Some("a"));
+    assert_eq!(b.metadata.unwrap().request_id.as_deref(), Some("b"));
+    assert_eq!(metadata.input_tokens, Some(123));
+    assert_eq!(metadata.output_tokens, Some(17));
+    assert_eq!(metadata.cost_usd, Some(0.000021));
+    let client = JevClient::new(config_at(1), jev_client::MemoryTransport::default());
+    assert!(client.evaluate_measured(&request()).metadata.is_none());
+}
+#[tokio::test]
+async fn transport_error_then_retryable_status_does_not_create_a_third_attempt() {
+    use tokio::io::{AsyncReadExt, AsyncWriteExt};
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let port = listener.local_addr().unwrap().port();
+    let hits = Arc::new(AtomicUsize::new(0));
+    let capture = hits.clone();
+    let server = tokio::spawn(async move {
+        for number in 0..3 {
+            let accepted =
+                tokio::time::timeout(Duration::from_millis(500), listener.accept()).await;
+            let Ok(Ok((mut socket, _))) = accepted else {
+                break;
+            };
+            let mut buf = [0; 8192];
+            let _ = socket.read(&mut buf).await;
+            capture.fetch_add(1, Ordering::SeqCst);
+            if number == 0 {
+                continue;
+            } // EOF before response causes a transport error.
+            let response = if number == 1 {
+                "HTTP/1.1 429 Too Many Requests\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+            } else {
+                "HTTP/1.1 200 OK\r\nContent-Length: 51\r\nConnection: close\r\n\r\n{\"answers\":{\"pick\":{\"type\":\"noul\",\"noul\":0.9}}}"
+            };
+            socket.write_all(response.as_bytes()).await.unwrap();
+        }
+    });
+    let outcome = tokio::task::spawn_blocking(move || judge(config_at(port)))
+        .await
+        .unwrap();
+    server.await.unwrap();
+    assert_eq!(
+        hits.load(Ordering::SeqCst),
+        2,
+        "one retry total across transport/status failures"
+    );
+    assert_eq!(outcome, JevOutcome::Unavailable);
+}
+#[tokio::test]
+async fn all_attempts_and_response_reads_share_one_call_deadline() {
+    let routes = Router::new().route(
+        "/v1/systemone",
+        post(|| async {
+            sleep(Duration::from_millis(700)).await;
+            (axum::http::StatusCode::TOO_MANY_REQUESTS, Json(json!(null)))
+        }),
+    );
+    let port = stub(routes).await;
+    let measured = tokio::task::spawn_blocking(move || {
+        let mut c = config_at(port);
+        c.timeout_secs = 1;
+        JevClient::new(c, HttpJevTransport::new()).evaluate_measured(&request())
+    })
+    .await
+    .unwrap();
+    assert_eq!(measured.outcome, JevOutcome::Unavailable);
+    assert!(
+        measured.elapsed_ms < 1250.0,
+        "one-second total deadline, observed {}ms",
+        measured.elapsed_ms
+    );
+}

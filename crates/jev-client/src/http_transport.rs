@@ -61,13 +61,16 @@ impl HttpJevTransport {
 
 impl JevTransport for HttpJevTransport {
     fn evaluate(&self, config: &JevConfig, request: &JevRequest) -> JevOutcome {
+        self.evaluate_measured(config, request).outcome
+    }
+    fn evaluate_measured(&self, config: &JevConfig, request: &JevRequest) -> crate::JevEvaluation {
         // Prefer the ambient multi-thread runtime: `block_in_place` moves the
         // calling task off the worker so the blocking `block_on` is legal.
         if let Ok(handle) = tokio::runtime::Handle::try_current()
             && handle.runtime_flavor() == tokio::runtime::RuntimeFlavor::MultiThread
         {
             return tokio::task::block_in_place(|| {
-                handle.block_on(self.evaluate_async(config, request))
+                handle.block_on(self.evaluate_measured_async(config, request))
             });
         }
         // Outside a multi-thread runtime (tests on the current-thread flavor,
@@ -84,13 +87,15 @@ impl JevTransport for HttpJevTransport {
                     .enable_all()
                     .build();
                 match runtime {
-                    Ok(runtime) => runtime.block_on(this.evaluate_async(&config, &request)),
-                    Err(_) => JevOutcome::Unavailable,
+                    Ok(runtime) => {
+                        runtime.block_on(this.evaluate_measured_async(&config, &request))
+                    }
+                    Err(_) => crate::JevEvaluation::unavailable(),
                 }
             }
         })
         .join();
-        evaluated.unwrap_or(JevOutcome::Unavailable)
+        evaluated.unwrap_or_else(|_| crate::JevEvaluation::unavailable())
     }
 }
 
@@ -101,19 +106,44 @@ impl HttpJevTransport {
     /// and on the documented retryable statuses (429 rate limit, 529
     /// overloaded); other statuses fail immediately.
     pub async fn evaluate_async(&self, config: &JevConfig, request: &JevRequest) -> JevOutcome {
+        self.evaluate_measured_async(config, request).await.outcome
+    }
+    pub async fn evaluate_measured_async(
+        &self,
+        config: &JevConfig,
+        request: &JevRequest,
+    ) -> crate::JevEvaluation {
+        let start = std::time::Instant::now();
+        let mut evaluation = tokio::time::timeout(
+            std::time::Duration::from_secs(config.timeout_secs.max(1)),
+            self.evaluate_inner(config, request),
+        )
+        .await
+        .unwrap_or_else(|_| {
+            warn!("Jev provider call deadline exceeded");
+            crate::JevEvaluation::unavailable()
+        });
+        evaluation.elapsed_ms = start.elapsed().as_secs_f64() * 1000.0;
+        evaluation
+    }
+    async fn evaluate_inner(
+        &self,
+        config: &JevConfig,
+        request: &JevRequest,
+    ) -> crate::JevEvaluation {
         // Payload guardrails first: a too-large state or too many questions is
         // a programming error that must not silently reach the provider.
         let state_bytes = serde_json::to_vec(&request.state)
             .map(|bytes| bytes.len())
             .unwrap_or(usize::MAX);
         if state_bytes > MAX_STATE_BYTES || request.questions.is_empty() {
-            return JevOutcome::Unavailable;
+            return crate::JevEvaluation::unavailable();
         }
         if request.questions.len() > MAX_QUESTIONS {
-            return JevOutcome::Unavailable;
+            return crate::JevEvaluation::unavailable();
         }
         let Ok(state) = serde_json::to_value(&request.state) else {
-            return JevOutcome::Unavailable;
+            return crate::JevEvaluation::unavailable();
         };
         let url = format!("{}/v1/systemone", config.base_url.trim_end_matches('/'));
         let questions = wire_questions(request);
@@ -132,56 +162,59 @@ impl HttpJevTransport {
                 .send()
         };
 
-        let response = match attempt().await {
-            Ok(response) => Some(response),
-            Err(error) => {
-                warn!("Jev provider unreachable: {error}");
-                match attempt().await {
-                    Ok(response) => Some(response),
-                    Err(error) => {
-                        warn!("Jev provider still unreachable after one retry: {error}");
-                        None
-                    }
+        // One retry budget shared by all transport/status failure categories.
+        // The outer deadline also covers retries and reading/parsing the body.
+        for index in 0..2 {
+            match attempt().await {
+                Ok(response) if response.status().is_success() => {
+                    return parse_answers(response).await;
+                }
+                Ok(response) if index == 0 && matches!(response.status().as_u16(), 429 | 529) => {
+                    warn!("Jev provider retryable status; one retry remaining");
+                }
+                Ok(response) => {
+                    warn!("Jev provider returned HTTP {}", response.status().as_u16());
+                    return crate::JevEvaluation::unavailable();
+                }
+                Err(_) if index == 0 => {
+                    warn!("Jev provider unreachable; one retry remaining");
+                }
+                Err(_) => {
+                    warn!("Jev provider unreachable after one retry");
+                    return crate::JevEvaluation::unavailable();
                 }
             }
-        };
-        let Some(response) = response else {
-            return JevOutcome::Unavailable;
-        };
-
-        let status = response.status();
-        if !(200..300).contains(&status.as_u16()) {
-            if matches!(status.as_u16(), 429 | 529) {
-                // One retry for the documented retryable statuses.
-                match attempt().await {
-                    Ok(retried) if retried.status().is_success() => {
-                        return parse_answers(retried).await;
-                    }
-                    Ok(retried) => {
-                        warn!(
-                            "Jev provider returned {} after a 429/529 retry",
-                            retried.status()
-                        );
-                    }
-                    Err(error) => warn!("Jev provider retry failed: {error}"),
-                }
-                return JevOutcome::Unavailable;
-            }
-            let code = status.as_u16();
-            warn!("Jev provider returned HTTP {code}");
-            return JevOutcome::Unavailable;
         }
-
-        parse_answers(response).await
+        crate::JevEvaluation::unavailable()
     }
 }
 
-async fn parse_answers(response: reqwest::Response) -> JevOutcome {
+async fn parse_answers(response: reqwest::Response) -> crate::JevEvaluation {
     let text = match response.text().await {
         Ok(text) => text,
-        Err(_) => return JevOutcome::Unavailable,
+        Err(_) => return crate::JevEvaluation::unavailable(),
     };
-    parse_answers_from_str(&text)
+    let outcome = parse_answers_from_str(&text);
+    let metadata = serde_json::from_str::<Value>(&text)
+        .ok()
+        .filter(|_| outcome.is_available())
+        .map(|v| crate::JevMetadata {
+            model: v.get("model").and_then(Value::as_str).map(str::to_owned),
+            provider: v.get("provider").and_then(Value::as_str).map(str::to_owned),
+            request_id: v.get("id").and_then(Value::as_str).map(str::to_owned),
+            input_tokens: v.pointer("/usage/input_tokens").and_then(Value::as_u64),
+            output_tokens: v.pointer("/usage/output_tokens").and_then(Value::as_u64),
+            cost_usd: v
+                .pointer("/usage/cost")
+                .and_then(Value::as_f64)
+                .filter(|c| c.is_finite() && *c >= 0.0),
+        })
+        .filter(|m| m != &crate::JevMetadata::default());
+    crate::JevEvaluation {
+        outcome,
+        metadata,
+        elapsed_ms: 0.0,
+    }
 }
 
 /// Fail-soft envelope parse: anything malformed (bad JSON, wrong envelope,
