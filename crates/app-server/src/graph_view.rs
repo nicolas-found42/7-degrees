@@ -10,6 +10,40 @@ use canvas_view::{GraphLink, GraphNode, GraphPayload};
 use serde::Deserialize;
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 
+/// Canvas assets belong to one router. Tests can independently exercise a built
+/// directory or an unavailable canvas without mutating process configuration.
+#[derive(Clone, Debug)]
+pub enum CanvasAssets {
+    Directory(std::path::PathBuf),
+    Unavailable,
+}
+impl Default for CanvasAssets {
+    fn default() -> Self {
+        Self::Directory(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/canvas-web"),
+        )
+    }
+}
+impl CanvasAssets {
+    pub(crate) fn from_environment() -> Self {
+        std::env::var_os("NBA_CANVAS_ASSET_DIR")
+            .map(std::path::PathBuf::from)
+            .map(Self::Directory)
+            .unwrap_or_default()
+    }
+    fn root(&self) -> Option<&std::path::Path> {
+        match self {
+            Self::Directory(root) => Some(root),
+            Self::Unavailable => None,
+        }
+    }
+    fn available(&self) -> bool {
+        self.root().is_some_and(|root| {
+            root.join("canvas_view.js").is_file() && root.join("canvas_view_bg.wasm").is_file()
+        })
+    }
+}
+
 #[derive(Deserialize)]
 pub struct NeighborhoodQuery {
     pub player: String,
@@ -335,9 +369,7 @@ pub async fn page(State(state): State<AppState>, Query(query): Query<GraphQuery>
         .unwrap_or_else(|| {
             "<p>Neighborhood exploration; no player-to-player chain requested.</p>".into()
         });
-    let canvas_status = if asset_root().join("canvas_view.js").is_file()
-        && asset_root().join("canvas_view_bg.wasm").is_file()
-    {
+    let canvas_status = if state.canvas_assets.available() {
         "Canvas loading; the text lists remain available."
     } else {
         "Canvas unavailable; use the accessible player and relationship lists."
@@ -360,7 +392,10 @@ pub async fn page(State(state): State<AppState>, Query(query): Query<GraphQuery>
 }
 
 /// Generated wasm-bindgen assets only; arbitrary filesystem paths are rejected.
-pub async fn asset(axum::extract::Path(asset): axum::extract::Path<String>) -> Response {
+pub async fn asset(
+    State(state): State<AppState>,
+    axum::extract::Path(asset): axum::extract::Path<String>,
+) -> Response {
     if asset == "canvas-loader.js" {
         return (
             StatusCode::OK,
@@ -377,7 +412,12 @@ pub async fn asset(axum::extract::Path(asset): axum::extract::Path<String>) -> R
         "canvas_view_bg.wasm" => "application/wasm",
         _ => return StatusCode::NOT_FOUND.into_response(),
     };
-    match std::fs::read(asset_root().join(asset)) {
+    let bytes = state
+        .canvas_assets
+        .root()
+        .ok_or_else(|| std::io::Error::from(std::io::ErrorKind::NotFound))
+        .and_then(|root| std::fs::read(root.join(asset)));
+    match bytes {
         Ok(bytes) => (
             StatusCode::OK,
             [(axum::http::header::CONTENT_TYPE, mime)],
@@ -390,12 +430,4 @@ pub async fn asset(axum::extract::Path(asset): axum::extract::Path<String>) -> R
         )
             .into_response(),
     }
-}
-
-fn asset_root() -> std::path::PathBuf {
-    std::env::var_os("NBA_CANVAS_ASSET_DIR")
-        .map(std::path::PathBuf::from)
-        .unwrap_or_else(|| {
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/canvas-web")
-        })
 }
