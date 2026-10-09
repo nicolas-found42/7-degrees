@@ -1,0 +1,71 @@
+{
+  "method": "Deterministic compact publication of retained completed original-source reading receipts, not a new inspection or new model judgment.",
+  "original_t4_sha256": "f4fe081d35518782969f502c68c7ba622b987a4d7bf042a729bf2333ff18a030",
+  "original_snapshot": {
+    "commit": "474481bde27ac33887ae9f285e351735f0905571",
+    "path": "docs/reports/t4/tenures.csv",
+    "locator": "cases.csv csv_line is the immutable original line; audit_id embeds that line."
+  },
+  "selected_original_cases": 6246,
+  "complex_groups": 1548,
+  "source_locators": 21984,
+  "case_source_associations": 123278,
+  "selection_seed": "7-degrees-source-audit-2026-10-09-v1",
+  "era_frames": {
+    "BAA 1946-49": 512,
+    "1950-66": 2188,
+    "1967-80": 3431,
+    "1981-99": 7835,
+    "2000-2025/26": 18008,
+    "merger-transition-1976-1978": 918
+  },
+  "class_quota": "12 per evidence class, unavailable quotas redistributed by global SHA256 rank to exactly 50",
+  "defunct_ids": [
+    "BOMBERS",
+    "BULLETS-DEFUNCT",
+    "CAPITOLS",
+    "FALCONS",
+    "HUSKIES",
+    "IRONMEN",
+    "JETS",
+    "NUGGETS-DEFUNCT",
+    "OLYMPIANS",
+    "PACKERS-ANDERSON",
+    "REBELS",
+    "REDSKINS-SHEBOYGAN",
+    "STAGS",
+    "STEAMROLLERS",
+    "WATERLOO-HAWKS"
+  ],
+  "original_source_sha256": {
+    "docs/reports/t3/player-universe.csv": "81031c7e3cf95845060119a3347d3cf37ec60c6a24b0ced9978fb7df2e7e651d",
+    "docs/reports/t4/tenures.csv": "f4fe081d35518782969f502c68c7ba622b987a4d7bf042a729bf2333ff18a030",
+    "data/sumitrodatta/Player Season Info.csv": "2191b45bfef0536f6d26ba8222f9a81a5cd54aa2aa4495a06b947fd5a0f35e8d",
+    "data/sumitrodatta/Player Totals.csv": "1c081cd7f9c694755ea2210c3426e709540afedc31c1bf781456f3df4b7582b2",
+    "data/sumitrodatta/Team Abbrev.csv": "50923959189fea83f703eda4a28aa4af01797945a6a903bc47ba181b84900e92",
+    "data/romainmorleghem/CommonPlayerInfo_ALL.csv": "4a2216031638a564e7b646d511ebe86de237cb31b5fe8ec049ef6fe077e3c3fa"
+  },
+  "retained_input_sha256": {
+    "acceptance29-all-case-reading.jsonl": "8201a3f875d194d551c5255dbe6507a74ac55081e4ce01c518904445ea319db5",
+    "acceptance29-complex-group-reading.jsonl": "3c352fd6fb2129fed2351e82387110ebb4c9c3bc08082156019c4f49a2bc673c",
+    "acceptance29-coverage.json": "dc734b871b99f11f93be2b8096dd2e093654b1bd05d4eba3716613dd6754b889",
+    "selection-manifest.json": "31278db503894a2224c9979723e52d7b9cecfc8c87962f5443d7668899a1d6a5",
+    "main-dossiers.jsonl": "4365ef23cc94695e3d39d9a2791dbc7e2bd3870ce5b4a8a118ce78d04bfa0fb3",
+    "baa-defunct/inspection-outcomes.jsonl": "570ef31a892f8ea0ed91d72a5f87d1ee560df2f525900abbc4f6adf0d0b99a80",
+    "modern-partition/inspection-outcomes.jsonl": "25fa924d45115b8ec4a46ca4df1ae4ea17528d988d76632693284d7e26b4390a",
+    "main-host-partition/inspection-outcomes.jsonl": "c715a10f5edb01d4ffdef81ec3e208b3bb3c51560dc0b5acc2b2c96f6a5bc55b"
+  },
+  "outcome_counts": {
+    "insufficient-date-evidence": 3567,
+    "discrepancy": 1964,
+    "supported-transaction-anchor-pair": 696,
+    "supported": 19
+  },
+  "partition_counts": {
+    "main-host-partition": 3141,
+    "baa-defunct": 798,
+    "modern-partition": 2307
+  },
+  "model_operational_status": "Completed retained outcomes; initial oversized/invalid judgments and repaired signal pointers remain separate from source reading.",
+  "limits": "Old IDs and line numbers refer to the pinned old T4 CSV. Source anchors do not prove uninterrupted service. Model signals are separate and fallible. Blank source hashes are unknown, not fabricated; S1 database witness version is v238. Original source paragraphs and full receipts remain retained outside the repository."
+}

@@ -1,0 +1,143 @@
+{
+  "source_base_commit": "c63edd0437249c0b57b999e5ca9e02f11edb13c9",
+  "origin_main_review_base": "f8e743ca30939476433c680e7a29169d70c3fa41",
+  "method": "Actual stdout/stderr from ordered checks; only machine path prefixes sanitized. External raw logs retained. Source/UI implementation unchanged during check pipeline except corrected docs header.",
+  "checks": [
+    {
+      "order": 1,
+      "command": "./scripts/build-canvas.sh",
+      "result": "exit 0",
+      "log": "logs/01-wasm-build.log",
+      "raw_sha256": "86598dbb291ad6355e0c057bf5d0db85d6bc56b74337fecec48f9d0479261f59",
+      "published_sha256": "888461c5e01c716a7b8530f1fca54033dca167e1694f78906097531aa8898194"
+    },
+    {
+      "order": 2,
+      "command": "cargo test --workspace",
+      "result": "exit 0",
+      "log": "logs/02-rust-workspace.log",
+      "raw_sha256": "7935eb90350508c3de6b7bb30e7edf92c8b077963dbdbbef5a6cf1f3ebda006d",
+      "published_sha256": "aedccb89de65090e0b032ce3aaf0297341603de8690a65185157ae3652444e3c"
+    },
+    {
+      "order": 3,
+      "command": "python3 -m unittest discover -s scripts -p 'test_*.py'",
+      "result": "exit 0",
+      "log": "logs/03-python-source.log",
+      "raw_sha256": "a88004b9dfdb25d02be31e94c72ec7b39f70bb1fe2f153d6cf39f050e5d98065",
+      "published_sha256": "a88004b9dfdb25d02be31e94c72ec7b39f70bb1fe2f153d6cf39f050e5d98065"
+    },
+    {
+      "order": 4,
+      "command": "cargo fmt --all --check",
+      "result": "exit 0",
+      "log": "logs/04-format.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "order": 5,
+      "command": "cargo clippy --workspace --all-targets -- -D warnings",
+      "result": "exit 0",
+      "log": "logs/05-clippy-host.log",
+      "raw_sha256": "f89d6fabc65a14c61b7e09caaf158ac738d536aaad0a573e6aa6b6e7869aa49a",
+      "published_sha256": "e4cff34a3b9a70edb11c2f42d177d3fc63b25ee9e8802d0cef48ea751bd53846"
+    },
+    {
+      "order": 6,
+      "command": "cargo clippy -p canvas-view --target wasm32-unknown-unknown -- -D warnings",
+      "result": "exit 0",
+      "log": "logs/06-clippy-wasm.log",
+      "raw_sha256": "7d4d657b0f99550bd3ecdb2e6c6aa275dbcaaed9bf362dd15f2436f31df7b358",
+      "published_sha256": "d8d2f2214f808629333c31794596b8eb2101f313b6cb62e3db1a4ccc7ad1fa89"
+    },
+    {
+      "order": 7,
+      "command": "cargo test -p app-server --test browser_e2e --test canvas_browser -- --ignored --nocapture",
+      "result": "exit 0",
+      "log": "logs/07-browser.log",
+      "raw_sha256": "d7771882775ada4bfd67208789dc279686dd124078b27d69be32406324037d5d",
+      "published_sha256": "8010734ac4f06dbdb1a9991d60be985e7e5278b300b742ea344067a0d92ecc3a"
+    },
+    {
+      "order": 8,
+      "command": "RUSTFLAGS='--cfg test_capture' cargo test -p app-server --test log_capture -- --nocapture",
+      "result": "exit 0",
+      "log": "logs/08-credential-logs.log",
+      "raw_sha256": "d5e916fc05b9d467aa4db381af88ba6dccc992afee577a88c2d4d756a59e54a0",
+      "published_sha256": "fd393e0b19aa623b4325ccab37eccab79739ce02301e2dac035e72342a63be94"
+    },
+    {
+      "order": 9,
+      "command": "cargo run -p app-server --bin semantic-eval -- --validate",
+      "result": "exit 0",
+      "log": "logs/09-semantic-labels.log",
+      "raw_sha256": "a72948a70ed7066afad485b0b83a2b29cb5e3a0ad58d8cff8f15bb65d74de3d7",
+      "published_sha256": "5908cff9010073b1a381ce52b937c1c387628a7262b28dc050d5099581d5a333"
+    },
+    {
+      "order": 10,
+      "command": "cargo run -p app-server --bin semantic-eval -- --replay",
+      "result": "exit 0",
+      "log": "logs/10-semantic-replay.log",
+      "raw_sha256": "6b17a236e6a8a851ec3996a723e325d09490172921d7a7e88b041e00644fd747",
+      "published_sha256": "6b17a236e6a8a851ec3996a723e325d09490172921d7a7e88b041e00644fd747"
+    },
+    {
+      "order": 11,
+      "command": "python3 scripts/check-semantic-evaluation.py",
+      "result": "exit 0",
+      "log": "logs/11-semantic-audit.log",
+      "raw_sha256": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0",
+      "published_sha256": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0"
+    },
+    {
+      "order": 12,
+      "command": "python3 scripts/compare-audit-snapshot.py",
+      "result": "exit 0",
+      "log": "logs/12-corrected-audit.log",
+      "raw_sha256": "c0ed441f50acd46c6b8947e2bc6fc055aa10fde2e25ba76054c216aa5727a12e",
+      "published_sha256": "c0ed441f50acd46c6b8947e2bc6fc055aa10fde2e25ba76054c216aa5727a12e"
+    },
+    {
+      "order": 13,
+      "command": "python3 scripts/check-historical-audit.py",
+      "result": "exit 0",
+      "log": "logs/13-historical-audit.log",
+      "raw_sha256": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232",
+      "published_sha256": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232"
+    },
+    {
+      "order": 14,
+      "command": "python3 scripts/verify-source-snapshot.py --data-dir <existing-pinned-data>",
+      "result": "exit 0",
+      "log": "logs/14-source-snapshot.log",
+      "raw_sha256": "0c24313c8bbe30bc8a7e32a55c9318dd58a23f59130bacea80e5af8d88fda1b2",
+      "published_sha256": "0c24313c8bbe30bc8a7e32a55c9318dd58a23f59130bacea80e5af8d88fda1b2"
+    },
+    {
+      "order": 15,
+      "command": "env -u OPENROUTER_API_KEY -u TYPESAFE_API_KEY NBA_PORT=49332 ./scripts/run-app.sh",
+      "result": "server started and APIs queried",
+      "log": "logs/15-app-startup.log",
+      "raw_sha256": "87b69c2c7cddf286ddd28d912b8ab87c02aee74291dba8327040292105e149f5",
+      "published_sha256": "0d015c94e3ec4d5f9fabd86be3c92d0c8e7f5941bd529c1f1dac9363c3c6e3cd"
+    },
+    {
+      "order": 16,
+      "command": "python3 scripts/capture-runtime-evidence.py --url http://127.0.0.1:49332 --output <raw-root>/runtime-apis.json",
+      "result": "exit 0",
+      "log": "logs/16-runtime-apis.log",
+      "raw_sha256": "860cec725d61b569b7e1b11b89f41d12032b82100212e64faf4c7ac62da8a379",
+      "published_sha256": "860cec725d61b569b7e1b11b89f41d12032b82100212e64faf4c7ac62da8a379"
+    }
+  ],
+  "source_sha256": {
+    "docs/reports/t3/player-universe.csv": "81031c7e3cf95845060119a3347d3cf37ec60c6a24b0ced9978fb7df2e7e651d",
+    "docs/reports/t4/tenures.csv": "5dbff2a790e87941b6bb9cd9c05c6f91414ae0f47ae1f2992d8d3c230a4fc24e",
+    "docs/reports/t4/transaction-source-pages.csv": "aa01ff509664f343e06e248498cc4699590b50bcf020f6884bb92047b94d8a5f",
+    "docs/evaluation/measurements.json": "6b827b64c0d0efd7af8d92c6a2c5e1ef161891b3b1e689b8cce4f04abe3a42a3",
+    "docs/evaluation/policy.json": "ea5b96b600da161f103ae83ce13a19dcbeeb4366e3feb3405442c6487cd68ee9"
+  },
+  "runtime_capture_sha256": "06c5f14f593a9cb34256dd1f21c2bd9921248a780f5f8e6241be56b5727973cf"
+}

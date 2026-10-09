@@ -1,0 +1,13 @@
+{
+  "acquired_utc": "2026-10-09",
+  "archives": [
+    {"source":"S1","slug":"wyattowalsh/basketball","version":238,"artifact":"basketball.zip","bytes":730695607,"files":20,"sha256":"8145cbb7586e6c0a5fbc9ad73b1ed7badb5004182ac66ac069a07dddc8490ada"},
+    {"source":"S2","slug":"sumitrodatta/nba-aba-baa-stats","version":56,"artifact":"nba-aba-baa-stats.zip","bytes":11152505,"files":22,"sha256":"5be35c2837020214a98148f42c21f90bfba0ea1c75d2b3ab8ff6b91baaa4917f"},
+    {"source":"S3","slug":"romainmorleghem/nba-players-info-and-headlinestats-up-to-2025","version":1,"artifact":"nba-players-info-and-headlinestats-up-to-2025.zip","bytes":242325,"files":2,"sha256":"6289efa9198f46f2b15c9a8ea7cfbb477ddf376e645449df065afe484f781ae3"}
+  ],
+  "cached_pages_ledger":"docs/reports/t4/transaction-source-pages.csv",
+  "derived_sha256": {
+    "docs/reports/t3/player-universe.csv":"81031c7e3cf95845060119a3347d3cf37ec60c6a24b0ced9978fb7df2e7e651d",
+    "docs/reports/t4/tenures.csv":"5dbff2a790e87941b6bb9cd9c05c6f91414ae0f47ae1f2992d8d3c230a4fc24e"
+  }
+}

@@ -1,0 +1,4 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.20s
+     Running `target/debug/semantic-eval --replay`
+Validated 44 labeled cases with explicit disjoint case IDs and splits
+Replayed 132 frozen case-variant outcomes through current runtime services without network calls

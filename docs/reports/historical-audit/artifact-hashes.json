@@ -1,0 +1,11 @@
+{
+  "case-sources.csv": "e1d3e3d54b60c0c57f4d9cc5c3cc011f381f2fa841b8822b80886fac16e66b14",
+  "cases.csv": "6424ae18cd28b2e9228f84afead5841c8c73bbfbe57a9425afff792d0637870d",
+  "complex-groups.csv": "41c1f83d3f2eefdbcfe39214f2d3f14d299613fbe451e3299687cc9f42263aca",
+  "corrected-delta-summary.json": "836902e4bf5f9858fa3fd1e6a534f1b3052a17419e48e4b66915b6f4a15cc9a4",
+  "corrected-delta.csv": "4a99a20e22d2522689d0bd46a2d24163669d780746e9e95b8966d38479195d4b",
+  "coverage.json": "8bee09d7871d56813f1081c05256c16356123d1327fd85ba7cda6606f8c2b639",
+  "export-manifest.json": "95d2c65c2919fe9fa01b5940f3a0d22e5f52323e40f85c6515fe230d2387e92c",
+  "model-signals.csv": "d621b85b7cb59b40e6a180546b308c9b4d4acf0f24b79a3cf051cca87517218f",
+  "sources.csv": "803594d0a639c0faae31af4ae313bf5c776e72bb56b97860739c4d1cab47b4bb"
+}
