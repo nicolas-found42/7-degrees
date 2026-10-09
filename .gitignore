@@ -1,0 +1,19 @@
+# Rust
+/target
+**/*.rs.bk
+
+# Secrets & credentials
+.env
+.env.*
+.kaggle/
+*.pem
+
+# Data artifacts (large, reproducible by pipeline/)
+/data/
+*.duckdb
+*.sqlite
+*.sqlite3
+*.parquet
+
+# Editor/OS
+.DS_Store
