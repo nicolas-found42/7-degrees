@@ -287,6 +287,25 @@ async fn all_paths_returns_alternative_shortest_chains() {
 }
 
 #[tokio::test]
+async fn all_paths_for_disconnected_pair_returns_no_chains() {
+    // A→D is the spec's same-franchise, non-overlapping case: no edge and no
+    // chain, so /api/paths must answer a defined empty result — not a panic.
+    let (status, body) = get("/api/paths?from=A&to=D").await;
+    assert_eq!(status, StatusCode::OK);
+    let paths = body.expect("JSON body present");
+    let paths = paths["paths"].as_array().expect("paths array");
+    assert!(
+        paths.is_empty(),
+        "disconnected pairs have no chain to list: {paths:?}"
+    );
+    // Reachability is undirected: the reversed query behaves identically.
+    let (status, body) = get("/api/paths?from=D&to=A").await;
+    assert_eq!(status, StatusCode::OK);
+    let body = body.expect("JSON body present");
+    assert_eq!(body["paths"].as_array().map(Vec::len), Some(0));
+}
+
+#[tokio::test]
 async fn missing_query_parameters_are_a_bad_request() {
     let (status, body) = get("/api/connection").await;
     assert_eq!(status, StatusCode::BAD_REQUEST);
