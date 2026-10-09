@@ -4,6 +4,7 @@
 mod fixture_data;
 mod jev;
 pub mod report_data;
+mod stats_view;
 mod ui;
 
 use axum::{
@@ -69,6 +70,7 @@ fn app(state: AppState) -> Router {
         .route("/api/connection", get(connection))
         .route("/api/paths", get(all_paths))
         .route("/api/stats", get(stats))
+        .route("/stats", get(statistics_page))
         .route("/api/coverage", get(coverage))
         .route("/api/coverage/{player}", get(player_coverage))
         .route("/api/players", get(players))
@@ -328,6 +330,14 @@ fn player_not_found(graph: &graph_core::TeammateGraph, from: &str, to: &str) -> 
         }),
     )
         .into_response()
+}
+
+async fn statistics_page(State(state): State<AppState>) -> Response {
+    stats_view::page(
+        &state.graph,
+        state.jev.status(),
+        state.reports.as_ref().map(|r| r.coverage.warning.as_str()),
+    )
 }
 
 async fn stats(State(state): State<AppState>) -> Json<serde_json::Value> {
