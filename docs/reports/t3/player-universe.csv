@@ -1982,7 +1982,7 @@ hillar01,Armond Hill,1953-03-31,NBA,1977,1984,12,N,77024,name+dob,Armond Hill,77
 hillcl01,Cleo Hill,1938-05-24,NBA,1962,1962,1,N,77025,name+dob,Cleo Hill,77025,via-S1-bridge
 hillga01,Gary Hill,1941-10-07,NBA,1964,1965,4,N,77026,name+dob,Gary Hill,77026,via-S1-bridge
 hillge01,George Hill,1986-05-04,NBA,2009,2023,23,N,201588,name+dob,George Hill,201588,via-S1-bridge
-hillgr01,Grant Hill,1972-10-05,NBA,1995,2013,18,N,255;201195,name+dob;surname+career-span,Grant Hill;Herbert Hill,201195,via-S1-bridge
+hillgr01,Grant Hill,1972-10-05,NBA,1995,2013,18,N,255,name+dob,Grant Hill,255,via-S1-bridge
 hillhar01,Art Hillhouse,1916-06-12,BAA,1947,1948,2,N,77027,name+dob,Art Hillhouse,77027,via-S1-bridge
 hillida01,Darrun Hilliard,1993-04-13,NBA,2016,2018,3,N,1626199,name+dob,Darrun Hilliard,1626199,via-S1-bridge
 hilljo01,Jordan Hill,1987-07-27,NBA,2010,2017,12,N,201941,name+dob,Jordan Hill,201941,via-S1-bridge
@@ -2251,7 +2251,7 @@ johnsca01,Carldell Johnson,1983-01-28,NBA,2012,2012,1,N,201291,name+dob,Carldell
 johnsca02,Cameron Johnson,1996-03-03,NBA,2020,2026,9,N,1629661,name+dob,Cameron Johnson,1629661,via-S1-bridge
 johnsch01,Charles Johnson,1949-03-31,NBA,1973,1979,9,N,77133,lastname+dob,Charlie Johnson,77133,via-S1-bridge
 johnsch02,Cheese Johnson,1957-09-07,NBA,1980,1980,1,N,77159,lastname+dob,Lynbert Johnson,77159,via-S1-bridge
-johnsch03,Chris Johnson,1985-07-15,NBA,2011,2013,7,N,,no-S1-match,,,
+johnsch03,Chris Johnson,1985-07-15,NBA,2011,2013,7,N,202419,initial-surname+dob-window,Chris Johnson,202419,via-S1-bridge
 johnsch04,Chris Johnson,1990-04-29,NBA,2013,2016,7,N,203187,name+dob,Chris Johnson,203187,via-S1-bridge
 johnsch06,Chaney Johnson,2002-06-20,NBA,2026,2026,1,N,,no-S1-match,,1643052,name-+dob
 johnscl01,Clemon Johnson,1956-09-12,NBA,1979,1988,12,N,77136,name+dob,Clemon Johnson,77136,via-S1-bridge
@@ -3277,7 +3277,7 @@ nattke01,Kenny Natt,1958-10-05,NBA,1981,1985,5,N,77692,name+dob,Kenny Natt,77692
 naullwi01,Willie Naulls,1934-10-07,NBA,1957,1966,14,N,77693,name+dob,Willie Naulls,77693,via-S1-bridge
 navarju01,Juan Carlos Navarro,1980-06-13,NBA,2008,2008,1,N,2434,name+dob,Juan Carlos Navarro,2434,via-S1-bridge
 ndiayha01,Hamady N'Diaye,1987-01-12,NBA,2011,2014,3,N,202380,name+dob,Hamady Ndiaye,202380,via-S1-bridge
-ndiayma01,Makhtar N'Diaye,1973-12-12,NBA,1999,1999,1,N,1823;1626122,name+dob,Makhtar N'diaye;Makhtar N'diaye,1823,name-+dob
+ndiayma01,Makhtar N'Diaye,1973-12-12,NBA,1999,1999,1,N,1823;1626122,name+dob,Makhtar N'diaye;Makhtar N'diaye,1823,via-S1-bridge
 ndiayma02,Mamadou N'Diaye,1975-06-16,NBA,2001,2005,7,N,2055,name+dob,Mamadou N'diaye,2055,via-S1-bridge
 ndongbo01,Boniface N'Dong,1977-03-09,NBA,2006,2006,1,N,101238,DOB-conflict,Boniface Ndong,101238,via-S1-bridge
 ndourma01,Maurice Ndour,1992-06-18,NBA,2017,2017,1,N,1626254,name+dob,Maurice Ndour,1626254,via-S1-bridge
@@ -3371,7 +3371,7 @@ obannch01,Charles O'Bannon,1975-02-22,NBA,1998,1999,2,N,1525,name+dob,Charles O'
 obanned01,Ed O'Bannon,1972-08-14,NBA,1996,1997,4,N,709,name+dob,Ed O'Bannon,709,via-S1-bridge
 obertfa01,Fabricio Oberto,1975-03-21,NBA,2006,2011,6,N,101177,name+dob,Fabricio Oberto,101177,via-S1-bridge
 oboyljo01,John O'Boyle,1928-03-07,NBA,1953,1953,1,N,77742,name+dob,John O'Boyle,77742,via-S1-bridge
-obriebo01,Bob O'Brien,1927-01-26,BAA,1948,1949,4,N,77743;77744,initial-surname+dob-window;name+dob,Bob O'Brien;Buckshot O'Brien,77744,via-S1-bridge
+obriebo01,Bob O'Brien,1927-01-26,BAA,1948,1949,4,N,77744,name+dob,Bob O'Brien,77744,via-S1-bridge
 obriejj01,J.J. O'Brien,1992-04-08,NBA,2016,2016,1,N,1626266,lastname+dob,JJ O'Brien,1626266,via-S1-bridge
 obriera01,Ralph O'Brien,1928-04-08,NBA,1952,1953,5,N,,no-S1-match,,,
 obryajo01,Johnny O'Bryant,1993-06-01,NBA,2015,2018,6,N,203948,name+dob,Johnny O'Bryant III,203948,via-S1-bridge
@@ -4330,7 +4330,7 @@ steveis01,Isaiah Stevens,2000-11-01,NBA,2025,2026,2,N,,no-S1-match,,1641815,name
 stevela01,Lamar Stevens,1997-07-09,NBA,2021,2025,7,N,1630205,name+dob,Lamar Stevens,1630205,via-S1-bridge
 stevewa01,Wayne Stevens,1936-06-19,NBA,1960,1960,1,N,78252,name+dob,Wayne Stevens,78252,via-S1-bridge
 stewade01,Dennis Stewart,1947-04-11,ABA|NBA,1971,1971,1,N,78253,name+dob,Dennis Stewart,78253,via-S1-bridge
-stewais01,Isaiah Stewart,2001-05-22,NBA,2021,2026,6,N,1630191;1630597,name+dob;surname+career-span,DJ Stewart;Isaiah Stewart,1630597,via-S1-bridge
+stewais01,Isaiah Stewart,2001-05-22,NBA,2021,2026,6,N,1630191,name+dob,Isaiah Stewart,1630191,via-S1-bridge
 stewake01,Kebu Stewart,1973-12-19,NBA,1998,1998,1,N,1529,name+dob,Kebu Stewart,1529,via-S1-bridge
 stewala01,Larry Stewart,1968-09-21,NBA,1992,1997,5,N,1125,name+dob,Larry Stewart,1125,via-S1-bridge
 stewami01,Michael Stewart,1975-04-25,NBA,1998,2005,10,N,1565,name+dob,Michael Stewart,1565,via-S1-bridge

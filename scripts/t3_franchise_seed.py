@@ -23,11 +23,13 @@ Lineage entry shape: (lg, team_name, abbr_bbr, abbr_s1, season_start, season_end
   spanning both leagues; purely-ABA franchises get separate canonical ids (they
   exist so ABA-only players can be bucketed and a wrong NBA merge can never
   happen silently).
-- Known S2 gaps this seed covers with S1 evidence (each is listed in the
-  reconciliation report): BAA season-1947 `BLB` (Baltimore Bullets) rows are
-  absent from `Team Abbrev.csv` while 39 BAA-1947 player rows carry BLB;
-  the BAA 1949-50 Tri-Cities Blackhawks season is labeled NBA by S2 (the NBA's
-  first season was 1949-50 = season "1950"; BAA seasons are "1947"-"1949").
+- S2 franchise coverage notes, checked against the raw tables:
+  - No Baltimore roster gap exists for BAA 1947 (1946-47): `Player Season Info.csv`
+    has no BLB rows in season 1947; Baltimore joined the BAA in 1947-48, where S2
+    has 18 BLB player rows, and 21 in 1948-49. `Team Abbrev.csv` includes both seasons.
+    BLB-1947 in `Draft Pick History.csv` is a draft-team entry, not roster coverage.
+  - The BAA 1949-50 Tri-Cities Blackhawks season is labeled NBA by S2 (the NBA's
+    first season was 1949-50 = season "1950"; BAA seasons are "1947"-"1949").
 
 Franchises sharing a display name across distinct franchises are split by season:
 - "Denver Nuggets": DNN season 1950 (defunct NBA, folded) vs the ABA Rockets/
