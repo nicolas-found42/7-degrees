@@ -6,7 +6,7 @@
 //! logs — and with no env key the handle is [`JevState::Unconfigured`], so
 //! every judgment is a deterministic `Unavailable`.
 
-use jev_client::{EnvConfig, JevClient, JevOutcome, JevRequest, JevTransport};
+use jev_client::{EnvConfig, JevClient, JevEvaluation, JevOutcome, JevRequest, JevTransport};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 
@@ -42,15 +42,15 @@ struct HandleInner {
 impl HandleInner {
     /// One judgment: records the outcome for the status surface. Never
     /// panics on provider problems (the transport fails soft).
-    fn judge(&self, request: &JevRequest) -> JevOutcome {
-        let outcome = self.client.evaluate(request);
-        if !outcome.is_available() {
+    fn judge_measured(&self, request: &JevRequest) -> JevEvaluation {
+        let evaluation = self.client.evaluate_measured(request);
+        if !evaluation.outcome.is_available() {
             self.last_outcome
                 .lock()
                 .expect("last_outcome lock")
-                .replace(outcome.clone());
+                .replace(evaluation.outcome.clone());
         }
-        outcome
+        evaluation
     }
 }
 
@@ -102,15 +102,25 @@ impl JevHandle {
     /// One judgment through the underlying client; `Unavailable` without a
     /// configured provider. A failed call latches the degraded status.
     pub fn judge(&self, request: &JevRequest) -> JevOutcome {
+        self.judge_measured(request).outcome
+    }
+    /// Receipt and latency belong to the returned call, never global status state.
+    pub fn judge_measured(&self, request: &JevRequest) -> JevEvaluation {
         match &self.inner {
-            JevState::Unconfigured => JevOutcome::Unavailable,
+            JevState::Unconfigured => JevEvaluation::unavailable(),
             JevState::Client { handle, degraded } => {
-                let outcome = handle.judge(request);
-                if !outcome.is_available() {
+                let evaluation = handle.judge_measured(request);
+                if !evaluation.outcome.is_available() {
                     degraded.store(true, Ordering::SeqCst);
                 }
-                outcome
+                evaluation
             }
+        }
+    }
+    /// A consumer rejected a typed but invalid response; preserve fail-soft status.
+    pub fn reject_response(&self) {
+        if let JevState::Client { degraded, .. } = &self.inner {
+            degraded.store(true, Ordering::SeqCst);
         }
     }
 
@@ -135,19 +145,26 @@ impl JevHandle {
 /// transport, erased in a closure) so the handle holds one concrete inner
 /// type.
 struct ErasedJudge {
-    evaluate: Box<dyn Fn(&JevRequest) -> JevOutcome + Send + Sync>,
+    evaluate: Box<dyn Fn(&JevRequest) -> JevEvaluation + Send + Sync>,
 }
 
 impl ErasedJudge {
     fn new<T: JevTransport + 'static>(client: JevClient<T>) -> Self {
         Self {
-            evaluate: Box::new(move |request| client.evaluate(request)),
+            evaluate: Box::new(move |request| client.evaluate_measured(request)),
         }
     }
 }
 
 impl JevTransport for ErasedJudge {
     fn evaluate(&self, _config: &jev_client::JevConfig, request: &JevRequest) -> JevOutcome {
+        (self.evaluate)(request).outcome
+    }
+    fn evaluate_measured(
+        &self,
+        _config: &jev_client::JevConfig,
+        request: &JevRequest,
+    ) -> JevEvaluation {
         (self.evaluate)(request)
     }
 }
