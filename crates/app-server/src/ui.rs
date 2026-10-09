@@ -208,7 +208,11 @@ pub fn home(
             semantic_status_line(semantic_status),
             coverage_line(coverage)
         ),
-        connect_form(players, Some(demo_from), Some(demo_to)),
+        format_args!(
+            "{}{}",
+            crate::search::form(""),
+            connect_form(players, Some(demo_from), Some(demo_to))
+        ),
         edges.len(),
         edge_items,
         url_encode(demo_from),
