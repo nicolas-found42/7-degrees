@@ -17,3 +17,7 @@
 
 # Editor/OS
 .DS_Store
+
+# Python verification artifacts
+__pycache__/
+*.py[cod]
