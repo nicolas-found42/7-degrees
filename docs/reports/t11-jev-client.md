@@ -102,15 +102,21 @@ Verified run this session: `test result: ok. 1 passed ... finished in 0.30s`.
 
 ## 6. Test matrix (observed outputs this session)
 
-- `cargo test --workspace` (plain): 33 passed, 0 failed (18 T1 + 3 seam
-  unit + 28… breakdown below), live smoke correctly `1 ignored`.
+- `cargo test --workspace` (plain): 34 passed, 0 failed — 29 api_integration
+  (19 T1 incl. the review fix + 10 new T11) + 1 graph-core unit + 1 fixture
+  unit + 3 jev-client seam unit — live smoke correctly `1 ignored`.
 - `RUSTFLAGS='--cfg test_capture' cargo test --workspace`: everything above
   plus the log-capture proof, all green.
-- Live: `cargo test ... --test live_smoke -- --ignored` → 1 passed (0.30s).
+- Offline transport fail-soft proofs (added post-review,
+  `cargo test -p jev-client --features http-transport --test transport_fallback`):
+  7 passed — unreachable provider, current-thread non-panic, 429→recovery,
+  429-exhausted, 401-immediate, malformed envelope, provider timeout.
+- Live: `cargo test -p jev-client --features http-transport --test live_smoke
+  -- --ignored` → 1 passed (0.30s).
 - Clippy over app-server + jev-client (all targets): clean; the only
   workspace warnings are T1's pre-existing graph-core ones (out of scope).
 
-Count note: 18 = T1's api_integration tests; the same suite file now holds
-28 including the 10 new T11 assertions; graph-core's unit test, fixture's
-unit test, jev-client's 3 seam unit tests, and the 2 process-isolated test
-targets complete the matrix above.
+Count note: 19 = T1's api_integration tests (18 original + 1 added by the
+T1 review fix); the same suite file now holds 29 including the 10 new T11
+assertions; the offline transport proofs live in their own target and
+complete the matrix above.

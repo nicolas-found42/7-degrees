@@ -71,12 +71,26 @@ impl JevTransport for HttpJevTransport {
             });
         }
         // Outside a multi-thread runtime (tests on the current-thread flavor,
-        // or plain threads): run on a small temporary runtime.
-        tokio::runtime::Builder::new_current_thread()
-            .enable_all()
-            .build()
-            .expect("temporary judgment runtime builds")
-            .block_on(self.evaluate_async(config, request))
+        // or plain threads): `block_on` is not legal here, so run the
+        // blocking call on a dedicated OS thread. Every failure mode — a
+        // runtime that fails to build, a panic inside the call — maps to
+        // `Unavailable`; the transport must never panic on transport problems.
+        let evaluated = std::thread::spawn({
+            let this = self.clone();
+            let config = config.clone();
+            let request = request.clone();
+            move || {
+                let runtime = tokio::runtime::Builder::new_current_thread()
+                    .enable_all()
+                    .build();
+                match runtime {
+                    Ok(runtime) => runtime.block_on(this.evaluate_async(&config, &request)),
+                    Err(_) => JevOutcome::Unavailable,
+                }
+            }
+        })
+        .join();
+        evaluated.unwrap_or(JevOutcome::Unavailable)
     }
 }
 

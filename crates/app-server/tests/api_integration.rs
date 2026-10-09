@@ -779,12 +779,11 @@ async fn jev_answers_surface_only_through_the_seam_not_the_graph() {
 }
 
 #[tokio::test]
-async fn credentials_never_reach_routine_logs() {
-    // The credential canary must never be emitted through `log` while the
-    // app serves traffic and runs a failing judgment. app-server installs no
-    // logger itself and never logs key material (see
-    // crates/app-server/tests/log_capture.rs for the captured-output proof
-    // under the same in-process seam).
+async fn credential_canary_never_reaches_served_surfaces() {
+    // Asserts about what the browser can see: with a canary key configured
+    // and the judgment failing, no served body (connection, semantic
+    // status) carries the credential. The log-side half of that proof lives
+    // in crates/app-server/tests/log_capture.rs (capture build only).
     let canary = "sk-canary-never-log-9012";
     let handle = JevHandle::from_client(JevClient::new(
         JevConfig::new(canary.to_string()),

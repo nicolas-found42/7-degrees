@@ -4,7 +4,7 @@
 //! Ignored by default (needs a real key + network); run explicitly with:
 //!
 //! ```sh
-//! cargo test -p app-server --test live_smoke -- --ignored
+//! cargo test -p jev-client --features http-transport --test live_smoke -- --ignored
 //! ```
 //!
 //! The key is never printed: the assertion reads the env var into the config
