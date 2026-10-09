@@ -1,9 +1,8 @@
 //! The minimal UI: server-rendered HTML authored entirely in Rust.
 //!
-//! The spec's Rust constraint rules out JavaScript UI/graph libraries; the
-//! plain Axum-served HTML option is fully compliant and needs no WASM tooling
-//! (trunk is not installed here), so this module renders the UI on the server
-//! from `graph_core` data. No JavaScript ships.
+//! Accessible HTML is rendered on the server from deterministic graph data.
+//! The optional graph canvas is authored in Rust and compiled to WASM;
+//! generated wasm-bindgen glue loads it without a JavaScript UI/graph library.
 
 use axum::http::{StatusCode, header};
 use axum::response::{IntoResponse, Response};

@@ -1,0 +1,28 @@
+{
+  "archives": [
+    {
+      "artifact": "basketball.zip",
+      "sha256": "8145cbb7586e6c0a5fbc9ad73b1ed7badb5004182ac66ac069a07dddc8490ada",
+      "files": 20,
+      "uncompressed_bytes": 4660601876
+    },
+    {
+      "artifact": "nba-aba-baa-stats.zip",
+      "sha256": "5be35c2837020214a98148f42c21f90bfba0ea1c75d2b3ab8ff6b91baaa4917f",
+      "files": 22,
+      "uncompressed_bytes": 32371135
+    },
+    {
+      "artifact": "nba-players-info-and-headlinestats-up-to-2025.zip",
+      "sha256": "6289efa9198f46f2b15c9a8ea7cfbb477ddf376e645449df065afe484f781ae3",
+      "files": 2,
+      "uncompressed_bytes": 925707
+    }
+  ],
+  "cached_transaction_pages_verified": 80,
+  "derived_sha256": {
+    "docs/reports/t3/player-universe.csv": "81031c7e3cf95845060119a3347d3cf37ec60c6a24b0ced9978fb7df2e7e651d",
+    "docs/reports/t4/tenures.csv": "5dbff2a790e87941b6bb9cd9c05c6f91414ae0f47ae1f2992d8d3c230a4fc24e"
+  },
+  "network_requests": 0
+}

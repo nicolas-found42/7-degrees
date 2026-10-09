@@ -1,0 +1,15 @@
+   Compiling log v0.4.34
+   Compiling canvas-view v0.1.0 (<checkout>/crates/canvas-view)
+   Compiling tracing v0.1.44
+   Compiling hyper-util v0.1.21
+   Compiling tower v0.5.3
+   Compiling axum-core v0.5.6
+   Compiling tower-http v0.6.11
+   Compiling hyper-rustls v0.27.10
+   Compiling axum v0.8.9
+   Compiling reqwest v0.12.28
+   Compiling jev-client v0.1.0 (<checkout>/crates/jev-client)
+   Compiling app-server v0.1.0 (<checkout>/crates/app-server)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.76s
+     Running `target/debug/semantic-eval --validate`
+Validated 44 labeled cases with explicit disjoint case IDs and splits

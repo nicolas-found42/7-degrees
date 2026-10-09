@@ -1,0 +1,24 @@
+   Compiling jev-client v0.1.0 (<checkout>/crates/jev-client)
+   Compiling app-server v0.1.0 (<checkout>/crates/app-server)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.04s
+     Running tests/browser_e2e.rs (target/debug/deps/browser_e2e-ef7243c9a141143e)
+
+running 3 tests
+Pinned real slice: 7 players, 76 exact committed tenure rows; mapping retains original record references and snapshot SHA-256.
+Chromium "153.0.8010.12"
+test home_lookup_and_connections_are_accessible_in_the_running_fixture_app ... ok
+Real slice: typo/alias, same-name context and clarification/choice, sourced Acy/Bogut chain/panel/native page, excluded postseason-only Vildoza and unresolved coverage passed.
+test real_lookup_disambiguation_and_selected_edge_provenance_remain_honest ... ok
+Synthetic diamond: equal alternatives/cursor/selection, team+era filters/removal, uncertainty/unsupported/provider-down fallback passed.
+test alternatives_filters_uncertainty_and_provider_failure_are_visible_user_outcomes ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.55s
+
+     Running tests/canvas_browser.rs (target/debug/deps/canvas_browser-01a6d675de170d44)
+
+running 1 test
+Chromium "153.0.8010.12"
+WASM initialized; canvas pixels changed; pointer selection/drag/wheel, button and keyboard transforms, direct/nearby expansion, preserved cursor/degree and edge hook passed. Fixture and real Acy/Bogut selected-edge panels loaded dates, both record references, source anchors and coverage.
+test rust_wasm_canvas_supports_pointer_keyboard_expansion_and_retains_chain_facts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.54s

@@ -1,0 +1,267 @@
+{
+  "cold_stats": {
+    "url": "/api/stats",
+    "elapsed_seconds": 0.27925470800255425,
+    "body": {
+      "components": 4168,
+      "diameter": 20,
+      "histogram": {
+        "1": 1517,
+        "10": 4635,
+        "11": 3891,
+        "12": 3002,
+        "13": 2368,
+        "14": 1481,
+        "15": 941,
+        "16": 500,
+        "17": 343,
+        "18": 195,
+        "19": 88,
+        "2": 1989,
+        "20": 40,
+        "3": 2752,
+        "4": 3916,
+        "5": 5028,
+        "6": 6175,
+        "7": 6547,
+        "8": 6240,
+        "9": 5535
+      },
+      "players": 5106,
+      "unreachable_pairs": 12975882
+    }
+  },
+  "cached_stats": {
+    "url": "/api/stats",
+    "elapsed_seconds": 0.00047862500287010334,
+    "body": {
+      "components": 4168,
+      "diameter": 20,
+      "histogram": {
+        "1": 1517,
+        "10": 4635,
+        "11": 3891,
+        "12": 3002,
+        "13": 2368,
+        "14": 1481,
+        "15": 941,
+        "16": 500,
+        "17": 343,
+        "18": 195,
+        "19": 88,
+        "2": 1989,
+        "20": 40,
+        "3": 2752,
+        "4": 3916,
+        "5": 5028,
+        "6": 6175,
+        "7": 6547,
+        "8": 6240,
+        "9": 5535
+      },
+      "players": 5106,
+      "unreachable_pairs": 12975882
+    }
+  },
+  "graph": {
+    "url": "/api/graph",
+    "elapsed_seconds": 0.23060620799878961,
+    "body": {
+      "node_count": 5106,
+      "edge_count": 1517
+    },
+    "raw_response_capture_sha256": "af975186d63999266bf8e6afe58a84c7f401d4460200838b1e75162782332b45"
+  },
+  "coverage": {
+    "url": "/api/coverage",
+    "elapsed_seconds": 0.0005067090023658238,
+    "body": {
+      "certified_tenures": 2227,
+      "complete": false,
+      "excluded_tenures": {
+        "cross-checked": 10176,
+        "inferred": 13445,
+        "unresolved": 3446
+      },
+      "players_without_certified_tenure": 3537,
+      "warning": "Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Only tenures with both dated transaction boundaries create edges; inferred, cross-checked and unresolved brackets are excluded. A degree is exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players."
+    }
+  },
+  "connection": {
+    "url": "/api/connection?from=acyqu01&to=bogutan01",
+    "elapsed_seconds": 0.00035516699790605344,
+    "body": {
+      "coverage": {
+        "certified_tenures": 2227,
+        "complete": false,
+        "excluded_tenures": {
+          "cross-checked": 10176,
+          "inferred": 13445,
+          "unresolved": 3446
+        },
+        "players_without_certified_tenure": 3537,
+        "warning": "Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Only tenures with both dated transaction boundaries create edges; inferred, cross-checked and unresolved brackets are excluded. A degree is exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players."
+      },
+      "degree": 1,
+      "links": [
+        {
+          "from": "acyqu01",
+          "overlap_days": 121,
+          "team": "MAVERICKS",
+          "to": "bogutan01"
+        }
+      ],
+      "path": [
+        "acyqu01",
+        "bogutan01"
+      ],
+      "result": "connected"
+    }
+  },
+  "evidence": {
+    "url": "/api/edges/acyqu01",
+    "elapsed_seconds": 0.0009887919986795168,
+    "body": {
+      "edges": [
+        {
+          "a": "acyqu01",
+          "b": "bogutan01",
+          "evidence": [
+            {
+              "overlap_days": 121,
+              "overlaps": [
+                {
+                  "end_day": 25889,
+                  "records": [
+                    {
+                      "arrival_days": "25768",
+                      "departure_days": "25889",
+                      "end_anchored": 1,
+                      "end_day": 25889,
+                      "evidence_class": "directly-evidenced",
+                      "membership_source": "S2",
+                      "notes": "",
+                      "player": "acyqu01",
+                      "record": "t4/tenures.csv:120",
+                      "season": 2017,
+                      "source_manifest": "docs/data/source-manifest.md (S1 v238; S2 v56; BBR request ledger)",
+                      "start_anchored": 1,
+                      "start_day": 25768,
+                      "team": "MAVERICKS"
+                    },
+                    {
+                      "arrival_days": "25755",
+                      "departure_days": "25986",
+                      "end_anchored": 1,
+                      "end_day": 25986,
+                      "evidence_class": "directly-evidenced",
+                      "membership_source": "S2",
+                      "notes": "",
+                      "player": "bogutan01",
+                      "record": "t4/tenures.csv:2563",
+                      "season": 2017,
+                      "source_manifest": "docs/data/source-manifest.md (S1 v238; S2 v56; BBR request ledger)",
+                      "start_anchored": 1,
+                      "start_day": 25755,
+                      "team": "MAVERICKS"
+                    }
+                  ],
+                  "start_day": 25768
+                }
+              ],
+              "records": [
+                {
+                  "arrival_days": "25768",
+                  "departure_days": "25889",
+                  "end_anchored": 1,
+                  "end_day": 25889,
+                  "evidence_class": "directly-evidenced",
+                  "membership_source": "S2",
+                  "notes": "",
+                  "player": "acyqu01",
+                  "record": "t4/tenures.csv:120",
+                  "season": 2017,
+                  "source_manifest": "docs/data/source-manifest.md (S1 v238; S2 v56; BBR request ledger)",
+                  "start_anchored": 1,
+                  "start_day": 25768,
+                  "team": "MAVERICKS"
+                },
+                {
+                  "arrival_days": "25755",
+                  "departure_days": "25986",
+                  "end_anchored": 1,
+                  "end_day": 25986,
+                  "evidence_class": "directly-evidenced",
+                  "membership_source": "S2",
+                  "notes": "",
+                  "player": "bogutan01",
+                  "record": "t4/tenures.csv:2563",
+                  "season": 2017,
+                  "source_manifest": "docs/data/source-manifest.md (S1 v238; S2 v56; BBR request ledger)",
+                  "start_anchored": 1,
+                  "start_day": 25755,
+                  "team": "MAVERICKS"
+                }
+              ],
+              "team": "MAVERICKS"
+            }
+          ],
+          "overlap_days": 121
+        }
+      ]
+    },
+    "publication_scope": "Acy/Bogut edge from actual Acy edge response; other edges omitted for compactness."
+  },
+  "postseason_only_coverage": {
+    "url": "/api/coverage/nba:1630492",
+    "elapsed_seconds": 0.0002607500027806964,
+    "body": {
+      "complete": false,
+      "coverage": {
+        "certified_tenures": 2227,
+        "complete": false,
+        "excluded_tenures": {
+          "cross-checked": 10176,
+          "inferred": 13445,
+          "unresolved": 3446
+        },
+        "players_without_certified_tenure": 3537,
+        "warning": "Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Only tenures with both dated transaction boundaries create edges; inferred, cross-checked and unresolved brackets are excluded. A degree is exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players."
+      },
+      "player": "nba:1630492",
+      "records": [
+        {
+          "end_day": 27894,
+          "evidence_class": "inferred",
+          "player": "nba:1630492",
+          "reasons": "",
+          "record": "t4/tenures.csv:19110",
+          "season": 2022,
+          "start_day": 27685,
+          "team": "BUCKS"
+        }
+      ]
+    }
+  },
+  "semantic_status": {
+    "url": "/api/semantic-status",
+    "elapsed_seconds": 0.00021674999879905954,
+    "body": {
+      "available": false,
+      "reason": "unconfigured"
+    }
+  },
+  "machine": {
+    "os": "Darwin",
+    "release": "25.4.0",
+    "architecture": "arm64",
+    "python": "3.14.7",
+    "qualification": "Single localhost debug-server samples on this machine; cold_stats is cold only when run first after server startup. Not a portable latency guarantee."
+  },
+  "served_assets": {
+    "wasm_sha256": "9eabf801550e443c2c6b3fa6617747a5a4f18b6ac5d251b35b27da7eb51e7bad",
+    "wasm_bytes": 239637,
+    "home_bytes": 500194,
+    "home_semantic_unavailable_visible": true
+  }
+}
