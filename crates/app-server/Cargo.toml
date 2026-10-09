@@ -22,6 +22,7 @@ unicode-normalization = "0.1.25"
 tower.workspace = true
 http-body-util.workspace = true
 env_logger.workspace = true
+sha2 = "0.10.9"
 
 [lints.rust]
 unexpected_cfgs = { level = "allow", check-cfg = ["cfg(test_capture)"] }
