@@ -20,6 +20,14 @@ tokio = { workspace = true, optional = true }
 default = []
 http-transport = ["dep:http", "dep:log", "dep:reqwest", "dep:tokio"]
 
+[dev-dependencies]
+axum.workspace = true
+tokio.workspace = true
+
+[[test]]
+name = "transport_fallback"
+required-features = ["http-transport"]
+
 [[test]]
 name = "live_smoke"
 required-features = ["http-transport"]

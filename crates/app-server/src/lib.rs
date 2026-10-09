@@ -24,6 +24,12 @@ pub use jev::JevHandle;
 #[cfg(test_capture)]
 pub use jev::test_log_capture;
 
+/// Installs the capture logger in test-capture builds (a no-op otherwise).
+/// The capture test calls this itself: test binaries install no logger, so
+/// the proof would be vacuous without an explicit install.
+#[cfg(test_capture)]
+pub use jev::install_capture_logger;
+
 /// App state shared by all routes: the built teammate graph plus the Jev
 /// client handle (credentials live only inside the handle's client).
 #[derive(Clone)]
