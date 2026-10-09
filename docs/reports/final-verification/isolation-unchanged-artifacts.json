@@ -1,0 +1,26 @@
+{
+  "docs/reports/t4/tenures.csv": {
+    "before_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+    "after_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04"
+  },
+  "docs/evaluation/measurements.json": {
+    "before_sha256": "6b827b64c0d0efd7af8d92c6a2c5e1ef161891b3b1e689b8cce4f04abe3a42a3",
+    "after_sha256": "6b827b64c0d0efd7af8d92c6a2c5e1ef161891b3b1e689b8cce4f04abe3a42a3"
+  },
+  "docs/evaluation/policy.json": {
+    "before_sha256": "ea5b96b600da161f103ae83ce13a19dcbeeb4366e3feb3405442c6487cd68ee9",
+    "after_sha256": "ea5b96b600da161f103ae83ce13a19dcbeeb4366e3feb3405442c6487cd68ee9"
+  },
+  "docs/evaluation/run-manifest.json": {
+    "before_sha256": "268759099bbb33f824582c7b830bed508f9431095cf0325f3b378c2a2027c71e",
+    "after_sha256": "268759099bbb33f824582c7b830bed508f9431095cf0325f3b378c2a2027c71e"
+  },
+  "docs/evaluation/summary.json": {
+    "before_sha256": "28d7f70d77e93b744d4dcf7a003b13b8b06c41f9cb963ad6b53269161c8645e3",
+    "after_sha256": "28d7f70d77e93b744d4dcf7a003b13b8b06c41f9cb963ad6b53269161c8645e3"
+  },
+  "docs/evaluation/cases.json": {
+    "before_sha256": "0b43174c2d3359173054e783a7c560606e4df695604ae06edf95116db9c6d9a3",
+    "after_sha256": "0b43174c2d3359173054e783a7c560606e4df695604ae06edf95116db9c6d9a3"
+  }
+}

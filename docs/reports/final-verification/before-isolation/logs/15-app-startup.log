@@ -1,0 +1,6 @@
+    Finished `release` profile [optimized] target(s) in 0.04s
+    Blocking waiting for file lock on build directory
+   Compiling app-server v0.1.0 (<checkout>/crates/app-server)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 6.37s
+     Running `target/debug/app-server`
+7-degrees listening on http://127.0.0.1:49333

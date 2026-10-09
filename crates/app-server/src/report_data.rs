@@ -89,10 +89,21 @@ struct TenureRow {
 }
 
 pub fn load(root: &Path) -> Result<(TeammateGraph, ReportMetadata), String> {
+    let players =
+        std::fs::File::open(root.join("t3/player-universe.csv")).map_err(|e| e.to_string())?;
+    let tenures = std::fs::File::open(root.join("t4/tenures.csv")).map_err(|e| e.to_string())?;
+    load_from_readers(players, tenures)
+}
+
+/// Import canonical records with the same strict evidence rules for every
+/// reader. No historical policy, acceptance flag or transformation lives here.
+pub fn load_from_readers(
+    players: impl std::io::Read,
+    tenures: impl std::io::Read,
+) -> Result<(TeammateGraph, ReportMetadata), String> {
     let mut roster = RosterData::default();
     let mut metadata = ReportMetadata::default();
-    let mut players =
-        csv::Reader::from_path(root.join("t3/player-universe.csv")).map_err(|e| e.to_string())?;
+    let mut players = csv::Reader::from_reader(players);
     for row in players.deserialize::<PlayerRow>() {
         let row = row.map_err(|e| e.to_string())?;
         if row.aba_only == "Y" {
@@ -127,8 +138,7 @@ pub fn load(root: &Path) -> Result<(TeammateGraph, ReportMetadata), String> {
         );
     }
     let mut teams = BTreeSet::new();
-    let mut tenures =
-        csv::Reader::from_path(root.join("t4/tenures.csv")).map_err(|e| e.to_string())?;
+    let mut tenures = csv::Reader::from_reader(tenures);
     for (index, row) in tenures.deserialize::<TenureRow>().enumerate() {
         let row = row.map_err(|e| e.to_string())?;
         if !matches!(row.lg.as_str(), "NBA" | "BAA") {

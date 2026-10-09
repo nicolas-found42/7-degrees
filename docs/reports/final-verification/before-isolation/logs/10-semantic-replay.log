@@ -1,4 +1,4 @@
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.60s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.07s
      Running `target/debug/semantic-eval --replay`
 Validated 44 labeled cases with explicit disjoint case IDs and splits
 Offline historical replay: hash-verified b107788 snapshot; superseded repeat-signing continuity policy reproduced only for recorded measurement comparability.

@@ -248,3 +248,35 @@ async fn legacy_repeat_signing_continuity_note_blocks_a_runtime_edge() {
     );
     assert_eq!(get(app, "/api/coverage").await["certified_tenures"], 3);
 }
+
+#[test]
+fn in_memory_and_file_import_share_strict_uncertainty_rules() {
+    use graph_core::Connection;
+    let root = snapshot();
+    let path = root.join("t4/tenures.csv");
+    let tenures = std::fs::read_to_string(&path).unwrap().replace(
+        ",1,5,1,1,,1,5",
+        ",1,5,1,1,repeat-signing-continues-open-stint,1,5",
+    );
+    std::fs::write(&path, &tenures).unwrap();
+    let players = std::fs::read(root.join("t3/player-universe.csv")).unwrap();
+    let (memory_graph, memory_report) =
+        app_server::report_data::load_from_readers(players.as_slice(), tenures.as_bytes()).unwrap();
+    let (file_graph, file_report) = app_server::report_data::load(&root).unwrap();
+    for (graph, report) in [(memory_graph, memory_report), (file_graph, file_report)] {
+        assert!(matches!(
+            graph.shortest_chain("a", "b").unwrap(),
+            Connection::Disconnected
+        ));
+        assert!(matches!(
+            graph.shortest_chain("b", "c").unwrap(),
+            Connection::Connected(_)
+        ));
+        assert_eq!(report.coverage.certified_tenures, 3);
+        assert!(
+            report.gaps["a"][0]
+                .reasons
+                .contains("repeat-signing-continues-open-stint")
+        );
+    }
+}

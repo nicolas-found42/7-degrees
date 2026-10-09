@@ -39,8 +39,8 @@
     "warning": "Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Only tenures with both dated transaction boundaries create edges; inferred, cross-checked and unresolved brackets are excluded. A degree is exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players."
   },
   "timing_seconds": {
-    "cold_stats": 0.5047971669991966,
-    "cached_stats": 0.0006861669971840456
+    "cold_stats": 1.2102782079964527,
+    "cached_stats": 0.0013170409947633743
   },
   "real_connection": {
     "coverage": {
