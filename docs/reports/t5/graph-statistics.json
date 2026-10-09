@@ -1,9 +1,9 @@
 {
   "statistics": {
-    "components": 4155,
+    "components": 4168,
     "diameter": 20,
     "histogram": {
-      "1": 1539,
+      "1": 1517,
       "10": 4635,
       "11": 3891,
       "12": 3002,
@@ -14,44 +14,44 @@
       "17": 343,
       "18": 195,
       "19": 88,
-      "2": 2012,
+      "2": 1989,
       "20": 40,
-      "3": 2768,
-      "4": 3938,
-      "5": 5040,
-      "6": 6181,
-      "7": 6556,
-      "8": 6242,
+      "3": 2752,
+      "4": 3916,
+      "5": 5028,
+      "6": 6175,
+      "7": 6547,
+      "8": 6240,
       "9": 5535
     },
     "players": 5106,
-    "unreachable_pairs": 12975770
+    "unreachable_pairs": 12975882
   },
   "coverage": {
-    "certified_tenures": 2245,
+    "certified_tenures": 2227,
     "complete": false,
     "excluded_tenures": {
-      "cross-checked": 10396,
-      "inferred": 13204,
-      "unresolved": 3450
+      "cross-checked": 10176,
+      "inferred": 13445,
+      "unresolved": 3446
     },
-    "players_without_certified_tenure": 3522,
+    "players_without_certified_tenure": 3537,
     "warning": "Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Only tenures with both dated transaction boundaries create edges; inferred, cross-checked and unresolved brackets are excluded. A degree is exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players."
   },
   "timing_seconds": {
-    "cold_stats": 0.5211872500003665,
-    "cached_stats": 0.0006173340007080697
+    "cold_stats": 0.28371579099984956,
+    "cached_stats": 0.0004176660004304722
   },
   "real_connection": {
     "coverage": {
-      "certified_tenures": 2245,
+      "certified_tenures": 2227,
       "complete": false,
       "excluded_tenures": {
-        "cross-checked": 10396,
-        "inferred": 13204,
-        "unresolved": 3450
+        "cross-checked": 10176,
+        "inferred": 13445,
+        "unresolved": 3446
       },
-      "players_without_certified_tenure": 3522,
+      "players_without_certified_tenure": 3537,
       "warning": "Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Only tenures with both dated transaction boundaries create edges; inferred, cross-checked and unresolved brackets are excluded. A degree is exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players."
     },
     "degree": 1,
@@ -149,14 +149,14 @@
   "postseason_only_coverage": {
     "complete": false,
     "coverage": {
-      "certified_tenures": 2245,
+      "certified_tenures": 2227,
       "complete": false,
       "excluded_tenures": {
-        "cross-checked": 10396,
-        "inferred": 13204,
-        "unresolved": 3450
+        "cross-checked": 10176,
+        "inferred": 13445,
+        "unresolved": 3446
       },
-      "players_without_certified_tenure": 3522,
+      "players_without_certified_tenure": 3537,
       "warning": "Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Only tenures with both dated transaction boundaries create edges; inferred, cross-checked and unresolved brackets are excluded. A degree is exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players."
     },
     "player": "nba:1630492",
@@ -175,6 +175,6 @@
   },
   "input_sha256": {
     "docs/reports/t3/player-universe.csv": "81031c7e3cf95845060119a3347d3cf37ec60c6a24b0ced9978fb7df2e7e651d",
-    "docs/reports/t4/tenures.csv": "977380b0c861c5e02a648a0425545ee41fde6b17bf46b8e577cc0cae605e50a8"
+    "docs/reports/t4/tenures.csv": "5dbff2a790e87941b6bb9cd9c05c6f91414ae0f47ae1f2992d8d3c230a4fc24e"
   }
 }

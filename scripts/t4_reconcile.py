@@ -361,8 +361,9 @@ def load_transaction_legs(data_dir, windows=None):
     src_pkl = os.path.join(data_dir, "t4", "transactions-parsed.pkl")
     with open(src_pkl, "rb") as f:
         blob = pickle.load(f)
-    from t4_fetch_bbr import event_scope
+    from t4_fetch_bbr import apply_draft_roster_guard, event_scope
     parse_rows = blob["rows"]
+    apply_draft_roster_guard(data_dir, parse_rows)
     era_idx = franchise_era_index()
     legs, fuzzy_events = [], []
     diag = Counter()

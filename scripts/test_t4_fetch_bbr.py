@@ -28,6 +28,100 @@ class TestRequestLedgerPrecision(unittest.TestCase):
 
 
 class TestTransactionRosterScope(unittest.TestCase):
+    def load_with_draft_history(self, paragraphs, draft_rows, membership_rows=()):
+        from t4_reconcile import load_transaction_legs
+        rows = []
+        for date_iso, paragraph in paragraphs:
+            row = self.parse_paragraph(paragraph)
+            row['date_iso'] = date_iso
+            row['page_window_from'], row['page_window_to'] = '2014-01-01', '2018-12-31'
+            row['legs_json'] = json.dumps(row.pop('legs'))
+            rows.append(row)
+        with tempfile.TemporaryDirectory() as directory:
+            os.makedirs(os.path.join(directory, 't4'))
+            os.makedirs(os.path.join(directory, 'sumitrodatta'))
+            with open(os.path.join(directory, 't4', 'transactions-parsed.pkl'), 'wb') as f:
+                pickle.dump({'rows': rows}, f)
+            with open(os.path.join(directory, 'sumitrodatta', 'Draft Pick History.csv'), 'w') as f:
+                f.write('season,lg,player_id\n' + ''.join('%s,NBA,%s\n' % (y,p) for y,p in draft_rows))
+            with open(os.path.join(directory, 'sumitrodatta', 'Player Season Info.csv'), 'w') as f:
+                f.write('season,lg,player_id,experience\n' + ''.join('%s,NBA,%s,%s\n' % r for r in membership_rows))
+            legs, _, _, _ = load_transaction_legs(directory)
+        return legs
+
+    def test_draft_history_blocks_oubre_trade_before_independent_signing(self):
+        legs = self.load_with_draft_history([
+            ('2015-06-25', 'The <a data-attr-from="ATL">Atlanta Hawks</a> traded '
+             '<a href="/players/o/oubreke01.html">Kelly Oubre Jr.</a> to the '
+             '<a data-attr-to="WAS">Washington Wizards</a>.'),
+            ('2015-07-09', 'The <a data-attr-to="WAS">Washington Wizards</a> signed '
+             '<a href="/players/o/oubreke01.html">Kelly Oubre Jr.</a> to a multi-year contract.')],
+            [(2015, 'oubreke01')], [(2016, 'oubreke01', 1)])
+        self.assertEqual([(l['event_class'], l['date_iso'], l['arrive']) for l in legs],
+                         [('sign', '2015-07-09', 'WIZARDS')])
+
+    def test_tyus_jones_draft_transfer_is_not_an_arrival_until_july_signing(self):
+        legs = self.load_with_draft_history([
+            ('2015-06-25', 'The <a data-attr-from="CLE">Cleveland Cavaliers</a> traded '
+             '<a href="/players/j/jonesty01.html">Tyus Jones</a> to the '
+             '<a data-attr-to="MIN">Minnesota Timberwolves</a> for a draft pick.'),
+            ('2015-07-07', 'The <a data-attr-to="MIN">Minnesota Timberwolves</a> signed '
+             '<a href="/players/j/jonesty01.html">Tyus Jones</a> to a multi-year contract.')],
+            [(2015, 'jonesty01')], [(2016, 'jonesty01', 1)])
+        self.assertEqual([(l['event_class'], l['date_iso']) for l in legs], [('sign', '2015-07-07')])
+
+    def test_russ_smith_return_piece_requires_his_separate_contract_signing(self):
+        legs = self.load_with_draft_history([
+            ('2014-06-27', 'The <a data-attr-from="NOP">New Orleans Pelicans</a> traded '
+             '<a href="/players/j/jackspi01.html">Pierre Jackson</a> to the '
+             '<a data-attr-to="PHI">Philadelphia 76ers</a> for '
+             '<a href="/players/s/smithru01.html">Russ Smith</a>.'),
+            ('2014-07-15', 'The <a data-attr-to="NOP">New Orleans Pelicans</a> signed '
+             '<a href="/players/s/smithru01.html">Russ Smith</a> to a multi-year contract.')],
+            [(2014, 'smithru01')], [(2015, 'smithru01', 1)])
+        smith = [l for l in legs if l['slug'] == 'smithru01']
+        self.assertEqual([(l['event_class'], l['date_iso']) for l in smith], [('sign', '2014-07-15')])
+
+    def test_thomas_bryant_draft_transfer_does_not_supply_june_arrival(self):
+        legs = self.load_with_draft_history([
+            ('2017-06-22', 'The <a data-attr-from="LAL">Los Angeles Lakers</a> traded '
+             '<a href="/players/b/bradlto01.html">Tony Bradley</a> to the '
+             '<a data-attr-to="UTA">Utah Jazz</a> for '
+             '<a href="/players/b/bryanth01.html">Thomas Bryant</a> and '
+             '<a href="/players/h/hartjo01.html">Josh Hart</a>.'),
+            ('2017-07-30', 'The <a data-attr-to="LAL">Los Angeles Lakers</a> signed '
+             '<a href="/players/b/bryanth01.html">Thomas Bryant</a> to a multi-year contract.')],
+            [(2017, 'bryanth01')], [(2018, 'bryanth01', 1)])
+        bryant = [l for l in legs if l['slug'] == 'bryanth01']
+        self.assertEqual([(l['event_class'], l['date_iso']) for l in bryant], [('sign', '2017-07-30')])
+
+    def test_veteran_hardaway_trade_survives_mixed_rookie_trade(self):
+        legs = self.load_with_draft_history([
+            ('2015-06-25', 'The <a data-attr-from="ATL">Atlanta Hawks</a> traded '
+             '<a href="/players/o/oubreke01.html">Kelly Oubre Jr.</a> to the '
+             '<a data-attr-to="WAS">Washington Wizards</a>; the '
+             '<a data-attr-from="NYK">New York Knicks</a> traded '
+             '<a href="/players/h/hardati02.html">Tim Hardaway Jr.</a> to the '
+             '<a data-attr-to="ATL">Atlanta Hawks</a>.')],
+            [(2015, 'oubreke01'), (2013, 'hardati02')],
+            [(2016, 'oubreke01', 1), (2014, 'hardati02', 1)])
+        self.assertEqual([(l['slug'], l['depart'], l['arrive']) for l in legs],
+                         [('hardati02', 'KNICKS', 'HAWKS')])
+
+    def test_established_rookie_contract_transfers_but_waived_contract_does_not(self):
+        for waived in (False, True):
+            with self.subTest(waived=waived):
+                events = [('2015-07-01', 'The <a data-attr-to="ATL">Atlanta Hawks</a> signed '
+                           '<a href="/players/o/oubreke01.html">Kelly Oubre Jr.</a>.')]
+                if waived:
+                    events.append(('2015-07-02', 'The <a data-attr-from="ATL">Atlanta Hawks</a> waived '
+                                   '<a href="/players/o/oubreke01.html">Kelly Oubre Jr.</a>.'))
+                events.append(('2015-07-03', 'The <a data-attr-from="ATL">Atlanta Hawks</a> traded '
+                               '<a href="/players/o/oubreke01.html">Kelly Oubre Jr.</a> to the '
+                               '<a data-attr-to="WAS">Washington Wizards</a>.'))
+                legs = self.load_with_draft_history(events, [(2015, 'oubreke01')], [(2016, 'oubreke01', 1)])
+                self.assertEqual(any(l['event_class']=='trade' for l in legs), not waived)
+
     def parse_paragraph(self, paragraph):
         html = ('Transactions listed are from July 1, 2010 to June 30, 2011.'
                 '<span id="transactions_link"></span><ul><li>'

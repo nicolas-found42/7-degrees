@@ -5,7 +5,7 @@ spec: `docs/specs/nba-teammate-degrees.md` · glossary: `GLOSSARY.md` ·
 inputs: T3 artifacts (`docs/reports/t3/`), S1 `game` season windows,
 cached Basketball-Reference transaction pages (this report §4).
 
-Report generated 2026-10-09 20:53 UTC by `scripts/t4_reconcile.py` + `scripts/t4_report.py`
+Report generated 2026-10-09 21:05 UTC by `scripts/t4_reconcile.py` + `scripts/t4_report.py`
 (fetch pass: `scripts/t4_fetch_bbr.py`; tests: `scripts/test_t4_core.py`,
 `scripts/test_t4_reconcile.py`, `scripts/test_t4_fetch_bbr.py`). Artifacts retained under `docs/reports/t4/`.
 
@@ -20,13 +20,13 @@ Report generated 2026-10-09 20:53 UTC by `scripts/t4_reconcile.py` + `scripts/t4
 | question | result |
 |---|---|
 | membership rows reconstructed (universe players, NBA/BAA) | 28,837 rows (S2 28,826 + S1-only supplements 11) |
-| tenure records (incl. multi-stint and unresolved membership rows) | 29,295 records from 28,837 membership rows; 26,568 have interval bounds, 2,727 have no constructible interval |
-| season-window coverage on tenure records | 26,214 with a season window; 3,081 without one |
-| directly evidenced tenures (both bounds from dated transactions) | 2,245 (7.7%) |
-| cross-checked (transaction + independent season-window agreement) | 10,396 (35.5%) |
-| inferred (season-window bracket only) | 13,204 (45.1%) |
-| unresolved (flagged, not invented) | 3,450 (11.8%) |
-| distinct player pairs with a positive tenure overlap (potential edges) | 139,593 (44,342 both-evidenced / 89,883 involves-inferred / 5,368 involves-unresolved) |
+| tenure records (incl. multi-stint and unresolved membership rows) | 29,294 records from 28,837 membership rows; 26,572 have interval bounds, 2,722 have no constructible interval |
+| season-window coverage on tenure records | 26,218 with a season window; 3,076 without one |
+| directly evidenced tenures (both bounds from dated transactions) | 2,227 (7.6%) |
+| cross-checked (transaction + independent season-window agreement) | 10,176 (34.7%) |
+| inferred (season-window bracket only) | 13,445 (45.9%) |
+| unresolved (flagged, not invented) | 3,446 (11.8%) |
+| distinct player pairs with a positive tenure overlap (potential edges) | 139,736 (42,683 both-evidenced / 91,642 involves-inferred / 5,411 involves-unresolved) |
 | 1946-1950 BAA source coverage gap | explicitly carried (§6; BAA-era evidence is structurally thinner) |
 
 ## 1. What a tenure is here
@@ -88,6 +88,15 @@ For each (universe player, canonical franchise, season) membership row:
    Jerian Grant's June 25, 2015 draft transfer is retained under that scope;
    his independent July 29 signing establishes his Knicks arrival. Veteran
    trade pieces in the same paragraph retain their eligible roster legs.
+   **Draft-year contract guard:** pinned S2 draft history and NBA/BAA membership
+   identify new entrants. An ordinary named draft-year trade requires a strictly
+   earlier dated active-contract action for its outgoing team; otherwise its
+   roster status is unresolved and it supplies no occupancy boundary. Prior
+   NBA/BAA season context preserves veterans and ordinary later-career trades.
+   Missing a cached signing is uncertainty, never proof that no contract existed.
+   Separate actual signings establish arrival. `draft-roster-status-review.csv`
+   retains the source words, teams, date and uncertainty reason; source-file
+   hashes and this pass's census are in the fetch summary.
    **Cross-season example:** Shareef Abdur-Rahim's NBA_2001 VAN→ATL move
    on 2001-06-27 anchors the 2002 ATL membership at 2001-06-27 (cross-checked; [2001-06-27, 2002-04-18)).
 3. **Stint walking** — arrivals/departures in day order produce stints;
@@ -115,20 +124,20 @@ For each (universe player, canonical franchise, season) membership row:
 
 | evidence class | tenures | share | meaning |
 |---|---|---|---|
-| directly-evidenced | 2,245 | 7.7% | both bounds anchored by dated transaction rows (season-window agreement recorded alongside when present) |
-| cross-checked | 10,396 | 35.5% | one transaction-anchored bound + independent season-window agreement (two sources corroborate the bounds) |
-| inferred | 13,204 | 45.1% | season-window bracket only (membership season + S1 games) |
-| unresolved | 3,450 | 11.8% | flagged: conflicts / fuzzy / same-day ordering / ambiguous source evidence — needs review |
+| directly-evidenced | 2,227 | 7.6% | both bounds anchored by dated transaction rows (season-window agreement recorded alongside when present) |
+| cross-checked | 10,176 | 34.7% | one transaction-anchored bound + independent season-window agreement (two sources corroborate the bounds) |
+| inferred | 13,445 | 45.9% | season-window bracket only (membership season + S1 games) |
+| unresolved | 3,446 | 11.8% | flagged: conflicts / fuzzy / same-day ordering / ambiguous source evidence — needs review |
 
 **Per era** (era boundaries per spec Source validation):
 
 | era | tenures | directly-evidenced | cross-checked | inferred | unresolved |
 |---|---|---|---|---|---|
 | BAA 1946-49 | 512 | 3 | 76 | 395 | 38 |
-| 1950-66 | 2,187 | 23 | 326 | 1,572 | 266 |
-| 1967-80 | 3,431 | 129 | 805 | 1,935 | 562 |
-| 1981-99 | 7,835 | 642 | 2,898 | 4,134 | 161 |
-| 2000-2025/26 | 15,330 | 1,448 | 6,291 | 5,168 | 2,423 |
+| 1950-66 | 2,187 | 21 | 307 | 1,593 | 266 |
+| 1967-80 | 3,431 | 126 | 796 | 1,947 | 562 |
+| 1981-99 | 7,834 | 634 | 2,817 | 4,222 | 161 |
+| 2000-2025/26 | 15,330 | 1,443 | 6,180 | 5,288 | 2,419 |
 
 BAA-era tenures are mostly **inferred**: S1 `game` windows exist,
 but BBR 1946-50 transaction rows are sparse and partly fuzzy-dated;
@@ -169,15 +178,17 @@ Numbers below separate this pass from the ledger's lifetime record.
 | transaction rows parsed from cache | 30,327 |
 | rows with precise dates | 30,250 |
 | rows fuzzy/undated (kept, flagged; never guessed) | 77 |
-| dated movement legs extracted | 25,137 |
+| dated movement legs extracted | 24,470 |
 | source legs excluded: non-roster scope | 9,151 |
-| source legs excluded: unresolved action scope | 495 |
-| legs usable as interval anchors (no blocking flags) | 24,994 |
-| precise-dated legs re-bucketed from a different page season | 58 |
+| source legs excluded: unresolved action scope | 1,162 |
+| draft-year trade legs reviewed by pinned contract guard | 667 |
+| players reviewed by pinned draft-year contract guard | 611 |
+| legs usable as interval anchors (no blocking flags) | 24,329 |
+| precise-dated legs re-bucketed from a different page season | 38 |
 | legs excluded: ambiguous or same-bucket date outside page window | 0 |
-| legs flagged unusable team/shape (row retained; overlaps with other flags) | 143 |
+| legs flagged unusable team/shape (row retained; overlaps with other flags) | 141 |
 
-**Independent count conflicts:** 47 player/team/season groups conflict with
+**Independent count conflicts:** 46 player/team/season groups conflict with
 the games available inside their recorded bounds; 1,503 team-seasons have a complete
 independent regular-season schedule matching S2. These conflicts remain unresolved;
 the audit supplies no replacement boundaries. Connie Simmons's 1949 Baltimore
@@ -186,7 +197,7 @@ complete 60-game S1 schedule permits only 45 within that interval.
 Lew Hitch's 1954 Milwaukee row retains the December 21 exit: 72 appearances
 cannot fit 24 known games before that exclusive exit even after allowing
 the departure-day game and one missing game inside the interval (upper bound 26).
-A further 31 groups fit only by including departure-day games; their same-day
+A further 30 groups fit only by including departure-day games; their same-day
 ordering remains unresolved, separately from confirmed count conflicts.
 
 **Season-bucket guard (BBR page-repetition leak):** BBR repeats major
@@ -201,7 +212,7 @@ flagged, and excluded as ambiguous:
 
 | season/window validation | legs |
 |---|---|
-| precise date re-bucketed to its own season (usable; duplicate anchors collapse) | 58 |
+| precise date re-bucketed to its own season (usable; duplicate anchors collapse) | 38 |
 | page season confirmed by independent S1 game window | 12 |
 | ambiguous or contradictory page window (excluded from anchor use) | 0 |
 
@@ -237,23 +248,23 @@ requests and just re-parses the cached pages.
 
 ### 5a. Flags for review (unresolved, never invented)
 
-`docs/reports/t4/unresolved-flags.csv` — all 3450 flagged rows:
+`docs/reports/t4/unresolved-flags.csv` — all 3446 flagged rows:
 
 | flag reason | rows |
 |---|---|
-| no-season-window | 1272 |
-| no-dated-evidence | 1167 |
-| open-stint-without-window | 1109 |
-| departure-after-closed-stint | 444 |
-| stint-entirely-outside-team-season-window | 295 |
-| repeat-signing-continues-open-stint | 214 |
+| no-season-window | 1271 |
+| no-dated-evidence | 1169 |
+| open-stint-without-window | 1108 |
+| departure-after-closed-stint | 445 |
+| stint-entirely-outside-team-season-window | 292 |
+| repeat-signing-continues-open-stint | 200 |
 | flagged-transaction-legs | 148 |
-| same-day-arrival-to-multiple-franchises | 90 |
-| multi-team-season | 72 |
+| same-day-arrival-to-multiple-franchises | 83 |
+| multi-team-season | 77 |
 | fuzzy-dated-rows-bear-on-this-tenure | 57 |
-| appearance-count-conflict | 50 |
+| appearance-count-conflict | 49 |
 | same-day-arrival-and-departure | 35 |
-| same-day-game-order-unresolved | 31 |
+| same-day-game-order-unresolved | 30 |
 | interval-construction-failed | 4 |
 | arrival-after-window-end | 4 |
 
@@ -284,7 +295,7 @@ Concretely:
 - 512 BAA-era tenure records; 395 inferred (season-window only),
   79 transaction-evidenced (3 directly-evidenced + 76 cross-checked)
   — the dated transaction layer covers only a fraction of BAA movement;
-- 156 dated movement legs parsed from the 1946-50 pages (BAA_1947..BAA_1949 +
+- 151 dated movement legs parsed from the 1946-50 pages (BAA_1947..BAA_1949 +
   NBA_1950); 17 of the pages' 199 transaction rows there carry fuzzy/undated
   ("February ?, 1947" is a real row shape);
 - all 1946-1950 franchise identities still resolve canonically (T3 crosswalk),
@@ -296,12 +307,12 @@ Concretely:
 
 | item | count |
 |---|---|
-| tenure intervals with constructed bounds | 26,568 |
-| membership/franchise-season tenure records (incl. unresolved no-interval rows) | 29,295 |
-| distinct player pairs with positive tenure overlap (potential teammate edges, pre-dedup across teams) | 139,593 |
-| …both tenures transaction/season-agreement evidenced | 44,342 |
-| …at least one inferred tenure | 89,883 |
-| …at least one unresolved tenure (edge blocked until resolved) | 5,368 |
+| tenure intervals with constructed bounds | 26,572 |
+| membership/franchise-season tenure records (incl. unresolved no-interval rows) | 29,294 |
+| distinct player pairs with positive tenure overlap (potential teammate edges, pre-dedup across teams) | 139,736 |
+| …both tenures transaction/season-agreement evidenced | 42,683 |
+| …at least one inferred tenure | 91,642 |
+| …at least one unresolved tenure (edge blocked until resolved) | 5,411 |
 | membership duplicates/summary rows excluded (2TM/3TM/TOT) | 2,875 |
 
 Pair counts are *upper bounds on edges*: the graph build deduplicates
@@ -329,7 +340,7 @@ cache pages and intermediate state are local under `data/cache/bbr/` and
 
 ## 9. Open items for review (not silently resolved)
 
-1. 3,450 tenure rows remain unresolved with reasons retained in
+1. 3,446 tenure rows remain unresolved with reasons retained in
    `unresolved-flags.csv`; each flag names the exact ambiguity class.
 2. Fuzzy/undated BBR rows (77) are retained (parsed CSV `row_flags`, fuzzy_events)
    and never guessed to dates; a manual pass could resolve month-precision rows
