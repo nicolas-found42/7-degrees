@@ -38,23 +38,23 @@ from a successful chain; its degree is exact within the evidenced snapshot.
 
 ## Real run
 
-Actual localhost API and HTML checks, 2026-10-09. Machine-readable output,
+Actual localhost API and HTML checks, 2026-10-09, refreshed after issue #6 roster-scope correction. G-League movement, draft rights/pick references and contract conversions supply no active-roster boundaries. The T4 appearance review retains source count conflicts and date-only game ordering as unresolved. Machine-readable output,
 input hashes and full histogram: `t5/graph-statistics.json`.
 
 | measure | result |
 |---|---:|
 | canonical nodes | 5,106 |
-| admitted two-boundary tenure rows | 3,565 |
-| excluded cross-checked rows | 10,713 |
-| excluded inferred rows | 12,386 |
-| excluded unresolved rows | 5,310 |
-| nodes without admitted tenure | 3,235 |
-| undirected certified teammate edges | 2,512 |
-| connected components (including isolates) | 3,813 |
-| maximum finite degree in this evidenced graph | 27 |
-| unreachable unordered pairs | 12,732,753 |
-| cold exact statistics HTTP call (debug build) | 0.655 s |
-| cached statistics HTTP call | 0.000739 s |
+| admitted two-boundary tenure rows | 2,245 |
+| excluded cross-checked rows | 10,396 |
+| excluded inferred rows | 13,204 |
+| excluded unresolved rows | 3,450 |
+| nodes without admitted tenure | 3,522 |
+| undirected certified teammate edges | 1,539 |
+| connected components (including isolates) | 4,155 |
+| maximum finite degree in this evidenced graph | 20 |
+| unreachable unordered pairs | 12,975,770 |
+| cold exact statistics HTTP call (debug build) | 0.521 s |
+| cached statistics HTTP call | 0.000617 s |
 
 Luca Vildoza (`nba:1630492`) remains a node based on his official postseason appearance. His T4 inferred tenure is visible as a coverage gap and creates no edge.
 
@@ -70,7 +70,7 @@ Quincy Acy → Andrew Bogut
 Degree: 1
 Team: MAVERICKS
 Overlap: [25768, 25889), 121 days
-Source records: t4/tenures.csv:121 and t4/tenures.csv:2771
+Source records: t4/tenures.csv:120 and t4/tenures.csv:2563
 ```
 
 The same query through `/chain` rendered both player names, degree 1 and the
