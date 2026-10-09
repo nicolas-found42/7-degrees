@@ -64,7 +64,7 @@ record `:19110`. It does not assert global line equivalence for the slice.
 ## Evidence
 
 The final run builds release WASM before workspace tests and explicitly runs
-the otherwise ignored browser targets. Chromium 153.0.8010.12 passed all three
+the otherwise ignored browser targets. The merged workspace run passed 102 tests (7 ignored); explicit browser runs passed four tests. Chromium 153.0.8010.12 passed all three
 new journeys and the retained canvas smoke. Formatting, host Clippy and wasm32
 Clippy use warnings denied. Raw output and the completion gate are retained
 outside the repository in `7-degrees-review-notes/t16-browser-e2e`.
