@@ -111,3 +111,27 @@ p.semantic-status[data-semantic-status="degraded"] {
     padding: 0.4rem 0.7rem;
     display: inline-block;
 }
+section.alternatives {
+    background: #fff;
+    border: 1px solid #dfe3d8;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-top: 1rem;
+    overflow-wrap: anywhere;
+}
+
+.alternatives li {
+    margin: 0.5rem 0;
+    padding: 0.4rem;
+}
+
+.alternatives li[data-selected="true"] {
+    border-inline-start: 3px solid #23405a;
+    background: #edf3f8;
+    font-weight: 600;
+}
+
+.alternatives a:focus-visible {
+    outline: 2px solid #23405a;
+    outline-offset: 3px;
+}

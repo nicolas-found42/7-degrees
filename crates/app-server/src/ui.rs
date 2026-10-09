@@ -8,7 +8,7 @@
 use axum::http::{StatusCode, header};
 use axum::response::{IntoResponse, Response};
 
-use graph_core::{Chain, Connection, Player, TeammateGraph};
+use graph_core::{Player, TeammateGraph};
 
 /// The stylesheet served at `/style.css`.
 pub const STYLE_CSS: &str = include_str!("style.css");
@@ -46,7 +46,7 @@ pub(crate) fn url_encode(value: &str) -> String {
 }
 
 /// The display name for a player id, falling back to the raw id.
-fn display_name<'a>(players: &'a [Player], id: &'a str) -> &'a str {
+pub(crate) fn display_name<'a>(players: &'a [Player], id: &'a str) -> &'a str {
     players
         .iter()
         .find(|player| player.id == id)
@@ -100,7 +100,7 @@ fn player_select(players: &[Player], field: &str, label: &str, selected: &str) -
 }
 
 /// The GET form that drives `/chain`, defaulting to the A→C demo pair.
-fn connect_form(players: &[Player], from: Option<&str>, to: Option<&str>) -> String {
+pub(crate) fn connect_form(players: &[Player], from: Option<&str>, to: Option<&str>) -> String {
     format!(
         "<form method=\"get\" action=\"/chain\" \
          class=\"controls\">{}{}<button type=\"submit\">Connect</button></form>",
@@ -124,36 +124,6 @@ fn connect_form(players: &[Player], from: Option<&str>, to: Option<&str>) -> Str
                 players.get(1).map(|p| p.id.as_str()).unwrap_or("")
             })
         ),
-    )
-}
-
-/// The shortest-chain section: ordered players and links with evidence.
-fn chain_section(chain: &Chain, players: &[Player]) -> String {
-    let items: String = chain
-        .path
-        .iter()
-        .map(|id| format!("<li>{}</li>", escape(display_name(players, id))))
-        .collect();
-    let links: String = chain
-        .links
-        .iter()
-        .map(|link| {
-            format!(
-                "<li>{} → {} — teammates on {}, overlapping roster tenure: {} day(s)</li>",
-                escape(display_name(players, &link.from)),
-                escape(display_name(players, &link.to)),
-                escape(&link.team),
-                link.overlap_days
-            )
-        })
-        .collect();
-    format!(
-        "<section class=\"chain\"><h2>Shortest teammate \
-         chain</h2><p class=\"degree\">Degree of separation: <strong>{}</strong></p><ol \
-         class=\"path\">{}</ol><ul class=\"links\">{}</ul></section>",
-        chain.links.len(),
-        items,
-        links
     )
 }
 
@@ -249,96 +219,6 @@ pub fn home(
         url_encode(demo_to)
     );
     document(StatusCode::OK, "7 Degrees — Teammate Explorer", &body)
-}
-
-/// The `/chain` page: the connect form plus the shortest teammate chain
-/// between the queried pair, an explanation when none exists, or an error
-/// when a player id is unknown. Every variant carries the semantic-feature
-/// status line.
-pub fn chain(
-    graph: &TeammateGraph,
-    from: Option<String>,
-    to: Option<String>,
-    semantic_status: (bool, &'static str),
-    coverage: Option<&str>,
-) -> Response {
-    let players = &graph.roster.players;
-    let status_line = format!(
-        "{}{}",
-        semantic_status_line(semantic_status),
-        coverage_line(coverage)
-    );
-    let back = "<p><a href=\"/\">← Back to the explorer</a></p>";
-    let (status, body) = match (from.as_deref(), to.as_deref()) {
-        (None, None) => (
-            StatusCode::OK,
-            format!(
-                "<h1>7 Degrees</h1>{}{}<p class=\"hint\">Pick two players and connect \
-                 them.</p>",
-                status_line,
-                connect_form(players, None, None)
-            ),
-        ),
-        (from, to) => {
-            let from_id = from.unwrap_or_else(|| {
-                if players.iter().any(|p| p.id == "A") {
-                    "A"
-                } else {
-                    players.first().map(|p| p.id.as_str()).unwrap_or("")
-                }
-            });
-            let to_id = to.unwrap_or_else(|| {
-                if players.iter().any(|p| p.id == "C") {
-                    "C"
-                } else {
-                    players.get(1).map(|p| p.id.as_str()).unwrap_or("")
-                }
-            });
-            if !graph.contains_player(from_id) || !graph.contains_player(to_id) {
-                let missing = if graph.contains_player(from_id) {
-                    to_id
-                } else {
-                    from_id
-                };
-                (
-                    StatusCode::NOT_FOUND,
-                    format!(
-                        "<h1>7 Degrees</h1>{}{}{}<p class=\"error\">No player node for id \
-                         {:?}.</p>",
-                        status_line,
-                        connect_form(players, Some(from_id), Some(to_id)),
-                        back,
-                        escape(missing)
-                    ),
-                )
-            } else {
-                match graph.shortest_chain(from_id, to_id) {
-                    Some(Connection::Connected(chain)) => (
-                        StatusCode::OK,
-                        format!(
-                            "<h1>7 Degrees</h1>{}{}{}",
-                            status_line,
-                            back,
-                            chain_section(&chain, players)
-                        ),
-                    ),
-                    Some(Connection::Disconnected) | None => (
-                        StatusCode::OK,
-                        format!(
-                            "<h1>7 Degrees</h1>{}{}<section class=\"chain\"><h2>Shortest \
-                             teammate chain</h2><p class=\"hint\">No teammate chain connects {} \
-                             and {}.</p></section>",
-                            status_line,
-                            back,
-                            escape(display_name(players, from_id)),
-                            escape(display_name(players, to_id))
-                        ),
-                    ),
-                }
-            }
-        }
-    };
-    document(status, "7 Degrees — Teammate Explorer", &body)
 }
 
 /// The 404 page for unknown non-API routes.

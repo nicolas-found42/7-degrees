@@ -1,6 +1,7 @@
 //! The 7-degrees local app server: Axum routes over a deterministic
 //! teammate graph, plus the minimal server-rendered UI.
 
+pub mod chain_view;
 mod fixture_data;
 mod jev;
 pub mod report_data;
@@ -423,17 +424,13 @@ async fn home(State(state): State<AppState>) -> Response {
 
 /// The `/chain` UI page: the shortest teammate chain between the queried pair
 /// as ordered players and links, with its degree of separation.
-#[derive(Deserialize)]
-struct ChainQuery {
-    from: Option<String>,
-    to: Option<String>,
-}
-
-async fn chain_page(State(state): State<AppState>, Query(query): Query<ChainQuery>) -> Response {
-    ui::chain(
+async fn chain_page(
+    State(state): State<AppState>,
+    Query(query): Query<chain_view::ChainQuery>,
+) -> Response {
+    chain_view::page(
         &state.graph,
-        query.from,
-        query.to,
+        query,
         state.jev.status(),
         state.reports.as_ref().map(|r| r.coverage.warning.as_str()),
     )
