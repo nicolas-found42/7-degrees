@@ -4,14 +4,28 @@ use http_body_util::BodyExt;
 use serde_json::Value;
 use tower::ServiceExt;
 
-async fn get(uri: &str) -> (u16, String) {
-    let response = app_with_fixture_data()
+async fn response(app: axum::Router, uri: &str) -> (u16, axum::http::HeaderMap, Vec<u8>) {
+    let response = app
         .oneshot(Request::builder().uri(uri).body(Body::empty()).unwrap())
         .await
         .unwrap();
     let status = response.status().as_u16();
-    let body = response.into_body().collect().await.unwrap().to_bytes();
-    (status, String::from_utf8(body.to_vec()).unwrap())
+    let headers = response.headers().clone();
+    let bytes = response
+        .into_body()
+        .collect()
+        .await
+        .unwrap()
+        .to_bytes()
+        .to_vec();
+    (status, headers, bytes)
+}
+async fn get(uri: &str) -> (u16, String) {
+    let (status, _, bytes) = response(app_with_fixture_data(), uri).await;
+    (
+        status,
+        String::from_utf8(bytes).expect("text endpoint response"),
+    )
 }
 #[tokio::test]
 async fn direct_and_nearby_neighborhoods_expose_only_evidenced_fixture_connections() {
@@ -102,22 +116,82 @@ async fn bounded_exploration_reports_truncation_and_rejects_invalid_graph_argume
 }
 
 #[tokio::test]
-async fn missing_canvas_assets_leave_a_visible_accessible_fallback() {
-    let (asset_status, _) = get("/assets/canvas_view_bg.wasm").await;
-    let (status, body) = get("/graph?from=A&to=C").await;
+async fn present_and_missing_canvas_assets_are_isolated_and_preserve_binary_bytes_and_accessible_fallback()
+ {
+    use app_server::{JevHandle, app_with_jev_and_canvas_assets, graph_view::CanvasAssets};
+    static NEXT: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../target/asset-test-fixtures")
+        .join(format!(
+            "{}-{}",
+            std::process::id(),
+            NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+        ));
+    std::fs::create_dir_all(&root).unwrap();
+    // Valid WASM header plus a custom section containing non-UTF-8 data.
+    let wasm = b"\0asm\x01\0\0\0\0\x03\x01x\xff";
+    let js = b"export default async function init() {}";
+    std::fs::write(root.join("canvas_view_bg.wasm"), wasm).unwrap();
+    std::fs::write(root.join("canvas_view.js"), js).unwrap();
+    std::fs::write(root.join("not-an-asset"), b"not allowlisted").unwrap();
+    let present =
+        app_with_jev_and_canvas_assets(JevHandle::unconfigured(), CanvasAssets::Directory(root));
+    let missing =
+        app_with_jev_and_canvas_assets(JevHandle::unconfigured(), CanvasAssets::Unavailable);
+    let ((status, headers, bytes), (missing_status, _, missing_bytes)) = tokio::join!(
+        response(present.clone(), "/assets/canvas_view_bg.wasm"),
+        response(missing.clone(), "/assets/canvas_view_bg.wasm")
+    );
     assert_eq!(status, 200);
-    assert!(body.contains("Player A"));
-    assert!(body.contains("Player B"));
-    assert!(body.contains("Player C"));
-    assert!(body.contains("Degree of separation: <strong>2</strong>"));
-    if asset_status == 503 {
-        assert!(
-            body.contains("Canvas unavailable; use the accessible player and relationship lists.")
-        );
-    } else {
-        assert_eq!(asset_status, 200);
+    assert_eq!(headers["content-type"], "application/wasm");
+    assert_eq!(bytes, wasm);
+    assert!(
+        String::from_utf8(bytes).is_err(),
+        "test must exercise an actual binary response"
+    );
+    assert_eq!(missing_status, 503);
+    assert!(
+        String::from_utf8(missing_bytes)
+            .unwrap()
+            .contains("Canvas assets unavailable")
+    );
+    let (status, headers, bytes) = response(present.clone(), "/assets/canvas_view.js").await;
+    assert_eq!(status, 200);
+    assert_eq!(headers["content-type"], "text/javascript; charset=utf-8");
+    assert_eq!(bytes, js);
+    for (app, expected) in [
+        (
+            present.clone(),
+            "Canvas loading; the text lists remain available.",
+        ),
+        (
+            missing.clone(),
+            "Canvas unavailable; use the accessible player and relationship lists.",
+        ),
+    ] {
+        let (status, _, bytes) = response(app.clone(), "/graph?from=A&to=C").await;
+        assert_eq!(status, 200);
+        let body = String::from_utf8(bytes).unwrap();
+        for name in ["Player A", "Player B", "Player C"] {
+            assert!(body.contains(name));
+        }
+        assert!(body.contains("Degree of separation: <strong>2</strong>"));
+        assert!(body.contains(expected));
+        assert_eq!(response(app, "/assets/not-an-asset").await.0, 404);
     }
-    assert_eq!(get("/assets/not-an-asset").await.0, 404);
+    assert_eq!(
+        response(missing.clone(), "/assets/canvas_view.js").await.0,
+        503
+    );
+    // Both routers retain their own states after interleaved requests.
+    assert_eq!(
+        response(present, "/assets/canvas_view_bg.wasm").await.0,
+        200
+    );
+    assert_eq!(
+        response(missing, "/assets/canvas_view_bg.wasm").await.0,
+        503
+    );
 }
 
 #[tokio::test]

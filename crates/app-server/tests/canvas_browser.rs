@@ -73,11 +73,13 @@ impl Drop for Browser {
 async fn rust_wasm_canvas_supports_pointer_keyboard_expansion_and_retains_chain_facts() {
     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
     let address = listener.local_addr().unwrap();
-    let server = tokio::spawn(async move {
-        axum::serve(listener, app_server::app_with_fixture_data())
-            .await
-            .unwrap()
-    });
+    let assets = std::env::var_os("NBA_CANVAS_ASSET_DIR")
+        .map(std::path::PathBuf::from)
+        .map(app_server::graph_view::CanvasAssets::Directory)
+        .unwrap_or_default();
+    let app =
+        app_server::app_with_jev_and_canvas_assets(app_server::JevHandle::unconfigured(), assets);
+    let server = tokio::spawn(async move { axum::serve(listener, app).await.unwrap() });
     let mut browser = Browser::start();
     println!("Chromium {}", browser.call(json!({"op":"launch"})));
     browser.call(json!({"op":"goto","url":format!("http://{address}/graph?from=A&to=B&cursor=v1:00&limit=1&selected=0")}));

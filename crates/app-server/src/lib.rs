@@ -43,6 +43,7 @@ pub struct AppState {
     graph: std::sync::Arc<graph_core::TeammateGraph>,
     jev: JevHandle,
     reports: Option<std::sync::Arc<report_data::ReportMetadata>>,
+    canvas_assets: graph_view::CanvasAssets,
 }
 
 /// The router with the fixture graph preloaded and Jev deterministically
@@ -57,10 +58,19 @@ pub fn app_with_fixture_data() -> Router {
 /// The router over an explicit Jev handle (the test seam: scripted
 /// transports prove fallback and credential isolation without a network).
 pub fn app_with_jev(jev: JevHandle) -> Router {
+    app_with_jev_and_canvas_assets(jev, graph_view::CanvasAssets::default())
+}
+
+/// Explicit fixture/asset HTTP seam; each router owns its asset configuration.
+pub fn app_with_jev_and_canvas_assets(
+    jev: JevHandle,
+    canvas_assets: graph_view::CanvasAssets,
+) -> Router {
     let state = AppState {
         graph: std::sync::Arc::new(fixture_data::fixture_graph()),
         jev,
         reports: None,
+        canvas_assets,
     };
     app(state)
 }
@@ -114,11 +124,21 @@ pub fn app_with_report_data(
     root: impl AsRef<std::path::Path>,
     jev: JevHandle,
 ) -> Result<Router, String> {
+    app_with_report_data_and_canvas_assets(root, jev, graph_view::CanvasAssets::default())
+}
+
+/// Real-data import seam with an explicit canvas asset directory or fallback.
+pub fn app_with_report_data_and_canvas_assets(
+    root: impl AsRef<std::path::Path>,
+    jev: JevHandle,
+    canvas_assets: graph_view::CanvasAssets,
+) -> Result<Router, String> {
     let (graph, reports) = report_data::load(root.as_ref())?;
     Ok(app(AppState {
         graph: std::sync::Arc::new(graph),
         jev,
         reports: Some(std::sync::Arc::new(reports)),
+        canvas_assets,
     }))
 }
 
@@ -461,11 +481,13 @@ pub async fn main() {
     jev::install_capture_logger();
     jev::init_logging();
     let jev = JevHandle::from_env();
+    let canvas_assets = graph_view::CanvasAssets::from_environment();
     let router = if std::env::var("NBA_DATA_MODE").as_deref() == Ok("fixture") {
-        app_with_jev(jev)
+        app_with_jev_and_canvas_assets(jev, canvas_assets)
     } else {
         let root = std::env::var("NBA_REPORT_DIR").unwrap_or_else(|_| "docs/reports".into());
-        app_with_report_data(root, jev).expect("load canonical T3/T4 report data")
+        app_with_report_data_and_canvas_assets(root, jev, canvas_assets)
+            .expect("load canonical T3/T4 report data")
     };
     let port: u16 = std::env::var("NBA_PORT")
         .unwrap_or_else(|_| "3000".into())
