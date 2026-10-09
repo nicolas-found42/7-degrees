@@ -43,18 +43,20 @@ input hashes and full histogram: `t5/graph-statistics.json`.
 
 | measure | result |
 |---|---:|
-| canonical nodes | 5,105 |
+| canonical nodes | 5,106 |
 | admitted two-boundary tenure rows | 3,565 |
 | excluded cross-checked rows | 10,713 |
-| excluded inferred rows | 12,385 |
+| excluded inferred rows | 12,386 |
 | excluded unresolved rows | 5,310 |
-| nodes without admitted tenure | 3,234 |
+| nodes without admitted tenure | 3,235 |
 | undirected certified teammate edges | 2,512 |
-| connected components (including isolates) | 3,812 |
+| connected components (including isolates) | 3,813 |
 | maximum finite degree in this evidenced graph | 27 |
-| unreachable unordered pairs | 12,727,648 |
-| cold exact statistics HTTP call (debug build) | 0.958 s |
-| cached statistics HTTP call | 0.000684 s |
+| unreachable unordered pairs | 12,732,753 |
+| cold exact statistics HTTP call (debug build) | 0.655 s |
+| cached statistics HTTP call | 0.000739 s |
+
+Luca Vildoza (`nba:1630492`) remains a node based on his official postseason appearance. His T4 inferred tenure is visible as a coverage gap and creates no edge.
 
 The many isolates and long finite diameter measure the deliberately incomplete
 **dated-evidence graph**, not the complete historical NBA teammate network.
