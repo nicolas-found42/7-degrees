@@ -469,9 +469,9 @@ fn archive(dir: &Path) {
 // Replay the measured source snapshot and its former import policy, exclusively
 // in this offline experiment binary. Production imports always reject uncertain
 // repeat-signing notes. These historical outcomes are not current graph claims.
-fn recorded_reports(root: &std::path::Path) -> std::path::PathBuf {
+fn recorded_reports(root: &std::path::Path) -> (TeammateGraph, report_data::ReportMetadata) {
     use sha2::{Digest, Sha256};
-    let destination = root.join("target/semantic-eval-recorded-snapshot");
+    let mut sources = Vec::new();
     for (path, hash) in [
         (
             "docs/reports/t3/player-universe.csv",
@@ -499,8 +499,7 @@ fn recorded_reports(root: &std::path::Path) -> std::path::PathBuf {
             hash,
             "Immutable measured source hash"
         );
-        let target = destination.join(path.strip_prefix("docs/reports/").unwrap());
-        std::fs::create_dir_all(target.parent().unwrap()).unwrap();
+
         if path.contains("t4/") {
             let mut reader = csv::Reader::from_reader(output.stdout.as_slice());
             let header = reader.headers().unwrap().clone();
@@ -508,7 +507,7 @@ fn recorded_reports(root: &std::path::Path) -> std::path::PathBuf {
                 .iter()
                 .position(|v| v == "unresolved_reasons")
                 .unwrap();
-            let mut writer = csv::Writer::from_path(target).unwrap();
+            let mut writer = csv::Writer::from_writer(Vec::new());
             writer.write_record(&header).unwrap();
             for row in reader.records() {
                 let row = row.unwrap();
@@ -528,15 +527,17 @@ fn recorded_reports(root: &std::path::Path) -> std::path::PathBuf {
                     .collect();
                 writer.write_record(fields).unwrap();
             }
-            writer.flush().unwrap();
+            sources.push(writer.into_inner().unwrap());
         } else {
-            std::fs::write(target, output.stdout).unwrap();
+            sources.push(output.stdout);
         }
     }
     eprintln!(
         "Offline historical replay: hash-verified b107788 snapshot; superseded repeat-signing continuity policy reproduced only for recorded measurement comparability."
     );
-    destination
+    // The transformed historical bytes never become importable disk artifacts.
+    // Production and this binary share the strict reader, without a policy flag.
+    report_data::load_from_readers(sources[0].as_slice(), sources[1].as_slice()).unwrap()
 }
 
 fn main() {
@@ -563,12 +564,11 @@ fn main() {
         std::env::var("OPENROUTER_API_KEY").expect("OPENROUTER_API_KEY required")
     };
     assert!(!key.trim().is_empty());
-    let reports_root = if arg == "--replay" {
+    let (graph, reports) = if arg == "--replay" {
         recorded_reports(&root)
     } else {
-        root.join("docs/reports")
+        report_data::load(&root.join("docs/reports")).unwrap()
     };
-    let (graph, reports) = report_data::load(&reports_root).unwrap();
     let catalog = PlayerCatalog::from_graph(&graph, Some(&reports));
     let (rank_graph, rank_catalog) = ranking_fixture();
     let ctx = Context {
