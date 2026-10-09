@@ -79,3 +79,30 @@ Host workspace tests, host and wasm32 Clippy with warnings denied, formatter,
 release WASM build and the actual browser smoke are run before reporting.
 This is a focused canvas smoke, not completion of the later whole-app browser
 acceptance suite or a claim of full historical source coverage.
+
+## Independent review correction — asset response testing
+
+A post-build review reproduced an invalid UTF-8 panic in the graph-view test
+helper: it decoded the generated WASM response as text. The earlier retained
+workspace run preceded the WASM build and did not expose that failure.
+
+The corrected HTTP helper retains response bytes and headers for binary routes.
+The asset test uses two independently configured routers concurrently: a private
+asset fixture directory containing a valid WASM binary with non-UTF-8 custom
+section data, and an explicitly unavailable asset configuration. It asserts exact
+binary bytes, WASM/JavaScript MIME types, missing-asset 503 responses, visible SSR
+fallback, retained path names/degree, and rejection of a non-allowlisted file
+even when that file exists. Neither shared assets nor process-global environment
+variables are changed by the tests.
+
+`graph_view::CanvasAssets` now belongs to `AppState`; both SSR readiness and asset
+serving use that same router's configuration. Public builders
+`app_with_jev_and_canvas_assets` and `app_with_report_data_and_canvas_assets`
+accept explicit `Directory` or `Unavailable` configuration. Existing builders
+use the default generated-asset directory. Runtime startup resolves
+`NBA_CANVAS_ASSET_DIR` once; the browser smoke passes its directory explicitly.
+
+Correction evidence is saved as `t8-canvas/fix-*.log`: a release WASM build runs
+**before** the full workspace suite, followed by formatter, host/wasm32 Clippy
+and the actual browser smoke. The prior Jev escalation is retained; no gate
+retry was made to seek automatic acceptance.
