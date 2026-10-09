@@ -1,402 +1,722 @@
-ts_utc,action,url,status,bytes,attempt,error,note
-"2026-10-09 (pre-script session, exact minute not recorded)",manual-probe,https://www.basketball-reference.com/leagues/BAA_1947_transactions.html,200,139944,1,,single curl probe preceding this script; cache-seeded
-2026-10-09T07:13:26Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1947_transactions.html,,139944,0,,cached (no request)
-2026-10-09T07:13:27Z,http-get,https://www.basketball-reference.com/leagues/BAA_1948_transactions.html,200,150077,1,,ok
-2026-10-09T07:13:32Z,http-get,https://www.basketball-reference.com/leagues/BAA_1949_transactions.html,200,146086,1,,ok
-2026-10-09T07:13:38Z,http-get,https://www.basketball-reference.com/leagues/NBA_1950_transactions.html,200,157379,1,,ok
-2026-10-09T07:13:42Z,http-get,https://www.basketball-reference.com/leagues/NBA_1951_transactions.html,200,149030,1,,ok
-2026-10-09T07:13:47Z,http-get,https://www.basketball-reference.com/leagues/NBA_1952_transactions.html,200,140623,1,,ok
-2026-10-09T07:13:53Z,http-get,https://www.basketball-reference.com/leagues/NBA_1953_transactions.html,200,144562,1,,ok
-2026-10-09T07:13:58Z,http-get,https://www.basketball-reference.com/leagues/NBA_1954_transactions.html,200,142090,1,,ok
-2026-10-09T07:14:03Z,http-get,https://www.basketball-reference.com/leagues/NBA_1955_transactions.html,200,143422,1,,ok
-2026-10-09T07:14:08Z,http-get,https://www.basketball-reference.com/leagues/NBA_1956_transactions.html,200,139879,1,,ok
-2026-10-09T07:14:13Z,http-get,https://www.basketball-reference.com/leagues/NBA_1957_transactions.html,200,143222,1,,ok
-2026-10-09T07:14:19Z,http-get,https://www.basketball-reference.com/leagues/NBA_1958_transactions.html,200,141845,1,,ok
-2026-10-09T07:14:24Z,http-get,https://www.basketball-reference.com/leagues/NBA_1959_transactions.html,200,140100,1,,ok
-2026-10-09T07:14:29Z,http-get,https://www.basketball-reference.com/leagues/NBA_1960_transactions.html,200,143702,1,,ok
-2026-10-09T07:14:34Z,http-get,https://www.basketball-reference.com/leagues/NBA_1961_transactions.html,200,145106,1,,ok
-2026-10-09T07:14:40Z,http-get,https://www.basketball-reference.com/leagues/NBA_1962_transactions.html,200,143705,1,,ok
-2026-10-09T07:14:45Z,http-get,https://www.basketball-reference.com/leagues/NBA_1963_transactions.html,200,142488,1,,ok
-2026-10-09T07:14:50Z,http-get,https://www.basketball-reference.com/leagues/NBA_1964_transactions.html,200,143668,1,,ok
-2026-10-09T07:14:55Z,http-get,https://www.basketball-reference.com/leagues/NBA_1965_transactions.html,200,141537,1,,ok
-2026-10-09T07:15:00Z,http-get,https://www.basketball-reference.com/leagues/NBA_1966_transactions.html,200,147571,1,,ok
-2026-10-09T07:15:06Z,http-get,https://www.basketball-reference.com/leagues/NBA_1967_transactions.html,200,150406,1,,ok
-2026-10-09T07:15:11Z,http-get,https://www.basketball-reference.com/leagues/NBA_1968_transactions.html,200,150866,1,,ok
-2026-10-09T07:15:16Z,http-get,https://www.basketball-reference.com/leagues/NBA_1969_transactions.html,200,146785,1,,ok
-2026-10-09T07:15:21Z,http-get,https://www.basketball-reference.com/leagues/NBA_1970_transactions.html,200,158442,1,,ok
-2026-10-09T07:15:26Z,http-get,https://www.basketball-reference.com/leagues/NBA_1971_transactions.html,200,149915,1,,ok
-2026-10-09T07:15:32Z,http-get,https://www.basketball-reference.com/leagues/NBA_1972_transactions.html,200,153194,1,,ok
-2026-10-09T07:15:37Z,http-get,https://www.basketball-reference.com/leagues/NBA_1973_transactions.html,200,158831,1,,ok
-2026-10-09T07:15:42Z,http-get,https://www.basketball-reference.com/leagues/NBA_1974_transactions.html,200,160320,1,,ok
-2026-10-09T07:15:47Z,http-get,https://www.basketball-reference.com/leagues/NBA_1975_transactions.html,200,158219,1,,ok
-2026-10-09T07:15:52Z,http-get,https://www.basketball-reference.com/leagues/NBA_1976_transactions.html,200,160338,1,,ok
-2026-10-09T07:15:58Z,http-get,https://www.basketball-reference.com/leagues/NBA_1977_transactions.html,200,183721,1,,ok
-2026-10-09T07:16:03Z,http-get,https://www.basketball-reference.com/leagues/NBA_1978_transactions.html,200,185326,1,,ok
-2026-10-09T07:16:08Z,http-get,https://www.basketball-reference.com/leagues/NBA_1979_transactions.html,200,180470,1,,ok
-2026-10-09T07:16:13Z,http-get,https://www.basketball-reference.com/leagues/NBA_1980_transactions.html,200,188590,1,,ok
-2026-10-09T07:16:18Z,http-get,https://www.basketball-reference.com/leagues/NBA_1981_transactions.html,200,182805,1,,ok
-2026-10-09T07:16:24Z,http-get,https://www.basketball-reference.com/leagues/NBA_1982_transactions.html,200,171786,1,,ok
-2026-10-09T07:16:29Z,http-get,https://www.basketball-reference.com/leagues/NBA_1983_transactions.html,200,184935,1,,ok
-2026-10-09T07:16:34Z,http-get,https://www.basketball-reference.com/leagues/NBA_1984_transactions.html,200,178156,1,,ok
-2026-10-09T07:16:39Z,http-get,https://www.basketball-reference.com/leagues/NBA_1985_transactions.html,200,178442,1,,ok
-2026-10-09T07:16:44Z,http-get,https://www.basketball-reference.com/leagues/NBA_1986_transactions.html,200,184015,1,,ok
-2026-10-09T07:16:50Z,http-get,https://www.basketball-reference.com/leagues/NBA_1987_transactions.html,200,191345,1,,ok
-2026-10-09T07:16:55Z,http-get,https://www.basketball-reference.com/leagues/NBA_1988_transactions.html,200,196169,1,,ok
-2026-10-09T07:17:00Z,http-get,https://www.basketball-reference.com/leagues/NBA_1989_transactions.html,200,201790,1,,ok
-2026-10-09T07:17:05Z,http-get,https://www.basketball-reference.com/leagues/NBA_1990_transactions.html,200,205363,1,,ok
-2026-10-09T07:17:11Z,http-get,https://www.basketball-reference.com/leagues/NBA_1991_transactions.html,200,210304,1,,ok
-2026-10-09T07:17:16Z,http-get,https://www.basketball-reference.com/leagues/NBA_1992_transactions.html,200,207136,1,,ok
-2026-10-09T07:17:21Z,http-get,https://www.basketball-reference.com/leagues/NBA_1993_transactions.html,200,203585,1,,ok
-2026-10-09T07:17:26Z,http-get,https://www.basketball-reference.com/leagues/NBA_1994_transactions.html,200,197892,1,,ok
-2026-10-09T07:17:31Z,http-get,https://www.basketball-reference.com/leagues/NBA_1995_transactions.html,200,212544,1,,ok
-2026-10-09T07:17:37Z,http-get,https://www.basketball-reference.com/leagues/NBA_1996_transactions.html,200,207360,1,,ok
-2026-10-09T07:17:42Z,http-get,https://www.basketball-reference.com/leagues/NBA_1997_transactions.html,200,231728,1,,ok
-2026-10-09T07:17:47Z,http-get,https://www.basketball-reference.com/leagues/NBA_1998_transactions.html,200,215188,1,,ok
-2026-10-09T07:17:52Z,http-get,https://www.basketball-reference.com/leagues/NBA_1999_transactions.html,200,201413,1,,ok
-2026-10-09T07:17:57Z,http-get,https://www.basketball-reference.com/leagues/NBA_2000_transactions.html,200,208076,1,,ok
-2026-10-09T07:18:03Z,http-get,https://www.basketball-reference.com/leagues/NBA_2001_transactions.html,200,201548,1,,ok
-2026-10-09T07:18:08Z,http-get,https://www.basketball-reference.com/leagues/NBA_2002_transactions.html,200,202667,1,,ok
-2026-10-09T07:18:13Z,http-get,https://www.basketball-reference.com/leagues/NBA_2003_transactions.html,200,189558,1,,ok
-2026-10-09T07:18:18Z,http-get,https://www.basketball-reference.com/leagues/NBA_2004_transactions.html,200,221266,1,,ok
-2026-10-09T07:18:23Z,http-get,https://www.basketball-reference.com/leagues/NBA_2005_transactions.html,200,205557,1,,ok
-2026-10-09T07:18:29Z,http-get,https://www.basketball-reference.com/leagues/NBA_2006_transactions.html,200,214540,1,,ok
-2026-10-09T07:18:34Z,http-get,https://www.basketball-reference.com/leagues/NBA_2007_transactions.html,200,200366,1,,ok
-2026-10-09T07:18:39Z,http-get,https://www.basketball-reference.com/leagues/NBA_2008_transactions.html,200,217863,1,,ok
-2026-10-09T07:18:44Z,http-get,https://www.basketball-reference.com/leagues/NBA_2009_transactions.html,200,216226,1,,ok
-2026-10-09T07:18:50Z,http-get,https://www.basketball-reference.com/leagues/NBA_2010_transactions.html,200,221198,1,,ok
-2026-10-09T07:18:55Z,http-get,https://www.basketball-reference.com/leagues/NBA_2011_transactions.html,200,235517,1,,ok
-2026-10-09T07:19:00Z,http-get,https://www.basketball-reference.com/leagues/NBA_2012_transactions.html,200,229980,1,,ok
-2026-10-09T07:19:05Z,http-get,https://www.basketball-reference.com/leagues/NBA_2013_transactions.html,200,302518,1,,ok
-2026-10-09T07:19:10Z,http-get,https://www.basketball-reference.com/leagues/NBA_2014_transactions.html,200,311431,1,,ok
-2026-10-09T07:19:15Z,http-get,https://www.basketball-reference.com/leagues/NBA_2015_transactions.html,200,361178,1,,ok
-2026-10-09T07:19:21Z,http-get,https://www.basketball-reference.com/leagues/NBA_2016_transactions.html,200,396011,1,,ok
-2026-10-09T07:19:26Z,http-get,https://www.basketball-reference.com/leagues/NBA_2017_transactions.html,200,468232,1,,ok
-2026-10-09T07:19:31Z,http-get,https://www.basketball-reference.com/leagues/NBA_2018_transactions.html,200,436819,1,,ok
-2026-10-09T07:19:36Z,http-get,https://www.basketball-reference.com/leagues/NBA_2019_transactions.html,200,437103,1,,ok
-2026-10-09T07:19:42Z,http-get,https://www.basketball-reference.com/leagues/NBA_2020_transactions.html,200,481074,1,,ok
-2026-10-09T07:19:47Z,http-get,https://www.basketball-reference.com/leagues/NBA_2021_transactions.html,200,306540,1,,ok
-2026-10-09T07:19:52Z,http-get,https://www.basketball-reference.com/leagues/NBA_2022_transactions.html,200,499000,1,,ok
-2026-10-09T07:19:57Z,http-get,https://www.basketball-reference.com/leagues/NBA_2023_transactions.html,200,324899,1,,ok
-2026-10-09T07:20:02Z,http-get,https://www.basketball-reference.com/leagues/NBA_2024_transactions.html,200,334372,1,,ok
-2026-10-09T07:20:08Z,http-get,https://www.basketball-reference.com/leagues/NBA_2025_transactions.html,200,346008,1,,ok
-2026-10-09T07:20:13Z,http-get,https://www.basketball-reference.com/leagues/NBA_2026_transactions.html,200,349318,1,,ok
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1947_transactions.html,,139944,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1948_transactions.html,,150077,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1949_transactions.html,,146086,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1950_transactions.html,,157379,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1951_transactions.html,,149030,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1952_transactions.html,,140623,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1953_transactions.html,,144562,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1954_transactions.html,,142090,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1955_transactions.html,,143422,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1956_transactions.html,,139879,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1957_transactions.html,,143222,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1958_transactions.html,,141845,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1959_transactions.html,,140100,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1960_transactions.html,,143702,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1961_transactions.html,,145106,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1962_transactions.html,,143705,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1963_transactions.html,,142488,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1964_transactions.html,,143668,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1965_transactions.html,,141537,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1966_transactions.html,,147571,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1967_transactions.html,,150406,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1968_transactions.html,,150866,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1969_transactions.html,,146785,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1970_transactions.html,,158442,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1971_transactions.html,,149915,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1972_transactions.html,,153194,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1973_transactions.html,,158831,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1974_transactions.html,,160320,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1975_transactions.html,,158219,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1976_transactions.html,,160338,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1977_transactions.html,,183721,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1978_transactions.html,,185326,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1979_transactions.html,,180470,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1980_transactions.html,,188590,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1981_transactions.html,,182805,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1982_transactions.html,,171786,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1983_transactions.html,,184935,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1984_transactions.html,,178156,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1985_transactions.html,,178442,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1986_transactions.html,,184015,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1987_transactions.html,,191345,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1988_transactions.html,,196169,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1989_transactions.html,,201790,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1990_transactions.html,,205363,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1991_transactions.html,,210304,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1992_transactions.html,,207136,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1993_transactions.html,,203585,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1994_transactions.html,,197892,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1995_transactions.html,,212544,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1996_transactions.html,,207360,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1997_transactions.html,,231728,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1998_transactions.html,,215188,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1999_transactions.html,,201413,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2000_transactions.html,,208076,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2001_transactions.html,,201548,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2002_transactions.html,,202667,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2003_transactions.html,,189558,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2004_transactions.html,,221266,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2005_transactions.html,,205557,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2006_transactions.html,,214540,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2007_transactions.html,,200366,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2008_transactions.html,,217863,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2009_transactions.html,,216226,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2010_transactions.html,,221198,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2011_transactions.html,,235517,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2012_transactions.html,,229980,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2013_transactions.html,,302518,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2014_transactions.html,,311431,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2015_transactions.html,,361178,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2016_transactions.html,,396011,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2017_transactions.html,,468232,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2018_transactions.html,,436819,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2019_transactions.html,,437103,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2020_transactions.html,,481074,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2021_transactions.html,,306540,0,,cached (no request)
-2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2022_transactions.html,,499000,0,,cached (no request)
-2026-10-09T07:20:41Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2023_transactions.html,,324899,0,,cached (no request)
-2026-10-09T07:20:41Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2024_transactions.html,,334372,0,,cached (no request)
-2026-10-09T07:20:41Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2025_transactions.html,,346008,0,,cached (no request)
-2026-10-09T07:20:41Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2026_transactions.html,,349318,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1947_transactions.html,,139944,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1948_transactions.html,,150077,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1949_transactions.html,,146086,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1950_transactions.html,,157379,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1951_transactions.html,,149030,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1952_transactions.html,,140623,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1953_transactions.html,,144562,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1954_transactions.html,,142090,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1955_transactions.html,,143422,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1956_transactions.html,,139879,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1957_transactions.html,,143222,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1958_transactions.html,,141845,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1959_transactions.html,,140100,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1960_transactions.html,,143702,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1961_transactions.html,,145106,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1962_transactions.html,,143705,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1963_transactions.html,,142488,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1964_transactions.html,,143668,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1965_transactions.html,,141537,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1966_transactions.html,,147571,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1967_transactions.html,,150406,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1968_transactions.html,,150866,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1969_transactions.html,,146785,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1970_transactions.html,,158442,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1971_transactions.html,,149915,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1972_transactions.html,,153194,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1973_transactions.html,,158831,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1974_transactions.html,,160320,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1975_transactions.html,,158219,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1976_transactions.html,,160338,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1977_transactions.html,,183721,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1978_transactions.html,,185326,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1979_transactions.html,,180470,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1980_transactions.html,,188590,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1981_transactions.html,,182805,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1982_transactions.html,,171786,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1983_transactions.html,,184935,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1984_transactions.html,,178156,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1985_transactions.html,,178442,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1986_transactions.html,,184015,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1987_transactions.html,,191345,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1988_transactions.html,,196169,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1989_transactions.html,,201790,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1990_transactions.html,,205363,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1991_transactions.html,,210304,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1992_transactions.html,,207136,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1993_transactions.html,,203585,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1994_transactions.html,,197892,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1995_transactions.html,,212544,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1996_transactions.html,,207360,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1997_transactions.html,,231728,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1998_transactions.html,,215188,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1999_transactions.html,,201413,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2000_transactions.html,,208076,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2001_transactions.html,,201548,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2002_transactions.html,,202667,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2003_transactions.html,,189558,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2004_transactions.html,,221266,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2005_transactions.html,,205557,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2006_transactions.html,,214540,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2007_transactions.html,,200366,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2008_transactions.html,,217863,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2009_transactions.html,,216226,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2010_transactions.html,,221198,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2011_transactions.html,,235517,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2012_transactions.html,,229980,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2013_transactions.html,,302518,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2014_transactions.html,,311431,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2015_transactions.html,,361178,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2016_transactions.html,,396011,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2017_transactions.html,,468232,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2018_transactions.html,,436819,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2019_transactions.html,,437103,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2020_transactions.html,,481074,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2021_transactions.html,,306540,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2022_transactions.html,,499000,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2023_transactions.html,,324899,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2024_transactions.html,,334372,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2025_transactions.html,,346008,0,,cached (no request)
-2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2026_transactions.html,,349318,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1947_transactions.html,,139944,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1948_transactions.html,,150077,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1949_transactions.html,,146086,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1950_transactions.html,,157379,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1951_transactions.html,,149030,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1952_transactions.html,,140623,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1953_transactions.html,,144562,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1954_transactions.html,,142090,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1955_transactions.html,,143422,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1956_transactions.html,,139879,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1957_transactions.html,,143222,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1958_transactions.html,,141845,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1959_transactions.html,,140100,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1960_transactions.html,,143702,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1961_transactions.html,,145106,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1962_transactions.html,,143705,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1963_transactions.html,,142488,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1964_transactions.html,,143668,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1965_transactions.html,,141537,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1966_transactions.html,,147571,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1967_transactions.html,,150406,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1968_transactions.html,,150866,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1969_transactions.html,,146785,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1970_transactions.html,,158442,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1971_transactions.html,,149915,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1972_transactions.html,,153194,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1973_transactions.html,,158831,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1974_transactions.html,,160320,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1975_transactions.html,,158219,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1976_transactions.html,,160338,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1977_transactions.html,,183721,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1978_transactions.html,,185326,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1979_transactions.html,,180470,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1980_transactions.html,,188590,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1981_transactions.html,,182805,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1982_transactions.html,,171786,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1983_transactions.html,,184935,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1984_transactions.html,,178156,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1985_transactions.html,,178442,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1986_transactions.html,,184015,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1987_transactions.html,,191345,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1988_transactions.html,,196169,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1989_transactions.html,,201790,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1990_transactions.html,,205363,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1991_transactions.html,,210304,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1992_transactions.html,,207136,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1993_transactions.html,,203585,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1994_transactions.html,,197892,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1995_transactions.html,,212544,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1996_transactions.html,,207360,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1997_transactions.html,,231728,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1998_transactions.html,,215188,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1999_transactions.html,,201413,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2000_transactions.html,,208076,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2001_transactions.html,,201548,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2002_transactions.html,,202667,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2003_transactions.html,,189558,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2004_transactions.html,,221266,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2005_transactions.html,,205557,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2006_transactions.html,,214540,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2007_transactions.html,,200366,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2008_transactions.html,,217863,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2009_transactions.html,,216226,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2010_transactions.html,,221198,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2011_transactions.html,,235517,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2012_transactions.html,,229980,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2013_transactions.html,,302518,0,,cached (no request)
-2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2014_transactions.html,,311431,0,,cached (no request)
-2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2015_transactions.html,,361178,0,,cached (no request)
-2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2016_transactions.html,,396011,0,,cached (no request)
-2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2017_transactions.html,,468232,0,,cached (no request)
-2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2018_transactions.html,,436819,0,,cached (no request)
-2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2019_transactions.html,,437103,0,,cached (no request)
-2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2020_transactions.html,,481074,0,,cached (no request)
-2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2021_transactions.html,,306540,0,,cached (no request)
-2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2022_transactions.html,,499000,0,,cached (no request)
-2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2023_transactions.html,,324899,0,,cached (no request)
-2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2024_transactions.html,,334372,0,,cached (no request)
-2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2025_transactions.html,,346008,0,,cached (no request)
-2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2026_transactions.html,,349318,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1947_transactions.html,,139944,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1948_transactions.html,,150077,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1949_transactions.html,,146086,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1950_transactions.html,,157379,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1951_transactions.html,,149030,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1952_transactions.html,,140623,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1953_transactions.html,,144562,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1954_transactions.html,,142090,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1955_transactions.html,,143422,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1956_transactions.html,,139879,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1957_transactions.html,,143222,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1958_transactions.html,,141845,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1959_transactions.html,,140100,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1960_transactions.html,,143702,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1961_transactions.html,,145106,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1962_transactions.html,,143705,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1963_transactions.html,,142488,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1964_transactions.html,,143668,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1965_transactions.html,,141537,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1966_transactions.html,,147571,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1967_transactions.html,,150406,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1968_transactions.html,,150866,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1969_transactions.html,,146785,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1970_transactions.html,,158442,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1971_transactions.html,,149915,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1972_transactions.html,,153194,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1973_transactions.html,,158831,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1974_transactions.html,,160320,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1975_transactions.html,,158219,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1976_transactions.html,,160338,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1977_transactions.html,,183721,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1978_transactions.html,,185326,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1979_transactions.html,,180470,0,,cached (no request)
-2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1980_transactions.html,,188590,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1981_transactions.html,,182805,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1982_transactions.html,,171786,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1983_transactions.html,,184935,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1984_transactions.html,,178156,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1985_transactions.html,,178442,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1986_transactions.html,,184015,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1987_transactions.html,,191345,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1988_transactions.html,,196169,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1989_transactions.html,,201790,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1990_transactions.html,,205363,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1991_transactions.html,,210304,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1992_transactions.html,,207136,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1993_transactions.html,,203585,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1994_transactions.html,,197892,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1995_transactions.html,,212544,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1996_transactions.html,,207360,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1997_transactions.html,,231728,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1998_transactions.html,,215188,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1999_transactions.html,,201413,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2000_transactions.html,,208076,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2001_transactions.html,,201548,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2002_transactions.html,,202667,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2003_transactions.html,,189558,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2004_transactions.html,,221266,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2005_transactions.html,,205557,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2006_transactions.html,,214540,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2007_transactions.html,,200366,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2008_transactions.html,,217863,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2009_transactions.html,,216226,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2010_transactions.html,,221198,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2011_transactions.html,,235517,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2012_transactions.html,,229980,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2013_transactions.html,,302518,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2014_transactions.html,,311431,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2015_transactions.html,,361178,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2016_transactions.html,,396011,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2017_transactions.html,,468232,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2018_transactions.html,,436819,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2019_transactions.html,,437103,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2020_transactions.html,,481074,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2021_transactions.html,,306540,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2022_transactions.html,,499000,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2023_transactions.html,,324899,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2024_transactions.html,,334372,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2025_transactions.html,,346008,0,,cached (no request)
-2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2026_transactions.html,,349318,0,,cached (no request)
+ts_utc,action,url,status,bytes,attempt,error,note,elapsed_since_previous_start_seconds,start_spacing_seconds
+"2026-10-09 (pre-script session, exact minute not recorded)",manual-probe,https://www.basketball-reference.com/leagues/BAA_1947_transactions.html,200,139944,1,,single curl probe preceding this script; cache-seeded,,
+2026-10-09T07:13:26Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1947_transactions.html,,139944,0,,cached (no request),,
+2026-10-09T07:13:27Z,http-get,https://www.basketball-reference.com/leagues/BAA_1948_transactions.html,200,150077,1,,ok,,
+2026-10-09T07:13:32Z,http-get,https://www.basketball-reference.com/leagues/BAA_1949_transactions.html,200,146086,1,,ok,,
+2026-10-09T07:13:38Z,http-get,https://www.basketball-reference.com/leagues/NBA_1950_transactions.html,200,157379,1,,ok,,
+2026-10-09T07:13:42Z,http-get,https://www.basketball-reference.com/leagues/NBA_1951_transactions.html,200,149030,1,,ok,,
+2026-10-09T07:13:47Z,http-get,https://www.basketball-reference.com/leagues/NBA_1952_transactions.html,200,140623,1,,ok,,
+2026-10-09T07:13:53Z,http-get,https://www.basketball-reference.com/leagues/NBA_1953_transactions.html,200,144562,1,,ok,,
+2026-10-09T07:13:58Z,http-get,https://www.basketball-reference.com/leagues/NBA_1954_transactions.html,200,142090,1,,ok,,
+2026-10-09T07:14:03Z,http-get,https://www.basketball-reference.com/leagues/NBA_1955_transactions.html,200,143422,1,,ok,,
+2026-10-09T07:14:08Z,http-get,https://www.basketball-reference.com/leagues/NBA_1956_transactions.html,200,139879,1,,ok,,
+2026-10-09T07:14:13Z,http-get,https://www.basketball-reference.com/leagues/NBA_1957_transactions.html,200,143222,1,,ok,,
+2026-10-09T07:14:19Z,http-get,https://www.basketball-reference.com/leagues/NBA_1958_transactions.html,200,141845,1,,ok,,
+2026-10-09T07:14:24Z,http-get,https://www.basketball-reference.com/leagues/NBA_1959_transactions.html,200,140100,1,,ok,,
+2026-10-09T07:14:29Z,http-get,https://www.basketball-reference.com/leagues/NBA_1960_transactions.html,200,143702,1,,ok,,
+2026-10-09T07:14:34Z,http-get,https://www.basketball-reference.com/leagues/NBA_1961_transactions.html,200,145106,1,,ok,,
+2026-10-09T07:14:40Z,http-get,https://www.basketball-reference.com/leagues/NBA_1962_transactions.html,200,143705,1,,ok,,
+2026-10-09T07:14:45Z,http-get,https://www.basketball-reference.com/leagues/NBA_1963_transactions.html,200,142488,1,,ok,,
+2026-10-09T07:14:50Z,http-get,https://www.basketball-reference.com/leagues/NBA_1964_transactions.html,200,143668,1,,ok,,
+2026-10-09T07:14:55Z,http-get,https://www.basketball-reference.com/leagues/NBA_1965_transactions.html,200,141537,1,,ok,,
+2026-10-09T07:15:00Z,http-get,https://www.basketball-reference.com/leagues/NBA_1966_transactions.html,200,147571,1,,ok,,
+2026-10-09T07:15:06Z,http-get,https://www.basketball-reference.com/leagues/NBA_1967_transactions.html,200,150406,1,,ok,,
+2026-10-09T07:15:11Z,http-get,https://www.basketball-reference.com/leagues/NBA_1968_transactions.html,200,150866,1,,ok,,
+2026-10-09T07:15:16Z,http-get,https://www.basketball-reference.com/leagues/NBA_1969_transactions.html,200,146785,1,,ok,,
+2026-10-09T07:15:21Z,http-get,https://www.basketball-reference.com/leagues/NBA_1970_transactions.html,200,158442,1,,ok,,
+2026-10-09T07:15:26Z,http-get,https://www.basketball-reference.com/leagues/NBA_1971_transactions.html,200,149915,1,,ok,,
+2026-10-09T07:15:32Z,http-get,https://www.basketball-reference.com/leagues/NBA_1972_transactions.html,200,153194,1,,ok,,
+2026-10-09T07:15:37Z,http-get,https://www.basketball-reference.com/leagues/NBA_1973_transactions.html,200,158831,1,,ok,,
+2026-10-09T07:15:42Z,http-get,https://www.basketball-reference.com/leagues/NBA_1974_transactions.html,200,160320,1,,ok,,
+2026-10-09T07:15:47Z,http-get,https://www.basketball-reference.com/leagues/NBA_1975_transactions.html,200,158219,1,,ok,,
+2026-10-09T07:15:52Z,http-get,https://www.basketball-reference.com/leagues/NBA_1976_transactions.html,200,160338,1,,ok,,
+2026-10-09T07:15:58Z,http-get,https://www.basketball-reference.com/leagues/NBA_1977_transactions.html,200,183721,1,,ok,,
+2026-10-09T07:16:03Z,http-get,https://www.basketball-reference.com/leagues/NBA_1978_transactions.html,200,185326,1,,ok,,
+2026-10-09T07:16:08Z,http-get,https://www.basketball-reference.com/leagues/NBA_1979_transactions.html,200,180470,1,,ok,,
+2026-10-09T07:16:13Z,http-get,https://www.basketball-reference.com/leagues/NBA_1980_transactions.html,200,188590,1,,ok,,
+2026-10-09T07:16:18Z,http-get,https://www.basketball-reference.com/leagues/NBA_1981_transactions.html,200,182805,1,,ok,,
+2026-10-09T07:16:24Z,http-get,https://www.basketball-reference.com/leagues/NBA_1982_transactions.html,200,171786,1,,ok,,
+2026-10-09T07:16:29Z,http-get,https://www.basketball-reference.com/leagues/NBA_1983_transactions.html,200,184935,1,,ok,,
+2026-10-09T07:16:34Z,http-get,https://www.basketball-reference.com/leagues/NBA_1984_transactions.html,200,178156,1,,ok,,
+2026-10-09T07:16:39Z,http-get,https://www.basketball-reference.com/leagues/NBA_1985_transactions.html,200,178442,1,,ok,,
+2026-10-09T07:16:44Z,http-get,https://www.basketball-reference.com/leagues/NBA_1986_transactions.html,200,184015,1,,ok,,
+2026-10-09T07:16:50Z,http-get,https://www.basketball-reference.com/leagues/NBA_1987_transactions.html,200,191345,1,,ok,,
+2026-10-09T07:16:55Z,http-get,https://www.basketball-reference.com/leagues/NBA_1988_transactions.html,200,196169,1,,ok,,
+2026-10-09T07:17:00Z,http-get,https://www.basketball-reference.com/leagues/NBA_1989_transactions.html,200,201790,1,,ok,,
+2026-10-09T07:17:05Z,http-get,https://www.basketball-reference.com/leagues/NBA_1990_transactions.html,200,205363,1,,ok,,
+2026-10-09T07:17:11Z,http-get,https://www.basketball-reference.com/leagues/NBA_1991_transactions.html,200,210304,1,,ok,,
+2026-10-09T07:17:16Z,http-get,https://www.basketball-reference.com/leagues/NBA_1992_transactions.html,200,207136,1,,ok,,
+2026-10-09T07:17:21Z,http-get,https://www.basketball-reference.com/leagues/NBA_1993_transactions.html,200,203585,1,,ok,,
+2026-10-09T07:17:26Z,http-get,https://www.basketball-reference.com/leagues/NBA_1994_transactions.html,200,197892,1,,ok,,
+2026-10-09T07:17:31Z,http-get,https://www.basketball-reference.com/leagues/NBA_1995_transactions.html,200,212544,1,,ok,,
+2026-10-09T07:17:37Z,http-get,https://www.basketball-reference.com/leagues/NBA_1996_transactions.html,200,207360,1,,ok,,
+2026-10-09T07:17:42Z,http-get,https://www.basketball-reference.com/leagues/NBA_1997_transactions.html,200,231728,1,,ok,,
+2026-10-09T07:17:47Z,http-get,https://www.basketball-reference.com/leagues/NBA_1998_transactions.html,200,215188,1,,ok,,
+2026-10-09T07:17:52Z,http-get,https://www.basketball-reference.com/leagues/NBA_1999_transactions.html,200,201413,1,,ok,,
+2026-10-09T07:17:57Z,http-get,https://www.basketball-reference.com/leagues/NBA_2000_transactions.html,200,208076,1,,ok,,
+2026-10-09T07:18:03Z,http-get,https://www.basketball-reference.com/leagues/NBA_2001_transactions.html,200,201548,1,,ok,,
+2026-10-09T07:18:08Z,http-get,https://www.basketball-reference.com/leagues/NBA_2002_transactions.html,200,202667,1,,ok,,
+2026-10-09T07:18:13Z,http-get,https://www.basketball-reference.com/leagues/NBA_2003_transactions.html,200,189558,1,,ok,,
+2026-10-09T07:18:18Z,http-get,https://www.basketball-reference.com/leagues/NBA_2004_transactions.html,200,221266,1,,ok,,
+2026-10-09T07:18:23Z,http-get,https://www.basketball-reference.com/leagues/NBA_2005_transactions.html,200,205557,1,,ok,,
+2026-10-09T07:18:29Z,http-get,https://www.basketball-reference.com/leagues/NBA_2006_transactions.html,200,214540,1,,ok,,
+2026-10-09T07:18:34Z,http-get,https://www.basketball-reference.com/leagues/NBA_2007_transactions.html,200,200366,1,,ok,,
+2026-10-09T07:18:39Z,http-get,https://www.basketball-reference.com/leagues/NBA_2008_transactions.html,200,217863,1,,ok,,
+2026-10-09T07:18:44Z,http-get,https://www.basketball-reference.com/leagues/NBA_2009_transactions.html,200,216226,1,,ok,,
+2026-10-09T07:18:50Z,http-get,https://www.basketball-reference.com/leagues/NBA_2010_transactions.html,200,221198,1,,ok,,
+2026-10-09T07:18:55Z,http-get,https://www.basketball-reference.com/leagues/NBA_2011_transactions.html,200,235517,1,,ok,,
+2026-10-09T07:19:00Z,http-get,https://www.basketball-reference.com/leagues/NBA_2012_transactions.html,200,229980,1,,ok,,
+2026-10-09T07:19:05Z,http-get,https://www.basketball-reference.com/leagues/NBA_2013_transactions.html,200,302518,1,,ok,,
+2026-10-09T07:19:10Z,http-get,https://www.basketball-reference.com/leagues/NBA_2014_transactions.html,200,311431,1,,ok,,
+2026-10-09T07:19:15Z,http-get,https://www.basketball-reference.com/leagues/NBA_2015_transactions.html,200,361178,1,,ok,,
+2026-10-09T07:19:21Z,http-get,https://www.basketball-reference.com/leagues/NBA_2016_transactions.html,200,396011,1,,ok,,
+2026-10-09T07:19:26Z,http-get,https://www.basketball-reference.com/leagues/NBA_2017_transactions.html,200,468232,1,,ok,,
+2026-10-09T07:19:31Z,http-get,https://www.basketball-reference.com/leagues/NBA_2018_transactions.html,200,436819,1,,ok,,
+2026-10-09T07:19:36Z,http-get,https://www.basketball-reference.com/leagues/NBA_2019_transactions.html,200,437103,1,,ok,,
+2026-10-09T07:19:42Z,http-get,https://www.basketball-reference.com/leagues/NBA_2020_transactions.html,200,481074,1,,ok,,
+2026-10-09T07:19:47Z,http-get,https://www.basketball-reference.com/leagues/NBA_2021_transactions.html,200,306540,1,,ok,,
+2026-10-09T07:19:52Z,http-get,https://www.basketball-reference.com/leagues/NBA_2022_transactions.html,200,499000,1,,ok,,
+2026-10-09T07:19:57Z,http-get,https://www.basketball-reference.com/leagues/NBA_2023_transactions.html,200,324899,1,,ok,,
+2026-10-09T07:20:02Z,http-get,https://www.basketball-reference.com/leagues/NBA_2024_transactions.html,200,334372,1,,ok,,
+2026-10-09T07:20:08Z,http-get,https://www.basketball-reference.com/leagues/NBA_2025_transactions.html,200,346008,1,,ok,,
+2026-10-09T07:20:13Z,http-get,https://www.basketball-reference.com/leagues/NBA_2026_transactions.html,200,349318,1,,ok,,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1947_transactions.html,,139944,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1948_transactions.html,,150077,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1949_transactions.html,,146086,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1950_transactions.html,,157379,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1951_transactions.html,,149030,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1952_transactions.html,,140623,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1953_transactions.html,,144562,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1954_transactions.html,,142090,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1955_transactions.html,,143422,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1956_transactions.html,,139879,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1957_transactions.html,,143222,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1958_transactions.html,,141845,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1959_transactions.html,,140100,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1960_transactions.html,,143702,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1961_transactions.html,,145106,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1962_transactions.html,,143705,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1963_transactions.html,,142488,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1964_transactions.html,,143668,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1965_transactions.html,,141537,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1966_transactions.html,,147571,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1967_transactions.html,,150406,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1968_transactions.html,,150866,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1969_transactions.html,,146785,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1970_transactions.html,,158442,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1971_transactions.html,,149915,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1972_transactions.html,,153194,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1973_transactions.html,,158831,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1974_transactions.html,,160320,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1975_transactions.html,,158219,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1976_transactions.html,,160338,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1977_transactions.html,,183721,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1978_transactions.html,,185326,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1979_transactions.html,,180470,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1980_transactions.html,,188590,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1981_transactions.html,,182805,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1982_transactions.html,,171786,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1983_transactions.html,,184935,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1984_transactions.html,,178156,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1985_transactions.html,,178442,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1986_transactions.html,,184015,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1987_transactions.html,,191345,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1988_transactions.html,,196169,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1989_transactions.html,,201790,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1990_transactions.html,,205363,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1991_transactions.html,,210304,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1992_transactions.html,,207136,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1993_transactions.html,,203585,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1994_transactions.html,,197892,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1995_transactions.html,,212544,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1996_transactions.html,,207360,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1997_transactions.html,,231728,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1998_transactions.html,,215188,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1999_transactions.html,,201413,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2000_transactions.html,,208076,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2001_transactions.html,,201548,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2002_transactions.html,,202667,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2003_transactions.html,,189558,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2004_transactions.html,,221266,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2005_transactions.html,,205557,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2006_transactions.html,,214540,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2007_transactions.html,,200366,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2008_transactions.html,,217863,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2009_transactions.html,,216226,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2010_transactions.html,,221198,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2011_transactions.html,,235517,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2012_transactions.html,,229980,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2013_transactions.html,,302518,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2014_transactions.html,,311431,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2015_transactions.html,,361178,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2016_transactions.html,,396011,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2017_transactions.html,,468232,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2018_transactions.html,,436819,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2019_transactions.html,,437103,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2020_transactions.html,,481074,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2021_transactions.html,,306540,0,,cached (no request),,
+2026-10-09T07:20:40Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2022_transactions.html,,499000,0,,cached (no request),,
+2026-10-09T07:20:41Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2023_transactions.html,,324899,0,,cached (no request),,
+2026-10-09T07:20:41Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2024_transactions.html,,334372,0,,cached (no request),,
+2026-10-09T07:20:41Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2025_transactions.html,,346008,0,,cached (no request),,
+2026-10-09T07:20:41Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2026_transactions.html,,349318,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1947_transactions.html,,139944,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1948_transactions.html,,150077,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1949_transactions.html,,146086,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1950_transactions.html,,157379,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1951_transactions.html,,149030,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1952_transactions.html,,140623,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1953_transactions.html,,144562,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1954_transactions.html,,142090,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1955_transactions.html,,143422,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1956_transactions.html,,139879,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1957_transactions.html,,143222,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1958_transactions.html,,141845,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1959_transactions.html,,140100,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1960_transactions.html,,143702,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1961_transactions.html,,145106,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1962_transactions.html,,143705,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1963_transactions.html,,142488,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1964_transactions.html,,143668,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1965_transactions.html,,141537,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1966_transactions.html,,147571,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1967_transactions.html,,150406,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1968_transactions.html,,150866,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1969_transactions.html,,146785,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1970_transactions.html,,158442,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1971_transactions.html,,149915,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1972_transactions.html,,153194,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1973_transactions.html,,158831,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1974_transactions.html,,160320,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1975_transactions.html,,158219,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1976_transactions.html,,160338,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1977_transactions.html,,183721,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1978_transactions.html,,185326,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1979_transactions.html,,180470,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1980_transactions.html,,188590,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1981_transactions.html,,182805,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1982_transactions.html,,171786,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1983_transactions.html,,184935,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1984_transactions.html,,178156,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1985_transactions.html,,178442,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1986_transactions.html,,184015,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1987_transactions.html,,191345,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1988_transactions.html,,196169,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1989_transactions.html,,201790,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1990_transactions.html,,205363,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1991_transactions.html,,210304,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1992_transactions.html,,207136,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1993_transactions.html,,203585,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1994_transactions.html,,197892,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1995_transactions.html,,212544,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1996_transactions.html,,207360,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1997_transactions.html,,231728,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1998_transactions.html,,215188,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1999_transactions.html,,201413,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2000_transactions.html,,208076,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2001_transactions.html,,201548,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2002_transactions.html,,202667,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2003_transactions.html,,189558,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2004_transactions.html,,221266,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2005_transactions.html,,205557,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2006_transactions.html,,214540,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2007_transactions.html,,200366,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2008_transactions.html,,217863,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2009_transactions.html,,216226,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2010_transactions.html,,221198,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2011_transactions.html,,235517,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2012_transactions.html,,229980,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2013_transactions.html,,302518,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2014_transactions.html,,311431,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2015_transactions.html,,361178,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2016_transactions.html,,396011,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2017_transactions.html,,468232,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2018_transactions.html,,436819,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2019_transactions.html,,437103,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2020_transactions.html,,481074,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2021_transactions.html,,306540,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2022_transactions.html,,499000,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2023_transactions.html,,324899,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2024_transactions.html,,334372,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2025_transactions.html,,346008,0,,cached (no request),,
+2026-10-09T07:22:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2026_transactions.html,,349318,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1947_transactions.html,,139944,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1948_transactions.html,,150077,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1949_transactions.html,,146086,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1950_transactions.html,,157379,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1951_transactions.html,,149030,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1952_transactions.html,,140623,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1953_transactions.html,,144562,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1954_transactions.html,,142090,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1955_transactions.html,,143422,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1956_transactions.html,,139879,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1957_transactions.html,,143222,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1958_transactions.html,,141845,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1959_transactions.html,,140100,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1960_transactions.html,,143702,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1961_transactions.html,,145106,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1962_transactions.html,,143705,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1963_transactions.html,,142488,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1964_transactions.html,,143668,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1965_transactions.html,,141537,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1966_transactions.html,,147571,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1967_transactions.html,,150406,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1968_transactions.html,,150866,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1969_transactions.html,,146785,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1970_transactions.html,,158442,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1971_transactions.html,,149915,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1972_transactions.html,,153194,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1973_transactions.html,,158831,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1974_transactions.html,,160320,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1975_transactions.html,,158219,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1976_transactions.html,,160338,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1977_transactions.html,,183721,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1978_transactions.html,,185326,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1979_transactions.html,,180470,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1980_transactions.html,,188590,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1981_transactions.html,,182805,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1982_transactions.html,,171786,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1983_transactions.html,,184935,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1984_transactions.html,,178156,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1985_transactions.html,,178442,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1986_transactions.html,,184015,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1987_transactions.html,,191345,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1988_transactions.html,,196169,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1989_transactions.html,,201790,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1990_transactions.html,,205363,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1991_transactions.html,,210304,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1992_transactions.html,,207136,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1993_transactions.html,,203585,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1994_transactions.html,,197892,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1995_transactions.html,,212544,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1996_transactions.html,,207360,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1997_transactions.html,,231728,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1998_transactions.html,,215188,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1999_transactions.html,,201413,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2000_transactions.html,,208076,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2001_transactions.html,,201548,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2002_transactions.html,,202667,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2003_transactions.html,,189558,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2004_transactions.html,,221266,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2005_transactions.html,,205557,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2006_transactions.html,,214540,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2007_transactions.html,,200366,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2008_transactions.html,,217863,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2009_transactions.html,,216226,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2010_transactions.html,,221198,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2011_transactions.html,,235517,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2012_transactions.html,,229980,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2013_transactions.html,,302518,0,,cached (no request),,
+2026-10-09T07:22:56Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2014_transactions.html,,311431,0,,cached (no request),,
+2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2015_transactions.html,,361178,0,,cached (no request),,
+2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2016_transactions.html,,396011,0,,cached (no request),,
+2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2017_transactions.html,,468232,0,,cached (no request),,
+2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2018_transactions.html,,436819,0,,cached (no request),,
+2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2019_transactions.html,,437103,0,,cached (no request),,
+2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2020_transactions.html,,481074,0,,cached (no request),,
+2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2021_transactions.html,,306540,0,,cached (no request),,
+2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2022_transactions.html,,499000,0,,cached (no request),,
+2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2023_transactions.html,,324899,0,,cached (no request),,
+2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2024_transactions.html,,334372,0,,cached (no request),,
+2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2025_transactions.html,,346008,0,,cached (no request),,
+2026-10-09T07:22:57Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2026_transactions.html,,349318,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1947_transactions.html,,139944,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1948_transactions.html,,150077,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1949_transactions.html,,146086,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1950_transactions.html,,157379,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1951_transactions.html,,149030,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1952_transactions.html,,140623,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1953_transactions.html,,144562,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1954_transactions.html,,142090,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1955_transactions.html,,143422,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1956_transactions.html,,139879,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1957_transactions.html,,143222,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1958_transactions.html,,141845,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1959_transactions.html,,140100,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1960_transactions.html,,143702,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1961_transactions.html,,145106,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1962_transactions.html,,143705,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1963_transactions.html,,142488,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1964_transactions.html,,143668,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1965_transactions.html,,141537,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1966_transactions.html,,147571,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1967_transactions.html,,150406,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1968_transactions.html,,150866,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1969_transactions.html,,146785,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1970_transactions.html,,158442,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1971_transactions.html,,149915,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1972_transactions.html,,153194,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1973_transactions.html,,158831,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1974_transactions.html,,160320,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1975_transactions.html,,158219,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1976_transactions.html,,160338,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1977_transactions.html,,183721,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1978_transactions.html,,185326,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1979_transactions.html,,180470,0,,cached (no request),,
+2026-10-09T07:24:32Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1980_transactions.html,,188590,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1981_transactions.html,,182805,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1982_transactions.html,,171786,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1983_transactions.html,,184935,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1984_transactions.html,,178156,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1985_transactions.html,,178442,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1986_transactions.html,,184015,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1987_transactions.html,,191345,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1988_transactions.html,,196169,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1989_transactions.html,,201790,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1990_transactions.html,,205363,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1991_transactions.html,,210304,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1992_transactions.html,,207136,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1993_transactions.html,,203585,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1994_transactions.html,,197892,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1995_transactions.html,,212544,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1996_transactions.html,,207360,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1997_transactions.html,,231728,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1998_transactions.html,,215188,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1999_transactions.html,,201413,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2000_transactions.html,,208076,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2001_transactions.html,,201548,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2002_transactions.html,,202667,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2003_transactions.html,,189558,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2004_transactions.html,,221266,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2005_transactions.html,,205557,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2006_transactions.html,,214540,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2007_transactions.html,,200366,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2008_transactions.html,,217863,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2009_transactions.html,,216226,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2010_transactions.html,,221198,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2011_transactions.html,,235517,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2012_transactions.html,,229980,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2013_transactions.html,,302518,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2014_transactions.html,,311431,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2015_transactions.html,,361178,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2016_transactions.html,,396011,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2017_transactions.html,,468232,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2018_transactions.html,,436819,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2019_transactions.html,,437103,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2020_transactions.html,,481074,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2021_transactions.html,,306540,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2022_transactions.html,,499000,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2023_transactions.html,,324899,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2024_transactions.html,,334372,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2025_transactions.html,,346008,0,,cached (no request),,
+2026-10-09T07:24:33Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2026_transactions.html,,349318,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1947_transactions.html,,139944,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1948_transactions.html,,150077,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1949_transactions.html,,146086,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1950_transactions.html,,157379,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1951_transactions.html,,149030,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1952_transactions.html,,140623,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1953_transactions.html,,144562,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1954_transactions.html,,142090,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1955_transactions.html,,143422,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1956_transactions.html,,139879,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1957_transactions.html,,143222,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1958_transactions.html,,141845,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1959_transactions.html,,140100,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1960_transactions.html,,143702,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1961_transactions.html,,145106,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1962_transactions.html,,143705,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1963_transactions.html,,142488,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1964_transactions.html,,143668,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1965_transactions.html,,141537,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1966_transactions.html,,147571,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1967_transactions.html,,150406,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1968_transactions.html,,150866,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1969_transactions.html,,146785,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1970_transactions.html,,158442,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1971_transactions.html,,149915,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1972_transactions.html,,153194,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1973_transactions.html,,158831,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1974_transactions.html,,160320,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1975_transactions.html,,158219,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1976_transactions.html,,160338,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1977_transactions.html,,183721,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1978_transactions.html,,185326,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1979_transactions.html,,180470,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1980_transactions.html,,188590,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1981_transactions.html,,182805,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1982_transactions.html,,171786,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1983_transactions.html,,184935,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1984_transactions.html,,178156,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1985_transactions.html,,178442,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1986_transactions.html,,184015,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1987_transactions.html,,191345,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1988_transactions.html,,196169,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1989_transactions.html,,201790,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1990_transactions.html,,205363,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1991_transactions.html,,210304,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1992_transactions.html,,207136,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1993_transactions.html,,203585,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1994_transactions.html,,197892,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1995_transactions.html,,212544,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1996_transactions.html,,207360,0,,cached (no request),,
+2026-10-09T07:38:11Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1997_transactions.html,,231728,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1998_transactions.html,,215188,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1999_transactions.html,,201413,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2000_transactions.html,,208076,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2001_transactions.html,,201548,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2002_transactions.html,,202667,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2003_transactions.html,,189558,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2004_transactions.html,,221266,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2005_transactions.html,,205557,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2006_transactions.html,,214540,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2007_transactions.html,,200366,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2008_transactions.html,,217863,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2009_transactions.html,,216226,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2010_transactions.html,,221198,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2011_transactions.html,,235517,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2012_transactions.html,,229980,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2013_transactions.html,,302518,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2014_transactions.html,,311431,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2015_transactions.html,,361178,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2016_transactions.html,,396011,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2017_transactions.html,,468232,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2018_transactions.html,,436819,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2019_transactions.html,,437103,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2020_transactions.html,,481074,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2021_transactions.html,,306540,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2022_transactions.html,,499000,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2023_transactions.html,,324899,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2024_transactions.html,,334372,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2025_transactions.html,,346008,0,,cached (no request),,
+2026-10-09T07:38:12Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2026_transactions.html,,349318,0,,cached (no request),,
+2026-10-09T08:02:12.255053Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1947_transactions.html,,139944,0,,cached (no request),,
+2026-10-09T08:02:12.260536Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1948_transactions.html,,150077,0,,cached (no request),,
+2026-10-09T08:02:12.266945Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1949_transactions.html,,146086,0,,cached (no request),,
+2026-10-09T08:02:12.273144Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1950_transactions.html,,157379,0,,cached (no request),,
+2026-10-09T08:02:12.280674Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1951_transactions.html,,149030,0,,cached (no request),,
+2026-10-09T08:02:12.286947Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1952_transactions.html,,140623,0,,cached (no request),,
+2026-10-09T08:02:12.291657Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1953_transactions.html,,144562,0,,cached (no request),,
+2026-10-09T08:02:12.297145Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1954_transactions.html,,142090,0,,cached (no request),,
+2026-10-09T08:02:12.302232Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1955_transactions.html,,143422,0,,cached (no request),,
+2026-10-09T08:02:12.307343Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1956_transactions.html,,139879,0,,cached (no request),,
+2026-10-09T08:02:12.312113Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1957_transactions.html,,143222,0,,cached (no request),,
+2026-10-09T08:02:12.317268Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1958_transactions.html,,141845,0,,cached (no request),,
+2026-10-09T08:02:12.322230Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1959_transactions.html,,140100,0,,cached (no request),,
+2026-10-09T08:02:12.326880Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1960_transactions.html,,143702,0,,cached (no request),,
+2026-10-09T08:02:12.332086Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1961_transactions.html,,145106,0,,cached (no request),,
+2026-10-09T08:02:12.337478Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1962_transactions.html,,143705,0,,cached (no request),,
+2026-10-09T08:02:12.342665Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1963_transactions.html,,142488,0,,cached (no request),,
+2026-10-09T08:02:12.347615Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1964_transactions.html,,143668,0,,cached (no request),,
+2026-10-09T08:02:12.352826Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1965_transactions.html,,141537,0,,cached (no request),,
+2026-10-09T08:02:12.357627Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1966_transactions.html,,147571,0,,cached (no request),,
+2026-10-09T08:02:12.363378Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1967_transactions.html,,150406,0,,cached (no request),,
+2026-10-09T08:02:12.369464Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1968_transactions.html,,150866,0,,cached (no request),,
+2026-10-09T08:02:12.375677Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1969_transactions.html,,146785,0,,cached (no request),,
+2026-10-09T08:02:12.381310Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1970_transactions.html,,158442,0,,cached (no request),,
+2026-10-09T08:02:12.388600Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1971_transactions.html,,149915,0,,cached (no request),,
+2026-10-09T08:02:12.394753Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1972_transactions.html,,153194,0,,cached (no request),,
+2026-10-09T08:02:12.401279Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1973_transactions.html,,158831,0,,cached (no request),,
+2026-10-09T08:02:12.408875Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1974_transactions.html,,160320,0,,cached (no request),,
+2026-10-09T08:02:12.416615Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1975_transactions.html,,158219,0,,cached (no request),,
+2026-10-09T08:02:12.423894Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1976_transactions.html,,160338,0,,cached (no request),,
+2026-10-09T08:02:12.431568Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1977_transactions.html,,183721,0,,cached (no request),,
+2026-10-09T08:02:12.442811Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1978_transactions.html,,185326,0,,cached (no request),,
+2026-10-09T08:02:12.454317Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1979_transactions.html,,180470,0,,cached (no request),,
+2026-10-09T08:02:12.465015Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1980_transactions.html,,188590,0,,cached (no request),,
+2026-10-09T08:02:12.476920Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1981_transactions.html,,182805,0,,cached (no request),,
+2026-10-09T08:02:12.487923Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1982_transactions.html,,171786,0,,cached (no request),,
+2026-10-09T08:02:12.497210Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1983_transactions.html,,184935,0,,cached (no request),,
+2026-10-09T08:02:12.508620Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1984_transactions.html,,178156,0,,cached (no request),,
+2026-10-09T08:02:12.519061Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1985_transactions.html,,178442,0,,cached (no request),,
+2026-10-09T08:02:12.529679Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1986_transactions.html,,184015,0,,cached (no request),,
+2026-10-09T08:02:12.540928Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1987_transactions.html,,191345,0,,cached (no request),,
+2026-10-09T08:02:12.553290Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1988_transactions.html,,196169,0,,cached (no request),,
+2026-10-09T08:02:12.566371Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1989_transactions.html,,201790,0,,cached (no request),,
+2026-10-09T08:02:12.580444Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1990_transactions.html,,205363,0,,cached (no request),,
+2026-10-09T08:02:12.595078Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1991_transactions.html,,210304,0,,cached (no request),,
+2026-10-09T08:02:12.610599Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1992_transactions.html,,207136,0,,cached (no request),,
+2026-10-09T08:02:12.625648Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1993_transactions.html,,203585,0,,cached (no request),,
+2026-10-09T08:02:12.639987Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1994_transactions.html,,197892,0,,cached (no request),,
+2026-10-09T08:02:12.653858Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1995_transactions.html,,212544,0,,cached (no request),,
+2026-10-09T08:02:12.669938Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1996_transactions.html,,207360,0,,cached (no request),,
+2026-10-09T08:02:12.684699Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1997_transactions.html,,231728,0,,cached (no request),,
+2026-10-09T08:02:12.703673Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1998_transactions.html,,215188,0,,cached (no request),,
+2026-10-09T08:02:12.719746Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1999_transactions.html,,201413,0,,cached (no request),,
+2026-10-09T08:02:12.733580Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2000_transactions.html,,208076,0,,cached (no request),,
+2026-10-09T08:02:12.748597Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2001_transactions.html,,201548,0,,cached (no request),,
+2026-10-09T08:02:12.762352Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2002_transactions.html,,202667,0,,cached (no request),,
+2026-10-09T08:02:12.776285Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2003_transactions.html,,189558,0,,cached (no request),,
+2026-10-09T08:02:12.788631Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2004_transactions.html,,221266,0,,cached (no request),,
+2026-10-09T08:02:12.805440Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2005_transactions.html,,205557,0,,cached (no request),,
+2026-10-09T08:02:12.820175Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2006_transactions.html,,214540,0,,cached (no request),,
+2026-10-09T08:02:12.835862Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2007_transactions.html,,200366,0,,cached (no request),,
+2026-10-09T08:02:12.849582Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2008_transactions.html,,217863,0,,cached (no request),,
+2026-10-09T08:02:12.866910Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2009_transactions.html,,216226,0,,cached (no request),,
+2026-10-09T08:02:12.882818Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2010_transactions.html,,221198,0,,cached (no request),,
+2026-10-09T08:02:12.899496Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2011_transactions.html,,235517,0,,cached (no request),,
+2026-10-09T08:02:12.918062Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2012_transactions.html,,229980,0,,cached (no request),,
+2026-10-09T08:02:12.935964Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2013_transactions.html,,302518,0,,cached (no request),,
+2026-10-09T08:02:12.964224Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2014_transactions.html,,311431,0,,cached (no request),,
+2026-10-09T08:02:12.993985Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2015_transactions.html,,361178,0,,cached (no request),,
+2026-10-09T08:02:13.031691Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2016_transactions.html,,396011,0,,cached (no request),,
+2026-10-09T08:02:13.073937Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2017_transactions.html,,468232,0,,cached (no request),,
+2026-10-09T08:02:13.126457Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2018_transactions.html,,436819,0,,cached (no request),,
+2026-10-09T08:02:13.181229Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2019_transactions.html,,437103,0,,cached (no request),,
+2026-10-09T08:02:13.229398Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2020_transactions.html,,481074,0,,cached (no request),,
+2026-10-09T08:02:13.283448Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2021_transactions.html,,306540,0,,cached (no request),,
+2026-10-09T08:02:13.312557Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2022_transactions.html,,499000,0,,cached (no request),,
+2026-10-09T08:02:13.368899Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2023_transactions.html,,324899,0,,cached (no request),,
+2026-10-09T08:02:13.403942Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2024_transactions.html,,334372,0,,cached (no request),,
+2026-10-09T08:02:13.438720Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2025_transactions.html,,346008,0,,cached (no request),,
+2026-10-09T08:02:13.473530Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2026_transactions.html,,349318,0,,cached (no request),,
+2026-10-09T08:07:26.294258Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1947_transactions.html,,139944,0,,cached (no request),,
+2026-10-09T08:07:26.299497Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1948_transactions.html,,150077,0,,cached (no request),,
+2026-10-09T08:07:26.305658Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1949_transactions.html,,146086,0,,cached (no request),,
+2026-10-09T08:07:26.311289Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1950_transactions.html,,157379,0,,cached (no request),,
+2026-10-09T08:07:26.318446Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1951_transactions.html,,149030,0,,cached (no request),,
+2026-10-09T08:07:26.324250Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1952_transactions.html,,140623,0,,cached (no request),,
+2026-10-09T08:07:26.328844Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1953_transactions.html,,144562,0,,cached (no request),,
+2026-10-09T08:07:26.334239Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1954_transactions.html,,142090,0,,cached (no request),,
+2026-10-09T08:07:26.339513Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1955_transactions.html,,143422,0,,cached (no request),,
+2026-10-09T08:07:26.344449Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1956_transactions.html,,139879,0,,cached (no request),,
+2026-10-09T08:07:26.348883Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1957_transactions.html,,143222,0,,cached (no request),,
+2026-10-09T08:07:26.354056Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1958_transactions.html,,141845,0,,cached (no request),,
+2026-10-09T08:07:26.358890Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1959_transactions.html,,140100,0,,cached (no request),,
+2026-10-09T08:07:26.363469Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1960_transactions.html,,143702,0,,cached (no request),,
+2026-10-09T08:07:26.368581Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1961_transactions.html,,145106,0,,cached (no request),,
+2026-10-09T08:07:26.373774Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1962_transactions.html,,143705,0,,cached (no request),,
+2026-10-09T08:07:26.379010Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1963_transactions.html,,142488,0,,cached (no request),,
+2026-10-09T08:07:26.383932Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1964_transactions.html,,143668,0,,cached (no request),,
+2026-10-09T08:07:26.388984Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1965_transactions.html,,141537,0,,cached (no request),,
+2026-10-09T08:07:26.393756Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1966_transactions.html,,147571,0,,cached (no request),,
+2026-10-09T08:07:26.399366Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1967_transactions.html,,150406,0,,cached (no request),,
+2026-10-09T08:07:26.405280Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1968_transactions.html,,150866,0,,cached (no request),,
+2026-10-09T08:07:26.411314Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1969_transactions.html,,146785,0,,cached (no request),,
+2026-10-09T08:07:26.417190Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1970_transactions.html,,158442,0,,cached (no request),,
+2026-10-09T08:07:26.424342Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1971_transactions.html,,149915,0,,cached (no request),,
+2026-10-09T08:07:26.430260Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1972_transactions.html,,153194,0,,cached (no request),,
+2026-10-09T08:07:26.436829Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1973_transactions.html,,158831,0,,cached (no request),,
+2026-10-09T08:07:26.444365Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1974_transactions.html,,160320,0,,cached (no request),,
+2026-10-09T08:07:26.451946Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1975_transactions.html,,158219,0,,cached (no request),,
+2026-10-09T08:07:26.459108Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1976_transactions.html,,160338,0,,cached (no request),,
+2026-10-09T08:07:26.466713Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1977_transactions.html,,183721,0,,cached (no request),,
+2026-10-09T08:07:26.477839Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1978_transactions.html,,185326,0,,cached (no request),,
+2026-10-09T08:07:26.489043Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1979_transactions.html,,180470,0,,cached (no request),,
+2026-10-09T08:07:26.499677Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1980_transactions.html,,188590,0,,cached (no request),,
+2026-10-09T08:07:26.511538Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1981_transactions.html,,182805,0,,cached (no request),,
+2026-10-09T08:07:26.522498Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1982_transactions.html,,171786,0,,cached (no request),,
+2026-10-09T08:07:26.531717Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1983_transactions.html,,184935,0,,cached (no request),,
+2026-10-09T08:07:26.542865Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1984_transactions.html,,178156,0,,cached (no request),,
+2026-10-09T08:07:26.553150Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1985_transactions.html,,178442,0,,cached (no request),,
+2026-10-09T08:07:26.563571Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1986_transactions.html,,184015,0,,cached (no request),,
+2026-10-09T08:07:26.574860Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1987_transactions.html,,191345,0,,cached (no request),,
+2026-10-09T08:07:26.587630Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1988_transactions.html,,196169,0,,cached (no request),,
+2026-10-09T08:07:26.600713Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1989_transactions.html,,201790,0,,cached (no request),,
+2026-10-09T08:07:26.614653Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1990_transactions.html,,205363,0,,cached (no request),,
+2026-10-09T08:07:26.629162Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1991_transactions.html,,210304,0,,cached (no request),,
+2026-10-09T08:07:26.644732Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1992_transactions.html,,207136,0,,cached (no request),,
+2026-10-09T08:07:26.659623Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1993_transactions.html,,203585,0,,cached (no request),,
+2026-10-09T08:07:26.673939Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1994_transactions.html,,197892,0,,cached (no request),,
+2026-10-09T08:07:26.687689Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1995_transactions.html,,212544,0,,cached (no request),,
+2026-10-09T08:07:26.703358Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1996_transactions.html,,207360,0,,cached (no request),,
+2026-10-09T08:07:26.718284Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1997_transactions.html,,231728,0,,cached (no request),,
+2026-10-09T08:07:26.737176Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1998_transactions.html,,215188,0,,cached (no request),,
+2026-10-09T08:07:26.753341Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1999_transactions.html,,201413,0,,cached (no request),,
+2026-10-09T08:07:26.767205Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2000_transactions.html,,208076,0,,cached (no request),,
+2026-10-09T08:07:26.782096Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2001_transactions.html,,201548,0,,cached (no request),,
+2026-10-09T08:07:26.795829Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2002_transactions.html,,202667,0,,cached (no request),,
+2026-10-09T08:07:26.863710Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2003_transactions.html,,189558,0,,cached (no request),,
+2026-10-09T08:07:26.876283Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2004_transactions.html,,221266,0,,cached (no request),,
+2026-10-09T08:07:26.893608Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2005_transactions.html,,205557,0,,cached (no request),,
+2026-10-09T08:07:26.908589Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2006_transactions.html,,214540,0,,cached (no request),,
+2026-10-09T08:07:26.924808Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2007_transactions.html,,200366,0,,cached (no request),,
+2026-10-09T08:07:26.939084Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2008_transactions.html,,217863,0,,cached (no request),,
+2026-10-09T08:07:26.956963Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2009_transactions.html,,216226,0,,cached (no request),,
+2026-10-09T08:07:26.974651Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2010_transactions.html,,221198,0,,cached (no request),,
+2026-10-09T08:07:26.993057Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2011_transactions.html,,235517,0,,cached (no request),,
+2026-10-09T08:07:27.013657Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2012_transactions.html,,229980,0,,cached (no request),,
+2026-10-09T08:07:27.033427Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2013_transactions.html,,302518,0,,cached (no request),,
+2026-10-09T08:07:27.065030Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2014_transactions.html,,311431,0,,cached (no request),,
+2026-10-09T08:07:27.097412Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2015_transactions.html,,361178,0,,cached (no request),,
+2026-10-09T08:07:27.138032Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2016_transactions.html,,396011,0,,cached (no request),,
+2026-10-09T08:07:27.180965Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2017_transactions.html,,468232,0,,cached (no request),,
+2026-10-09T08:07:27.235049Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2018_transactions.html,,436819,0,,cached (no request),,
+2026-10-09T08:07:27.286196Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2019_transactions.html,,437103,0,,cached (no request),,
+2026-10-09T08:07:27.335438Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2020_transactions.html,,481074,0,,cached (no request),,
+2026-10-09T08:07:27.389463Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2021_transactions.html,,306540,0,,cached (no request),,
+2026-10-09T08:07:27.418347Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2022_transactions.html,,499000,0,,cached (no request),,
+2026-10-09T08:07:27.474766Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2023_transactions.html,,324899,0,,cached (no request),,
+2026-10-09T08:07:27.507660Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2024_transactions.html,,334372,0,,cached (no request),,
+2026-10-09T08:07:27.542877Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2025_transactions.html,,346008,0,,cached (no request),,
+2026-10-09T08:07:27.577499Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2026_transactions.html,,349318,0,,cached (no request),,
+2026-10-09T08:08:02.745134Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1947_transactions.html,,139944,0,,cached (no request),,
+2026-10-09T08:08:02.750475Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1948_transactions.html,,150077,0,,cached (no request),,
+2026-10-09T08:08:02.757008Z,cache-hit,https://www.basketball-reference.com/leagues/BAA_1949_transactions.html,,146086,0,,cached (no request),,
+2026-10-09T08:08:02.762754Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1950_transactions.html,,157379,0,,cached (no request),,
+2026-10-09T08:08:02.770167Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1951_transactions.html,,149030,0,,cached (no request),,
+2026-10-09T08:08:02.776413Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1952_transactions.html,,140623,0,,cached (no request),,
+2026-10-09T08:08:02.781344Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1953_transactions.html,,144562,0,,cached (no request),,
+2026-10-09T08:08:02.786710Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1954_transactions.html,,142090,0,,cached (no request),,
+2026-10-09T08:08:02.791939Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1955_transactions.html,,143422,0,,cached (no request),,
+2026-10-09T08:08:02.797407Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1956_transactions.html,,139879,0,,cached (no request),,
+2026-10-09T08:08:02.802118Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1957_transactions.html,,143222,0,,cached (no request),,
+2026-10-09T08:08:02.807343Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1958_transactions.html,,141845,0,,cached (no request),,
+2026-10-09T08:08:02.812288Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1959_transactions.html,,140100,0,,cached (no request),,
+2026-10-09T08:08:02.816895Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1960_transactions.html,,143702,0,,cached (no request),,
+2026-10-09T08:08:02.822179Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1961_transactions.html,,145106,0,,cached (no request),,
+2026-10-09T08:08:02.827702Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1962_transactions.html,,143705,0,,cached (no request),,
+2026-10-09T08:08:02.832991Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1963_transactions.html,,142488,0,,cached (no request),,
+2026-10-09T08:08:02.838120Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1964_transactions.html,,143668,0,,cached (no request),,
+2026-10-09T08:08:02.843328Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1965_transactions.html,,141537,0,,cached (no request),,
+2026-10-09T08:08:02.848322Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1966_transactions.html,,147571,0,,cached (no request),,
+2026-10-09T08:08:02.854190Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1967_transactions.html,,150406,0,,cached (no request),,
+2026-10-09T08:08:02.860458Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1968_transactions.html,,150866,0,,cached (no request),,
+2026-10-09T08:08:02.866848Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1969_transactions.html,,146785,0,,cached (no request),,
+2026-10-09T08:08:02.872737Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1970_transactions.html,,158442,0,,cached (no request),,
+2026-10-09T08:08:02.880150Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1971_transactions.html,,149915,0,,cached (no request),,
+2026-10-09T08:08:02.886305Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1972_transactions.html,,153194,0,,cached (no request),,
+2026-10-09T08:08:02.893106Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1973_transactions.html,,158831,0,,cached (no request),,
+2026-10-09T08:08:02.901086Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1974_transactions.html,,160320,0,,cached (no request),,
+2026-10-09T08:08:02.909132Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1975_transactions.html,,158219,0,,cached (no request),,
+2026-10-09T08:08:02.916692Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1976_transactions.html,,160338,0,,cached (no request),,
+2026-10-09T08:08:02.924657Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1977_transactions.html,,183721,0,,cached (no request),,
+2026-10-09T08:08:02.936329Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1978_transactions.html,,185326,0,,cached (no request),,
+2026-10-09T08:08:02.948106Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1979_transactions.html,,180470,0,,cached (no request),,
+2026-10-09T08:08:02.959221Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1980_transactions.html,,188590,0,,cached (no request),,
+2026-10-09T08:08:02.971660Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1981_transactions.html,,182805,0,,cached (no request),,
+2026-10-09T08:08:02.983074Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1982_transactions.html,,171786,0,,cached (no request),,
+2026-10-09T08:08:02.992815Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1983_transactions.html,,184935,0,,cached (no request),,
+2026-10-09T08:08:03.004498Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1984_transactions.html,,178156,0,,cached (no request),,
+2026-10-09T08:08:03.015193Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1985_transactions.html,,178442,0,,cached (no request),,
+2026-10-09T08:08:03.026210Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1986_transactions.html,,184015,0,,cached (no request),,
+2026-10-09T08:08:03.038153Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1987_transactions.html,,191345,0,,cached (no request),,
+2026-10-09T08:08:03.050831Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1988_transactions.html,,196169,0,,cached (no request),,
+2026-10-09T08:08:03.064514Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1989_transactions.html,,201790,0,,cached (no request),,
+2026-10-09T08:08:03.079099Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1990_transactions.html,,205363,0,,cached (no request),,
+2026-10-09T08:08:03.094319Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1991_transactions.html,,210304,0,,cached (no request),,
+2026-10-09T08:08:03.110398Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1992_transactions.html,,207136,0,,cached (no request),,
+2026-10-09T08:08:03.126020Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1993_transactions.html,,203585,0,,cached (no request),,
+2026-10-09T08:08:03.141194Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1994_transactions.html,,197892,0,,cached (no request),,
+2026-10-09T08:08:03.155537Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1995_transactions.html,,212544,0,,cached (no request),,
+2026-10-09T08:08:03.172196Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1996_transactions.html,,207360,0,,cached (no request),,
+2026-10-09T08:08:03.187399Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1997_transactions.html,,231728,0,,cached (no request),,
+2026-10-09T08:08:03.206924Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1998_transactions.html,,215188,0,,cached (no request),,
+2026-10-09T08:08:03.223716Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_1999_transactions.html,,201413,0,,cached (no request),,
+2026-10-09T08:08:03.238057Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2000_transactions.html,,208076,0,,cached (no request),,
+2026-10-09T08:08:03.253396Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2001_transactions.html,,201548,0,,cached (no request),,
+2026-10-09T08:08:03.267697Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2002_transactions.html,,202667,0,,cached (no request),,
+2026-10-09T08:08:03.282336Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2003_transactions.html,,189558,0,,cached (no request),,
+2026-10-09T08:08:03.295232Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2004_transactions.html,,221266,0,,cached (no request),,
+2026-10-09T08:08:03.312860Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2005_transactions.html,,205557,0,,cached (no request),,
+2026-10-09T08:08:03.328143Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2006_transactions.html,,214540,0,,cached (no request),,
+2026-10-09T08:08:03.344151Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2007_transactions.html,,200366,0,,cached (no request),,
+2026-10-09T08:08:03.358239Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2008_transactions.html,,217863,0,,cached (no request),,
+2026-10-09T08:08:03.375892Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2009_transactions.html,,216226,0,,cached (no request),,
+2026-10-09T08:08:03.392327Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2010_transactions.html,,221198,0,,cached (no request),,
+2026-10-09T08:08:03.409596Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2011_transactions.html,,235517,0,,cached (no request),,
+2026-10-09T08:08:03.429020Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2012_transactions.html,,229980,0,,cached (no request),,
+2026-10-09T08:08:03.447780Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2013_transactions.html,,302518,0,,cached (no request),,
+2026-10-09T08:08:03.477403Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2014_transactions.html,,311431,0,,cached (no request),,
+2026-10-09T08:08:03.508402Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2015_transactions.html,,361178,0,,cached (no request),,
+2026-10-09T08:08:03.547661Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2016_transactions.html,,396011,0,,cached (no request),,
+2026-10-09T08:08:03.591509Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2017_transactions.html,,468232,0,,cached (no request),,
+2026-10-09T08:08:03.646601Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2018_transactions.html,,436819,0,,cached (no request),,
+2026-10-09T08:08:03.698493Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2019_transactions.html,,437103,0,,cached (no request),,
+2026-10-09T08:08:03.748480Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2020_transactions.html,,481074,0,,cached (no request),,
+2026-10-09T08:08:03.804541Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2021_transactions.html,,306540,0,,cached (no request),,
+2026-10-09T08:08:03.834176Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2022_transactions.html,,499000,0,,cached (no request),,
+2026-10-09T08:08:03.892729Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2023_transactions.html,,324899,0,,cached (no request),,
+2026-10-09T08:08:03.926889Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2024_transactions.html,,334372,0,,cached (no request),,
+2026-10-09T08:08:03.962831Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2025_transactions.html,,346008,0,,cached (no request),,
+2026-10-09T08:08:03.998846Z,cache-hit,https://www.basketball-reference.com/leagues/NBA_2026_transactions.html,,349318,0,,cached (no request),,

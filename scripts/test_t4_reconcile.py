@@ -13,10 +13,14 @@ Covers the four acceptance-critical behaviors:
   * fuzzy/flagged transaction legs never anchor a boundary
 """
 
+import csv
+import json
 import os
 import sys
+import tempfile
 import unittest
 from datetime import date
+from unittest.mock import patch
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -33,9 +37,13 @@ from t4_core import (  # noqa: E402
     day_number,
 )
 from t4_reconcile import (  # noqa: E402
+    apply_fetch_failures,
+    derive_coverage_counts,
     extract_anchors,
     leg_season_bucket,
     load_transaction_legs,
+    offseason_arrivals_by_membership,
+    reconstruct,
     walk_stints,
 )
 
@@ -321,6 +329,165 @@ class TestTenureConstructionSemantics(unittest.TestCase):
         # one-sided transaction evidence can no longer cross-check
         self.assertEqual(self.class_of(True, False, window_present=False), CLASS_INFERRED)
         self.assertEqual(self.class_of(False, True, window_present=False), CLASS_INFERRED)
+
+
+class TestOffseasonArrivalLinkage(unittest.TestCase):
+    def test_trade_arrival_anchors_matching_next_season_membership(self):
+        membership = [{"season": 2002, "lg": "NBA", "bbr_player_id": "abdursh01",
+                       "franchise": "HAWKS"}]
+        legs = [{"season": 2001, "league": "NBA", "slug": "abdursh01",
+                 "date_iso": "2001-06-27", "depart": "GRIZZLIES",
+                 "arrive": "HAWKS", "leg_flags": ""}]
+        windows = {
+            ("HAWKS", 2001): win("2000-10-31", "2001-04-19"),
+            ("HAWKS", 2002): win("2001-10-30", "2002-04-18"),
+        }
+        carried = offseason_arrivals_by_membership(membership, legs, windows)
+        arrivals, departures = extract_anchors(carried[("abdursh01", 2002)])
+        self.assertEqual(arrivals, {"HAWKS": [day_number("2001-06-27")]})
+        self.assertEqual(departures, {})
+        stints, flags, anomalies, notes = walk_stints(
+            arrivals["HAWKS"], [], windows[("HAWKS", 2002)])
+        self.assertEqual(stints[0][0], day_number("2001-06-27"))
+        self.assertEqual((flags, anomalies, notes), ([], [], []))
+
+    def test_offseason_arrival_does_not_carry_to_nonmatching_team(self):
+        membership = [{"season": 2002, "lg": "NBA", "bbr_player_id": "abdursh01",
+                       "franchise": "CELTICS"}]
+        legs = [{"season": 2001, "league": "NBA", "slug": "abdursh01",
+                 "date_iso": "2001-06-27", "depart": "GRIZZLIES",
+                 "arrive": "HAWKS", "leg_flags": ""}]
+        windows = {
+            ("HAWKS", 2001): win("2000-10-31", "2001-04-19"),
+            ("HAWKS", 2002): win("2001-10-30", "2002-04-18"),
+            ("CELTICS", 2001): win("2000-10-31", "2001-04-19"),
+            ("CELTICS", 2002): win("2001-10-30", "2002-04-18"),
+        }
+        self.assertEqual(offseason_arrivals_by_membership(membership, legs, windows), {})
+
+
+class TestReconstructEarlyContinueCoverage(unittest.TestCase):
+    def test_no_stint_early_continue_rows_are_in_final_coverage_counts(self):
+        """Exercise the actual no-stint early-continue branches end to end.
+
+        Inline membership/transaction rows make the regression independent of
+        the multi-gigabyte source snapshot. The three cases hit: membership
+        without a window, same-day arrivals to two franchises (ordering
+        ambiguous), and a same-day arrival/departure that yields no interval.
+        Every emitted row must be reflected in the CSV-derived JSON totals.
+        """
+        membership = [
+            {"bbr_player_id": "no-window", "display_name": "No Window",
+             "season": 2025, "lg": "NBA", "era": "2000-2025/26",
+             "franchise": "TEAM_NONE", "membership_source": "S2"},
+            {"bbr_player_id": "ambiguous", "display_name": "Ambiguous",
+             "season": 2025, "lg": "NBA", "era": "2000-2025/26",
+             "franchise": "TEAM_EAST", "membership_source": "S2"},
+            {"bbr_player_id": "ambiguous", "display_name": "Ambiguous",
+             "season": 2025, "lg": "NBA", "era": "2000-2025/26",
+             "franchise": "TEAM_WEST", "membership_source": "S2"},
+            {"bbr_player_id": "same-day", "display_name": "Same Day",
+             "season": 2025, "lg": "NBA", "era": "2000-2025/26",
+             "franchise": "TEAM_SAME", "membership_source": "S2"},
+        ]
+        day = "2024-10-01"
+        legs = [
+            {"slug": "ambiguous", "season": 2025, "date_iso": day,
+             "depart": "", "arrive": "TEAM_EAST", "leg_flags": ""},
+            {"slug": "ambiguous", "season": 2025, "date_iso": day,
+             "depart": "", "arrive": "TEAM_WEST", "leg_flags": ""},
+            {"slug": "same-day", "season": 2025, "date_iso": day,
+             "depart": "", "arrive": "TEAM_SAME", "leg_flags": ""},
+            {"slug": "same-day", "season": 2025, "date_iso": day,
+             "depart": "TEAM_SAME", "arrive": "", "leg_flags": ""},
+        ]
+        diag = {
+            "membership_rows": len(membership),
+            "rows_S2": len(membership),
+            "rows_S1_only_supplement": 0,
+        }
+        with tempfile.TemporaryDirectory() as td:
+            data_dir = os.path.join(td, "data")
+            output_dir = os.path.join(td, "report", "t4")
+            os.makedirs(os.path.join(data_dir, "t4"))
+            with patch("t4_reconcile.T4_DIR", output_dir), \
+                 patch("t4_reconcile.load_s1_season_windows",
+                       return_value=({}, {}, [], 0)), \
+                 patch("t4_reconcile.load_membership",
+                       return_value=(membership, diag, [])), \
+                 patch("t4_reconcile.load_transaction_legs",
+                       return_value=(legs, [], {}, {})):
+                reconstruct(data_dir)
+
+            with open(os.path.join(output_dir, "tenures.csv"), newline="",
+                      encoding="utf-8") as f:
+                tenure_rows = list(csv.DictReader(f))
+            with open(os.path.join(output_dir, "coverage-counts.json"),
+                      encoding="utf-8") as f:
+                counts = json.load(f)["R"]
+
+        self.assertEqual(len(tenure_rows), 4)
+        self.assertEqual(counts["tenures"], 4)
+        self.assertEqual(counts["tenures-unresolved"], 4)
+        self.assertEqual(counts["intervals-absent"], 4)
+        self.assertEqual(counts["intervals-present"], 0)
+        self.assertTrue(all(row["evidence_class"] == CLASS_UNRESOLVED
+                            for row in tenure_rows))
+        reasons_by_player = {
+            row["bbr_player_id"]: row["unresolved_reasons"]
+            for row in tenure_rows
+        }
+        self.assertIn("no-dated-evidence",
+                      reasons_by_player["no-window"])
+        self.assertIn("same-day-arrival-to-multiple-franchises",
+                      reasons_by_player["ambiguous"])
+        self.assertIn("same-day-arrival-and-departure",
+                      reasons_by_player["same-day"])
+
+
+class TestAuthoritativeCoverage(unittest.TestCase):
+    def test_counts_are_derived_from_final_tenure_rows(self):
+        rows = [
+            {"season": 2001, "era": "2000-2025/26", "evidence_class": CLASS_CROSS_CHECKED,
+             "start_day": "10", "end_day": "20", "season_window_iso": "[a, b)"},
+            {"season": 2002, "era": "2000-2025/26", "evidence_class": CLASS_UNRESOLVED,
+             "start_day": "", "end_day": "", "season_window_iso": ""},
+            {"season": 2003, "era": "2000-2025/26", "evidence_class": CLASS_UNRESOLVED,
+             "start_day": "30", "end_day": "40", "season_window_iso": ""},
+        ]
+        counts, era_counts = derive_coverage_counts(rows)
+        self.assertEqual(counts["tenures"], len(rows))
+        self.assertEqual(counts["tenures-cross-checked"], 1)
+        self.assertEqual(counts["tenures-unresolved"], 2)
+        self.assertEqual(counts["intervals-present"], 2)
+        self.assertEqual(counts["intervals-absent"], 1)
+        self.assertEqual(counts["membership-window-present"], 1)
+        self.assertEqual(counts["membership-window-missing"], 2)
+        self.assertEqual(era_counts["2000-2025/26"]["unresolved"], 2)
+
+    def test_persistent_page_failure_overrides_any_evidence_class(self):
+        tenures = [
+            {"season": 2002, "lg": "NBA", "bbr_player_id": "abdursh01",
+             "franchise": "HAWKS", "display_name": "Shareef Abdur-Rahim",
+             "membership_source": "S2", "evidence_class": CLASS_DIRECT,
+             "reasons": [], "start_anchored": True, "end_anchored": True},
+            {"season": 2003, "lg": "NBA", "bbr_player_id": "abdursh01",
+             "franchise": "HAWKS", "display_name": "Shareef Abdur-Rahim",
+             "membership_source": "S2", "evidence_class": CLASS_DIRECT,
+             "reasons": [], "start_anchored": True, "end_anchored": True},
+            {"season": 2004, "lg": "NBA", "bbr_player_id": "abdursh01",
+             "franchise": "HAWKS", "display_name": "Shareef Abdur-Rahim",
+             "membership_source": "S2", "evidence_class": CLASS_DIRECT,
+             "reasons": [], "start_anchored": True, "end_anchored": True},
+        ]
+        apply_fetch_failures(tenures, {})
+        self.assertEqual(tenures[0]["evidence_class"], CLASS_DIRECT)
+        apply_fetch_failures(tenures, {"NBA_2002": {"status": 503}})
+        self.assertEqual(tenures[0]["evidence_class"], CLASS_UNRESOLVED)
+        self.assertIn("fetch-failure:NBA_2002", tenures[0]["reasons"])
+        self.assertEqual(tenures[1]["evidence_class"], CLASS_UNRESOLVED)
+        self.assertIn("fetch-failure:NBA_2002", tenures[1]["reasons"])
+        self.assertEqual(tenures[2]["evidence_class"], CLASS_DIRECT)
 
 
 if __name__ == "__main__":

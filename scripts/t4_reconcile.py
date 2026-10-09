@@ -575,6 +575,95 @@ def walk_stints(arr_days, dep_days, window):
     return stints, flags, anomalies, notes
 
 
+def offseason_arrivals_by_membership(membership, legs, windows):
+    """Carry only evidenced offseason arrivals into matching next-season rows.
+
+    A usable arrival leg is carried from season N to N+1 only when the player
+    has destination-team membership in N+1 and the dated move falls between
+    that team's adjacent season windows. The event date remains the exact start
+    boundary; no arbitrary June/July rebucketing is performed.
+    """
+    next_memberships = {
+        (m["bbr_player_id"], m["season"], m["franchise"])
+        for m in membership
+    }
+    carried = defaultdict(list)
+    seen = set()
+    for leg in legs:
+        if leg.get("leg_flags") or not leg.get("arrive"):
+            continue
+        source_season = int(leg["season"])
+        target_season = source_season + 1
+        target_key = (leg["slug"], target_season, leg["arrive"])
+        if target_key not in next_memberships:
+            continue
+        previous_window = windows.get((leg["arrive"], source_season))
+        next_window = windows.get((leg["arrive"], target_season))
+        if not previous_window or not next_window:
+            continue
+        event_day = day_number(leg["date_iso"])
+        if not (previous_window[1] <= event_day < next_window[0]):
+            continue
+        unique = (leg["slug"], target_season, leg["arrive"], event_day)
+        if unique in seen:
+            continue
+        seen.add(unique)
+        carried[(leg["slug"], target_season)].append({
+            "date_iso": leg["date_iso"], "depart": "", "arrive": leg["arrive"],
+            "leg_flags": "", "offseason_source_season": source_season,
+        })
+    return dict(carried)
+
+
+def apply_fetch_failures(tenures, failures):
+    """Downgrade tenures whose own or offseason-source page failed persistently."""
+    for tenure in tenures:
+        season = int(tenure["season"])
+        relevant_pages = {"%s_%s" % (tenure["lg"], season)}
+        # A date-bucketed offseason move from season N can anchor N+1.
+        if season > 1947:
+            relevant_pages.add("%s_%s" % (tenure["lg"], season - 1))
+        # BAA_1949 can contain the last offseason arrivals for NBA 1950.
+        if tenure["lg"] == "NBA" and season == 1950:
+            relevant_pages.add("BAA_1949")
+        failed_pages = sorted(relevant_pages.intersection(failures))
+        for page in failed_pages:
+            reason = "fetch-failure:" + page
+            if reason not in tenure["reasons"]:
+                tenure["reasons"].append(reason)
+            tenure["evidence_class"] = CLASS_UNRESOLVED
+
+
+def derive_coverage_counts(rows):
+    """Return authoritative class/interval/window counts from final tenure rows."""
+    classes = Counter()
+    eras = defaultdict(Counter)
+    interval_present = 0
+    window_present = 0
+    for row in rows:
+        evidence_class = row["evidence_class"]
+        classes[evidence_class] += 1
+        era = row.get("era")
+        if era:
+            eras[era][evidence_class] += 1
+        start = row.get("start", row.get("start_day"))
+        end = row.get("end", row.get("end_day"))
+        if start not in (None, "") and end not in (None, ""):
+            interval_present += 1
+        if row.get("season_window_iso"):
+            window_present += 1
+    total = sum(classes.values())
+    counts = {"tenures": total,
+              "intervals-present": interval_present,
+              "intervals-absent": total - interval_present,
+              "membership-window-present": window_present,
+              "membership-window-missing": total - window_present}
+    for evidence_class in (CLASS_DIRECT, CLASS_CROSS_CHECKED,
+                           CLASS_INFERRED, CLASS_UNRESOLVED):
+        counts["tenures-" + evidence_class] = classes[evidence_class]
+    return counts, {era: dict(values) for era, values in eras.items()}
+
+
 # ---------------------------------------------------------------- pipeline ---
 def reconstruct(data_dir):
     print("loading S1 season windows ...", flush=True)
@@ -605,6 +694,13 @@ def reconstruct(data_dir):
     by_player_season = defaultdict(list)
     for m in membership:
         by_player_season[(m["bbr_player_id"], m["season"])].append(m)
+
+    # A precise event can precede the next season's page bucket. Carry its
+    # arrival only where player/team membership and adjacent team windows prove
+    # this is the offseason move opening that next-season tenure.
+    carried_arrivals = offseason_arrivals_by_membership(membership, legs, windows)
+    for key, carried in carried_arrivals.items():
+        legs_by_player_season[key].extend(carried)
 
     for (slug, season), mems in sorted(by_player_season.items()):
         plist = legs_by_player_season.get((slug, season), [])
@@ -696,6 +792,8 @@ def reconstruct(data_dir):
 
             if not stints:
                 reasons = []
+                if same_day_flags:
+                    reasons.append("same-day-arrival-and-departure(ordering-flagged)")
                 if not ws_we:
                     reasons.append("no-season-window(S1-game-table-ends-2022-23-"
                                    "or-season-absent-from-S1)")
@@ -780,6 +878,20 @@ def reconstruct(data_dir):
                 R["tenures"] += 1
                 R["tenures-" + cls] += 1
 
+    fetch_summary_path = os.path.join(data_dir, "t4", "fetch-summary.json")
+    if os.path.exists(fetch_summary_path):
+        with open(fetch_summary_path, encoding="utf-8") as f:
+            fetch_failures = json.load(f).get("failures", {})
+    else:
+        fetch_failures = {}
+    apply_fetch_failures(tenures, fetch_failures)
+    # Rebuild flags from final classification so fetch-failure reasons appear
+    # in the retained unresolved-flags artifact too.
+    flags_rows = [[t["bbr_player_id"], t["display_name"], t["season"],
+                   t["franchise"], t["membership_source"], t["evidence_class"],
+                   t["interval_iso"], "; ".join(t["reasons"])]
+                  for t in tenures if t["evidence_class"] == CLASS_UNRESOLVED]
+
     R["membership_rows"] = diag["membership_rows"]
     R["rows_S2"] = diag["rows_S2"]
     R["rows_S1_only_supplement"] = diag["rows_S1_only_supplement"]
@@ -792,11 +904,8 @@ def reconstruct(data_dir):
     R["membership_window_missing"] = window_hits["window-missing"]
     R["membership_window_present"] = window_hits["window-present"]
 
-    # era breakdown
-    era_counts = defaultdict(Counter)
-    for t in tenures:
-        era_counts[t["era"]][t["evidence_class"]] += 1
-    R["era_classes"] = {e: dict(c) for e, c in era_counts.items()}
+    # The final CSV is the count source of truth. Re-read it after writing so
+    # early-continue paths and post-classification downgrades cannot skew JSON.
 
     # `parsed_rows_1950` is returned by load_transaction_legs from the same
     # parsed blob; preserve those per-page total/fuzzy row counts for reporting.
@@ -820,6 +929,13 @@ def reconstruct(data_dir):
           ",".join(str(x) for x in t["arrival_days"]),
           ",".join(str(x) for x in t["departure_days"])]
          for t in tenures])
+    final_csv_rows = read_csv(os.path.join(T4_DIR, "tenures.csv"))
+    coverage_counts, era_counts = derive_coverage_counts(final_csv_rows)
+    for key, value in coverage_counts.items():
+        R[key] = value
+    R["membership_window_present"] = coverage_counts["membership-window-present"]
+    R["membership_window_missing"] = coverage_counts["membership-window-missing"]
+    R["era_classes"] = era_counts
     write_csv(
         os.path.join(T4_DIR, "unresolved-flags.csv"),
         ["bbr_player_id", "display_name", "season", "canonical_franchise",
