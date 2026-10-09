@@ -20,6 +20,37 @@ struct Provider {
 }
 impl JevTransport for Provider {
     fn evaluate(&self, _: &JevConfig, request: &JevRequest) -> JevOutcome {
+        if request.state.get("mention").is_some() {
+            let candidates = request.state["candidates"].as_array().unwrap();
+            let intended = match request.state["mention"].as_str().unwrap() {
+                "Plauer A" => "Player A",
+                other => panic!("no scripted resolution for {other}"),
+            };
+            let selected = candidates
+                .iter()
+                .find(|c| c["player"]["name"] == intended)
+                .expect("fixture candidate exists")["option"]
+                .as_str()
+                .unwrap()
+                .to_owned();
+            let JevQuestion::Choice { criteria, .. } = &request.questions[0].1 else {
+                panic!("resolution Choice")
+            };
+            return JevOutcome::Answers(vec![
+                (
+                    "choice".into(),
+                    JevAnswer::Choice(
+                        selected.clone(),
+                        criteria
+                            .iter()
+                            .map(|(key, _)| (key.clone(), f64::from(key == &selected)))
+                            .collect(),
+                        1.0,
+                    ),
+                ),
+                ("exists".into(), JevAnswer::Noul(1.0)),
+            ]);
+        }
         JevOutcome::Answers(
             request
                 .questions
@@ -334,4 +365,163 @@ async fn a_profile_filter_limits_sourced_team_and_era_context_without_changing_i
     let all: Value = serde_json::from_str(&all).unwrap();
     assert_eq!(all["players"][1]["teams"], json!(["BLUE", "RED"]));
     assert_eq!(all["players"][1]["last_season"], 2010);
+}
+
+#[tokio::test]
+async fn a_copied_misspelling_uses_shared_guarded_resolution_before_connection() {
+    let app = configured(
+        "Connect two players through their shortest teammate chain",
+        "Player mention: Plauer A",
+        "Player mention: Player C",
+    );
+    let (_, body) = get(app, "/api/query?q=connect%20Plauer%20A%20to%20Player%20C").await;
+    let value: Value = serde_json::from_str(&body).unwrap();
+    assert_eq!(value["status"], "executed");
+    assert_eq!(value["players"][0]["id"], "A");
+    assert_eq!(value["data"]["degree"], 2);
+    assert_eq!(
+        value["resolutions"][0]["interpretation"],
+        "semantic_interpretation"
+    );
+    assert_eq!(
+        value["resolutions"][0]["semantic"]["existence_probability"],
+        1.0
+    );
+}
+
+struct InvalidPacket(u8);
+impl JevTransport for InvalidPacket {
+    fn evaluate(&self, config: &JevConfig, request: &JevRequest) -> JevOutcome {
+        let JevOutcome::Answers(mut answers) = Provider {
+            operation: "Connect two players through their shortest teammate chain",
+            first: "Player mention: Player A",
+            second: "Player mention: Player C",
+            era: "No stated era filter",
+            team: "No stated team filter",
+        }
+        .evaluate(config, request) else {
+            unreachable!()
+        };
+        let (_, JevAnswer::Choice(selected, probabilities, confidence)) = &mut answers[0] else {
+            unreachable!()
+        };
+        match self.0 {
+            0 => *selected = "invented_operation".into(),
+            1 => probabilities[0].1 = 1.5,
+            2 => *confidence = 0.4,
+            _ => {
+                let duplicate = answers[0].clone();
+                answers.push(duplicate);
+            }
+        }
+        JevOutcome::Answers(answers)
+    }
+}
+#[tokio::test]
+async fn malformed_packets_degrade_and_uncertain_valid_packets_clarify_without_execution() {
+    for kind in 0..4 {
+        let app = app_server::app_with_jev(app_server::JevHandle::from_client(JevClient::new(
+            JevConfig::new("never-display-this-key".into()),
+            InvalidPacket(kind),
+        )));
+        let (_, body) = get(
+            app.clone(),
+            "/api/query?q=connect%20Player%20A%20to%20Player%20C",
+        )
+        .await;
+        let value: Value = serde_json::from_str(&body).unwrap();
+        assert_eq!(
+            value["status"],
+            if kind == 2 {
+                "clarification"
+            } else {
+                "unavailable"
+            }
+        );
+        assert!(value["data"].is_null());
+        assert!(!body.contains("never-display-this-key"));
+        let (_, status) = get(app, "/api/semantic-status").await;
+        let status: Value = serde_json::from_str(&status).unwrap();
+        assert_eq!(
+            status["reason"],
+            if kind == 2 { "available" } else { "degraded" }
+        );
+    }
+}
+
+struct RecordingProvider {
+    inner: Provider,
+    seen: std::sync::Arc<std::sync::Mutex<Vec<JevRequest>>>,
+}
+impl JevTransport for RecordingProvider {
+    fn evaluate(&self, config: &JevConfig, request: &JevRequest) -> JevOutcome {
+        self.seen.lock().unwrap().push(request.clone());
+        self.inner.evaluate(config, request)
+    }
+}
+#[test]
+fn evaluation_config_changes_actual_provider_criteria_and_keeps_per_call_receipts() {
+    let players = ["A", "B", "C", "C2", "D", "E"]
+        .iter()
+        .map(|id| fixture::FixturePlayer {
+            id: (*id).into(),
+            name: format!("Player {id}"),
+        })
+        .collect::<Vec<_>>();
+    let graph = graph_core::TeammateGraph::build(fixture::roster_data(
+        &players,
+        &[
+            ("Red".into(), "Team Red".into()),
+            ("Blue".into(), "Team Blue".into()),
+            ("Green".into(), "Team Green".into()),
+        ],
+    ));
+    let catalog = app_server::search::PlayerCatalog::from_graph(&graph, None);
+    let seen = std::sync::Arc::new(std::sync::Mutex::new(Vec::new()));
+    let jev = app_server::JevHandle::from_client(JevClient::new(
+        JevConfig::new("server-only".into()),
+        RecordingProvider {
+            inner: Provider {
+                operation: "Connect players via minimum evidenced teammate steps",
+                first: "Player mention: Player A",
+                second: "Player mention: Player C",
+                era: "No stated era filter",
+                team: "No stated team filter",
+            },
+            seen: seen.clone(),
+        },
+    ));
+    let config = app_server::query::QueryConfig {
+        prompt_variant: app_server::query::PromptVariant::Paraphrase,
+        option_order: app_server::query::OptionOrder::Reversed,
+        ..Default::default()
+    };
+    let call = app_server::query::execute(
+        &graph,
+        &catalog,
+        None,
+        &jev,
+        "connect Player A to Player C",
+        &config,
+    )
+    .unwrap();
+    assert_eq!(call.result.status, "executed");
+    assert_eq!(call.result.data["degree"], 2);
+    assert_eq!(call.measurements.len(), 1);
+    assert!(
+        call.measurements[0].metadata.is_none(),
+        "missing fake-provider usage/cost remains unknown"
+    );
+    let seen = seen.lock().unwrap();
+    assert_eq!(seen.len(), 1);
+    let JevQuestion::Choice { criteria, .. } = &seen[0].questions[0].1 else {
+        panic!("Choice")
+    };
+    assert_eq!(
+        criteria.last().unwrap(),
+        &(
+            "o004".into(),
+            "Connect players via minimum evidenced teammate steps".into()
+        )
+    );
 }
