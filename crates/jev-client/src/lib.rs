@@ -184,6 +184,38 @@ impl JevOutcome {
     }
 }
 
+/// Optional provider receipt tied to one call; missing values remain unknown.
+#[derive(Clone, Debug, Default, PartialEq, serde::Serialize)]
+pub struct JevMetadata {
+    pub model: Option<String>,
+    pub provider: Option<String>,
+    pub request_id: Option<String>,
+    pub input_tokens: Option<u64>,
+    pub output_tokens: Option<u64>,
+    pub cost_usd: Option<f64>,
+}
+/// Per-call measurement for evaluation; browser DTOs do not contain this receipt.
+#[derive(Clone, Debug, PartialEq)]
+pub struct JevEvaluation {
+    pub outcome: JevOutcome,
+    pub metadata: Option<JevMetadata>,
+    pub elapsed_ms: f64,
+}
+impl JevEvaluation {
+    pub fn unavailable() -> Self {
+        Self::from(JevOutcome::Unavailable)
+    }
+}
+impl From<JevOutcome> for JevEvaluation {
+    fn from(outcome: JevOutcome) -> Self {
+        Self {
+            outcome,
+            metadata: None,
+            elapsed_ms: 0.0,
+        }
+    }
+}
+
 /// The judgment entry point the server holds: a typed request in, a fail-soft
 /// [`JevOutcome`] out. The transport behind it is either the verified HTTP
 /// transport (`http_transport` feature, wired by the app server) or an
@@ -202,7 +234,14 @@ impl<T: JevTransport> JevClient<T> {
     /// One judgment: bounded state plus typed questions in, fallible answers
     /// or `Unavailable` out. Never panics on provider problems.
     pub fn evaluate(&self, request: &JevRequest) -> JevOutcome {
-        self.transport.evaluate(&self.config, request)
+        self.evaluate_measured(request).outcome
+    }
+
+    pub fn evaluate_measured(&self, request: &JevRequest) -> JevEvaluation {
+        let start = std::time::Instant::now();
+        let mut evaluation = self.transport.evaluate_measured(&self.config, request);
+        evaluation.elapsed_ms = start.elapsed().as_secs_f64() * 1000.0;
+        evaluation
     }
 
     /// The (redacted) config, for status surfaces only.
@@ -254,6 +293,10 @@ pub trait JevTransport: Send + Sync {
     /// Send one judgment request. Implementations must never panic on
     /// transport problems — every failure returns `JevOutcome::Unavailable`.
     fn evaluate(&self, config: &JevConfig, request: &JevRequest) -> JevOutcome;
+    /// Existing scripted transports need not fabricate unavailable metadata.
+    fn evaluate_measured(&self, config: &JevConfig, request: &JevRequest) -> JevEvaluation {
+        self.evaluate(config, request).into()
+    }
 }
 
 /// Guardrail shared with the HTTP transport: the outbound state must stay
