@@ -95,11 +95,7 @@ impl TeammateEdge {
 }
 
 fn ordered_pair<'a>(a: &'a str, b: &'a str) -> (&'a str, &'a str) {
-    if a <= b {
-        (a, b)
-    } else {
-        (b, a)
-    }
+    if a <= b { (a, b) } else { (b, a) }
 }
 
 impl RosterData {
@@ -113,7 +109,10 @@ impl RosterData {
         // Group tenures by team, then compare intervals within a team.
         let mut by_team: BTreeMap<&str, Vec<&LocatedTenure>> = BTreeMap::new();
         for tenure in &self.tenures {
-            by_team.entry(tenure.team.as_str()).or_default().push(tenure);
+            by_team
+                .entry(tenure.team.as_str())
+                .or_default()
+                .push(tenure);
         }
 
         // (a, b) -> team -> summed overlap days for that team.
@@ -126,11 +125,7 @@ impl RosterData {
                         // Repeated overlaps from multiple stints on the same
                         // team accumulate their summed overlap days.
                         let (x, y) = ordered_pair(a.player.as_str(), b.player.as_str());
-                        *overlaps
-                            .entry((x, y))
-                            .or_default()
-                            .entry(team)
-                            .or_insert(0) += days;
+                        *overlaps.entry((x, y)).or_default().entry(team).or_insert(0) += days;
                     }
                 }
             }
@@ -143,7 +138,10 @@ impl RosterData {
                 b: b.to_string(),
                 evidence: team_overlaps
                     .into_iter()
-                    .map(|(team, days)| EdgeEvidence { team: team.to_string(), overlap_days: days })
+                    .map(|(team, days)| EdgeEvidence {
+                        team: team.to_string(),
+                        overlap_days: days,
+                    })
                     .collect(),
             })
             .collect()
@@ -210,7 +208,11 @@ impl TeammateGraph {
             let b = by_id[&edge.b];
             graph.add_edge(a, b, edge.evidence);
         }
-        TeammateGraph { roster, graph, by_id }
+        TeammateGraph {
+            roster,
+            graph,
+            by_id,
+        }
     }
 
     pub fn player_ids(&self) -> Vec<String> {
@@ -346,7 +348,13 @@ impl TeammateGraph {
             suffix.pop();
         }
         let mut node_paths = Vec::new();
-        collect(&distance, &predecessors, goal, &mut Vec::new(), &mut node_paths);
+        collect(
+            &distance,
+            &predecessors,
+            goal,
+            &mut Vec::new(),
+            &mut node_paths,
+        );
         let chains = node_paths
             .into_iter()
             .map(|path| {
@@ -394,8 +402,11 @@ impl TeammateGraph {
     pub fn statistics(&self) -> GraphStatistics {
         let ids = self.player_ids();
         let n = ids.len();
-        let index_of: HashMap<&str, usize> =
-            ids.iter().enumerate().map(|(i, id)| (id.as_str(), i)).collect();
+        let index_of: HashMap<&str, usize> = ids
+            .iter()
+            .enumerate()
+            .map(|(i, id)| (id.as_str(), i))
+            .collect();
         // All-pairs shortest distances via BFS from each node.
         let mut distances: Vec<Vec<Option<usize>>> = vec![Vec::new(); n];
         for (i, id) in ids.iter().enumerate() {

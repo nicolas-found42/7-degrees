@@ -57,7 +57,10 @@ fn loc(player: &str, team: &str, start: u32, end: u32) -> LocatedTenure {
     LocatedTenure {
         player: player.to_string(),
         team: team.to_string(),
-        tenure: Tenure { start: graph_core::Day(start), end: graph_core::Day(end) },
+        tenure: Tenure {
+            start: graph_core::Day(start),
+            end: graph_core::Day(end),
+        },
     }
 }
 
@@ -71,11 +74,17 @@ pub fn roster_data(players: &[FixturePlayer], teams: &[(String, String)]) -> Ros
     RosterData {
         players: players
             .iter()
-            .map(|p| Player { id: p.id.clone(), name: p.name.clone() })
+            .map(|p| Player {
+                id: p.id.clone(),
+                name: p.name.clone(),
+            })
             .collect(),
         teams: teams
             .iter()
-            .map(|(id, name)| Team { id: id.clone(), name: name.clone() })
+            .map(|(id, name)| Team {
+                id: id.clone(),
+                name: name.clone(),
+            })
             .collect(),
         tenures: fixture_tenures(),
     }
@@ -181,9 +190,7 @@ pub fn fixture_connection(
                 degree,
             })
         }
-        Some(graph_core::Connection::Disconnected) | None => {
-            Some(FixtureConnection::Disconnected)
-        }
+        Some(graph_core::Connection::Disconnected) | None => Some(FixtureConnection::Disconnected),
     }
 }
 
@@ -210,7 +217,11 @@ mod tests {
             let match_found = expected
                 .iter()
                 .any(|(a, b, days)| row.a == *a && row.b == *b && row.overlap_days == *days);
-            assert!(match_found, "edge {:?} is documented in expected_edges", row);
+            assert!(
+                match_found,
+                "edge {:?} is documented in expected_edges",
+                row
+            );
         }
     }
 }
