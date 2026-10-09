@@ -61,13 +61,22 @@ impl HttpJevTransport {
 
 impl JevTransport for HttpJevTransport {
     fn evaluate(&self, config: &JevConfig, request: &JevRequest) -> JevOutcome {
-        let rt = tokio::runtime::Handle::try_current();
-        match rt {
-            Ok(handle) => handle.block_on(self.evaluate_async(config, request)),
-            // Outside any runtime (rare): this server always calls from async
-            // handlers, but fail soft rather than panic if that ever changes.
-            Err(_) => JevOutcome::Unavailable,
+        // Prefer the ambient multi-thread runtime: `block_in_place` moves the
+        // calling task off the worker so the blocking `block_on` is legal.
+        if let Ok(handle) = tokio::runtime::Handle::try_current()
+            && handle.runtime_flavor() == tokio::runtime::RuntimeFlavor::MultiThread
+        {
+            return tokio::task::block_in_place(|| {
+                handle.block_on(self.evaluate_async(config, request))
+            });
         }
+        // Outside a multi-thread runtime (tests on the current-thread flavor,
+        // or plain threads): run on a small temporary runtime.
+        tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .expect("temporary judgment runtime builds")
+            .block_on(self.evaluate_async(config, request))
     }
 }
 
