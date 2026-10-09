@@ -7,7 +7,7 @@ Inputs (all read-only, see docs/data/source-manifest.md):
   S1  data/nba.sqlite `game` (season windows: first/last game dates per team-season,
       Regular Season + Playoffs rows; read-only SQLite URI)
   T3  docs/reports/t3/franchise-crosswalk.csv + player-universe.csv (canonical
-      franchise identities + the 5,105-player universe; committed artifacts)
+      franchise identities + the canonical player universe; committed artifacts)
       + docs/reports/t3/membership-mismatches.csv (S1-only membership rows S2 omits)
   BBR data/t4/transactions-parsed.pkl (cached transaction-page parse from
       scripts/t4_fetch_bbr.py; legs: player slug + depart/arrive abbr per date)
