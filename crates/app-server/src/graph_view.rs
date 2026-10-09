@@ -350,7 +350,7 @@ pub async fn page(State(state): State<AppState>, Query(query): Query<GraphQuery>
         })
         .collect();
     let players:String=payload.nodes.iter().enumerate().map(|(index,n)|format!("<li><button id=\"select-node-{index}\" type=\"button\" data-select-player=\"{}\">{}</button> — {}; teams: {}</li>",ui::escape(&n.id),ui::escape(&n.name),ui::escape(&n.era),ui::escape(&n.teams.join(", ")))).collect();
-    let edges:String=payload.links.iter().enumerate().map(|(index,e)|format!("<li><button id=\"select-edge-{index}\" type=\"button\" data-select-edge-from=\"{}\" data-select-edge-to=\"{}\">{} ↔ {}</button> — {}, {} overlap day(s){}</li>",ui::escape(&e.from),ui::escape(&e.to),ui::escape(ui::display_name(&state.graph.roster.players,&e.from)),ui::escape(ui::display_name(&state.graph.roster.players,&e.to)),ui::escape(&e.team),e.overlap_days,if e.on_path{"; selected chain link"}else{""})).collect();
+    let edges:String=payload.links.iter().enumerate().map(|(index,e)|format!("<li><button id=\"select-edge-{index}\" type=\"button\" data-select-edge-from=\"{}\" data-select-edge-to=\"{}\">{} ↔ {}</button> — {}, {} overlap day(s){} <a href=\"/edge?from={}&amp;to={}\" target=\"_blank\" rel=\"noopener\">Open overlap evidence</a></li>",ui::escape(&e.from),ui::escape(&e.to),ui::escape(ui::display_name(&state.graph.roster.players,&e.from)),ui::escape(ui::display_name(&state.graph.roster.players,&e.to)),ui::escape(&e.team),e.overlap_days,if e.on_path{"; selected chain link"}else{""},ui::url_encode(&e.from),ui::url_encode(&e.to))).collect();
     let buttons: String = [
         ("zoom-in", "Zoom in"),
         ("zoom-out", "Zoom out"),
@@ -369,6 +369,20 @@ pub async fn page(State(state): State<AppState>, Query(query): Query<GraphQuery>
         .unwrap_or_else(|| {
             "<p>Neighborhood exploration; no player-to-player chain requested.</p>".into()
         });
+    let source_panel = if let Some(edge) = payload
+        .links
+        .iter()
+        .find(|e| e.on_path)
+        .or_else(|| payload.links.first())
+    {
+        format!(
+            "<section id=\"edge-provenance-panel\"><h3>Selected relationship evidence</h3><p>Select a relationship to load its overlap evidence here, or open any evidence link in a separate page.</p><p><a id=\"open-selected-edge\" href=\"/edge?from={}&amp;to={}\" target=\"_blank\" rel=\"noopener\">Open selected relationship evidence in a separate page</a></p><iframe id=\"edge-provenance-frame\" title=\"Selected teammate overlap evidence\" src=\"about:blank\" sandbox=\"allow-popups allow-popups-to-escape-sandbox\"></iframe></section>",
+            ui::url_encode(&edge.from),
+            ui::url_encode(&edge.to)
+        )
+    } else {
+        "<p>No relationship is present in this view; source evidence may be incomplete.</p>".into()
+    };
     let canvas_status = if state.canvas_assets.available() {
         "Canvas loading; the text lists remain available."
     } else {
@@ -378,7 +392,7 @@ pub async fn page(State(state): State<AppState>, Query(query): Query<GraphQuery>
         StatusCode::OK,
         "7 Degrees — Graph",
         &format!(
-            "<h1>Graph exploration</h1>{}<p><a href=\"/\">Back to explorer</a></p>{chain_link}{selected_text}<section class=\"graph-view\"><h2>Selected chain and neighborhood</h2><p>{}</p>{}<canvas id=\"graph-canvas\" width=\"1000\" height=\"600\" tabindex=\"0\" aria-label=\"Interactive teammate graph\" aria-describedby=\"graph-help graph-selection\">Use the player and relationship lists below to explore.</canvas><p id=\"graph-help\">Drag to pan; scroll to zoom. Arrow keys pan; + and − zoom. Select a player or relationship in the canvas or lists.</p><p id=\"canvas-status\" role=\"status\" data-ready=\"false\">{canvas_status}</p><div class=\"controls\">{buttons}</div><form id=\"graph-expand\" class=\"controls\" action=\"/graph\" method=\"get\">{fields}<label for=\"graph-player\">Selected player</label><select id=\"graph-player\" name=\"player\">{options}</select><button name=\"depth\" value=\"1\">Expand direct connections</button><button name=\"depth\" value=\"2\">Expand nearby connections</button></form><p id=\"graph-selection\" role=\"status\"></p><p id=\"selected-edge\" role=\"status\">Select a teammate relationship to inspect its graph facts.</p><h3>Visible players</h3><ul id=\"graph-players\">{players}</ul><h3>Visible relationships</h3><ul id=\"graph-links\">{edges}</ul><template id=\"graph-payload\" data-payload=\"{}\"></template><script type=\"module\" src=\"/assets/canvas-loader.js\"></script></section>",
+            "<h1>Graph exploration</h1>{}<p><a href=\"/\">Back to explorer</a></p>{chain_link}{selected_text}<section class=\"graph-view\"><h2>Selected chain and neighborhood</h2><p>{}</p>{}<canvas id=\"graph-canvas\" width=\"1000\" height=\"600\" tabindex=\"0\" aria-label=\"Interactive teammate graph\" aria-describedby=\"graph-help graph-selection\">Use the player and relationship lists below to explore.</canvas><p id=\"graph-help\">Drag to pan; scroll to zoom. Arrow keys pan; + and − zoom. Select a player or relationship in the canvas or lists.</p><p id=\"canvas-status\" role=\"status\" data-ready=\"false\">{canvas_status}</p><div class=\"controls\">{buttons}</div><form id=\"graph-expand\" class=\"controls\" action=\"/graph\" method=\"get\">{fields}<label for=\"graph-player\">Selected player</label><select id=\"graph-player\" name=\"player\">{options}</select><button name=\"depth\" value=\"1\">Expand direct connections</button><button name=\"depth\" value=\"2\">Expand nearby connections</button></form><p id=\"graph-selection\" role=\"status\"></p><p id=\"selected-edge\" role=\"status\">Select a teammate relationship to inspect its graph facts.</p>{source_panel}<h3>Visible players</h3><ul id=\"graph-players\">{players}</ul><h3>Visible relationships</h3><ul id=\"graph-links\">{edges}</ul><template id=\"graph-payload\" data-payload=\"{}\"></template><script type=\"module\" src=\"/assets/canvas-loader.js\"></script></section>",
             ui::semantic_status_line(state.jev.status()),
             ui::escape(&payload.coverage),
             if payload.truncated {

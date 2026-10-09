@@ -163,3 +163,6 @@ ol.path li {
     border-radius: 6px;
     padding: 0.45rem 0.7rem;
 }
+#edge-provenance-frame { width: 100%; min-height: 30rem; border: 1px solid #a4b4bd; background: #fff; }
+#edge-provenance-panel { margin: 1rem 0; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; }
