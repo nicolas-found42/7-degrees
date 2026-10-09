@@ -175,6 +175,7 @@ struct ConnectQuery {
     from: Option<String>,
     to: Option<String>,
     offset: Option<u64>,
+    cursor: Option<String>,
     limit: Option<usize>,
 }
 
@@ -195,11 +196,22 @@ async fn all_paths(State(state): State<AppState>, Query(query): Query<ConnectQue
         )
             .into_response();
     }
+    if query.cursor.is_some() && query.offset.is_some() {
+        return (
+            StatusCode::BAD_REQUEST,
+            Json(ErrorResponse {
+                error: "invalid-cursor".into(),
+                message: "use either cursor or offset".into(),
+            }),
+        )
+            .into_response();
+    }
     connection_response_all(
         &state,
         query.from.as_deref(),
         query.to.as_deref(),
         query.offset.unwrap_or(0),
+        query.cursor.as_deref(),
         limit,
     )
 }
@@ -238,6 +250,7 @@ fn connection_response_all(
     from: Option<&str>,
     to: Option<&str>,
     offset: u64,
+    cursor: Option<&str>,
     limit: usize,
 ) -> Response {
     let (Some(from), Some(to)) = (from, to) else {
@@ -256,10 +269,28 @@ fn connection_response_all(
     // Both players exist, but the pair may be unreachable (`None`), e.g.
     // spec fixture A–D: same franchise, non-overlapping tenures. A missing
     // reachability answer is a defined empty result, not a panic.
-    let page = state
-        .graph
-        .shortest_chains_page(from, to, offset, limit)
-        .expect("players exist");
+    let page = match cursor {
+        Some(cursor) => match state
+            .graph
+            .shortest_chains_page_cursor(from, to, cursor, limit)
+        {
+            Ok(page) => page.expect("players exist"),
+            Err(message) => {
+                return (
+                    StatusCode::BAD_REQUEST,
+                    Json(ErrorResponse {
+                        error: "invalid-cursor".into(),
+                        message,
+                    }),
+                )
+                    .into_response();
+            }
+        },
+        None => state
+            .graph
+            .shortest_chains_page(from, to, offset, limit)
+            .expect("players exist"),
+    };
     let paths: Vec<api_types::PathDto> = page
         .chains
         .into_iter()
@@ -279,7 +310,8 @@ fn connection_response_all(
         })
         .collect();
     Json(serde_json::json!({ "paths": paths, "total":page.total, "total_saturated":page.total_saturated,
-        "next_offset":page.next_offset, "coverage":state.reports.as_ref().map(|r| &r.coverage) })).into_response()
+        "total_exact":page.total_exact, "next_offset":page.next_offset, "next_cursor":page.next_cursor,
+        "coverage":state.reports.as_ref().map(|r| &r.coverage) })).into_response()
 }
 
 fn player_not_found(graph: &graph_core::TeammateGraph, from: &str, to: &str) -> Response {

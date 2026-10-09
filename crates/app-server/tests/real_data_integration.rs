@@ -138,3 +138,111 @@ async fn coverage_gaps_remain_inspectable_for_the_affected_player() {
     assert_eq!(gaps["records"][0]["start_day"], 1);
     assert_eq!(gaps["records"][0]["team"], "RED");
 }
+
+/// Each neighboring layer is a complete bipartite graph. The independently
+/// known number of shortest chains is two choices per layer: 2^layers.
+fn binary_layers(layers_count: usize) -> std::path::PathBuf {
+    let root = snapshot();
+    let mut players = String::from(
+        "bbr_player_id,display_name,first_season,last_season,aba_only,s1_display_name\n",
+    );
+    players.push_str("s,Start,2000,2000,N,\ng,Goal,2000,2000,N,\n");
+    let mut layers = vec![vec!["s".to_string()]];
+    for layer in 0..layers_count {
+        let ids = vec![format!("l{layer:02}a"), format!("l{layer:02}b")];
+        for id in &ids {
+            players.push_str(&format!("{id},{id},2000,2000,N,\n"));
+        }
+        layers.push(ids);
+    }
+    layers.push(vec!["g".to_string()]);
+    let mut rows = String::from(
+        "bbr_player_id,season,lg,canonical_franchise,membership_source,evidence_class,start_day,end_day,start_anchored,end_anchored,unresolved_reasons,arrival_days,departure_days\n",
+    );
+    let mut edge = 0;
+    for pair in layers.windows(2) {
+        for a in &pair[0] {
+            for b in &pair[1] {
+                let team = format!("edge{edge}");
+                edge += 1;
+                for player in [a, b] {
+                    rows.push_str(&format!(
+                        "{player},2000,NBA,{team},S2,directly-evidenced,1,2,1,1,,1,2\n"
+                    ));
+                }
+            }
+        }
+    }
+    std::fs::write(root.join("t3/player-universe.csv"), players).unwrap();
+    std::fs::write(root.join("t4/tenures.csv"), rows).unwrap();
+    root
+}
+
+#[tokio::test]
+async fn the_final_shortest_chain_survives_the_u64_boundary() {
+    let app =
+        app_server::app_with_report_data(binary_layers(64), app_server::JevHandle::unconfigured())
+            .unwrap();
+    let before = get(
+        app.clone(),
+        "/api/paths?from=s&to=g&offset=18446744073709551614&limit=1",
+    )
+    .await;
+    assert_eq!(before["paths"].as_array().unwrap().len(), 1);
+    assert_eq!(before["next_offset"], json!(u64::MAX));
+    let last = get(
+        app,
+        "/api/paths?from=s&to=g&offset=18446744073709551615&limit=1",
+    )
+    .await;
+    assert_eq!(last["paths"].as_array().unwrap().len(), 1);
+    assert_eq!(last["next_offset"], Value::Null);
+    let path = last["paths"][0]["path"].as_array().unwrap();
+    assert_eq!(path[1], "l00b");
+    assert_eq!(path[64], "l63b");
+}
+
+#[tokio::test]
+async fn continuation_cursors_reach_shortest_chains_beyond_fixed_integer_limits() {
+    // 2^129 paths deliberately exceeds both u64 and u128. Exact decimal
+    // expectations are independent constants, not recomputed by the test.
+    let app =
+        app_server::app_with_report_data(binary_layers(129), app_server::JevHandle::unconfigured())
+            .unwrap();
+    let page = get(
+        app.clone(),
+        "/api/paths?from=s&to=g&offset=18446744073709551615&limit=1",
+    )
+    .await;
+    assert_eq!(
+        page["total_exact"],
+        "680564733841876926926749214863536422912"
+    );
+    assert_eq!(page["next_cursor"], "v1:18446744073709551616");
+    let resumed = get(
+        app.clone(),
+        "/api/paths?from=s&to=g&cursor=v1:18446744073709551616&limit=1",
+    )
+    .await;
+    assert_eq!(resumed["paths"].as_array().unwrap().len(), 1);
+    assert_ne!(resumed["paths"][0]["path"], page["paths"][0]["path"]);
+    assert_eq!(resumed["next_cursor"], "v1:18446744073709551617");
+    let penultimate = get(
+        app.clone(),
+        "/api/paths?from=s&to=g&cursor=v1:680564733841876926926749214863536422910&limit=1",
+    )
+    .await;
+    assert_eq!(
+        penultimate["next_cursor"],
+        "v1:680564733841876926926749214863536422911"
+    );
+    let last = get(
+        app,
+        "/api/paths?from=s&to=g&cursor=v1:680564733841876926926749214863536422911&limit=1",
+    )
+    .await;
+    assert_eq!(last["paths"].as_array().unwrap().len(), 1);
+    assert_eq!(last["next_cursor"], Value::Null);
+    assert_eq!(last["paths"][0]["path"][1], "l00b");
+    assert_eq!(last["paths"][0]["path"][129], "l128b");
+}

@@ -9,6 +9,7 @@
 //! - Repeated overlaps between the same pair collapse to one undirected
 //!   teammate edge whose provenance accumulates all overlapping stints.
 
+use num_bigint::BigUint;
 use std::collections::{BTreeMap, HashMap};
 
 use petgraph::graph::NodeIndex;
@@ -428,6 +429,41 @@ impl TeammateGraph {
         offset: u64,
         limit: usize,
     ) -> Option<ChainPage> {
+        self.shortest_chains_at_rank(from, to, BigUint::from(offset), limit)
+    }
+
+    /// Resume the next equally short alternative using the cursor returned by
+    /// a previous page. Cursor ranks and DAG counts have arbitrary precision.
+    pub fn shortest_chains_page_cursor(
+        &self,
+        from: &str,
+        to: &str,
+        cursor: &str,
+        limit: usize,
+    ) -> Result<Option<ChainPage>, String> {
+        let rank = cursor
+            .strip_prefix("v1:")
+            .ok_or("unsupported shortest-chain cursor")?;
+        // A simple DAG has at most 2^n paths, so a valid rank has fewer
+        // decimal digits than nodes. Reject oversized input before parsing.
+        if rank.is_empty()
+            || rank.len() > self.graph.node_count().max(1)
+            || !rank.bytes().all(|byte| byte.is_ascii_digit())
+        {
+            return Err("invalid shortest-chain cursor".into());
+        }
+        let rank =
+            BigUint::parse_bytes(rank.as_bytes(), 10).ok_or("invalid shortest-chain cursor")?;
+        Ok(self.shortest_chains_at_rank(from, to, rank, limit))
+    }
+
+    fn shortest_chains_at_rank(
+        &self,
+        from: &str,
+        to: &str,
+        offset: BigUint,
+        limit: usize,
+    ) -> Option<ChainPage> {
         let start = *self.by_id.get(from)?;
         let goal = *self.by_id.get(to)?;
         let distance = self.distances(goal);
@@ -435,8 +471,10 @@ impl TeammateGraph {
             return Some(ChainPage {
                 chains: Vec::new(),
                 total: 0,
+                total_exact: "0".into(),
                 total_saturated: false,
                 next_offset: None,
+                next_cursor: None,
             });
         }
         let mut order: Vec<_> = self
@@ -445,19 +483,16 @@ impl TeammateGraph {
             .filter(|n| distance[n.index()] != usize::MAX)
             .collect();
         order.sort_by_key(|n| distance[n.index()]);
-        let mut counts = vec![0u64; self.graph.node_count()];
-        let mut saturated = false;
-        counts[goal.index()] = 1;
+        let mut counts = vec![BigUint::default(); self.graph.node_count()];
+        counts[goal.index()] = BigUint::from(1u8);
         for node in order {
             if node == goal {
                 continue;
             }
             for &next in &self.neighbors[node.index()] {
                 if distance[next.index()].checked_add(1) == Some(distance[node.index()]) {
-                    let (sum, overflow) =
-                        counts[node.index()].overflowing_add(counts[next.index()]);
-                    counts[node.index()] = if overflow { u64::MAX } else { sum };
-                    saturated |= overflow;
+                    let next_count = counts[next.index()].clone();
+                    counts[node.index()] += next_count;
                 }
             }
         }
@@ -465,8 +500,8 @@ impl TeammateGraph {
             graph: &'a TeammateGraph,
             goal: NodeIndex,
             distance: &'a [usize],
-            counts: &'a [u64],
-            skip: u64,
+            counts: &'a [BigUint],
+            skip: BigUint,
             limit: usize,
             paths: Vec<Vec<NodeIndex>>,
         }
@@ -476,7 +511,7 @@ impl TeammateGraph {
                     return;
                 }
                 if self.skip >= self.counts[node.index()] {
-                    self.skip -= self.counts[node.index()];
+                    self.skip -= &self.counts[node.index()];
                     return;
                 }
                 path.push(node);
@@ -503,16 +538,24 @@ impl TeammateGraph {
             goal,
             distance: &distance,
             counts: &counts,
-            skip: offset,
+            skip: offset.clone(),
             limit,
             paths: Vec::new(),
         };
         walk.collect(start, &mut Vec::new());
         let paths = walk.paths;
-        let total = counts[start.index()];
-        let next = offset.saturating_add(paths.len() as u64);
-        let next_offset = if next < total && !paths.is_empty() {
-            Some(next)
+        let exact_total = &counts[start.index()];
+        let total = u64::try_from(exact_total).unwrap_or(u64::MAX);
+        let saturated = exact_total > &BigUint::from(u64::MAX);
+        let next = offset + BigUint::from(paths.len());
+        let has_more = &next < exact_total && !paths.is_empty();
+        let next_offset = if has_more {
+            u64::try_from(&next).ok()
+        } else {
+            None
+        };
+        let next_cursor = if has_more {
+            Some(format!("v1:{}", next.to_str_radix(10)))
         } else {
             None
         };
@@ -527,8 +570,10 @@ impl TeammateGraph {
         Some(ChainPage {
             chains,
             total,
+            total_exact: exact_total.to_str_radix(10),
             total_saturated: saturated,
             next_offset,
+            next_cursor,
         })
     }
 
@@ -610,7 +655,13 @@ pub struct GraphStatistics {
 #[derive(Clone, Debug)]
 pub struct ChainPage {
     pub chains: Vec<ChainWithDegree>,
+    /// Legacy numeric count, capped when it cannot fit u64.
     pub total: u64,
+    /// Exact decimal count; consume as text to avoid JSON number precision loss.
+    pub total_exact: String,
     pub total_saturated: bool,
+    /// Legacy numeric continuation, when the next rank fits u64.
     pub next_offset: Option<u64>,
+    /// Resumable continuation for every rank, including beyond integer limits.
+    pub next_cursor: Option<String>,
 }

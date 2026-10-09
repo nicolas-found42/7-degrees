@@ -82,9 +82,14 @@ interaction verification belongs to the later UI tickets.
 Shortest degree is exact BFS. Neighbor order is stable by canonical ID.
 `/api/paths` traverses a shortest-path DAG, counts alternatives without
 materializing them, and returns bounded deterministic pages (default 100,
-maximum 500). `offset` skips counted DAG subtrees; `next_offset` allows every
-alternative to remain inspectable. Extremely large counts saturate at `u64::MAX`
-and report `total_saturated`; no degree or edge is changed by pagination.
+maximum 500). Ranks and DAG counts use arbitrary-precision integers. The exact
+count is returned as decimal text `total_exact`; `next_cursor` resumes every
+alternative without a fixed-width integer boundary. Pass that returned string
+unchanged as the next request's `cursor` argument. Numeric `offset` and
+`next_offset` remain supported where ranks fit `u64`. Only the legacy numeric
+`total` field saturates at `u64::MAX`, with `total_saturated` marking that case;
+the exact count and cursor remain available. No degree or edge changes through
+pagination.
 
 Statistics use dense-index BFS over each node, count each unordered pair once,
 and retain one distance row at a time. The immutable graph caches its result.
@@ -105,10 +110,12 @@ curl 'http://127.0.0.1:3017/api/stats'
 NBA_DATA_MODE=fixture cargo run -p app-server
 ```
 
-Both Rust checks passed. The 29 existing API tests passed unchanged. Six new
+Both Rust checks passed. The 29 existing API tests passed unchanged. Eight new
 approved API-seam tests passed, each implemented with a red/green cycle:
 canonical import/provenance, excluded season-only uncertainty/context, duplicate
 source interval deduplication, stable shortest-path pagination, legitimate
-continuing-signing evidence, and per-player coverage-record inspection. The
+continuing-signing evidence, per-player coverage-record inspection, the final
+chain at the `u64` boundary, and arbitrary-precision cursor continuation over a
+fixture with 2^129 shortest alternatives. The
 fixture and provider-fallback suites also passed; the live provider smoke test
 remains intentionally ignored by the normal offline suite.
