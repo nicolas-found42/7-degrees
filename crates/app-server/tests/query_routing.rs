@@ -525,3 +525,40 @@ fn evaluation_config_changes_actual_provider_criteria_and_keeps_per_call_receipt
         )
     );
 }
+
+#[tokio::test]
+async fn frozen_routing_policy_clarifies_a_point_nine_four_operation() {
+    struct SoftOperation(Provider);
+    impl JevTransport for SoftOperation {
+        fn evaluate(&self, c: &JevConfig, r: &JevRequest) -> JevOutcome {
+            let JevOutcome::Answers(mut answers) = self.0.evaluate(c, r) else {
+                unreachable!()
+            };
+            for (id, answer) in &mut answers {
+                if id == "operation" {
+                    let JevAnswer::Choice(_, _, confidence) = answer else {
+                        unreachable!()
+                    };
+                    *confidence = 0.94;
+                }
+            }
+            JevOutcome::Answers(answers)
+        }
+    }
+    let provider = SoftOperation(Provider {
+        operation: "Show a player's sourced identity, teams and era",
+        first: "Player mention: Player A",
+        second: "No player mention stated",
+        era: "No stated era filter",
+        team: "No stated team filter",
+    });
+    let app = app_server::app_with_jev(app_server::JevHandle::from_client(JevClient::new(
+        JevConfig::new("fixture-key".into()),
+        provider,
+    )));
+    let (status, body) = get(app, "/api/query?q=Show%20Player%20A%20profile").await;
+    assert_eq!(status, StatusCode::OK);
+    let value: Value = serde_json::from_str(&body).unwrap();
+    assert_eq!(value["status"], "clarification");
+    assert!(value["operation"].is_null());
+}
