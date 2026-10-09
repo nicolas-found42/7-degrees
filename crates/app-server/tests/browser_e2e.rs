@@ -194,7 +194,9 @@ impl JevTransport for Scripted {
         } else {
             "Show a player's evidenced direct teammates"
         };
-        let first = if q.contains("Player Alpha") {
+        let first = if q.contains("Dee Brown") {
+            "Player mention: Dee Brown"
+        } else if q.contains("Player Alpha") {
             "Player mention: Player Alpha"
         } else if q.contains("Player A") {
             "Player mention: Player A"
@@ -203,7 +205,9 @@ impl JevTransport for Scripted {
         } else {
             "No player mention stated"
         };
-        let second = if q.contains("Player C") {
+        let second = if q.contains("Quincy Acy") {
+            "Player mention: Quincy Acy"
+        } else if q.contains("Player C") {
             "Player mention: Player C"
         } else {
             "No player mention stated"
@@ -397,7 +401,7 @@ fn real_slice() -> axum::Router {
         ),
         (
             "t4/tenures.csv",
-            "5dbff2a790e87941b6bb9cd9c05c6f91414ae0f47ae1f2992d8d3c230a4fc24e",
+            "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
         ),
     ] {
         let bytes = std::fs::read(source.join(file)).unwrap();
@@ -424,7 +428,7 @@ fn real_slice() -> axum::Router {
                         .unwrap()
                 };
                 mapping.push(json!({"slice_record":format!("{file}:{slice_line}"),"original_record":format!("{file}:{}",index+2),"snapshot_sha256":hash,"player":field("bbr_player_id"),"team":field("canonical_franchise"),"season":field("season"),"evidence_class":field("evidence_class")}));
-                if index + 2 == 120 {
+                if index + 2 == 123 {
                     assert_eq!(
                         (
                             &row[id],
@@ -437,7 +441,7 @@ fn real_slice() -> axum::Router {
                         ("acyqu01", "MAVERICKS", "25768", "25889", "1", "1")
                     );
                 }
-                if index + 2 == 2563 {
+                if index + 2 == 2602 {
                     assert_eq!(
                         (
                             &row[id],
@@ -460,9 +464,9 @@ fn real_slice() -> axum::Router {
         }
     }
     for original in [
-        "t4/tenures.csv:120",
-        "t4/tenures.csv:2563",
-        "t4/tenures.csv:19110",
+        "t4/tenures.csv:123",
+        "t4/tenures.csv:2602",
+        "t4/tenures.csv:19618",
     ] {
         assert!(mapping.iter().any(|r| r["original_record"] == original));
     }
@@ -481,6 +485,44 @@ async fn real_lookup_disambiguation_and_selected_edge_provenance_remain_honest()
     let server = Server::start(real_slice()).await;
     let mut b = Browser::start();
     b.call(json!({"op":"launch"}));
+    b.call(json!({"op":"goto","url":format!("{}/",server.url)}));
+    b.call(
+        json!({"op":"fill","selector":"#network-query","value":"connect Dee Brown to Quincy Acy"}),
+    );
+    b.click("Ask");
+    let candidates = b.call(json!({"op":"text","selector":"[data-query-candidates]"}));
+    let candidates = candidates.as_str().unwrap();
+    assert!(candidates.contains("1991") && candidates.contains("2009"));
+    assert!(candidates.contains("CELTICS") && candidates.contains("WIZARDS"));
+    assert_eq!(
+        b.call(json!({"op":"count","selector":"[data-query-candidates] button"})),
+        2
+    );
+    assert_eq!(b.call(json!({"op":"count","selector":"main ol"})), 0);
+    screenshot(&mut b, "query-clarification.png", Some("main"));
+    b.click("Choose Dee Brown (brownde01)");
+    assert_eq!(
+        b.call(
+            json!({"op":"attribute","selector":"[data-query-status]","name":"data-query-status"})
+        ),
+        "executed"
+    );
+    assert_eq!(
+        b.call(json!({"op":"attribute","selector":"#network-query","name":"value"})),
+        "connect Dee Brown to Quincy Acy"
+    );
+    let continued = b.call(json!({"op":"text","selector":"main"}));
+    assert!(
+        continued
+            .as_str()
+            .unwrap()
+            .contains("No teammate chain is established")
+    );
+    let link = b.call(
+        json!({"op":"attribute","selector":"a[href^='/chain?from=brownde01']","name":"href"}),
+    );
+    assert_eq!(link, "/chain?from=brownde01&to=acyqu01");
+    screenshot(&mut b, "query-chosen.png", Some("main"));
     b.call(json!({"op":"goto","url":format!("{}/",server.url)}));
     b.call(json!({"op":"fill","selector":"#player-query","value":"Quincy Aci"}));
     b.click("Search players");
@@ -516,7 +558,7 @@ async fn real_lookup_disambiguation_and_selected_edge_provenance_remain_honest()
     let mapping: serde_json::Value =
         serde_json::from_slice(&std::fs::read(artifacts().join("real-slice-map.json")).unwrap())
             .unwrap();
-    for original in ["t4/tenures.csv:120", "t4/tenures.csv:2563"] {
+    for original in ["t4/tenures.csv:123", "t4/tenures.csv:2602"] {
         let reference = mapping["records"]
             .as_array()
             .unwrap()

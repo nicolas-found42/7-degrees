@@ -42,29 +42,29 @@ credential nonappearance for the exercised responses, not every possible route.
 
 The slice contains only `acyqu01`, `bogutan01`, `brownde01`, `brownde03`,
 `jordami01`, `onealsh01`, and `nba:1630492`: seven selected player nodes and all
-76 corresponding committed T4 rows. It is not the full player universe or full
+79 corresponding committed T4 rows. It is not the full player universe or full
 historical graph. No synthetic roster rows are mixed into the real slice.
 Coverage remains incomplete.
 
 Before extraction, the test checks SHA-256 of the committed T3 universe
 `81031c7e3cf95845060119a3347d3cf37ec60c6a24b0ced9978fb7df2e7e651d` and T4 tenures
-`5dbff2a790e87941b6bb9cd9c05c6f91414ae0f47ae1f2992d8d3c230a4fc24e`. Source
+`bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04`. Source
 changes require explicit revalidation of these pins. Exact CSV fields are
 copied through the runtime import seam. Independent literal checks retain Acy
 and Bogut's canonical team, source dates and anchor flags; both admitted source
 links displayed in the browser must trace to the original records.
 
 **References in slice screenshots are slice-local.** In particular,
-`t4/tenures.csv:8` maps to full snapshot record `t4/tenures.csv:120` (Acy), and
-`:23` maps to full record `:2563` (Bogut). The portable
+`t4/tenures.csv:10` maps to full snapshot record `t4/tenures.csv:123` (Acy), and
+`:26` maps to full record `:2602` (Bogut). The portable
 [real-slice map](t16/real-slice-map.json) maps every slice-local tenure reference
 to its original full-snapshot record and SHA-256, including Vildoza's inferred
-record `:19110`. It does not assert global line equivalence for the slice.
+record `:19618`. It does not assert global line equivalence for the slice.
 
 ## Evidence
 
 The final run builds release WASM before workspace tests and explicitly runs
-the otherwise ignored browser targets. The merged workspace run passed 102 tests (7 ignored); explicit browser runs passed four tests. Chromium 153.0.8010.12 passed all three
+the otherwise ignored browser targets. The merged workspace run passed 103 tests (7 ignored); explicit browser runs passed four tests. Chromium 153.0.8010.12 passed all three
 new journeys and the retained canvas smoke. Formatting, host Clippy and wasm32
 Clippy use warnings denied. Raw output and the completion gate are retained
 outside the repository in `7-degrees-review-notes/t16-browser-e2e`.
@@ -83,3 +83,11 @@ standalone page includes both records and coverage warnings:
 ![Real Acy/Bogut evidence with both tenure records](t16/real-evidence-page.png)
 
 ![Focused selected-edge evidence panel](t16/real-evidence-panel.png)
+
+## Final review clarification regression
+
+The actual seven-player real-slice browser journey submits “connect Dee Brown to Quincy Acy”, shows both Dee Browns with source era/team context and explicit choices, and shows no chain before selection. Choosing `brownde01` resumes the original Connect request with `acyqu01` retained. The original request stays visible; no connection is established in this incomplete slice. The public HTTP test separately retains the RED/2000s filters, validates the selected identity against the original mention’s deterministic shortlist, and rejects selecting Acy as a Dee Brown candidate.
+
+![Explicit namesake choice with source context](t16/query-clarification.png)
+
+![Original request continued after choice](t16/query-chosen.png)

@@ -2,15 +2,15 @@
 
 The complete Rust application was started through `./scripts/run-app.sh` against the full committed report snapshot, with release WASM built first, no database service and semantic credentials removed from the launching environment. Actual HTTP responses and browser journeys confirm the implemented behavior. This is local evidence; no remote CI result or complete historical graph is claimed.
 
-[Ordered commands, results and hashes](commands-and-hashes.json) link the actual [raw check output](logs/). Machine-specific path prefixes were removed and redundant trailing empty lines normalized in published logs; hashes of the unchanged external originals are retained. Checks used integration source base `c63edd0437249c0b57b999e5ca9e02f11edb13c9`, with the T17 documentation/header correction. Final review base is origin/main `f8e743ca30939476433c680e7a29169d70c3fa41`. Generated audit utilities were also executed against retained artifacts after the application test pipeline. No raw source data, ignored cache or checkpoint was changed.
+[Ordered commands, results and hashes](commands-and-hashes.json) link the actual [raw check output](logs/). Machine-specific path prefixes were removed and redundant trailing empty lines normalized in published logs; hashes of the unchanged external originals are retained. Checks were repeated after the final review corrections; the command manifest identifies the source commit and exact rebuilt report hashes. Final review base is origin/main `f8e743ca30939476433c680e7a29169d70c3fa41`. Generated audit utilities were also executed against retained artifacts after the application test pipeline. Raw archives and source cache pages were unchanged; the isolated T4 reconciliation checkpoint was regenerated from those pinned inputs.
 
 ## Actual checks
 
 | Check | Actual result / receipt |
 |---|---|
 | Release canvas build before workspace suite | Passed; [01](logs/01-wasm-build.log) |
-| Rust workspace | **102 passed, 7 intentionally ignored**, zero failures; [02](logs/02-rust-workspace.log) |
-| Source-preparation Python suite | **90 passed**; [03](logs/03-python-source.log) |
+| Rust workspace | **103 passed, 7 intentionally ignored**, zero failures; [02](logs/02-rust-workspace.log) |
+| Source-preparation Python suite | **92 passed**; [03](logs/03-python-source.log) |
 | Rust formatting | Passed; [04](logs/04-format.log) |
 | Host and wasm32 Clippy, warnings denied | Passed; [05](logs/05-clippy-host.log), [06](logs/06-clippy-wasm.log) |
 | Explicit browser E2E + canvas browser | **3 + 1 passed**, Chromium 153.0.8010.12; [07](logs/07-browser.log) |
@@ -20,7 +20,7 @@ The complete Rust application was started through `./scripts/run-app.sh` against
 | Semantic artifact consistency | 44 labels, 132 outcomes, 18 summaries, policy/order/source hash/usage/degree invariants audited; [11](logs/11-semantic-audit.log) |
 | Current-vs-original audit join and audit integrity | 6,246 original cases, 1,548 groups, six 50-case strata, 21,984 source locators and 123,278 associations; [12](logs/12-corrected-audit.log), [13](logs/13-historical-audit.log) |
 | Actual raw snapshot SHA verification | All three bulk archives and **80 cached pages**, zero downloads; [14](logs/14-source-snapshot.log) |
-| Default full-app wrapper startup | Port 49332; [15](logs/15-app-startup.log) |
+| Default full-app wrapper startup | Port 49333; [15](logs/15-app-startup.log) |
 | Fresh full-snapshot APIs and WASM response | Counts, evidence, no-key fallback and asset magic checked; [16](logs/16-runtime-apis.log), [API receipts](runtime-apis.json) |
 
 The seven workspace ignores are explicit browser/canvas/live-provider checks. Browser targets are separately exercised above; live-only checks are not rerun in T17. Recorded paid semantic experiments remain in [evaluation evidence](../../evaluation/README.md). The tested API/browser seams are the user-approved black-box seams, with source-preparation unit tests retained for deterministic parsing arithmetic.
@@ -28,35 +28,35 @@ The seven workspace ignores are explicit browser/canvas/live-provider checks. Br
 To repeat the runtime receipt capture, start the wrapper with a fresh server before the first statistics request, then run:
 
 ```sh
-env -u OPENROUTER_API_KEY -u TYPESAFE_API_KEY NBA_PORT=49332 ./scripts/run-app.sh
+env -u OPENROUTER_API_KEY -u TYPESAFE_API_KEY NBA_PORT=49333 ./scripts/run-app.sh
 # In a second terminal:
-python3 scripts/capture-runtime-evidence.py --url http://127.0.0.1:49332 --output target/runtime-apis.json
+python3 scripts/capture-runtime-evidence.py --url http://127.0.0.1:49333 --output target/runtime-apis.json
 ```
 
 No key is required for these requests. `scripts/publish-final-evidence.py --raw-root <raw-log-root>` publishes the actual logs with path prefixes sanitized. It never fabricates test output. The command/result manifest explicitly separates startup from completed checks. Committed runtime graph metadata summarizes the full response count; the full raw graph response is retained outside the repo with its capture hash. The published Acy evidence response contains only the actual Acy/Bogut edge for compactness.
 
 ## Full evidenced graph
 
-Fresh `/api/graph`, `/api/stats` and `/api/coverage` agreed: **5,106 nodes, 2,227 certified tenures, 1,517 undirected edges, 4,168 connected components, finite diameter 20, 57,183 reachable unordered pairs and 12,975,882 unreachable unordered pairs**. These sum to `5106 × 5105 / 2 = 13,033,065` distinct unordered pairs. Self-pairs are excluded; isolates each count as a component. Unreachable pairs are omitted from the histogram and finite diameter, not assigned a finite distance. Computation is deterministic BFS in Rust.
+Fresh `/api/graph`, `/api/stats` and `/api/coverage` agreed: **5,106 nodes, 2,227 certified tenures, 1,501 undirected edges, 4,176 connected components, finite diameter 20, 55,842 reachable unordered pairs and 12,977,223 unreachable unordered pairs**. These sum to `5106 × 5105 / 2 = 13,033,065` distinct unordered pairs. Self-pairs are excluded; isolates each count as a component. Unreachable pairs are omitted from the histogram and finite diameter, not assigned a finite distance. Computation is deterministic BFS in Rust.
 
 | Degree | Reachable pairs | Degree | Reachable pairs |
 |---:|---:|---:|---:|
-| 1 | 1,517 | 11 | 3,891 |
-| 2 | 1,989 | 12 | 3,002 |
-| 3 | 2,752 | 13 | 2,368 |
-| 4 | 3,916 | 14 | 1,481 |
-| 5 | 5,028 | 15 | 941 |
-| 6 | 6,175 | 16 | 500 |
-| 7 | 6,547 | 17 | 343 |
-| 8 | 6,240 | 18 | 195 |
-| 9 | 5,535 | 19 | 88 |
-| 10 | 4,635 | 20 | 40 |
+| 1 | 1,501 | 11 | 3,912 |
+| 2 | 1,921 | 12 | 2,995 |
+| 3 | 2,641 | 13 | 2,386 |
+| 4 | 3,711 | 14 | 1,474 |
+| 5 | 4,856 | 15 | 933 |
+| 6 | 5,921 | 16 | 496 |
+| 7 | 6,338 | 17 | 339 |
+| 8 | 6,119 | 18 | 195 |
+| 9 | 5,404 | 19 | 88 |
+| 10 | 4,572 | 20 | 40 |
 
-Measured cold statistics HTTP wall time was **0.279255 s**, followed by **0.000479 s** cached. These single samples came from a localhost debug server on Darwin/arm64, not a general performance guarantee. OS/Python versions and exact timings are in the API receipts.
+Measured cold statistics HTTP wall time was **0.504797 s**, followed by **0.000686 s** cached. These single samples came from a localhost debug server on Darwin/arm64, not a general performance guarantee. OS/Python versions and exact timings are in the API receipts.
 
-Only positive intervals with both dated transaction anchors, stable identity and no blocking unresolved flags enter the graph. Excluded tenure counts are 10,176 cross-checked, 13,445 inferred and 3,446 unresolved. **3,537 players have no certified tenure**, coverage is `complete: false`, and unresolved 1946–1950 BAA evidence remains explicit. The real Acy/Bogut edge is Dallas/MAVERICKS for 121 days; current full snapshot source references are `t4/tenures.csv:120` and `:2563`. Postseason-only Luca Vildoza (`nba:1630492`) is included as an evidenced person; his inferred 2022 stint (`:19110`) does not create edges. Five nameless S1 play-by-play references (471, 775, 1277, 1787, 2794) remain unresolved identity candidates. Other source disagreements are retained in the T3 register; the build does not claim every historical identity is fully reconciled.
+Only positive intervals with both dated transaction anchors, stable identity and no blocking unresolved flags enter the graph. Excluded tenure counts are 10,170 cross-checked, 13,445 inferred and 4,215 unresolved. **3,537 players have no certified tenure**, coverage is `complete: false`, and unresolved 1946–1950 BAA evidence remains explicit. The real Acy/Bogut edge is Dallas/MAVERICKS for 121 days; current full snapshot source references are `t4/tenures.csv:123` and `:2602`. Postseason-only Luca Vildoza (`nba:1630492`) is included as an evidenced person; his inferred 2022 stint (`:19618`) does not create edges. Five nameless S1 play-by-play references (471, 775, 1277, 1787, 2794) remain unresolved identity candidates. Other source disagreements are retained in the T3 register; the build does not claim every historical identity is fully reconciled.
 
-The [historical audit](../historical-audit/README.md) preserves actual reading outcomes and fallible model signals separately. Current membership-key joins do not count as new source reading. Its original selected rows are Git-recoverable at commit `474481bde27ac33887ae9f285e351735f0905571`; current source hash is `5dbff2a790e87941b6bb9cd9c05c6f91414ae0f47ae1f2992d8d3c230a4fc24e`. Pre-correction discrepancies are not represented as current graph defects.
+The [historical audit](../historical-audit/README.md) preserves actual reading outcomes and fallible model signals separately. Current membership-key joins do not count as new source reading. Its original selected rows are Git-recoverable at commit `474481bde27ac33887ae9f285e351735f0905571`; current source hash is `bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04`. Pre-correction discrepancies are not represented as current graph defects.
 
 ## Semantic evidence and limits
 
@@ -64,7 +64,7 @@ No live provider experiment was repeated in T17. The retained evaluation has 44 
 
 ## Actual browser artifacts
 
-These screenshots are the committed inspected T16 captures, not new T17 screenshots. The real journey uses seven selected canonical players and all 76 corresponding committed tenure rows. It is a **real slice**, not the full snapshot or a mixture with synthetic rows. Slice-local Acy record `:8` maps to full record `:120`, and Bogut `:23` maps to `:2563`; every mapping and hash is retained in the [real-slice map](../t16/real-slice-map.json). The separate synthetic fixture and diamond test alternatives/filters deterministically.
+These screenshots were recaptured and visually inspected after the final review fixes, alongside the complete fresh browser suite. The real journey uses seven selected canonical players and all 79 corresponding committed tenure rows. It is a **real slice**, not the full snapshot or a mixture with synthetic rows. Slice-local Acy record `:10` maps to full record `:123`, and Bogut `:26` maps to `:2602`; every mapping and hash is retained in the [real-slice map](../t16/real-slice-map.json). The separate synthetic fixture and diamond test alternatives/filters deterministically.
 
 ![Synthetic fixture indirect path and focused neighborhood](../t16/fixture-graph.png)
 
@@ -80,6 +80,15 @@ These screenshots are the committed inspected T16 captures, not new T17 screensh
 
 The valid [Jev gate result](final-gate-result.json) is **`escalate`**, retained without retry: composite **0.7617**, minimum `safe_to_apply` **0.34**, with low-confidence/test-gap/blast-radius review signals. It checked the actual base `f8e743ca30939476433c680e7a29169d70c3fa41` through reviewed HEAD `5683a2f99c5d292554815d64ea42f285c7ad57c1`. [Scope](final-gate-scope.json) lists the **five complete raw file diffs** (39,905 characters) and 16,249 characters of actual bounded evidence. The [input](final-gate-input.json) includes the correctly named changed `crates/app-server/tests/log_capture.rs`; other test/code/data paths are explicitly excluded from this scoped patch judgment and require independent full-diff review. A first larger input returned operational `400 max_tokens_exceeded`, which had no verdict; only its input was bounded before the valid call.
 
-Six of seven claims were verified. The model labeled the aggregate workspace/Python-count claim “contradicted” at **confidence 0.07**, with probabilities verified 0.27 / contradicted 0.38 / unsupported 0.35. [Exact arithmetic recount](workspace-result-recount.json) of all actual Rust result lines gives **102 passed, 0 failed, 7 ignored**; the Python log explicitly reports 90 tests and `OK`. This conflicting weak signal remains unresolved by the gate and is referred to stronger independent review; it is not silently changed to “auto.” Startup was verified at confidence 0.69, also requiring review. The gate used 21,763 input and 741 output tokens; no provider cost metadata was supplied.
+Six of seven claims were verified. The model labeled the aggregate workspace/Python-count claim “contradicted” at **confidence 0.07**, with probabilities verified 0.27 / contradicted 0.38 / unsupported 0.35. [Exact arithmetic recount](previous-workspace-result-recount.json) of the prior actual Rust result lines gives **102 passed, 0 failed, 7 ignored**; the Python log explicitly reports 90 tests and `OK`. This conflicting weak signal remains unresolved by the gate and is referred to stronger independent review; it is not silently changed to “auto.” Startup was verified at confidence 0.69, also requiring review. The gate used 21,763 input and 741 output tokens; no provider cost metadata was supplied.
 
 This evidence-only addition records the already completed gate and arithmetic recount after its reviewed HEAD; it does not alter application behavior, source data or helper logic. It was not itself part of that gate's diff. The final independent review must cover the complete final state, including these receipt files. No PR readiness, issue closure or full-diff approval follows from this scoped escalation.
+
+
+## Gate for the final review corrections
+
+The new source revision `59780ce8cbe2b65e45a966879408866403c2d17d` received one [valid gate](review-corrections-gate-result.json), retained without retry. It escalated: composite **0.7576**, minimum `safe_to_apply` **0.30**. [Input](review-corrections-gate-input.json) retains ten complete actual raw source/test diffs (32,469 characters) and 12,785 characters of bounded evidence; generated source/audit CSV changes and browser test diff require independent full-diff review.
+
+Two claims were verified, three unsupported, and the aggregated check-count claim was labeled contradicted at confidence **0.13** (verified 0.29 / contradicted 0.42 / unsupported 0.29). Exact [current recount](workspace-result-recount.json) gives **103 passed, zero failed, seven ignored**; [Python stdout](logs/03-python-source.log) gives **92 tests and OK**, and [actual browser stdout](logs/07-browser.log) gives **3 + 1 passed**. The gate's uncertainty remains an escalation for independent stronger review of the actual code and receipts; it is not claimed as automatic acceptance. It reported 22,865 input and 1,156 output tokens, with no provider cost metadata. Original prior gate/results and previous manifest/runtime/recount remain retained.
+
+[Correction details](final-review-corrections.md) describe the source witness, runtime defense, validated query continuation, shared mappings and historical experiment qualification. Receipt publication after the reviewed source commit changes no app behavior; final independent review must also cover these documents and receipts.

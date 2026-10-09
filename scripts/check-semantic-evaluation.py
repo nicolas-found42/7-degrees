@@ -2,6 +2,7 @@
 """Audit portable experiment counts and receipts; no provider calls or policy decisions."""
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DIR = ROOT / 'docs/evaluation'
@@ -14,7 +15,10 @@ assert summary['policy'] == policy
 assert len({c['id'] for c in cases}) == len(cases)
 assert len({(c['component'], c['text'], c['context']) for c in cases}) == len(cases)
 for source, expected in manifest['source_sha256'].items():
-    assert hashlib.sha256((ROOT / source).read_bytes()).hexdigest() == expected
+    current = (ROOT / source).read_bytes()
+    if hashlib.sha256(current).hexdigest() != expected:
+        current = subprocess.check_output(['git', 'show', f"{manifest['integration_base']}:{source}"], cwd=ROOT)
+    assert hashlib.sha256(current).hexdigest() == expected
 frozen = [r for r in measurements if r['policy'] == policy]
 assert len(frozen) == len(cases) * 3
 assert len({(r['case']['id'], r['variant']) for r in frozen}) == len(frozen)

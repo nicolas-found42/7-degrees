@@ -7,15 +7,7 @@ use fixture::{self as fixture_crate, FixturePlayer};
 /// The fixture's player ids in stable order.
 pub const FIXTURE_PLAYERS: [&str; 6] = ["A", "B", "C", "C2", "D", "E"];
 
-/// The fixture teams as `(id, name)` pairs (spec: Teams Red/Blue; Green exists
-/// only as the second team of the repeated-overlap player E).
-pub fn fixture_teams() -> Vec<(String, String)> {
-    vec![
-        ("Red".to_string(), "Team Red".to_string()),
-        ("Blue".to_string(), "Team Blue".to_string()),
-        ("Green".to_string(), "Team Green".to_string()),
-    ]
-}
+pub use fixture_crate::fixture_teams;
 
 /// The display name the UI shows for a fixture player.
 pub fn fixture_display_name(id: &str) -> String {

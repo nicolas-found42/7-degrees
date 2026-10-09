@@ -1,87 +1,87 @@
 {
   "cold_stats": {
     "url": "/api/stats",
-    "elapsed_seconds": 0.5047971669991966,
+    "elapsed_seconds": 0.27925470800255425,
     "body": {
-      "components": 4176,
+      "components": 4168,
       "diameter": 20,
       "histogram": {
-        "1": 1501,
-        "10": 4572,
-        "11": 3912,
-        "12": 2995,
-        "13": 2386,
-        "14": 1474,
-        "15": 933,
-        "16": 496,
-        "17": 339,
+        "1": 1517,
+        "10": 4635,
+        "11": 3891,
+        "12": 3002,
+        "13": 2368,
+        "14": 1481,
+        "15": 941,
+        "16": 500,
+        "17": 343,
         "18": 195,
         "19": 88,
-        "2": 1921,
+        "2": 1989,
         "20": 40,
-        "3": 2641,
-        "4": 3711,
-        "5": 4856,
-        "6": 5921,
-        "7": 6338,
-        "8": 6119,
-        "9": 5404
+        "3": 2752,
+        "4": 3916,
+        "5": 5028,
+        "6": 6175,
+        "7": 6547,
+        "8": 6240,
+        "9": 5535
       },
       "players": 5106,
-      "unreachable_pairs": 12977223
+      "unreachable_pairs": 12975882
     }
   },
   "cached_stats": {
     "url": "/api/stats",
-    "elapsed_seconds": 0.0006861669971840456,
+    "elapsed_seconds": 0.00047862500287010334,
     "body": {
-      "components": 4176,
+      "components": 4168,
       "diameter": 20,
       "histogram": {
-        "1": 1501,
-        "10": 4572,
-        "11": 3912,
-        "12": 2995,
-        "13": 2386,
-        "14": 1474,
-        "15": 933,
-        "16": 496,
-        "17": 339,
+        "1": 1517,
+        "10": 4635,
+        "11": 3891,
+        "12": 3002,
+        "13": 2368,
+        "14": 1481,
+        "15": 941,
+        "16": 500,
+        "17": 343,
         "18": 195,
         "19": 88,
-        "2": 1921,
+        "2": 1989,
         "20": 40,
-        "3": 2641,
-        "4": 3711,
-        "5": 4856,
-        "6": 5921,
-        "7": 6338,
-        "8": 6119,
-        "9": 5404
+        "3": 2752,
+        "4": 3916,
+        "5": 5028,
+        "6": 6175,
+        "7": 6547,
+        "8": 6240,
+        "9": 5535
       },
       "players": 5106,
-      "unreachable_pairs": 12977223
+      "unreachable_pairs": 12975882
     }
   },
   "graph": {
     "url": "/api/graph",
-    "elapsed_seconds": 0.38964908300113166,
+    "elapsed_seconds": 0.23060620799878961,
     "body": {
       "node_count": 5106,
-      "edge_count": 1501
+      "edge_count": 1517
     },
-    "raw_response_capture_sha256": "4be02a5d615735f163ba7dd1abbf31323c8d7ab613d7b408a74fa0df6dfb7abb"
+    "raw_response_capture_sha256": "af975186d63999266bf8e6afe58a84c7f401d4460200838b1e75162782332b45"
   },
   "coverage": {
     "url": "/api/coverage",
-    "elapsed_seconds": 0.0008961659987107851,
+    "elapsed_seconds": 0.0005067090023658238,
     "body": {
       "certified_tenures": 2227,
       "complete": false,
       "excluded_tenures": {
-        "cross-checked": 10170,
+        "cross-checked": 10176,
         "inferred": 13445,
-        "unresolved": 4215
+        "unresolved": 3446
       },
       "players_without_certified_tenure": 3537,
       "warning": "Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Only tenures with both dated transaction boundaries create edges; inferred, cross-checked and unresolved brackets are excluded. A degree is exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players."
@@ -89,15 +89,15 @@
   },
   "connection": {
     "url": "/api/connection?from=acyqu01&to=bogutan01",
-    "elapsed_seconds": 0.0006122499980847351,
+    "elapsed_seconds": 0.00035516699790605344,
     "body": {
       "coverage": {
         "certified_tenures": 2227,
         "complete": false,
         "excluded_tenures": {
-          "cross-checked": 10170,
+          "cross-checked": 10176,
           "inferred": 13445,
-          "unresolved": 4215
+          "unresolved": 3446
         },
         "players_without_certified_tenure": 3537,
         "warning": "Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Only tenures with both dated transaction boundaries create edges; inferred, cross-checked and unresolved brackets are excluded. A degree is exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players."
@@ -120,7 +120,7 @@
   },
   "evidence": {
     "url": "/api/edges/acyqu01",
-    "elapsed_seconds": 0.0019739589988603257,
+    "elapsed_seconds": 0.0009887919986795168,
     "body": {
       "edges": [
         {
@@ -142,7 +142,7 @@
                       "membership_source": "S2",
                       "notes": "",
                       "player": "acyqu01",
-                      "record": "t4/tenures.csv:123",
+                      "record": "t4/tenures.csv:120",
                       "season": 2017,
                       "source_manifest": "docs/data/source-manifest.md (S1 v238; S2 v56; BBR request ledger)",
                       "start_anchored": 1,
@@ -158,7 +158,7 @@
                       "membership_source": "S2",
                       "notes": "",
                       "player": "bogutan01",
-                      "record": "t4/tenures.csv:2602",
+                      "record": "t4/tenures.csv:2563",
                       "season": 2017,
                       "source_manifest": "docs/data/source-manifest.md (S1 v238; S2 v56; BBR request ledger)",
                       "start_anchored": 1,
@@ -179,7 +179,7 @@
                   "membership_source": "S2",
                   "notes": "",
                   "player": "acyqu01",
-                  "record": "t4/tenures.csv:123",
+                  "record": "t4/tenures.csv:120",
                   "season": 2017,
                   "source_manifest": "docs/data/source-manifest.md (S1 v238; S2 v56; BBR request ledger)",
                   "start_anchored": 1,
@@ -195,7 +195,7 @@
                   "membership_source": "S2",
                   "notes": "",
                   "player": "bogutan01",
-                  "record": "t4/tenures.csv:2602",
+                  "record": "t4/tenures.csv:2563",
                   "season": 2017,
                   "source_manifest": "docs/data/source-manifest.md (S1 v238; S2 v56; BBR request ledger)",
                   "start_anchored": 1,
@@ -214,16 +214,16 @@
   },
   "postseason_only_coverage": {
     "url": "/api/coverage/nba:1630492",
-    "elapsed_seconds": 0.0005080420014564879,
+    "elapsed_seconds": 0.0002607500027806964,
     "body": {
       "complete": false,
       "coverage": {
         "certified_tenures": 2227,
         "complete": false,
         "excluded_tenures": {
-          "cross-checked": 10170,
+          "cross-checked": 10176,
           "inferred": 13445,
-          "unresolved": 4215
+          "unresolved": 3446
         },
         "players_without_certified_tenure": 3537,
         "warning": "Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Only tenures with both dated transaction boundaries create edges; inferred, cross-checked and unresolved brackets are excluded. A degree is exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players."
@@ -235,7 +235,7 @@
           "evidence_class": "inferred",
           "player": "nba:1630492",
           "reasons": "",
-          "record": "t4/tenures.csv:19618",
+          "record": "t4/tenures.csv:19110",
           "season": 2022,
           "start_day": 27685,
           "team": "BUCKS"
@@ -245,140 +245,10 @@
   },
   "semantic_status": {
     "url": "/api/semantic-status",
-    "elapsed_seconds": 0.0004207500023767352,
+    "elapsed_seconds": 0.00021674999879905954,
     "body": {
       "available": false,
       "reason": "unconfigured"
-    }
-  },
-  "repeat_contract_connection": {
-    "url": "/api/connection?from=willire02&to=shakumu01",
-    "elapsed_seconds": 0.00088658400636632,
-    "body": {
-      "certainty": "unresolved_coverage",
-      "coverage": {
-        "certified_tenures": 2227,
-        "complete": false,
-        "excluded_tenures": {
-          "cross-checked": 10170,
-          "inferred": 13445,
-          "unresolved": 4215
-        },
-        "players_without_certified_tenure": 3537,
-        "warning": "Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Only tenures with both dated transaction boundaries create edges; inferred, cross-checked and unresolved brackets are excluded. A degree is exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players."
-      },
-      "result": "disconnected"
-    }
-  },
-  "repeat_contract_coverage": {
-    "url": "/api/coverage/willire02",
-    "elapsed_seconds": 0.0005984160015941598,
-    "body": {
-      "complete": false,
-      "coverage": {
-        "certified_tenures": 2227,
-        "complete": false,
-        "excluded_tenures": {
-          "cross-checked": 10170,
-          "inferred": 13445,
-          "unresolved": 4215
-        },
-        "players_without_certified_tenure": 3537,
-        "warning": "Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Only tenures with both dated transaction boundaries create edges; inferred, cross-checked and unresolved brackets are excluded. A degree is exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players."
-      },
-      "player": "willire02",
-      "records": [
-        {
-          "end_day": 23480,
-          "evidence_class": "cross-checked",
-          "player": "willire02",
-          "reasons": "",
-          "record": "t4/tenures.csv:29327",
-          "season": 2010,
-          "start_day": 23436,
-          "team": "WARRIORS"
-        },
-        {
-          "end_day": 23844,
-          "evidence_class": "inferred",
-          "player": "willire02",
-          "reasons": "",
-          "record": "t4/tenures.csv:29328",
-          "season": 2011,
-          "start_day": 23675,
-          "team": "WARRIORS"
-        },
-        {
-          "end_day": 24223,
-          "evidence_class": "cross-checked",
-          "player": "willire02",
-          "reasons": "",
-          "record": "t4/tenures.csv:29329",
-          "season": 2012,
-          "start_day": 24089,
-          "team": "BOBCATS-HORNETS2"
-        },
-        {
-          "end_day": null,
-          "evidence_class": "unresolved",
-          "player": "willire02",
-          "reasons": "no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)",
-          "record": "t4/tenures.csv:29330",
-          "season": 2013,
-          "start_day": null,
-          "team": "BOBCATS-HORNETS2"
-        },
-        {
-          "end_day": 24923,
-          "evidence_class": "unresolved",
-          "player": "willire02",
-          "reasons": "repeat-signing-prior-end-unknown",
-          "record": "t4/tenures.csv:29331",
-          "season": 2014,
-          "start_day": 24901,
-          "team": "THUNDER"
-        },
-        {
-          "end_day": 25240,
-          "evidence_class": "unresolved",
-          "player": "willire02",
-          "reasons": "repeat-signing-prior-end-unknown",
-          "record": "t4/tenures.csv:29333",
-          "season": 2015,
-          "start_day": 25229,
-          "team": "SPURS"
-        },
-        {
-          "end_day": 25252,
-          "evidence_class": "unresolved",
-          "player": "willire02",
-          "reasons": "repeat-signing-prior-end-unknown",
-          "record": "t4/tenures.csv:29334",
-          "season": 2015,
-          "start_day": 25240,
-          "team": "SPURS"
-        },
-        {
-          "end_day": 25324,
-          "evidence_class": "cross-checked",
-          "player": "willire02",
-          "reasons": "",
-          "record": "t4/tenures.csv:29335",
-          "season": 2015,
-          "start_day": 25252,
-          "team": "SPURS"
-        },
-        {
-          "end_day": 26035,
-          "evidence_class": "cross-checked",
-          "player": "willire02",
-          "reasons": "",
-          "record": "t4/tenures.csv:29337",
-          "season": 2017,
-          "start_day": 25988,
-          "team": "HORNETS-PELICANS"
-        }
-      ]
     }
   },
   "machine": {
@@ -391,7 +261,7 @@
   "served_assets": {
     "wasm_sha256": "9eabf801550e443c2c6b3fa6617747a5a4f18b6ac5d251b35b27da7eb51e7bad",
     "wasm_bytes": 239637,
-    "home_bytes": 500192,
+    "home_bytes": 500194,
     "home_semantic_unavailable_visible": true
   }
 }

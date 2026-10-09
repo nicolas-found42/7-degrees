@@ -466,6 +466,79 @@ fn archive(dir: &Path) {
         target.file_name().unwrap().to_string_lossy()
     );
 }
+// Replay the measured source snapshot and its former import policy, exclusively
+// in this offline experiment binary. Production imports always reject uncertain
+// repeat-signing notes. These historical outcomes are not current graph claims.
+fn recorded_reports(root: &std::path::Path) -> std::path::PathBuf {
+    use sha2::{Digest, Sha256};
+    let destination = root.join("target/semantic-eval-recorded-snapshot");
+    for (path, hash) in [
+        (
+            "docs/reports/t3/player-universe.csv",
+            "81031c7e3cf95845060119a3347d3cf37ec60c6a24b0ced9978fb7df2e7e651d",
+        ),
+        (
+            "docs/reports/t4/tenures.csv",
+            "5dbff2a790e87941b6bb9cd9c05c6f91414ae0f47ae1f2992d8d3c230a4fc24e",
+        ),
+    ] {
+        let output = std::process::Command::new("git")
+            .current_dir(root)
+            .args([
+                "show",
+                &format!("b107788fccd0c789f4bcb06429d317ee9a390d36:{path}"),
+            ])
+            .output()
+            .expect("recorded Git snapshot");
+        assert!(
+            output.status.success(),
+            "Recorded source commit must be available"
+        );
+        assert_eq!(
+            format!("{:x}", Sha256::digest(&output.stdout)),
+            hash,
+            "Immutable measured source hash"
+        );
+        let target = destination.join(path.strip_prefix("docs/reports/").unwrap());
+        std::fs::create_dir_all(target.parent().unwrap()).unwrap();
+        if path.contains("t4/") {
+            let mut reader = csv::Reader::from_reader(output.stdout.as_slice());
+            let header = reader.headers().unwrap().clone();
+            let notes = header
+                .iter()
+                .position(|v| v == "unresolved_reasons")
+                .unwrap();
+            let mut writer = csv::Writer::from_path(target).unwrap();
+            writer.write_record(&header).unwrap();
+            for row in reader.records() {
+                let row = row.unwrap();
+                let fields: Vec<String> = row
+                    .iter()
+                    .enumerate()
+                    .map(|(i, text)| {
+                        if i == notes {
+                            text.split(';')
+                                .filter(|note| note.trim() != "repeat-signing-continues-open-stint")
+                                .collect::<Vec<_>>()
+                                .join(";")
+                        } else {
+                            text.into()
+                        }
+                    })
+                    .collect();
+                writer.write_record(fields).unwrap();
+            }
+            writer.flush().unwrap();
+        } else {
+            std::fs::write(target, output.stdout).unwrap();
+        }
+    }
+    eprintln!(
+        "Offline historical replay: hash-verified b107788 snapshot; superseded repeat-signing continuity policy reproduced only for recorded measurement comparability."
+    );
+    destination
+}
+
 fn main() {
     let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
     let dir = root.join("docs/evaluation");
@@ -490,7 +563,12 @@ fn main() {
         std::env::var("OPENROUTER_API_KEY").expect("OPENROUTER_API_KEY required")
     };
     assert!(!key.trim().is_empty());
-    let (graph, reports) = report_data::load(&root.join("docs/reports")).unwrap();
+    let reports_root = if arg == "--replay" {
+        recorded_reports(&root)
+    } else {
+        root.join("docs/reports")
+    };
+    let (graph, reports) = report_data::load(&reports_root).unwrap();
     let catalog = PlayerCatalog::from_graph(&graph, Some(&reports));
     let (rank_graph, rank_catalog) = ranking_fixture();
     let ctx = Context {

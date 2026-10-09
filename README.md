@@ -2,7 +2,7 @@
 
 Explore NBA/BAA teammates and their shortest chains. An undirected link requires a positive, dated overlap in roster tenure on the same canonical franchise. Playing for a franchise in different years, or sharing only an All-Star, national-team, summer-league or G League association, creates no link. Injured and inactive roster occupants remain eligible; shared game minutes are not required.
 
-The current pinned build contains **5,106 evidenced player identities, 2,227 certified dated tenures and 1,517 edges**. Its distances and statistics are exact within this evidence graph. **Historical roster coverage is incomplete**, including 1946–1950 BAA: 3,537 players have no certified tenure, and missing edges may shorten historical chains or connect current isolates. Five nameless official play-by-play references remain unresolved identities. See the [coverage report](docs/reports/t4-tenure-coverage.md), [identity reconciliation](docs/reports/t3-reconciliation.md), and [final evidence](docs/reports/final-verification/README.md).
+The current pinned build contains **5,106 evidenced player identities, 2,227 certified dated tenures and 1,501 edges**. Its distances and statistics are exact within this evidence graph. **Historical roster coverage is incomplete**, including 1946–1950 BAA: 3,537 players have no certified tenure, and missing edges may shorten historical chains or connect current isolates. Five nameless official play-by-play references remain unresolved identities. See the [coverage report](docs/reports/t4-tenure-coverage.md), [identity reconciliation](docs/reports/t3-reconciliation.md), and [final evidence](docs/reports/final-verification/README.md).
 
 ## Start the complete app
 

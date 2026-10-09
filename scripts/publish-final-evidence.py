@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import re
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,14 +23,14 @@ COMMANDS = [
 ('12-corrected-audit.log','python3 scripts/compare-audit-snapshot.py'),
 ('13-historical-audit.log','python3 scripts/check-historical-audit.py'),
 ('14-source-snapshot.log','python3 scripts/verify-source-snapshot.py --data-dir <existing-pinned-data>'),
-('15-app-startup.log','env -u OPENROUTER_API_KEY -u TYPESAFE_API_KEY NBA_PORT=49332 ./scripts/run-app.sh'),
-('16-runtime-apis.log','python3 scripts/capture-runtime-evidence.py --url http://127.0.0.1:49332 --output <raw-root>/runtime-apis.json'),
+('15-app-startup.log','env -u OPENROUTER_API_KEY -u TYPESAFE_API_KEY NBA_PORT=49333 ./scripts/run-app.sh'),
+('16-runtime-apis.log','python3 scripts/capture-runtime-evidence.py --url http://127.0.0.1:49333 --output <raw-root>/runtime-apis.json'),
 ]
 
 def publish(raw):
     output = ROOT / 'docs/reports/final-verification'; logs = output / 'logs'; logs.mkdir(parents=True, exist_ok=True)
-    manifest = dict(source_base_commit='c63edd0437249c0b57b999e5ca9e02f11edb13c9', origin_main_review_base='f8e743ca30939476433c680e7a29169d70c3fa41',
-                    method='Actual stdout/stderr from ordered checks; machine path prefixes sanitized and redundant trailing empty lines normalized. External raw logs retained. Source/UI implementation unchanged during check pipeline except corrected docs header.',
+    manifest = dict(source_base_commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(), origin_main_review_base='f8e743ca30939476433c680e7a29169d70c3fa41',
+                    method='Actual stdout/stderr from ordered checks; machine path prefixes sanitized and redundant trailing empty lines normalized. External raw logs retained. Final review corrections verified against rebuilt source reports; snapshot hashes below identify exact generated inputs.',
                     checks=[], source_sha256={})
     for name, command in COMMANDS:
         data = (raw / name).read_bytes(); text = data.decode().replace(str(ROOT), '<checkout>')

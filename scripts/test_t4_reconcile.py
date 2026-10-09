@@ -250,6 +250,24 @@ class TestWalkStints(unittest.TestCase):
         self.assertTrue(any(n[0].startswith("departure-after-closed-stint")
                             for n in notes))
 
+    def test_repeat_signing_does_not_certify_service_between_contracts(self):
+        # Williams' two ten-day contracts have no dated departure between them.
+        # The later signed/expired pair is evidenced; the earlier end is unknown.
+        start, renewal, expiry = map(day_number, ["2014-03-06", "2014-03-28", "2014-04-07"])
+        stints, flags, anomalies, notes = walk_stints([start, renewal], [expiry],
+                                                    win("2013-10-30", "2014-06-01"))
+        self.assertEqual(stints, [(start, renewal, True, False),
+                                 (renewal, expiry, True, True)])
+        self.assertEqual(flags, [])
+        self.assertIn(("repeat-signing-prior-end-unknown", renewal), notes)
+
+    def test_duplicate_signing_on_same_day_is_one_anchor(self):
+        legs = [{"date_iso": "2014-03-28", "depart": "", "arrive": "TEAM"}] * 2
+        arrivals, _ = extract_anchors(legs)
+        stints, _, _, notes = walk_stints(arrivals["TEAM"], [day_number("2014-04-07")], None)
+        self.assertEqual(stints, [(day_number("2014-03-28"), day_number("2014-04-07"), True, True)])
+        self.assertEqual(notes, [])
+
     def test_arrival_after_window_end_cannot_stretch_into_a_stint(self):
         # an off-season arrival dated after this window's last game belongs to
         # the NEXT season — flagged, never stretched into a fabricated interval

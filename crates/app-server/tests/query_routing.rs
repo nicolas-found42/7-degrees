@@ -24,6 +24,7 @@ impl JevTransport for Provider {
             let candidates = request.state["candidates"].as_array().unwrap();
             let intended = match request.state["mention"].as_str().unwrap() {
                 "Plauer A" => "Player A",
+                "Dee Brown" => "Dee Brown",
                 other => panic!("no scripted resolution for {other}"),
             };
             let selected = candidates
@@ -48,7 +49,14 @@ impl JevTransport for Provider {
                         1.0,
                     ),
                 ),
-                ("exists".into(), JevAnswer::Noul(1.0)),
+                (
+                    "exists".into(),
+                    JevAnswer::Noul(if request.state["mention"] == "Dee Brown" {
+                        0.5
+                    } else {
+                        1.0
+                    }),
+                ),
             ]);
         }
         JevOutcome::Answers(
@@ -561,4 +569,63 @@ async fn frozen_routing_policy_clarifies_a_point_nine_four_operation() {
     let value: Value = serde_json::from_str(&body).unwrap();
     assert_eq!(value["status"], "clarification");
     assert!(value["operation"].is_null());
+}
+
+#[tokio::test]
+async fn ambiguous_names_show_context_and_explicit_choice_continues_original_request() {
+    let root = std::env::temp_dir().join(format!("query-namesakes-{}", std::process::id()));
+    std::fs::create_dir_all(root.join("t3")).unwrap();
+    std::fs::create_dir_all(root.join("t4")).unwrap();
+    std::fs::write(root.join("t3/player-universe.csv"), "bbr_player_id,display_name,first_season,last_season,aba_only,s1_display_name\nbrownde01,Dee Brown,1991,2002,N,\nbrownde03,Dee Brown,2007,2009,N,\nacyqu01,Quincy Acy,2013,2019,N,\n").unwrap();
+    std::fs::write(root.join("t4/tenures.csv"), "bbr_player_id,season,lg,canonical_franchise,membership_source,evidence_class,start_day,end_day,start_anchored,end_anchored,unresolved_reasons,arrival_days,departure_days\nbrownde01,2000,NBA,RED,S2,directly-evidenced,1,5,1,1,,1,5\nbrownde03,2008,NBA,BLUE,S2,directly-evidenced,10,15,1,1,,10,15\nacyqu01,2013,NBA,RED,S2,directly-evidenced,2,4,1,1,,2,4\n").unwrap();
+    let app = app_server::app_with_report_data(
+        root,
+        app_server::JevHandle::from_client(JevClient::new(
+            JevConfig::new("fake".into()),
+            Provider {
+                operation: "Connect two players through their shortest teammate chain",
+                first: "Player mention: Dee Brown",
+                second: "Player mention: Quincy Acy",
+                era: "Era filter: 2000s (season-ending years 2000–2009)",
+                team: "Team filter: RED",
+            },
+        )),
+    )
+    .unwrap();
+    let q = "connect Dee Brown to Quincy Acy on RED in the 2000s";
+    let (_, body) = get(
+        app.clone(),
+        "/api/query?q=connect%20Dee%20Brown%20to%20Quincy%20Acy%20on%20RED%20in%20the%202000s",
+    )
+    .await;
+    let initial: Value = serde_json::from_str(&body).unwrap();
+    assert_eq!(initial["status"], "clarification");
+    assert!(initial["data"].get("path").is_none());
+    let (_, html) = get(
+        app.clone(),
+        "/query?q=connect%20Dee%20Brown%20to%20Quincy%20Acy%20on%20RED%20in%20the%202000s",
+    )
+    .await;
+    assert!(html.contains("1991–2002") && html.contains("2007–2009"));
+    assert!(html.contains("Choose Dee Brown (brownde01)"));
+    let continuation = initial["data"]["continuation"].to_string();
+    let encode = |v: &str| v.bytes().map(|c| format!("%{c:02X}")).collect::<String>();
+    let uri = format!(
+        "/api/query?q={}&continuation={}&pick=brownde01",
+        encode(q),
+        encode(&continuation)
+    );
+    let (_, body) = get(app.clone(), &uri).await;
+    let chosen: Value = serde_json::from_str(&body).unwrap();
+    assert_eq!(chosen["status"], "executed");
+    assert_eq!(chosen["operation"], "connect");
+    assert_eq!(chosen["players"][0]["id"], "brownde01");
+    assert_eq!(chosen["players"][1]["id"], "acyqu01");
+    assert_eq!(chosen["filters"], initial["filters"]);
+    assert_eq!(chosen["filters"]["team"], "RED");
+    assert_eq!(chosen["filters"]["first_season"], 2000);
+    assert_eq!(chosen["data"]["result"], "disconnected");
+    assert_eq!(chosen["data"]["unfiltered_degree"], 1);
+    let (status, _) = get(app, &uri.replace("pick=brownde01", "pick=acyqu01")).await;
+    assert_eq!(status, StatusCode::BAD_REQUEST);
 }

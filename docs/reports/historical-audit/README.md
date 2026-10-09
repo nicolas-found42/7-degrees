@@ -38,14 +38,14 @@ Raw source paragraphs, full 26 MB case JSONL and detailed dossiers remain in the
 
 ## Comparison with the final corrected snapshot
 
-[Corrected delta](corrected-delta.csv) rejoins each original case to current T4 by `(bbr_player_id, league, season, canonical franchise)` and compares exact dates. Current SHA-256 is `5dbff2a790e87941b6bb9cd9c05c6f91414ae0f47ae1f2992d8d3c230a4fc24e`; its current CSV lines are explicitly separate from the original lines. [Summary](corrected-delta-summary.json):
+[Corrected delta](corrected-delta.csv) rejoins each original case to current T4 by `(bbr_player_id, league, season, canonical franchise)` and compares exact dates. Current SHA-256 is `bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04`; its current CSV lines are explicitly separate from the original lines. [Summary](corrected-delta-summary.json):
 
 | Deterministic comparison | Cases |
 |---|---:|
 | Original selected cases / current membership groups found | 6,246 / 6,246 |
-| At least one unchanged exact interval | 2,523 |
+| At least one unchanged exact interval | 2,364 |
 | Originally directly evidenced | 1,812 |
-| Original direct interval still direct at same dates | 525 |
+| Original direct interval still direct at same dates | 503 |
 | Group has any corrected positive directly evidenced interval | 1,053 |
 
-This comparison is not a new source reading, uninterrupted-service certification, or proof of an edge. The Rust loader additionally checks identity, anchor flags, blocking reasons and pairwise overlap. Its actual final graph admits 2,227 certified tenures and 1,517 edges; 3,537 players have no certified tenure. The [runtime report](../final-verification/README.md) and coverage warnings retain this limitation.
+This comparison is not a new source reading, uninterrupted-service certification, or proof of an edge. The Rust loader additionally checks identity, anchor flags, blocking reasons and pairwise overlap. Its actual final graph admits 2,227 certified tenures and 1,501 edges; 3,537 players have no certified tenure. The [runtime report](../final-verification/README.md) and coverage warnings retain this limitation.
