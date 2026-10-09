@@ -6,6 +6,7 @@ mod fixture_data;
 pub mod graph_view;
 mod jev;
 pub mod provenance;
+pub mod query;
 pub mod ranking;
 pub mod report_data;
 pub mod resolution;
@@ -97,6 +98,8 @@ fn app(state: AppState) -> Router {
         .route("/api/coverage", get(coverage))
         .route("/api/coverage/{player}", get(player_coverage))
         .route("/api/players", get(players))
+        .route("/api/query", get(query::api))
+        .route("/query", get(query::page))
         .route("/api/search", get(search::api))
         .route("/api/resolve", get(resolution::api))
         .route("/api/rank", get(ranking::api))
