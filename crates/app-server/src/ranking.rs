@@ -30,7 +30,7 @@ pub enum RankingOrder {
     Deterministic,
     Reverse,
 }
-/// Explicit weights and provisional confidence policy; reused by #16 evaluation.
+/// Explicit weights and frozen calibrated confidence policy, shared with evaluation.
 #[derive(Clone, Debug)]
 pub struct RankingConfig {
     pub era_weight: f64,
@@ -46,7 +46,7 @@ impl Default for RankingConfig {
         Self {
             era_weight: 0.25,
             interest_weight: 0.75,
-            minimum_confidence: 0.5,
+            minimum_confidence: crate::semantic_policy::calibrated().ranking,
             era_levels: vec![
                 "The supplied career/roster context remains primarily within one basketball era."
                     .into(),

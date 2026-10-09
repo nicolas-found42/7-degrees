@@ -441,3 +441,25 @@ async fn a_zero_weight_dimension_does_not_block_a_certain_interest_preference() 
     assert_eq!(call.result.chains[0].original_index, 1);
     assert_eq!(call.result.chains[0].weighted_score, Some(1.0));
 }
+
+#[tokio::test]
+async fn frozen_calibration_accepts_point_three_scores_but_keeps_point_two_uncertain() {
+    for (confidence, status) in [(0.3, "ranked"), (0.2, "uncertain")] {
+        let JevOutcome::Answers(mut answers) = scripted([(2.0, 0.0), (0.0, 2.0)]) else {
+            unreachable!()
+        };
+        for (_, answer) in &mut answers {
+            let JevAnswer::Score(_, _, c) = answer else {
+                unreachable!()
+            };
+            *c = confidence;
+        }
+        let r = get(
+            app(JevOutcome::Answers(answers)),
+            "/api/rank?from=s&to=g&interest=Gamma",
+        )
+        .await;
+        assert_eq!(r["status"], status);
+        assert_eq!(r["degree"], 2);
+    }
+}

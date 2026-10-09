@@ -30,7 +30,7 @@ pub enum OptionOrder {
     Lexical,
     Reverse,
 }
-/// Provisional policy; #16 calibrates these values using the same runtime service.
+/// Defaults use the frozen labeled calibration policy; overrides support experiments.
 #[derive(Clone, Debug)]
 pub struct ResolutionConfig {
     pub candidate_limit: usize,
@@ -45,10 +45,10 @@ impl Default for ResolutionConfig {
     fn default() -> Self {
         Self {
             candidate_limit: 20,
-            choice_probability: 0.9,
-            choice_confidence: 0.9,
-            margin: 0.25,
-            existence_probability: 0.9,
+            choice_probability: crate::semantic_policy::calibrated().resolution,
+            choice_confidence: crate::semantic_policy::calibrated().resolution,
+            margin: crate::semantic_policy::calibrated().margin,
+            existence_probability: crate::semantic_policy::calibrated().existence,
             prompt_variant: PromptVariant::Baseline,
             option_order: OptionOrder::Lexical,
         }
@@ -243,7 +243,7 @@ pub fn resolve(
                 .find(|(id, _)| id == &evidence.selected_option)
                 .unwrap()
                 .1;
-            if evidence.existence_probability <= 1.0 - config.existence_probability {
+            if evidence.existence_probability < 1.0 - config.existence_probability {
                 result.status = "no_match".into();
                 result.reason = "no_supported_candidate".into();
             } else if evidence.selected_option != "none"
@@ -251,6 +251,7 @@ pub fn resolve(
                 && selected_probability >= config.choice_probability
                 && evidence.margin >= config.margin
                 && evidence.existence_probability >= config.existence_probability
+                && evidence.existence_probability > 0.5
                 && !result.has_more
             {
                 let option = request.state["candidates"]

@@ -98,9 +98,9 @@ pub struct QueryConfig {
 impl Default for QueryConfig {
     fn default() -> Self {
         Self {
-            minimum_probability: 0.9,
-            minimum_confidence: 0.9,
-            minimum_margin: 0.25,
+            minimum_probability: crate::semantic_policy::calibrated().query,
+            minimum_confidence: crate::semantic_policy::calibrated().query,
+            minimum_margin: crate::semantic_policy::calibrated().margin,
             prompt_variant: PromptVariant::Direct,
             option_order: OptionOrder::Natural,
             resolution: crate::resolution::ResolutionConfig::default(),
@@ -253,7 +253,7 @@ fn result(status: &str, reason: &str) -> QueryResult {
     }
 }
 
-/// Public runtime/evaluation seam. Configuration thresholds remain provisional until #16.
+/// Public runtime/evaluation seam. Default thresholds use the frozen labeled calibration policy.
 pub fn execute(
     graph: &TeammateGraph,
     catalog: &PlayerCatalog,
