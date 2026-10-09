@@ -11,22 +11,38 @@ connect them.
 
 ## Running locally
 
-The app currently serves the spec's synthetic fixture (Players A–D and Teams Red/Blue, plus
-fixture-only players C2 and E); the real data import lands with the graph ticket (T5).
+The default app builds the real canonical NBA/BAA graph from committed T3 player identities
+and T4 dated-tenure reports. No raw source artifact or database server is needed at runtime.
 
 ```sh
 cargo run -p app-server
 ```
 
-No separately managed database service is needed: the fixture-backed teammate graph is built
-in memory at startup. The server listens on <http://127.0.0.1:3000>.
+The server listens on <http://127.0.0.1:3000>. Set `NBA_PORT` for another localhost port,
+or `NBA_REPORT_DIR` for another directory containing `t3/` and `t4/` report snapshots.
 
-- `/` — connect form plus the fixture's teammate edge list
-- `/chain?from=A&to=C` — the shortest teammate chain as ordered players and links with its
-  degree of separation (Player A → Player B → Player C, degree 2)
-- `/api/fixture`, `/api/edges`, `/api/edges/{player}`, `/api/connection?from=A&to=C`,
-  `/api/paths?from=A&to=C`, `/api/stats` — the JSON API
+Only tenures with **both dated transaction boundaries** and no blocking unresolved flags
+create edges. Season-only brackets and single-bound cross-checks stay visible as coverage
+gaps. Degrees/statistics are exact within this evidenced graph; the snapshot does not
+establish the full historical teammate graph. See [T5 graph report](docs/reports/t5-real-graph.md).
+
+- `/` — player connect form, coverage warning, and the first 100 teammate edges
+- `/chain?from=acyqu01&to=bogutan01` — real Quincy Acy → Andrew Bogut chain
+- `/api/graph` — player and edge summary (`/api/fixture` remains an alias for compatibility)
+- `/api/players` — canonical player identities, aliases, first/last season and franchise context
+- `/api/edges`, `/api/edges/{player}` — edges with overlapping source records and dates
+- `/api/connection?from=acyqu01&to=bogutan01` — exact shortest chain and coverage status
+- `/api/paths?from=acyqu01&to=bogutan01&limit=100&offset=0` — equally short alternatives,
+  deterministic ID order, `total` count and `next_offset`; maximum page size 500
+- `/api/stats` — cached exact finite separation statistics over unordered pairs
+- `/api/coverage`, `/api/coverage/{player}` — coverage counts and individual excluded records
 - `/api/semantic-status` — whether semantic (Jev) features are available
+
+Run the unchanged synthetic fixture explicitly for browser tests:
+
+```sh
+NBA_DATA_MODE=fixture cargo run -p app-server
+```
 
 All application code is Rust, including the server-rendered UI: the served pages are plain
 HTML and contain no JavaScript.
@@ -55,7 +71,7 @@ spec's graph rules: tenure overlap, same-franchise non-overlap, mid-season moves
 repeated-overlap deduplication, minimal-degree chains, unknown-player handling, and the
 separation statistics.
 
-Status: T1 scaffold complete (fixture graph core, Axum API, minimal UI); data acquired
-(T2); the real NBA/BAA graph lands with T4/T5. Server-side Jev client with safe fallback
+Status: the canonical report loader and real dated-evidence graph (T5) are implemented;
+fixture API tests remain available unchanged. Server-side Jev client with safe fallback
 (T11) landed: see the "Jev (semantic) features and the safe fallback" section and
 `docs/reports/t11-jev-client.md`.

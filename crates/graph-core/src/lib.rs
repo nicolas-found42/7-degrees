@@ -1,4 +1,4 @@
-//! Fixture-backed teammate graph.
+//! Deterministic teammate graph for fixture and canonical historical tenures.
 //!
 //! Domain rules (spec, Implementation Decisions):
 //! - Nodes are player nodes, identified independently of display names.
@@ -9,10 +9,10 @@
 //! - Repeated overlaps between the same pair collapse to one undirected
 //!   teammate edge whose provenance accumulates all overlapping stints.
 
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap};
 
 use petgraph::graph::NodeIndex;
-use petgraph::visit::{EdgeRef, IntoNodeIdentifiers, VisitMap, Visitable};
+use petgraph::visit::{EdgeRef, VisitMap, Visitable};
 use petgraph::{Directed, Graph};
 
 /// A counted day in league time. Days are integers so interval arithmetic stays
@@ -117,9 +117,19 @@ impl RosterData {
 
         // (a, b) -> team -> summed overlap days for that team.
         let mut overlaps: BTreeMap<(&str, &str), BTreeMap<&str, u32>> = BTreeMap::new();
-        for (team, team_tenures) in by_team {
+        for (team, mut team_tenures) in by_team {
+            // Exact repeated source intervals retain their source pointers in
+            // the import metadata, but count once in the graph.
+            team_tenures.sort_by_key(|t| (t.tenure.start.0, t.tenure.end.0, &t.player));
+            team_tenures.dedup_by(|a, b| a.player == b.player && a.tenure == b.tenure);
             for (i, a) in team_tenures.iter().enumerate() {
                 for b in team_tenures.iter().skip(i + 1) {
+                    if b.tenure.start >= a.tenure.end {
+                        break;
+                    }
+                    if a.player == b.player {
+                        continue;
+                    }
                     let days = a.tenure.overlap_days(&b.tenure);
                     if days > 0 {
                         // Repeated overlaps from multiple stints on the same
@@ -154,6 +164,8 @@ pub struct TeammateGraph {
     pub roster: RosterData,
     graph: Graph<Player, Vec<EdgeEvidence>, Directed>,
     by_id: HashMap<String, NodeIndex>,
+    neighbors: Vec<Vec<NodeIndex>>,
+    statistics: std::sync::OnceLock<GraphStatistics>,
 }
 
 /// A chain between two players expressed in domain vocabulary.
@@ -208,7 +220,17 @@ impl TeammateGraph {
             let b = by_id[&edge.b];
             graph.add_edge(a, b, edge.evidence);
         }
+        let neighbors = graph
+            .node_indices()
+            .map(|node| {
+                let mut neighbors: Vec<_> = graph.neighbors_undirected(node).collect();
+                neighbors.sort_by(|a, b| graph[*a].id.cmp(&graph[*b].id));
+                neighbors
+            })
+            .collect();
         TeammateGraph {
+            neighbors,
+            statistics: std::sync::OnceLock::new(),
             roster,
             graph,
             by_id,
@@ -266,7 +288,7 @@ impl TeammateGraph {
         while let Some(node) = queue.pop_front() {
             // The teammate graph is undirected; edges are stored once, so
             // traverse both directions.
-            for neighbor in self.graph.neighbors_undirected(node) {
+            for &neighbor in &self.neighbors[node.index()] {
                 if visited.is_visited(&neighbor) {
                     continue;
                 }
@@ -312,7 +334,7 @@ impl TeammateGraph {
         queue.push_back(start);
         while let Some(node) = queue.pop_front() {
             let d = distance[&node];
-            for neighbor in self.graph.neighbors_undirected(node) {
+            for &neighbor in &self.neighbors[node.index()] {
                 match distance.get(&neighbor) {
                     None => {
                         distance.insert(neighbor, d + 1);
@@ -396,87 +418,177 @@ impl TeammateGraph {
         links
     }
 
-    /// Graph statistics: connected components, the separation histogram over
-    /// reachable unordered pairs, diameter within components, and the count of
-    /// unreachable pairs (reported separately, never folded into the diameter).
-    pub fn statistics(&self) -> GraphStatistics {
-        let ids = self.player_ids();
-        let n = ids.len();
-        let index_of: HashMap<&str, usize> = ids
-            .iter()
-            .enumerate()
-            .map(|(i, id)| (id.as_str(), i))
+    /// A bounded page of ALL equally short alternatives in stable ID order.
+    /// The predecessor DAG is counted without enumerating its paths. Offset
+    /// skips entire subtrees, so a large offset does not allocate skipped paths.
+    pub fn shortest_chains_page(
+        &self,
+        from: &str,
+        to: &str,
+        offset: u64,
+        limit: usize,
+    ) -> Option<ChainPage> {
+        let start = *self.by_id.get(from)?;
+        let goal = *self.by_id.get(to)?;
+        let distance = self.distances(goal);
+        if distance[start.index()] == usize::MAX {
+            return Some(ChainPage {
+                chains: Vec::new(),
+                total: 0,
+                total_saturated: false,
+                next_offset: None,
+            });
+        }
+        let mut order: Vec<_> = self
+            .graph
+            .node_indices()
+            .filter(|n| distance[n.index()] != usize::MAX)
             .collect();
-        // All-pairs shortest distances via BFS from each node.
-        let mut distances: Vec<Vec<Option<usize>>> = vec![Vec::new(); n];
-        for (i, id) in ids.iter().enumerate() {
-            let start = self.by_id[id];
-            let mut dist: HashMap<NodeIndex, usize> = HashMap::new();
-            dist.insert(start, 0);
-            let mut queue = std::collections::VecDeque::new();
-            queue.push_back(start);
-            while let Some(node) = queue.pop_front() {
-                let d = dist[&node];
-                for neighbor in self.graph.neighbors_undirected(node) {
-                    if !dist.contains_key(&neighbor) {
-                        dist.insert(neighbor, d + 1);
-                        queue.push_back(neighbor);
-                    }
-                }
-            }
-            let mut row = vec![None; n];
-            for (node, d) in dist {
-                let player = &self.graph[node].id;
-                row[index_of[player.as_str()]] = Some(d);
-            }
-            distances[i] = row;
-        }
-        let mut histogram: BTreeMap<usize, usize> = BTreeMap::new();
-        let mut unreachable_pairs = 0usize;
-        for i in 0..n {
-            for j in (i + 1)..n {
-                match distances[i][j] {
-                    Some(d) => *histogram.entry(d).or_insert(0) += 1,
-                    None => unreachable_pairs += 1,
-                }
-            }
-        }
-        let components = self.connected_components(&ids);
-        let diameter = histogram.keys().copied().max().unwrap_or(0);
-        GraphStatistics {
-            players: n,
-            histogram,
-            components,
-            diameter,
-            unreachable_pairs,
-        }
-    }
-
-    fn connected_components(&self, ids: &[String]) -> usize {
-        let mut seen: HashSet<usize> = HashSet::new();
-        let mut queue = std::collections::VecDeque::new();
-        let mut components = 0;
-        for id in ids {
-            let start = self
-                .graph
-                .node_identifiers()
-                .find(|n| self.graph[*n].id == *id)
-                .expect("player node exists");
-            if seen.contains(&start.index()) {
+        order.sort_by_key(|n| distance[n.index()]);
+        let mut counts = vec![0u64; self.graph.node_count()];
+        let mut saturated = false;
+        counts[goal.index()] = 1;
+        for node in order {
+            if node == goal {
                 continue;
             }
-            components += 1;
-            queue.push_back(start);
-            seen.insert(start.index());
-            while let Some(node) = queue.pop_front() {
-                for neighbor in self.graph.neighbors_undirected(node) {
-                    if seen.insert(neighbor.index()) {
-                        queue.push_back(neighbor);
-                    }
+            for &next in &self.neighbors[node.index()] {
+                if distance[next.index()].checked_add(1) == Some(distance[node.index()]) {
+                    let (sum, overflow) =
+                        counts[node.index()].overflowing_add(counts[next.index()]);
+                    counts[node.index()] = if overflow { u64::MAX } else { sum };
+                    saturated |= overflow;
                 }
             }
         }
-        components
+        struct PageWalk<'a> {
+            graph: &'a TeammateGraph,
+            goal: NodeIndex,
+            distance: &'a [usize],
+            counts: &'a [u64],
+            skip: u64,
+            limit: usize,
+            paths: Vec<Vec<NodeIndex>>,
+        }
+        impl PageWalk<'_> {
+            fn collect(&mut self, node: NodeIndex, path: &mut Vec<NodeIndex>) {
+                if self.paths.len() >= self.limit {
+                    return;
+                }
+                if self.skip >= self.counts[node.index()] {
+                    self.skip -= self.counts[node.index()];
+                    return;
+                }
+                path.push(node);
+                if node == self.goal {
+                    self.paths.push(path.clone());
+                } else {
+                    for index in 0..self.graph.neighbors[node.index()].len() {
+                        let next = self.graph.neighbors[node.index()][index];
+                        if self.distance[next.index()].checked_add(1)
+                            == Some(self.distance[node.index()])
+                        {
+                            self.collect(next, path);
+                            if self.paths.len() >= self.limit {
+                                break;
+                            }
+                        }
+                    }
+                }
+                path.pop();
+            }
+        }
+        let mut walk = PageWalk {
+            graph: self,
+            goal,
+            distance: &distance,
+            counts: &counts,
+            skip: offset,
+            limit,
+            paths: Vec::new(),
+        };
+        walk.collect(start, &mut Vec::new());
+        let paths = walk.paths;
+        let total = counts[start.index()];
+        let next = offset.saturating_add(paths.len() as u64);
+        let next_offset = if next < total && !paths.is_empty() {
+            Some(next)
+        } else {
+            None
+        };
+        let chains = paths
+            .into_iter()
+            .map(|path| ChainWithDegree {
+                links: self.chain_links(&path),
+                degree: distance[start.index()],
+                path: path.into_iter().map(|n| self.graph[n].id.clone()).collect(),
+            })
+            .collect();
+        Some(ChainPage {
+            chains,
+            total,
+            total_saturated: saturated,
+            next_offset,
+        })
+    }
+
+    fn distances(&self, start: NodeIndex) -> Vec<usize> {
+        let mut distances = vec![usize::MAX; self.graph.node_count()];
+        let mut queue = Vec::with_capacity(self.graph.node_count());
+        distances[start.index()] = 0;
+        queue.push(start);
+        let mut cursor = 0;
+        while cursor < queue.len() {
+            let node = queue[cursor];
+            cursor += 1;
+            for &next in &self.neighbors[node.index()] {
+                if distances[next.index()] == usize::MAX {
+                    distances[next.index()] = distances[node.index()] + 1;
+                    queue.push(next);
+                }
+            }
+        }
+        distances
+    }
+
+    /// Exact unordered-pair statistics, cached for this immutable graph.
+    /// Each BFS uses dense indices; only one distance row is retained.
+    pub fn statistics(&self) -> GraphStatistics {
+        self.statistics
+            .get_or_init(|| {
+                let n = self.graph.node_count();
+                let mut histogram = BTreeMap::new();
+                let mut unreachable_pairs = 0;
+                let mut components = 0;
+                let mut component_seen = vec![false; n];
+                for start in self.graph.node_indices() {
+                    let distances = self.distances(start);
+                    if !component_seen[start.index()] {
+                        components += 1;
+                        for (index, &distance) in distances.iter().enumerate() {
+                            if distance != usize::MAX {
+                                component_seen[index] = true;
+                            }
+                        }
+                    }
+                    for &distance in distances.iter().skip(start.index() + 1) {
+                        if distance == usize::MAX {
+                            unreachable_pairs += 1;
+                        } else {
+                            *histogram.entry(distance).or_insert(0) += 1;
+                        }
+                    }
+                }
+                let diameter = histogram.keys().copied().max().unwrap_or(0);
+                GraphStatistics {
+                    players: n,
+                    histogram,
+                    components,
+                    diameter,
+                    unreachable_pairs,
+                }
+            })
+            .clone()
     }
 }
 
@@ -492,4 +604,13 @@ pub struct GraphStatistics {
     pub diameter: usize,
     /// Unordered player pairs with no teammate chain between them.
     pub unreachable_pairs: usize,
+}
+
+/// Bounded shortest-chain result, suitable for a browser query.
+#[derive(Clone, Debug)]
+pub struct ChainPage {
+    pub chains: Vec<ChainWithDegree>,
+    pub total: u64,
+    pub total_saturated: bool,
+    pub next_offset: Option<u64>,
 }
