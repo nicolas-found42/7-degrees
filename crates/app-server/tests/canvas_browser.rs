@@ -77,8 +77,10 @@ async fn rust_wasm_canvas_supports_pointer_keyboard_expansion_and_retains_chain_
         .map(std::path::PathBuf::from)
         .map(app_server::graph_view::CanvasAssets::Directory)
         .unwrap_or_default();
-    let app =
-        app_server::app_with_jev_and_canvas_assets(app_server::JevHandle::unconfigured(), assets);
+    let app = app_server::app_with_jev_and_canvas_assets(
+        app_server::JevHandle::unconfigured(),
+        assets.clone(),
+    );
     let server = tokio::spawn(async move { axum::serve(listener, app).await.unwrap() });
     let mut browser = Browser::start();
     println!("Chromium {}", browser.call(json!({"op":"launch"})));
@@ -159,6 +161,15 @@ async fn rust_wasm_canvas_supports_pointer_keyboard_expansion_and_retains_chain_
     assert_eq!(edge["from"], "A");
     assert_eq!(edge["to"], "B");
     assert_eq!(edge["team"], "Red");
+    browser.call(json!({"op":"ready","frame":"#edge-provenance-frame","selector":"h1"}));
+    let pointer_panel =
+        browser.call(json!({"op":"text","frame":"#edge-provenance-frame","selector":"main"}));
+    assert!(
+        pointer_panel
+            .as_str()
+            .unwrap()
+            .contains("Overlap: [day 2, day 4)")
+    );
     browser.click("Expand direct connections");
     browser.ready();
     assert!(browser.text("#graph-players").contains("Player C2"));
@@ -193,6 +204,29 @@ async fn rust_wasm_canvas_supports_pointer_keyboard_expansion_and_retains_chain_
             .text("#selected-chain")
             .contains("Degree of separation: 1")
     );
+    browser.call(json!({"op":"ready","frame":"#edge-provenance-frame","selector":"h1"}));
+    let panel = browser
+        .call(json!({"op":"text","frame":"#edge-provenance-frame","selector":"main"}))
+        .as_str()
+        .unwrap()
+        .to_string();
+    for text in [
+        "Canonical franchise: Red",
+        "Overlap: [day 2, day 4)",
+        "fixture:tenure:1",
+        "fixture:tenure:3",
+    ] {
+        assert!(panel.contains(text), "missing fixture panel {text}");
+    }
+    assert!(
+        browser
+            .text("#selected-chain")
+            .contains("Degree of separation: 1")
+    );
+    assert_eq!(
+        browser.call(json!({"op":"attribute","selector":"input[name=cursor]","name":"value"})),
+        "v1:00"
+    );
     assert_eq!(browser.call(json!({"op":"errors"})), json!([]));
     let artifact = std::env::var("CANVAS_SCREENSHOT").unwrap_or_else(|_| {
         PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -204,9 +238,77 @@ async fn rust_wasm_canvas_supports_pointer_keyboard_expansion_and_retains_chain_
     assert_eq!(browser.attr("data-pan-x"), initial_x);
     assert_eq!(browser.attr("data-pan-y"), initial_y);
     browser.call(json!({"op":"screenshot","path":artifact}));
+    let real_listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let real_address = real_listener.local_addr().unwrap();
+    let reports = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../docs/reports");
+    let real_app = app_server::app_with_report_data_and_canvas_assets(
+        reports,
+        app_server::JevHandle::unconfigured(),
+        assets,
+    )
+    .unwrap();
+    let real_server =
+        tokio::spawn(async move { axum::serve(real_listener, real_app).await.unwrap() });
+    browser.call(json!({"op":"goto","url":format!("http://{real_address}/graph?from=acyqu01&to=bogutan01&cursor=v1:00&limit=1&selected=0")}));
+    browser.ready();
+    browser.click("Quincy Acy ↔ Andrew Bogut");
+    browser.call(json!({"op":"ready","frame":"#edge-provenance-frame","selector":"h1"}));
+    let panel = browser
+        .call(json!({"op":"text","frame":"#edge-provenance-frame","selector":"main"}))
+        .as_str()
+        .unwrap()
+        .to_string();
+    for text in [
+        "Canonical franchise: MAVERICKS",
+        "2016-07-20",
+        "2016-11-18",
+        "directly-evidenced",
+        "transaction anchored",
+        "S1 v238",
+        "S2 v56",
+        "Source evidence is incomplete",
+    ] {
+        assert!(panel.contains(text), "missing real panel {text}");
+    }
+    assert!(panel.matches("Source record t4/tenures.csv:").count() >= 2);
+    assert_eq!(
+        browser.call(json!({"op":"count","frame":"#edge-provenance-frame","selector":"section:not(.coverage) a[href^='/sources/tenure?record=']"})),
+        2
+    );
+    let standalone = browser.call(json!({"op":"open-link-text","selector":"#selected-chain a"}));
+    assert!(
+        standalone
+            .as_str()
+            .unwrap()
+            .contains("Canonical franchise: MAVERICKS")
+    );
+    assert!(
+        standalone
+            .as_str()
+            .unwrap()
+            .contains("Overlap: [2016-07-20, 2016-11-18)")
+    );
+
+    assert!(
+        browser
+            .text("#selected-chain")
+            .contains("Degree of separation: 1")
+    );
+    assert_eq!(
+        browser.call(json!({"op":"attribute","selector":"input[name=cursor]","name":"value"})),
+        "v1:00"
+    );
+    assert_eq!(browser.call(json!({"op":"errors"})), json!([]));
+    let screenshot =
+        std::env::var("CANVAS_SCREENSHOT").unwrap_or_else(|_| "target/canvas-browser.png".into());
+    // A locator screenshot scrolls this panel into view and waits for stable paint.
+    // Full-page capture alone can leave an offscreen cross-origin frame unpainted.
+    browser.call(json!({"op":"screenshot","selector":"#edge-provenance-panel","path":format!("{screenshot}.real-panel.png")}));
+    browser.call(json!({"op":"screenshot","path":format!("{screenshot}.real-provenance.png")}));
+    real_server.abort();
     browser.call(json!({"op":"close"}));
     server.abort();
     println!(
-        "WASM initialized; canvas pixels changed; pointer selection/drag/wheel, button and keyboard transforms, direct/nearby expansion, preserved cursor/degree and edge hook passed."
+        "WASM initialized; canvas pixels changed; pointer selection/drag/wheel, button and keyboard transforms, direct/nearby expansion, preserved cursor/degree and edge hook passed. Fixture and real Acy/Bogut selected-edge panels loaded dates, both record references, source anchors and coverage."
     );
 }
