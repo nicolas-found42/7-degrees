@@ -125,6 +125,11 @@ def franchise_era_index():
     return idx
 
 
+def resolve_s1_abbr(era_idx, season, abbr):
+    return {cid for lg in ("NBA", "BAA")
+            for cid, era in era_idx.get((lg, season), []) if era[3] == abbr}
+
+
 def load_s1_season_windows(data_dir):
     """(canonical_franchise, s2_season) -> (window_start_day, window_end_day_exclusive).
 
@@ -138,14 +143,6 @@ def load_s1_season_windows(data_dir):
     from t3_franchise_seed import FRANCHISES as _FR
 
     era_idx = franchise_era_index()
-
-    def resolve_s1_abbr(season, abbr):
-        cands = set()
-        for lg in ("NBA", "BAA"):
-            for cid, era in era_idx.get((lg, season), []):
-                if era[3] == abbr:
-                    cands.add(cid)
-        return cands
 
     path = os.path.join(data_dir, "nba.sqlite")
     con = sqlite3.connect("file:%s?mode=ro" % path, uri=True)
@@ -189,7 +186,7 @@ def load_s1_season_windows(data_dir):
         if fixed:
             abbr = fixed
             s1_abbr_diag[("fixed:SAN->SAS", s2s, 1)] = 1  # counted, not silent
-        cands = resolve_s1_abbr(s2s, abbr)
+        cands = resolve_s1_abbr(era_idx, s2s, abbr)
         if len(cands) != 1:
             s1_abbr_diag[(abbr, s2s, len(cands))] += 1
             continue
@@ -364,18 +361,32 @@ def load_transaction_legs(data_dir, windows=None):
     src_pkl = os.path.join(data_dir, "t4", "transactions-parsed.pkl")
     with open(src_pkl, "rb") as f:
         blob = pickle.load(f)
+    from t4_fetch_bbr import event_scope
     parse_rows = blob["rows"]
     era_idx = franchise_era_index()
     legs, fuzzy_events = [], []
     diag = Counter()
     parsed_rows_1950 = {}   # per 1946-50 page: total/fuzzy row counts
     for r in parse_rows:
+        if r["date_precision"] != "precise":
+            diag["row-fuzzy-or-undated"] += 1
         if r["page"].startswith(("BAA_", "NBA_1950")):
             counts = parsed_rows_1950.setdefault(
                 r["page"], {"total": 0, "fuzzy_or_undated": 0})
             counts["total"] += 1
             if r["date_precision"] != "precise":
                 counts["fuzzy_or_undated"] += 1
+        source_legs = json.loads(r["legs_json"]) if r.get("legs_json") else []
+        roster_legs = []
+        for leg in source_legs:
+            scope = leg.get("scope", r.get("event_scope", event_scope(r["event_class"])))
+            if scope == "nba-roster":
+                roster_legs.append(leg)
+            else:
+                diag["leg-excluded-" + scope] += 1
+        if source_legs and not roster_legs:
+            diag["row-excluded-non-roster-or-unresolved"] += 1
+            continue
         if r["date_precision"] != "precise":
             if r["event_class"] not in ("coach-hire", "coach-fire", "coach-other",
                                         "other", "no-segment"):
@@ -383,12 +394,12 @@ def load_transaction_legs(data_dir, windows=None):
                     "page": r["page"], "season": r["season"],
                     "date_text": r["date_text"], "li_index": r["li_index"],
                     "event_class": r["event_class"],
-                    "player_slugs": r["player_slugs"], "team_abbrs": r["team_abbrs"],
+                    "player_slugs": ",".join(sorted({l["slug"] for l in roster_legs})), "team_abbrs": r["team_abbrs"],
                     "text": r["text"],
                 })
-            diag["row-fuzzy-or-undated"] += 1
+            diag["row-fuzzy-roster-action"] += 1
             continue
-        legs_from_row = json.loads(r["legs_json"]) if r.get("legs_json") else []
+        legs_from_row = roster_legs
         if not legs_from_row:
             diag["row-no-legs"] += 1
             continue
@@ -451,7 +462,8 @@ def load_transaction_legs(data_dir, windows=None):
                 "league": r["league"],
                 "bucket_season": bucket,
                 "li_index": r["li_index"], "date_text": r["date_text"],
-                "date_iso": r["date_iso"], "event_class": r["event_class"],
+                "date_iso": r["date_iso"], "event_class": l.get("action_class", r["event_class"]),
+                "paragraph_index": r.get("paragraph_index", -1),
                 "slug": l["slug"], "player_name": l.get("name", ""),
                 "depart_abbr": l["depart"], "arrive_abbr": l["arrive"],
                 "depart": depart_c or "", "arrive": arrive_c or "",
@@ -632,6 +644,100 @@ def apply_fetch_failures(tenures, failures):
             if reason not in tenure["reasons"]:
                 tenure["reasons"].append(reason)
             tenure["evidence_class"] = CLASS_UNRESOLVED
+
+
+def load_appearance_evidence(data_dir):
+    """Independent season counts and regular-season dates for bounded auditing."""
+    player_path = os.path.join(data_dir, S2_DIR_NAME, "Player Totals.csv")
+    team_path = os.path.join(data_dir, S2_DIR_NAME, "Team Totals.csv")
+    database_path = os.path.join(data_dir, "nba.sqlite")
+    if not all(os.path.isfile(path) for path in (player_path, team_path, database_path)):
+        return {}, {}, {}
+    canon, _ambiguous = load_franchise_lookup()
+    player_games, team_games = {}, {}
+    for row in read_csv(player_path):
+        if row["lg"] not in ("NBA", "BAA"):
+            continue
+        season = int(row["season"])
+        franchise = canon.get((season, row["team"]))
+        if franchise and row["g"].isdigit():
+            player_games[(row["player_id"], season, franchise)] = int(row["g"])
+    for row in read_csv(team_path):
+        if row["lg"] not in ("NBA", "BAA"):
+            continue
+        season = int(row["season"])
+        franchise = canon.get((season, row["abbreviation"]))
+        if franchise and row["g"].isdigit():
+            team_games[(franchise, season)] = int(row["g"])
+    schedules = defaultdict(list)
+    era_idx = franchise_era_index()
+    con = sqlite3.connect("file:" + database_path + "?mode=ro", uri=True)
+    query = ("select game_id, game_date, season_id, team_abbreviation_home from game "
+             "where season_type='Regular Season' union "
+             "select game_id, game_date, season_id, team_abbreviation_away from game "
+             "where season_type='Regular Season'")
+    for game_id, game_date, season_id, abbreviation in con.execute(query):
+        season = s1_season_id_to_s2_season(season_id)
+        abbreviation = S1_ABBR_FIXUP.get(abbreviation, abbreviation)
+        candidates = resolve_s1_abbr(era_idx, season, abbreviation)
+        if len(candidates) == 1 and game_date and re.match(r"^\d{4}-\d{2}-\d{2}", game_date):
+            schedules[(next(iter(candidates)), season)].append((game_id, day_number(game_date[:10])))
+    con.close()
+    return player_games, team_games, schedules
+
+
+def flag_appearance_conflicts(tenures, player_games, team_games, schedules):
+    """Retain source disagreements when exact bounds cannot fit known appearances.
+
+    A missing/incomplete S1 schedule is never evidence of absence: allow every
+    missing regular-season game inside the interval when S1 has fewer games
+    than S2's full team total. Departure-day games may precede a dated move:
+    distinguish that ordering ambiguity from excess even over the optimistic
+    inclusive capacity. Count the union of all player/team/season stints.
+    Keep the disputed dates and receipts, but mark the entire group unresolved.
+    """
+    groups = defaultdict(list)
+    for tenure in tenures:
+        groups[(tenure["bbr_player_id"], int(tenure["season"]), tenure["franchise"])].append(tenure)
+    conflicts = []
+    for key, rows in sorted(groups.items()):
+        pid, season, franchise = key
+        schedule = schedules.get((franchise, season), [])
+        games = {game_id: day for game_id, day in schedule}
+        full_total = team_games.get((franchise, season))
+        appearances = player_games.get(key)
+        if (not games or not full_total or len(games) > full_total or appearances is None
+                or any(t["start"] is None or t["end"] is None for t in rows)
+                or not any(t["evidence_class"] in (CLASS_DIRECT, CLASS_CROSS_CHECKED) for t in rows)):
+            continue
+        capacity = sum(any(t["start"] <= day < t["end"] for t in rows) for day in games.values())
+        missing = full_total - len(games)
+        if appearances <= capacity + missing:
+            continue
+        inclusive_capacity = sum(any(t["start"] <= day <= t["end"] for t in rows)
+                                 for day in games.values())
+        departure_allowance = inclusive_capacity - capacity
+        capacity_upper_bound = inclusive_capacity + missing
+        review_kind = ("appearance-count-conflict" if appearances > capacity_upper_bound
+                       else "same-day-game-order-unresolved")
+        reason = ("%s(S2-player-games=%s,S1-season-games=%s,S2-team-games=%s,"
+                  "interval-capacity=%s,departure-day-allowance=%s,missing-games-allowance=%s,"
+                  "capacity-upper-bound=%s)" % (review_kind, appearances, len(games), full_total,
+                                               capacity, departure_allowance, missing, capacity_upper_bound))
+        for tenure in rows:
+            tenure["evidence_class"] = CLASS_UNRESOLVED
+            if reason not in tenure["reasons"]:
+                tenure["reasons"].append(reason)
+        conflicts.append({"bbr_player_id": pid, "display_name": rows[0]["display_name"],
+                          "season": season, "canonical_franchise": franchise,
+                          "player_games": appearances, "s1_schedule_games": len(games),
+                          "s2_team_games": full_total, "interval_game_capacity": capacity,
+                          "missing_schedule_games": missing,
+                          "departure_day_game_allowance": departure_allowance,
+                          "interval_capacity_upper_bound": capacity_upper_bound,
+                          "review_kind": review_kind,
+                          "reason": reason})
+    return conflicts
 
 
 def derive_coverage_counts(rows):
@@ -885,6 +991,14 @@ def reconstruct(data_dir):
     else:
         fetch_failures = {}
     apply_fetch_failures(tenures, fetch_failures)
+    player_games, team_games, schedules = load_appearance_evidence(data_dir)
+    appearance_conflicts = flag_appearance_conflicts(tenures, player_games, team_games, schedules)
+    review_counts = Counter(r["review_kind"] for r in appearance_conflicts)
+    R["appearance-count-conflicts"] = review_counts["appearance-count-conflict"]
+    R["same-day-game-order-unresolved"] = review_counts["same-day-game-order-unresolved"]
+    R["complete-independent-schedule-team-seasons"] = sum(
+        len({game_id for game_id, _day in games}) == team_games.get(key)
+        for key, games in schedules.items())
     # Rebuild flags from final classification so fetch-failure reasons appear
     # in the retained unresolved-flags artifact too.
     flags_rows = [[t["bbr_player_id"], t["display_name"], t["season"],
@@ -912,6 +1026,17 @@ def reconstruct(data_dir):
 
     # ---- retained CSVs -------------------------------------------------------
     os.makedirs(T4_DIR, exist_ok=True)
+    write_csv(
+        os.path.join(T4_DIR, "appearance-capacity-review.csv"),
+        ["bbr_player_id", "display_name", "season", "canonical_franchise", "player_games",
+         "s1_schedule_games", "s2_team_games", "interval_game_capacity",
+         "missing_schedule_games", "departure_day_game_allowance",
+         "interval_capacity_upper_bound", "review_kind", "reason"],
+        [[r[k] for k in ("bbr_player_id", "display_name", "season", "canonical_franchise",
+                         "player_games", "s1_schedule_games", "s2_team_games",
+                         "interval_game_capacity", "missing_schedule_games",
+                         "departure_day_game_allowance", "interval_capacity_upper_bound",
+                         "review_kind", "reason")] for r in appearance_conflicts])
     write_csv(
         os.path.join(T4_DIR, "tenures.csv"),
         ["bbr_player_id", "display_name", "season", "lg", "era", "canonical_franchise",
@@ -964,7 +1089,7 @@ def reconstruct(data_dir):
         "windows": {("%s|%s" % k): v for k, v in windows.items()},
         "membership": membership,
         "era_counts": {e: dict(c) for e, c in era_counts.items()},
-        "pair_analysis": pairs,
+        "pair_analysis": pairs, "appearance_conflicts": appearance_conflicts,
     }
     with open(os.path.join(data_dir, "t4", ".state.pkl"), "wb") as f:
         pickle.dump(state, f)

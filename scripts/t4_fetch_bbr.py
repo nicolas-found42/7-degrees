@@ -37,6 +37,7 @@ Run:  python3 scripts/t4_fetch_bbr.py [data_dir] [--no-fetch]
 """
 
 import csv
+import hashlib
 import json
 import os
 import pickle
@@ -46,6 +47,7 @@ import time
 import urllib.request
 import urllib.error
 from datetime import datetime, timezone
+from collections import Counter
 from html.parser import HTMLParser
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -436,9 +438,9 @@ EVENT_CLASSES = (
     ("claim", ("claimed off waivers", "claimed on waivers", "claim")),
     ("waive", ("waived",)),
     ("release", ("released",)),
-    ("sign", ("signed",)),
-    ("resign", ("re-signed", "resigned")),
     ("extension", ("signed an extension", "contract extension")),
+    ("resign", ("re-signed", "resigned")),
+    ("sign", ("signed",)),
     ("renounce", ("renounced",)),
     ("dispersal", ("selected", "dispersal")),
     ("coach-hire", ("hired",)),
@@ -448,24 +450,55 @@ EVENT_CLASSES = (
 
 def classify_event(text, has_coach_only):
     low = text.lower()
-    if has_coach_only:
+    if re.search(r"\bcontract expires\b", low):
+        return "contract-expiration"
+    if re.search(r"\bnot (?:re[- ]?signed|sign|signed)\b", low):
+        return "other"
+    if has_coach_only or re.search(r"\b(?:head|assistant)\s*coach\b", low):
         if "fired" in low:
             return "coach-fire"
         if "hired" in low:
             return "coach-hire"
         return "coach-other"
-    # order matters: "re-signed" before "signed"; "claimed off waivers" before "signed"
+    if (re.search(r"\bconverted\b", low) and "regular contract" in low
+            and re.search(r"\btwo[- ]way contract\b", low)):
+        return "contract-conversion"
+    # A purchase/sale of rights alone is not evidence of active roster occupancy.
+    if (re.search(r"\b(?:player|draft|reserve) rights\b|\bright[s]? to\b", low)
+            and re.search(r"\b(?:sold|purchased|bought|renounced)\b", low)):
+        return "rights-transfer"
+    if (re.search(r"\b(?:g[- ]?league|d[- ]?league|development(?:al)? league)\b", low)
+            and re.search(r"\b(?:loaned|loan|transferred)\b", low)):
+        return "g-league-loan-or-transfer"
+    # Assignment keeps the NBA roster contract; it is not a signing/release.
+    # Classify its actual action before considering roster verbs.
+    if re.search(r"\bassigned\b", low):
+        return "g-league-assignment"
+    if re.search(r"\brecalled\b", low):
+        return "g-league-recall"
+    # Match whole words: "signed" must never match the suffix of "assigned".
     for cls, words in EVENT_CLASSES:
         for w in words:
-            if w in low:
+            if re.search(r"\b" + re.escape(w) + r"\b", low):
                 return cls
     if "waiver" in low:
         return "claim"
     return "other"
 
 
+def event_scope(event_class):
+    """An action label never grants NBA occupancy unless it is a roster action."""
+    if event_class in {"trade", "sale", "purchase", "claim", "waive", "release",
+                       "sign", "resign", "dispersal", "contract-expiration"}:
+        return "nba-roster"
+    if event_class.startswith(("coach-", "g-league-")) or event_class in {
+            "rights-transfer", "draft-pick-reference", "extension", "renounce", "contract-conversion"}:
+        return "non-roster"
+    return "unresolved"
+
+
 def movement_legs(items, event_class):
-    """(player_slug, name, depart_team_abbr|'', arrive_team_abbr|'') legs.
+    """(player_slug, name, reported_from, reported_to, scope, action_class) legs.
 
     `items` is the segment's ordered stream of ("text", str) and
     ("anchor", rec) pairs — text chunks retained so movement attribution is
@@ -517,6 +550,14 @@ def movement_legs(items, event_class):
         sentences.append(sentence)
 
     for sen in sentences:
+        sentence_text = "".join(v if k == "text" else v.get("text", "") for k, v in sen)
+        sentence_class = classify_event(sentence_text, False)
+        # BBR puts the explicit expiration after a semicolon; its first clause
+        # carries the player and departure attributes. Keep that source link.
+        if (event_class == "contract-expiration"
+                and re.search(r"\bnot re[- ]?signed\b", sentence_text, re.I)):
+            sentence_class = "contract-expiration"
+        sentence_scope = event_scope(sentence_class)
         sen_anchors = [v for k, v in sen if k == "anchor"]
         # sentence-level from/to (the phrase initiator + destination); BBR gives
         # each sentence its own attrs, so these hold for every player in it
@@ -528,6 +569,24 @@ def movement_legs(items, event_class):
         for idx, (k, v) in enumerate(sen):
             if k != "anchor" or v["kind"] != "player":
                 continue
+            # Source role belongs to the linked player, not the whole paragraph.
+            # A future pick's eventual draftee is commentary, never a traded
+            # active player. Rights apply until the opposing FOR clause starts.
+            prefix = "".join(v2 if k2 == "text" else v2.get("text", "")
+                             for k2, v2 in sen[:idx])
+            following = ""
+            for k2, v2 in sen[idx + 1:]:
+                if k2 == "anchor":
+                    break
+                following += v2
+            scope, action = sentence_scope, sentence_class
+            rights = list(re.finditer(r"\b(?:player|draft|reserve) rights\b|\bright[s]? to\b",
+                                      prefix, re.I))
+            returns = list(re.finditer(r"\bfor\b", prefix, re.I))
+            if rights and (not returns or rights[-1].start() > returns[-1].start()):
+                scope, action = "non-roster", "rights-transfer"
+            if re.search(r"\bwas later selected\b", following, re.I):
+                scope, action = "non-roster", "draft-pick-reference"
             # 'for'-clause detection: any text chunk before this player that ends
             # the outgoing side (BBR: 'traded X to the B for Y and Z')
             seen_for = any(k2 == "text" and re.search(r"\bfor\s*$", v2.rstrip())
@@ -558,12 +617,22 @@ def movement_legs(items, event_class):
                     break
             if seen_for and (sen_from or sen_to):
                 # return piece: travels the sentence's destination -> initiator
-                legs.append((v["slug"], v.get("text", ""), sen_to, sen_from))
+                legs.append((v["slug"], v.get("text", ""), sen_to, sen_from, scope, action))
                 continue
             depart = back_from or fwd_from
             arrive = fwd_to or back_to
-            legs.append((v["slug"], v.get("text", ""), depart, arrive))
-    return legs
+            legs.append((v["slug"], v.get("text", ""), depart, arrive, scope, action))
+    # A named trade piece may also be explicitly the eventual draftee in this
+    # paragraph. The source then establishes a pick/rights transfer, not that
+    # the rookie occupied an NBA roster. Keep the reported leg for review;
+    # separate signing evidence must establish active occupancy. Veterans in
+    # the same mixed trade keep their ordinary roster legs.
+    draftees = {slug for slug, _name, _depart, _arrive, _scope, action in legs
+                if action == "draft-pick-reference"}
+    return [(slug, name, depart, arrive,
+             "unresolved" if slug in draftees and scope == "nba-roster" else scope,
+             "draft-roster-status-unresolved" if slug in draftees and scope == "nba-roster" else action)
+            for slug, name, depart, arrive, scope, action in legs]
 
 
 def parse_transactions_html(html, league, season):
@@ -588,7 +657,7 @@ def parse_transactions_html(html, league, season):
     out = []
     for li_index, row in enumerate(parser.rows):
         precision, iso = parse_date_text(row["date"])
-        for seg in row["segments"]:
+        for paragraph_index, seg in enumerate(row["segments"]):
             text = seg.get("text", "")
             items = seg.get("items")
             anchors = [v for k, v in (items or []) if k == "anchor"]
@@ -601,17 +670,23 @@ def parse_transactions_html(html, league, season):
             else:
                 event_class = classify_event(text, False)
             legs = movement_legs(items or [], event_class)
+            scopes = {leg[4] for leg in legs}
+            row_scope = next(iter(scopes)) if len(scopes) == 1 else (
+                "mixed" if scopes else event_scope(event_class))
+            source_text = re.sub(r"\s+", " ", "".join(
+                v if k == "text" else v.get("text", "") for k, v in items or [])).strip()
             out.append({
                 "page": "%s_%d" % (league, season),
                 "league": league,
                 "season": season,
-                "li_index": li_index,
+                "li_index": li_index, "paragraph_index": paragraph_index,
                 "date_text": row["date"].strip(),
                 "date_precision": precision,
                 "date_iso": iso,
                 "page_window_from": window_from,
                 "page_window_to": window_to,
                 "event_class": event_class,
+                "event_scope": row_scope,
                 "team_abbrs": ",".join(sorted({a.get("from_abbr") or a.get("to_abbr") or a.get("abbr", "")
                                                for a in anchors if a["kind"] == "team"})),
                 "from_abbr": (next((a.get("from_abbr") for a in anchors
@@ -622,8 +697,10 @@ def parse_transactions_html(html, league, season):
                                                  if a["kind"] == "player" and a.get("slug")})),
                 "player_names": ",".join(sorted({a.get("text", "") for a in anchors
                                                  if a["kind"] == "player"})),
-                "legs": [{"slug": s, "name": n, "depart": d, "arrive": v} for s, n, d, v in legs],
-                "text": text,
+                "legs": [{"slug": s, "name": n, "depart": d, "arrive": v,
+                          "scope": scope, "action_class": action}
+                         for s, n, d, v, scope, action in legs],
+                "text": source_text,
             })
         if not row["segments"]:
             out.append({
@@ -631,14 +708,14 @@ def parse_transactions_html(html, league, season):
                 "li_index": li_index, "date_text": row["date"].strip(),
                 "date_precision": precision, "date_iso": iso,
                 "page_window_from": window_from, "page_window_to": window_to,
-                "event_class": "no-segment", "team_abbrs": "", "from_abbr": "", "to_abbr": "",
+                "event_class": "no-segment", "event_scope": "unresolved", "paragraph_index": -1, "team_abbrs": "", "from_abbr": "", "to_abbr": "",
                 "player_slugs": "", "player_names": "", "legs": [], "text": row["raw"],
             })
     return out, window_from, window_to
 
 
-CSV_COLUMNS = ["page", "league", "season", "li_index", "date_text", "date_precision",
-               "date_iso", "page_window_from", "page_window_to", "event_class",
+CSV_COLUMNS = ["page", "league", "season", "li_index", "paragraph_index", "date_text", "date_precision",
+               "date_iso", "page_window_from", "page_window_to", "event_class", "event_scope",
                "team_abbrs", "from_abbr", "to_abbr", "player_slugs", "player_names",
                "legs_json", "text", "row_flags"]
 
@@ -696,6 +773,7 @@ def main(argv):
             if os.path.exists(cache) and os.path.getsize(cache) > 0:
                 with open(cache, "rb") as f:
                     body = f.read()
+                state["cache_hits"] += 1
             else:
                 state["fetch_failures"] += 1
                 state["failures"]["%s_%d" % (league, year)] = {"status": None,
@@ -716,6 +794,7 @@ def main(argv):
 
     # parse every cached page again for the final artifact (incl. failures skipped above)
     all_rows = []
+    source_pages = []
     parse_failures = []
     for league, year in PAGES:
         cache = page_cache_path(paths, league, year)
@@ -723,13 +802,34 @@ def main(argv):
             parse_failures.append({"page": "%s_%d" % (league, year), "reason": "not-cached"})
             continue
         with open(cache, "rb") as f:
-            html = f.read().decode("utf-8", "replace")
+            body = f.read()
+        html = body.decode("utf-8", "replace")
         rows, wf, wt = parse_transactions_html(html, league, year)
+        source_pages.append({"page": "%s_%d" % (league, year),
+                             "url": page_url(league, year), "sha256": hashlib.sha256(body).hexdigest(),
+                             "bytes": len(body), "parsed_rows": len(rows),
+                             "window_from": wf, "window_to": wt})
         for r in rows:
             r["row_flags"] = row_flag(r)
             r["legs_json"] = json.dumps(r["legs"], sort_keys=True)
             del r["legs"]
             all_rows.append(r)
+    excluded_legs = []
+    leg_scopes = Counter()
+    for row in all_rows:
+        for leg in json.loads(row["legs_json"]):
+            scope = leg["scope"]
+            leg_scopes[scope] += 1
+            if scope != "nba-roster":
+                excluded_legs.append({
+                    "page": row["page"], "league": row["league"], "season": row["season"],
+                    "li_index": row["li_index"], "paragraph_index": row["paragraph_index"],
+                    "date_iso": row["date_iso"], "date_precision": row["date_precision"],
+                    "action_class": leg["action_class"], "scope": scope,
+                    "player_slug": leg["slug"], "player_name": leg["name"],
+                    "reported_from": leg["depart"], "reported_to": leg["arrive"],
+                    "text": row["text"],
+                })
     # summary
     summary = {
         "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -744,6 +844,7 @@ def main(argv):
         "wall_seconds": state["wall_seconds"],
         "failures": state["failures"],
         "parsed_rows": len(all_rows),
+        "leg_scopes": dict(sorted(leg_scopes.items())),
         "parse_failures": parse_failures,
         "note": ("A recorded fetch failure is an UNRESOLVED FETCH. It is never proof "
                  "that a historical transaction record does not exist."),
@@ -753,12 +854,26 @@ def main(argv):
     with open(paths["parsed_pkl"], "wb") as f:
         pickle.dump({"rows": all_rows, "summary": summary}, f)
     # retained CSVs
+    with open(os.path.join(T4_DIR, "transaction-source-pages.csv"), "w",
+              newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["page", "url", "sha256", "bytes",
+                                              "parsed_rows", "window_from", "window_to"])
+        writer.writeheader()
+        writer.writerows(source_pages)
     with open(os.path.join(T4_DIR, "bbr-transactions-parsed.csv"), "w",
               newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=CSV_COLUMNS, extrasaction="ignore")
         w.writeheader()
         for r in all_rows:
             w.writerow({k: r.get(k, "") for k in CSV_COLUMNS})
+    excluded_columns = ["page", "league", "season", "li_index", "paragraph_index",
+                        "date_iso", "date_precision", "action_class", "scope", "player_slug",
+                        "player_name", "reported_from", "reported_to", "text"]
+    with open(os.path.join(T4_DIR, "excluded-non-roster-events.csv"), "w",
+              newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=excluded_columns)
+        writer.writeheader()
+        writer.writerows(excluded_legs)
     led = ledger_rows(ledger_path)
     with open(os.path.join(T4_DIR, "bbr-request-ledger.csv"), "w",
               newline="", encoding="utf-8") as f:

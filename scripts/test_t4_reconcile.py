@@ -490,5 +490,96 @@ class TestAuthoritativeCoverage(unittest.TestCase):
         self.assertEqual(tenures[2]["evidence_class"], CLASS_DIRECT)
 
 
+
+class TestIndependentAppearanceCapacity(unittest.TestCase):
+    def test_load_independent_original_shape_schedule_and_player_totals(self):
+        import sqlite3
+        from t4_reconcile import load_appearance_evidence
+        with tempfile.TemporaryDirectory() as directory:
+            s2 = os.path.join(directory, 'sumitrodatta')
+            os.makedirs(s2)
+            with open(os.path.join(s2, 'Player Totals.csv'), 'w') as f:
+                f.write('lg,season,team,player_id,g\nBAA,1949,BLB,simmoco01,60\n')
+            with open(os.path.join(s2, 'Team Totals.csv'), 'w') as f:
+                f.write('lg,season,abbreviation,g\nBAA,1949,BLB,60\n')
+            con = sqlite3.connect(os.path.join(directory, 'nba.sqlite'))
+            con.execute('create table game(game_id text, game_date text, season_id text, '
+                        'team_abbreviation_home text, team_abbreviation_away text, season_type text)')
+            con.execute("insert into game values('g','1949-02-10 00:00:00','21948','BAL','NYK','Regular Season')")
+            con.commit()
+            con.close()
+            players, teams, schedules = load_appearance_evidence(directory)
+        self.assertEqual(players[('simmoco01', 1949, 'BULLETS-DEFUNCT')], 60)
+        self.assertEqual(teams[('BULLETS-DEFUNCT', 1949)], 60)
+        self.assertEqual(schedules[('BULLETS-DEFUNCT', 1949)], [('g', day_number('1949-02-10'))])
+
+    def test_complete_schedule_disagrees_with_a_purported_early_departure(self):
+        from t4_reconcile import flag_appearance_conflicts
+        # Original Connie Simmons case: S2 says 60 BLB appearances in a
+        # 60-game season; only 45 S1 games fit before the alleged departure.
+        start = day_number("1948-11-01")
+        tenure = {'bbr_player_id': 'simmoco01', 'display_name': 'Connie Simmons',
+                  'season': 1949, 'franchise': 'BULLETS-DEFUNCT',
+                  'start': start, 'end': start + 45,
+                  'evidence_class': CLASS_CROSS_CHECKED, 'reasons': []}
+        key = ('BULLETS-DEFUNCT', 1949)
+        schedule = {key: [(str(i), start + i) for i in range(60)]}
+        conflicts = flag_appearance_conflicts(
+            [tenure], {('simmoco01', 1949, 'BULLETS-DEFUNCT'): 60}, {key: 60}, schedule)
+        self.assertEqual(tenure['evidence_class'], CLASS_UNRESOLVED)
+        self.assertEqual((tenure['start'], tenure['end']), (start, start + 45))
+        self.assertEqual(conflicts[0]['interval_game_capacity'], 45)
+        self.assertEqual(conflicts[0]['player_games'], 60)
+
+
+    def test_incomplete_independent_schedule_is_a_gap_not_a_contradiction(self):
+        from t4_reconcile import flag_appearance_conflicts
+        tenure = {'bbr_player_id': 'p', 'display_name': 'Fixture', 'season': 1949,
+                  'franchise': 'BLB', 'start': 0, 'end': 45,
+                  'evidence_class': CLASS_CROSS_CHECKED, 'reasons': []}
+        conflicts = flag_appearance_conflicts(
+            [tenure], {('p', 1949, 'BLB'): 60}, {('BLB', 1949): 60},
+            {('BLB', 1949): [(str(i), i) for i in range(40)]})
+        self.assertEqual(conflicts, [])
+        self.assertEqual(tenure['evidence_class'], CLASS_CROSS_CHECKED)
+
+    def test_multiple_stints_collectively_accommodate_the_season_appearances(self):
+        from t4_reconcile import flag_appearance_conflicts
+        base = {'bbr_player_id': 'p', 'display_name': 'Fixture', 'season': 1949,
+                'franchise': 'BLB', 'evidence_class': CLASS_DIRECT, 'reasons': []}
+        tenures = [dict(base, start=0, end=30), dict(base, start=30, end=60)]
+        conflicts = flag_appearance_conflicts(
+            tenures, {('p', 1949, 'BLB'): 60}, {('BLB', 1949): 60},
+            {('BLB', 1949): [(str(i), i) for i in range(60)]})
+        self.assertEqual(conflicts, [])
+        self.assertTrue(all(t['evidence_class'] == CLASS_DIRECT for t in tenures))
+
+    def test_missing_game_allowance_still_cannot_fit_original_hitch_appearances(self):
+        from t4_reconcile import flag_appearance_conflicts
+        tenure = {'bbr_player_id': 'hitchle01', 'display_name': 'Lew Hitch', 'season': 1954,
+                  'franchise': 'HAWKS', 'start': 0, 'end': 25,
+                  'evidence_class': CLASS_CROSS_CHECKED, 'reasons': []}
+        conflicts = flag_appearance_conflicts(
+            [tenure], {('hitchle01', 1954, 'HAWKS'): 72}, {('HAWKS', 1954): 72},
+            {('HAWKS', 1954): [(str(i), i) for i in range(71)]})
+        self.assertEqual(tenure['evidence_class'], CLASS_UNRESOLVED)
+        self.assertEqual(conflicts[0]['missing_schedule_games'], 1)
+        self.assertEqual(conflicts[0]['interval_capacity_upper_bound'], 27)
+
+    def test_departure_day_game_is_ordering_ambiguity_not_a_proven_source_conflict(self):
+        from t4_reconcile import flag_appearance_conflicts
+        tenure = {'bbr_player_id': 'p', 'display_name': 'Fixture', 'season': 1949,
+                  'franchise': 'BLB', 'start': 0, 'end': 45,
+                  'evidence_class': CLASS_CROSS_CHECKED, 'reasons': []}
+        reviews = flag_appearance_conflicts(
+            [tenure], {('p', 1949, 'BLB'): 46}, {('BLB', 1949): 60},
+            {('BLB', 1949): [(str(i), i) for i in range(60)]})
+        self.assertEqual(tenure['evidence_class'], CLASS_UNRESOLVED)
+        self.assertEqual(reviews[0]['review_kind'], 'same-day-game-order-unresolved')
+        self.assertEqual(reviews[0]['interval_game_capacity'], 45)
+        self.assertEqual(reviews[0]['departure_day_game_allowance'], 1)
+        self.assertEqual(reviews[0]['interval_capacity_upper_bound'], 46)
+
+
 if __name__ == "__main__":
     unittest.main()

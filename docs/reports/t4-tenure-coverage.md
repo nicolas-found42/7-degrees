@@ -5,7 +5,7 @@ spec: `docs/specs/nba-teammate-degrees.md` · glossary: `GLOSSARY.md` ·
 inputs: T3 artifacts (`docs/reports/t3/`), S1 `game` season windows,
 cached Basketball-Reference transaction pages (this report §4).
 
-Report generated 2026-10-09 20:07 UTC by `scripts/t4_reconcile.py` + `scripts/t4_report.py`
+Report generated 2026-10-09 20:53 UTC by `scripts/t4_reconcile.py` + `scripts/t4_report.py`
 (fetch pass: `scripts/t4_fetch_bbr.py`; tests: `scripts/test_t4_core.py`,
 `scripts/test_t4_reconcile.py`, `scripts/test_t4_fetch_bbr.py`). Artifacts retained under `docs/reports/t4/`.
 
@@ -20,13 +20,13 @@ Report generated 2026-10-09 20:07 UTC by `scripts/t4_reconcile.py` + `scripts/t4
 | question | result |
 |---|---|
 | membership rows reconstructed (universe players, NBA/BAA) | 28,837 rows (S2 28,826 + S1-only supplements 11) |
-| tenure records (incl. multi-stint and unresolved membership rows) | 31,974 records from 28,837 membership rows; 29,100 have interval bounds, 2,874 have no constructible interval |
-| season-window coverage on tenure records | 28,653 with a season window; 3,321 without one |
-| directly evidenced tenures (both bounds from dated transactions) | 3,565 (11.1%) |
-| cross-checked (transaction + independent season-window agreement) | 10,713 (33.5%) |
-| inferred (season-window bracket only) | 12,386 (38.7%) |
-| unresolved (flagged, not invented) | 5,310 (16.6%) |
-| distinct player pairs with a positive tenure overlap (potential edges) | 137,788 (44,506 both-evidenced / 82,865 involves-inferred / 10,417 involves-unresolved) |
+| tenure records (incl. multi-stint and unresolved membership rows) | 29,295 records from 28,837 membership rows; 26,568 have interval bounds, 2,727 have no constructible interval |
+| season-window coverage on tenure records | 26,214 with a season window; 3,081 without one |
+| directly evidenced tenures (both bounds from dated transactions) | 2,245 (7.7%) |
+| cross-checked (transaction + independent season-window agreement) | 10,396 (35.5%) |
+| inferred (season-window bracket only) | 13,204 (45.1%) |
+| unresolved (flagged, not invented) | 3,450 (11.8%) |
+| distinct player pairs with a positive tenure overlap (potential edges) | 139,593 (44,342 both-evidenced / 89,883 involves-inferred / 5,368 involves-unresolved) |
 | 1946-1950 BAA source coverage gap | explicitly carried (§6; BAA-era evidence is structurally thinner) |
 
 ## 1. What a tenure is here
@@ -71,6 +71,23 @@ For each (universe player, canonical franchise, season) membership row:
    A precise offseason arrival carries forward only when adjacent team-season
    windows bracket the dated move and the same player/team has next-season
    membership; its transaction date remains the tenure start boundary.
+   **Roster scope is checked per paragraph, sentence and linked player.**
+   G-League assignment, recall, loan and transfer do not end or start NBA
+   roster service. Draft/player rights transfers and eventual draft-pick
+   selections do not establish active roster occupancy. Coaching hires,
+   contract extensions and two-way-to-regular conversions supply no new
+   occupancy boundary. Unknown actions remain unresolved. Source rows,
+   linked identities and reported team directions remain in the parsed CSV;
+   excluded legs are retained in `excluded-non-roster-events.csv`. Actual
+   signings from the G-League and active players in mixed rights/pick trades
+   remain eligible. Explicit dated contract expiration is a departure.
+   `transaction-source-pages.csv` pins each original page URL, byte count and
+   SHA-256; parsed and excluded records reference its page plus raw LI and paragraph.
+   A named trade piece that is also the eventual pick selection in the same
+   paragraph has unresolved draft-roster status and cannot anchor occupancy.
+   Jerian Grant's June 25, 2015 draft transfer is retained under that scope;
+   his independent July 29 signing establishes his Knicks arrival. Veteran
+   trade pieces in the same paragraph retain their eligible roster legs.
    **Cross-season example:** Shareef Abdur-Rahim's NBA_2001 VAN→ATL move
    on 2001-06-27 anchors the 2002 ATL membership at 2001-06-27 (cross-checked; [2001-06-27, 2002-04-18)).
 3. **Stint walking** — arrivals/departures in day order produce stints;
@@ -81,25 +98,37 @@ For each (universe player, canonical franchise, season) membership row:
    `tenures.csv.season_window_iso` — a confirmed-both-sides pair, the
    strongest possible bounds, is still reported as directly-evidenced);
    one bound + agreement → cross-checked; otherwise inferred.
+5. **Independent appearance-capacity audit** — compare S2 player appearances
+   with S1 regular-season games inside the union of all reconstructed stints
+   for that player/team/season. Allow every game missing from S1 relative to
+   S2's full team total inside the interval, plus all known departure-day games
+   that might precede the date-only move. More appearances than even this
+   optimistic capacity upper bound is a source
+   conflict: retain the disputed dates and anchors, mark the group unresolved,
+   and record it in `appearance-capacity-review.csv`. Cases fitting only with
+   departure-day games are ordering-unresolved, never certified by invention.
+   Missing/incomplete
+   schedules without team totals and missing interval bounds skip this audit;
+   they prove no absence. Excess S1 counts also skip the capacity comparison.
 
 ## 3. Evidence classes — counts
 
 | evidence class | tenures | share | meaning |
 |---|---|---|---|
-| directly-evidenced | 3,565 | 11.1% | both bounds anchored by dated transaction rows (season-window agreement recorded alongside when present) |
-| cross-checked | 10,713 | 33.5% | one transaction-anchored bound + independent season-window agreement (two sources corroborate the bounds) |
-| inferred | 12,386 | 38.7% | season-window bracket only (membership season + S1 games) |
-| unresolved | 5,310 | 16.6% | flagged: conflicts / fuzzy / same-day ordering / ambiguous source evidence — needs review |
+| directly-evidenced | 2,245 | 7.7% | both bounds anchored by dated transaction rows (season-window agreement recorded alongside when present) |
+| cross-checked | 10,396 | 35.5% | one transaction-anchored bound + independent season-window agreement (two sources corroborate the bounds) |
+| inferred | 13,204 | 45.1% | season-window bracket only (membership season + S1 games) |
+| unresolved | 3,450 | 11.8% | flagged: conflicts / fuzzy / same-day ordering / ambiguous source evidence — needs review |
 
 **Per era** (era boundaries per spec Source validation):
 
 | era | tenures | directly-evidenced | cross-checked | inferred | unresolved |
 |---|---|---|---|---|---|
-| BAA 1946-49 | 512 | 4 | 106 | 359 | 43 |
-| 1950-66 | 2,188 | 49 | 433 | 1,443 | 263 |
-| 1967-80 | 3,431 | 147 | 824 | 1,785 | 675 |
-| 1981-99 | 7,835 | 654 | 2,938 | 4,025 | 218 |
-| 2000-2025/26 | 18,008 | 2,711 | 6,412 | 4,774 | 4,111 |
+| BAA 1946-49 | 512 | 3 | 76 | 395 | 38 |
+| 1950-66 | 2,187 | 23 | 326 | 1,572 | 266 |
+| 1967-80 | 3,431 | 129 | 805 | 1,935 | 562 |
+| 1981-99 | 7,835 | 642 | 2,898 | 4,134 | 161 |
+| 2000-2025/26 | 15,330 | 1,448 | 6,291 | 5,168 | 2,423 |
 
 BAA-era tenures are mostly **inferred**: S1 `game` windows exist,
 but BBR 1946-50 transaction rows are sparse and partly fuzzy-dated;
@@ -140,11 +169,25 @@ Numbers below separate this pass from the ledger's lifetime record.
 | transaction rows parsed from cache | 30,327 |
 | rows with precise dates | 30,250 |
 | rows fuzzy/undated (kept, flagged; never guessed) | 77 |
-| dated movement legs extracted | 34,770 |
-| legs usable as interval anchors (no blocking flags) | 34,165 |
-| precise-dated legs re-bucketed from a different page season | 71 |
+| dated movement legs extracted | 25,137 |
+| source legs excluded: non-roster scope | 9,151 |
+| source legs excluded: unresolved action scope | 495 |
+| legs usable as interval anchors (no blocking flags) | 24,994 |
+| precise-dated legs re-bucketed from a different page season | 58 |
 | legs excluded: ambiguous or same-bucket date outside page window | 0 |
-| legs flagged unusable team/shape (row retained; overlaps with other flags) | 605 |
+| legs flagged unusable team/shape (row retained; overlaps with other flags) | 143 |
+
+**Independent count conflicts:** 47 player/team/season groups conflict with
+the games available inside their recorded bounds; 1,503 team-seasons have a complete
+independent regular-season schedule matching S2. These conflicts remain unresolved;
+the audit supplies no replacement boundaries. Connie Simmons's 1949 Baltimore
+row retains the disputed February 11 exit: S2 says 60 appearances, while the
+complete 60-game S1 schedule permits only 45 within that interval.
+Lew Hitch's 1954 Milwaukee row retains the December 21 exit: 72 appearances
+cannot fit 24 known games before that exclusive exit even after allowing
+the departure-day game and one missing game inside the interval (upper bound 26).
+A further 31 groups fit only by including departure-day games; their same-day
+ordering remains unresolved, separately from confirmed count conflicts.
 
 **Season-bucket guard (BBR page-repetition leak):** BBR repeats major
 trades on the NEXT season's page (the Perkins trade dated 2011-02-24
@@ -158,7 +201,7 @@ flagged, and excluded as ambiguous:
 
 | season/window validation | legs |
 |---|---|
-| precise date re-bucketed to its own season (usable; duplicate anchors collapse) | 71 |
+| precise date re-bucketed to its own season (usable; duplicate anchors collapse) | 58 |
 | page season confirmed by independent S1 game window | 12 |
 | ambiguous or contradictory page window (excluded from anchor use) | 0 |
 
@@ -175,54 +218,56 @@ requests and just re-parses the cached pages.
 
 | evidence_class | bbr_player_id | display_name | season | era | canonical_franchise | interval_iso | reasons_or_note |
 |---|---|---|---|---|---|---|---|
-| directly-evidenced | beendha01 | Hank Beenders | 1948 | BAA 1946-49 | WARRIORS | [1948-01-15, 1948-05-01) | (clean) |
 | directly-evidenced | halbech01 | Chick Halbert | 1949 | BAA 1946-49 | CELTICS | [1948-05-01, 1949-01-16) | (clean) |
+| directly-evidenced | mahnkjo01 | John Mahnken | 1949 | BAA 1946-49 | BULLETS-DEFUNCT | [1948-05-05, 1948-11-19) | (clean) |
+| directly-evidenced | yabusgu01 | Guerschon Yabusele | 2026 | 2000-2025/26 | KNICKS | [2025-07-06, 2026-02-05) | (clean) |
 | directly-evidenced | youngch01 | Chris Youngblood | 2026 | 2000-2025/26 | THUNDER | [2025-09-26, 2026-02-06) | repeat-signing-continues-open-stint |
-| directly-evidenced | youngja05 | Jahmir Young | 2026 | 2000-2025/26 | HEAT | [2025-09-11, 2026-04-11) | repeat-signing-continues-open-stint |
 | cross-checked | beckemo01 | Moe Becker | 1947 | BAA 1946-49 | CELTICS | [1946-12-12, 1947-03-31) | (clean) |
 | cross-checked | beckemo01 | Moe Becker | 1947 | BAA 1946-49 | IRONMEN | [1946-11-02, 1946-12-12) | (clean) |
+| cross-checked | yorkga01 | Gabe York | 2023 | 2000-2025/26 | PACERS | [2023-03-30, 2023-04-10) | (clean) |
 | cross-checked | zelleco01 | Cody Zeller | 2023 | 2000-2025/26 | HEAT | [2023-02-20, 2023-06-13) | (clean) |
-| cross-checked | zubaciv01 | Ivica Zubac | 2023 | 2000-2025/26 | CLIPPERS | [2022-06-28, 2023-04-26) | (clean) |
 | inferred | abramjo01 | John Abramovic | 1947 | BAA 1946-49 | IRONMEN | [1946-11-02, 1947-03-27) | (clean) |
 | inferred | aubucch01 | Chet Aubuchon | 1947 | BAA 1946-49 | FALCONS | [1946-11-02, 1947-03-30) | (clean) |
-| inferred | youngtr01 | Trae Young | 2023 | 2000-2025/26 | HAWKS | [2022-10-19, 2023-04-28) | (clean) |
 | inferred | yurtsom01 | Omer Yurtseven | 2023 | 2000-2025/26 | HEAT | [2022-10-19, 2023-06-13) | (clean) |
+| inferred | zubaciv01 | Ivica Zubac | 2023 | 2000-2025/26 | CLIPPERS | [2022-10-20, 2023-04-26) | (clean) |
 | unresolved | beckemo01 | Moe Becker | 1947 | BAA 1946-49 | FALCONS | [1946-11-02, 1947-03-30) | multi-team-season(ordering-unresolved): player has dated moves to other franchises this season; bracket-only stint cannot be ordered against them |
-| unresolved | militna01 | Nat Militzok | 1947 | BAA 1946-49 | KNICKS |  | fuzzy-dated-rows-bear-on-this-tenure |
+| unresolved | fitzgbo01 | Bob Fitzgerald | 1947 | BAA 1946-49 | HUSKIES | [1946-11-01, 1947-01-21) | same-day-game-order-unresolved(S2-player-games=31,S1-season-games=60,S2-team-games=60,interval-capacity=30,departure-day-allowance=1,missing-games-allowance=0,capacity-upper-bound=31) |
 | unresolved | zubaciv01 | Ivica Zubac | 2026 | 2000-2025/26 | PACERS |  | no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window |
 | unresolved | zubaciv01 | Ivica Zubac | 2026 | 2000-2025/26 | CLIPPERS |  | no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); departure-after-closed-stint(prior-spell-exit,or-source-noise) |
 
 ### 5a. Flags for review (unresolved, never invented)
 
-`docs/reports/t4/unresolved-flags.csv` — all 5310 flagged rows:
+`docs/reports/t4/unresolved-flags.csv` — all 3450 flagged rows:
 
 | flag reason | rows |
 |---|---|
-| departure-after-closed-stint | 2748 |
-| no-season-window | 1349 |
-| same-day-arrival-and-departure | 1188 |
-| open-stint-without-window | 1151 |
-| no-dated-evidence | 1009 |
-| repeat-signing-continues-open-stint | 665 |
-| flagged-transaction-legs | 527 |
-| stint-entirely-outside-team-season-window | 422 |
-| same-day-arrival-to-multiple-franchises | 113 |
-| fuzzy-dated-rows-bear-on-this-tenure | 71 |
-| multi-team-season | 54 |
-| arrival-after-window-end | 25 |
-| interval-construction-failed | 8 |
+| no-season-window | 1272 |
+| no-dated-evidence | 1167 |
+| open-stint-without-window | 1109 |
+| departure-after-closed-stint | 444 |
+| stint-entirely-outside-team-season-window | 295 |
+| repeat-signing-continues-open-stint | 214 |
+| flagged-transaction-legs | 148 |
+| same-day-arrival-to-multiple-franchises | 90 |
+| multi-team-season | 72 |
+| fuzzy-dated-rows-bear-on-this-tenure | 57 |
+| appearance-count-conflict | 50 |
+| same-day-arrival-and-departure | 35 |
+| same-day-game-order-unresolved | 31 |
+| interval-construction-failed | 4 |
+| arrival-after-window-end | 4 |
 
 **Same-day / ordering-unresolved examples** (each retained verbatim for
 review; none resolved by invention):
 
 | player | season | franchise | reasons |
 |---|---|---|---|
-| Maurice Ager | 2008 | MAVERICKS | same-day-arrival-to-multiple-franchises(ordering-unresolved) |
-| Maurice Ager | 2008 | NETS | same-day-arrival-to-multiple-franchises(ordering-unresolved) |
-| Santi Aldama | 2022 | GRIZZLIES | same-day-arrival-and-departure(ordering-flagged); repeat-signing-continues-open-stint; departure-after-closed-stint(prio |
-| Santi Aldama | 2022 | GRIZZLIES | same-day-arrival-and-departure(ordering-flagged); repeat-signing-continues-open-stint; departure-after-closed-stint(prio |
-| Santi Aldama | 2022 | GRIZZLIES | same-day-arrival-and-departure(ordering-flagged); repeat-signing-continues-open-stint; departure-after-closed-stint(prio |
-| Santi Aldama | 2022 | GRIZZLIES | same-day-arrival-and-departure(ordering-flagged); repeat-signing-continues-open-stint; departure-after-closed-stint(prio |
+| Shareef Abdur-Rahim | 2004 | HAWKS | same-day-game-order-unresolved(S2-player-games=53,S1-season-games=82,S2-team-games=82,interval-capacity=52,departure-day |
+| Nickeil Alexander-Walker | 2026 | HAWKS | same-day-arrival-to-multiple-franchises(ordering-unresolved) |
+| Kyle Anderson | 2025 | WARRIORS | same-day-arrival-to-multiple-franchises(ordering-unresolved) |
+| Kyle Anderson | 2025 | HEAT | same-day-arrival-to-multiple-franchises(ordering-unresolved) |
+| Wade Baldwin | 2019 | TRAIL BLAZERS | same-day-arrival-to-multiple-franchises(ordering-unresolved) |
+| Lonzo Ball | 2022 | BULLS | same-day-arrival-to-multiple-franchises(ordering-unresolved) |
 
 ## 6. The 1946-1950 BAA source coverage gap (explicit callout)
 
@@ -236,10 +281,10 @@ a missing record is **not proof a tenure or edge did not exist**; per the spec,
 uncovered intervals surface here instead of silently becoming graph facts.
 Concretely:
 
-- 512 BAA-era tenure records; 359 inferred (season-window only),
-  110 transaction-evidenced (4 directly-evidenced + 106 cross-checked)
+- 512 BAA-era tenure records; 395 inferred (season-window only),
+  79 transaction-evidenced (3 directly-evidenced + 76 cross-checked)
   — the dated transaction layer covers only a fraction of BAA movement;
-- 198 dated movement legs parsed from the 1946-50 pages (BAA_1947..BAA_1949 +
+- 156 dated movement legs parsed from the 1946-50 pages (BAA_1947..BAA_1949 +
   NBA_1950); 17 of the pages' 199 transaction rows there carry fuzzy/undated
   ("February ?, 1947" is a real row shape);
 - all 1946-1950 franchise identities still resolve canonically (T3 crosswalk),
@@ -251,12 +296,12 @@ Concretely:
 
 | item | count |
 |---|---|
-| tenure intervals with constructed bounds | 29,100 |
-| membership/franchise-season tenure records (incl. unresolved no-interval rows) | 31,974 |
-| distinct player pairs with positive tenure overlap (potential teammate edges, pre-dedup across teams) | 137,788 |
-| …both tenures transaction/season-agreement evidenced | 44,506 |
-| …at least one inferred tenure | 82,865 |
-| …at least one unresolved tenure (edge blocked until resolved) | 10,417 |
+| tenure intervals with constructed bounds | 26,568 |
+| membership/franchise-season tenure records (incl. unresolved no-interval rows) | 29,295 |
+| distinct player pairs with positive tenure overlap (potential teammate edges, pre-dedup across teams) | 139,593 |
+| …both tenures transaction/season-agreement evidenced | 44,342 |
+| …at least one inferred tenure | 89,883 |
+| …at least one unresolved tenure (edge blocked until resolved) | 5,368 |
 | membership duplicates/summary rows excluded (2TM/3TM/TOT) | 2,875 |
 
 Pair counts are *upper bounds on edges*: the graph build deduplicates
@@ -267,8 +312,8 @@ continuity; unresolved tenures do not silently produce edges.
 
 ```bash
 # from the repo root; requires the pinned data snapshot under data/ (docs/data/source-manifest.md)
-# 1) one-time cached throttled fetch (~8 min; subsequent runs are cache-only, 0 requests)
-python3 scripts/t4_fetch_bbr.py [data_dir]
+# 1) offline parse of the pinned transaction cache (0 HTTP requests)
+python3 scripts/t4_fetch_bbr.py [data_dir] --no-fetch
 # 2) reconstruction + classification
 python3 scripts/t4_reconcile.py [data_dir]   # writes docs/reports/t4/*.csv + data/t4/.state.pkl
 # 3) this report (accepts the same data_dir argument)
@@ -284,7 +329,7 @@ cache pages and intermediate state are local under `data/cache/bbr/` and
 
 ## 9. Open items for review (not silently resolved)
 
-1. 5,310 tenure rows remain unresolved with reasons retained in
+1. 3,450 tenure rows remain unresolved with reasons retained in
    `unresolved-flags.csv`; each flag names the exact ambiguity class.
 2. Fuzzy/undated BBR rows (77) are retained (parsed CSV `row_flags`, fuzzy_events)
    and never guessed to dates; a manual pass could resolve month-precision rows
