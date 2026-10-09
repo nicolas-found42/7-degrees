@@ -95,3 +95,19 @@ p.error {
     border-radius: 6px;
     padding: 0.5rem 0.75rem;
 }
+
+p.semantic-status {
+    color: #5b6572;
+    font-size: 0.85rem;
+    margin: 0.5rem 0 0;
+}
+
+p.semantic-status[data-semantic-status="unavailable"],
+p.semantic-status[data-semantic-status="degraded"] {
+    color: #8a6d1d;
+    background: #faf3dd;
+    border: 1px solid #e8dca8;
+    border-radius: 6px;
+    padding: 0.4rem 0.7rem;
+    display: inline-block;
+}

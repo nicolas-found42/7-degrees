@@ -1,0 +1,25 @@
+[package]
+name = "jev-client"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+
+# The optional real transport (enabled by the app server).
+http = { version = "1", optional = true }
+log = { version = "0.4", optional = true }
+reqwest = { version = "0.12", default-features = false, features = [
+    "json",
+    "rustls-tls",
+], optional = true }
+tokio = { workspace = true, optional = true }
+
+[features]
+default = []
+http-transport = ["dep:http", "dep:log", "dep:reqwest", "dep:tokio"]
+
+[[test]]
+name = "live_smoke"
+required-features = ["http-transport"]

@@ -2,6 +2,7 @@
 //! teammate graph, plus the minimal server-rendered UI.
 
 mod fixture_data;
+mod jev;
 mod ui;
 
 use axum::{
@@ -15,17 +16,38 @@ use serde::Deserialize;
 
 use api_types::ErrorResponse;
 
-/// App state shared by all routes: the built teammate graph.
+pub use jev::JevHandle;
+
+/// The log-capture buffer, available only in test-capture builds
+/// (`RUSTFLAGS='--cfg test_capture'`). The integration tests assert
+/// credential non-appearance against it.
+#[cfg(test_capture)]
+pub use jev::test_log_capture;
+
+/// App state shared by all routes: the built teammate graph plus the Jev
+/// client handle (credentials live only inside the handle's client).
 #[derive(Clone)]
 pub struct AppState {
     graph: std::sync::Arc<graph_core::TeammateGraph>,
+    jev: JevHandle,
 }
 
-/// The router with the fixture graph preloaded, as a real data import would
-/// load it. Integration tests drive this directly through `tower::ServiceExt`.
+/// The router with the fixture graph preloaded and Jev deterministically
+/// unconfigured. Integration tests drive this directly through
+/// `tower::ServiceExt`. Tests must not depend on the developer shell's
+/// `OPENROUTER_API_KEY`, so this builder never reads the environment; the
+/// binary's `main()` builds the env-driven state via
+/// `app_with_jev(JevHandle::from_env())`.
 pub fn app_with_fixture_data() -> Router {
+    app_with_jev(JevHandle::unconfigured())
+}
+
+/// The router over an explicit Jev handle (the test seam: scripted
+/// transports prove fallback and credential isolation without a network).
+pub fn app_with_jev(jev: JevHandle) -> Router {
     let state = AppState {
         graph: std::sync::Arc::new(fixture_data::fixture_graph()),
+        jev,
     };
     app(state)
 }
@@ -38,6 +60,7 @@ fn app(state: AppState) -> Router {
         .route("/api/connection", get(connection))
         .route("/api/paths", get(all_paths))
         .route("/api/stats", get(stats))
+        .route("/api/semantic-status", get(semantic_status))
         .route("/", get(home))
         .route("/chain", get(chain_page))
         .route("/style.css", get(style_css))
@@ -196,10 +219,22 @@ async fn stats(State(state): State<AppState>) -> Json<serde_json::Value> {
     }))
 }
 
+/// Semantic-feature availability (acceptance criterion: the UI reports
+/// semantic features as unavailable when Jev is unconfigured/unreachable).
+/// The body carries only the availability tuple — never any credential
+/// material, env var names, or provider identifiers.
+async fn semantic_status(State(state): State<AppState>) -> Json<serde_json::Value> {
+    let (available, reason) = state.jev.status();
+    Json(serde_json::json!({
+        "available": available,
+        "reason": reason,
+    }))
+}
+
 /// The minimal UI home page: the connect form and the fixture edge list,
 /// rendered server-side in Rust.
 async fn home(State(state): State<AppState>) -> Response {
-    ui::home(&state.graph)
+    ui::home(&state.graph, state.jev.status())
 }
 
 /// The `/chain` UI page: the shortest teammate chain between the queried pair
@@ -211,7 +246,7 @@ struct ChainQuery {
 }
 
 async fn chain_page(State(state): State<AppState>, Query(query): Query<ChainQuery>) -> Response {
-    ui::chain(&state.graph, query.from, query.to)
+    ui::chain(&state.graph, query.from, query.to, state.jev.status())
 }
 
 /// The UI stylesheet, authored in the server crate and served as a static
@@ -226,10 +261,14 @@ async fn style_css() -> Response {
 }
 
 /// Serve the fixture-backed app on localhost. Exposed for the binary entry
-/// point (`src/main.rs`).
+/// point (`src/main.rs`). Jev reads its key from the process env at startup
+/// (fail-soft: unconfigured runs keep every deterministic feature).
 pub async fn main() {
+    jev::install_capture_logger();
+    jev::init_logging();
     let state = AppState {
         graph: std::sync::Arc::new(fixture_data::fixture_graph()),
+        jev: JevHandle::from_env(),
     };
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
         .await

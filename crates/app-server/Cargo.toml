@@ -7,11 +7,17 @@ edition.workspace = true
 api-types = { workspace = true }
 fixture = { workspace = true }
 graph-core = { workspace = true }
+jev-client = { workspace = true, features = ["http-transport"] }
 axum.workspace = true
 tokio.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+log.workspace = true
 
 [dev-dependencies]
 tower.workspace = true
 http-body-util.workspace = true
+env_logger.workspace = true
+
+[lints.rust]
+unexpected_cfgs = { level = "allow", check-cfg = ["cfg(test_capture)"] }
