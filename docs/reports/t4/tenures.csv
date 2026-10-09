@@ -7217,7 +7217,7 @@ diallha01,Hamidou Diallo,2021,NBA,2000-2025/26,PISTONS,S2,cross-checked,27465,27
 diallha01,Hamidou Diallo,2021,NBA,2000-2025/26,THUNDER,S2,cross-checked,27388,27465,"[2020-12-26, 2021-03-13)",0,1,"[2020-12-26, 2021-05-17)",,,27465
 diallha01,Hamidou Diallo,2022,NBA,2000-2025/26,PISTONS,S2,cross-checked,27624,27859,"[2021-08-19, 2022-04-11)",1,0,"[2021-10-20, 2022-04-11)",,27624,
 diallha01,Hamidou Diallo,2023,NBA,2000-2025/26,PISTONS,S2,unresolved,,,,0,0,,flagged-transaction-legs(no-team-anchor-on-leg),,
-diallha01,Hamidou Diallo,2024,NBA,2000-2025/26,WIZARDS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,"28417,28497",28417
+diallha01,Hamidou Diallo,2024,NBA,2000-2025/26,WIZARDS,S2,unresolved,,,,0,0,,same-day-arrival-and-departure(ordering-flagged); no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,"28417,28497",28417
 diawamo01,Mohamed Diawara,2026,NBA,2000-2025/26,KNICKS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,29112,
 diawaya01,Yakhouba Diawara,2007,NBA,2000-2025/26,NUGGETS,S2,cross-checked,22121,22402,"[2006-07-26, 2007-05-03)",1,0,"[2006-11-02, 2007-05-03)",,22121,
 diawaya01,Yakhouba Diawara,2008,NBA,2000-2025/26,NUGGETS,S2,inferred,22583,22764,"[2007-10-31, 2008-04-29)",0,0,"[2007-10-31, 2008-04-29)",,,
@@ -11143,7 +11143,7 @@ haddaha01,Hamed Haddadi,2013,NBA,2000-2025/26,SUNS,S2,directly-evidenced,24523,2
 haffnsc01,Scott Haffner,1990,NBA,1981-99,HEAT,S2,inferred,16012,16182,"[1989-11-03, 1990-04-22)",0,0,"[1989-11-03, 1990-04-22)",,,
 haffnsc01,Scott Haffner,1991,NBA,1981-99,HORNETS-PELICANS,S2,cross-checked,16457,16546,"[1991-01-22, 1991-04-21)",1,0,"[1990-11-02, 1991-04-21)",repeat-signing-continues-open-stint,"16457,16477",
 haganas01,Ashton Hagans,2021,NBA,2000-2025/26,TIMBERWOLVES,S2,directly-evidenced,27351,27437,"[2020-11-19, 2021-02-13)",1,1,"[2020-12-23, 2021-05-17)",,27351,27437
-haganas01,Ashton Hagans,2024,NBA,2000-2025/26,TRAIL BLAZERS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window; repeat-signing-continues-open-stint,"28397,28527,28542",28397
+haganas01,Ashton Hagans,2024,NBA,2000-2025/26,TRAIL BLAZERS,S2,unresolved,,,,0,0,,same-day-arrival-and-departure(ordering-flagged); no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window; repeat-signing-continues-open-stint,"28397,28527,28542",28397
 hagancl01,Cliff Hagan,1957,NBA,1950-66,HAWKS,S2,inferred,3952,4121,"[1956-10-27, 1957-04-14)",0,0,"[1956-10-27, 1957-04-14)",,,
 hagancl01,Cliff Hagan,1958,NBA,1950-66,HAWKS,S2,inferred,4312,4453,"[1957-10-22, 1958-03-12)",0,0,"[1957-10-22, 1958-03-12)",,,
 hagancl01,Cliff Hagan,1959,NBA,1950-66,HAWKS,S2,inferred,4678,4818,"[1958-10-23, 1959-03-12)",0,0,"[1958-10-23, 1959-03-12)",,,
@@ -13995,7 +13995,7 @@ jarosto01,Tony Jaros,1950,NBA,1950-66,LAKERS,S2,inferred,1401,1574,"[1949-11-02,
 jarosto01,Tony Jaros,1951,NBA,1950-66,LAKERS,S2,inferred,1765,1919,"[1950-11-01, 1951-04-04)",0,0,"[1950-11-01, 1951-04-04)",,,
 jarrede01,DeJon Jarreau,2022,NBA,2000-2025/26,PACERS,S2,directly-evidenced,27629,27742,"[2021-08-24, 2021-12-15)",1,1,"[2021-10-20, 2022-04-11)",,27629,27742
 jarrede01,DeJon Jarreau,2024,NBA,2000-2025/26,GRIZZLIES,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window; repeat-signing-continues-open-stint,"28558,28568",
-jarrede01,DeJon Jarreau,2026,NBA,2000-2025/26,GRIZZLIES,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window; repeat-signing-continues-open-stint,"29145,29291,29301",29145
+jarrede01,DeJon Jarreau,2026,NBA,2000-2025/26,GRIZZLIES,S2,unresolved,,,,0,0,,same-day-arrival-and-departure(ordering-flagged); no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window; repeat-signing-continues-open-stint,"29145,29291,29301",29145
 jasiksa01,Šarūnas Jasikevičius,2006,NBA,2000-2025/26,PACERS,S2,cross-checked,21772,22024,"[2005-08-11, 2006-04-20)",1,0,"[2005-11-02, 2006-04-20)",,21772,
 jasiksa01,Šarūnas Jasikevičius,2007,NBA,2000-2025/26,WARRIORS,S2,cross-checked,22295,22415,"[2007-01-16, 2007-05-16)",1,0,"[2006-11-01, 2007-05-16)",,22295,
 jasiksa01,Šarūnas Jasikevičius,2007,NBA,2000-2025/26,PACERS,S2,cross-checked,22219,22295,"[2006-11-01, 2007-01-16)",0,1,"[2006-11-01, 2007-04-19)",,,22295
@@ -16995,7 +16995,7 @@ lichtto01,Todd Lichti,1993,NBA,1981-99,NUGGETS,S2,inferred,17112,17282,"[1992-11
 lichtto01,Todd Lichti,1994,NBA,1981-99,CELTICS,S2,directly-evidenced,17619,17638,"[1994-03-29, 1994-04-17)",1,1,"[1993-11-05, 1994-04-25)",,17619,17638
 lichtto01,Todd Lichti,1994,NBA,1981-99,WARRIORS,S2,cross-checked,17590,17646,"[1994-02-28, 1994-04-25)",1,0,"[1993-11-05, 1994-04-25)",,17590,
 lichtto01,Todd Lichti,1994,NBA,1981-99,MAGIC,S2,directly-evidenced,17397,17586,"[1993-08-19, 1994-02-24)",1,1,"[1993-11-05, 1994-04-25)",,17397,17586
-liddeej01,E.J. Liddell,2024,NBA,2000-2025/26,HORNETS-PELICANS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1),28310,28310
+liddeej01,E.J. Liddell,2024,NBA,2000-2025/26,HORNETS-PELICANS,S2,unresolved,,,,0,0,,same-day-arrival-and-departure(ordering-flagged); no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1),28310,28310
 liddeej01,E.J. Liddell,2025,NBA,2000-2025/26,BULLS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window; repeat-signing-continues-open-stint,"28739,28780",
 liddeej01,E.J. Liddell,2026,NBA,2000-2025/26,NETS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,29100,
 liggide01,DeAndre Liggins,2012,NBA,2000-2025/26,MAGIC,S2,inferred,24099,24235,"[2011-12-25, 2012-05-09)",0,0,"[2011-12-25, 2012-05-09)",,,
@@ -20807,6 +20807,7 @@ naullwi01,Willie Naulls,1964,NBA,1950-66,CELTICS,S2,cross-checked,6455,6691,"[19
 naullwi01,Willie Naulls,1965,NBA,1950-66,CELTICS,S2,inferred,6864,7020,"[1964-10-17, 1965-03-22)",0,0,"[1964-10-17, 1965-03-22)",,,
 naullwi01,Willie Naulls,1966,NBA,1950-66,CELTICS,S2,inferred,7228,7423,"[1965-10-16, 1966-04-29)",0,0,"[1965-10-16, 1966-04-29)",,,
 navarju01,Juan Carlos Navarro,2008,NBA,2000-2025/26,GRIZZLIES,S2,cross-checked,22508,22752,"[2007-08-17, 2008-04-17)",1,0,"[2007-10-31, 2008-04-17)",,22508,
+nba:1630492,Luca Vildoza,2022,NBA,2000-2025/26,BUCKS,S1-only-supplement,inferred,27685,27894,"[2021-10-19, 2022-05-16)",0,0,"[2021-10-19, 2022-05-16)",,,
 ndiayha01,Hamady N'Diaye,2011,NBA,2000-2025/26,WIZARDS,S2,directly-evidenced,23550,23746,"[2010-06-24, 2011-01-06)",1,1,"[2010-10-28, 2011-04-14)",,"23550,23775",23746
 ndiayha01,Hamady N'Diaye,2011,NBA,2000-2025/26,WIZARDS,S2,cross-checked,23775,23844,"[2011-02-04, 2011-04-14)",1,1,"[2010-10-28, 2011-04-14)",,"23550,23775",23746
 ndiayha01,Hamady N'Diaye,2012,NBA,2000-2025/26,WIZARDS,S2,cross-checked,24100,24106,"[2011-12-26, 2012-01-01)",1,1,"[2011-12-26, 2012-04-27)",,24135,"24106,24143"
@@ -21499,7 +21500,7 @@ okafoja01,Jahlil Okafor,2018,NBA,2000-2025/26,76ERS,S2,cross-checked,26223,26273
 okafoja01,Jahlil Okafor,2019,NBA,2000-2025/26,HORNETS-PELICANS,S2,cross-checked,26517,26762,"[2018-08-08, 2019-04-10)",1,0,"[2018-10-17, 2019-04-10)",,26517,
 okafoja01,Jahlil Okafor,2020,NBA,2000-2025/26,HORNETS-PELICANS,S2,inferred,26957,27254,"[2019-10-22, 2020-08-14)",0,0,"[2019-10-22, 2020-08-14)",,,
 okafoja01,Jahlil Okafor,2021,NBA,2000-2025/26,PISTONS,S2,cross-checked,27363,27530,"[2020-12-01, 2021-05-17)",1,0,"[2020-12-23, 2021-05-17)",,27363,
-okafoja01,Jahlil Okafor,2025,NBA,2000-2025/26,PACERS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,"28777,28896",28777
+okafoja01,Jahlil Okafor,2025,NBA,2000-2025/26,PACERS,S2,unresolved,,,,0,0,,same-day-arrival-and-departure(ordering-flagged); no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,"28777,28896",28777
 okanito01,Toby Okani,2026,NBA,2000-2025/26,GRIZZLIES,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,29312,
 okeefdi01,Dick O'Keefe,1948,BAA,BAA 1946-49,CAPITOLS,S2,inferred,680,813,"[1947-11-12, 1948-03-24)",0,0,"[1947-11-12, 1948-03-24)",,,
 okeefdi01,Dick O'Keefe,1949,BAA,BAA 1946-49,CAPITOLS,S2,inferred,1037,1199,"[1948-11-03, 1949-04-14)",0,0,"[1948-11-03, 1949-04-14)",,,
@@ -28362,7 +28363,7 @@ tomjaru01,Rudy Tomjanovich,1978,NBA,1967-80,ROCKETS,S2,inferred,11614,11786,"[19
 tomjaru01,Rudy Tomjanovich,1979,NBA,1967-80,ROCKETS,S2,inferred,11973,12156,"[1978-10-13, 1979-04-14)",0,0,"[1978-10-13, 1979-04-14)",,,
 tomjaru01,Rudy Tomjanovich,1980,NBA,1967-80,ROCKETS,S2,inferred,12337,12523,"[1979-10-12, 1980-04-15)",0,0,"[1979-10-12, 1980-04-15)",,,
 tomjaru01,Rudy Tomjanovich,1981,NBA,1981-99,ROCKETS,S2,inferred,12701,12918,"[1980-10-10, 1981-05-15)",0,0,"[1980-10-10, 1981-05-15)",,,
-tomlina01,Nae'Qwan Tomlin,2025,NBA,2000-2025/26,CAVALIERS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window; repeat-signing-continues-open-stint,"28756,28905,28915",28756
+tomlina01,Nae'Qwan Tomlin,2025,NBA,2000-2025/26,CAVALIERS,S2,unresolved,,,,0,0,,same-day-arrival-and-departure(ordering-flagged); no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window; repeat-signing-continues-open-stint,"28756,28905,28915",28756
 tomlina01,Nae'Qwan Tomlin,2026,NBA,2000-2025/26,CAVALIERS,S2,unresolved,,,,0,0,,"no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); departure-after-closed-stint(prior-spell-exit,or-source-noise)",,29261
 toneyan01,Andrew Toney,1981,NBA,1981-99,76ERS,S2,inferred,12701,12907,"[1980-10-10, 1981-05-04)",0,0,"[1980-10-10, 1981-05-04)",,,
 toneyan01,Andrew Toney,1982,NBA,1981-99,76ERS,S2,inferred,13086,13308,"[1981-10-30, 1982-06-09)",0,0,"[1981-10-30, 1982-06-09)",,,

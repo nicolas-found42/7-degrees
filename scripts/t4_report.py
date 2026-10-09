@@ -161,7 +161,11 @@ def main(argv=None):
     A("creates no edge day and no edge.")
     A("")
     A("Membership baseline: T3's canonical player-season-team rows (S2 NBA/BAA rows")
-    A("plus the 12 S1-only supplements from T3 §5), 5,105-player universe, canonical")
+    with open(os.path.join(REPO, "docs", "reports", "t3", "player-universe.csv"),
+              newline="", encoding="utf-8") as f:
+        universe_count = sum(1 for _ in csv.DictReader(f))
+    A("plus the %s S1-only supplements from T3 §5), %s-player universe, canonical"
+      % (R["rows_S1_only_supplement"], fmt(universe_count)))
     A("franchise ids from `franchise-crosswalk.csv`.")
     A("")
 
