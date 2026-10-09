@@ -11,7 +11,7 @@ import json
 import os
 import pickle
 import sys
-from collections import Counter
+from collections import Counter, defaultdict
 from datetime import datetime, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -48,29 +48,54 @@ def main(argv=None):
     if not os.path.isdir(data_dir):
         data_dir = os.path.normpath(os.path.join(REPO, "..", "7-degrees", "data"))
     st = pickle.load(open(os.path.join(data_dir, "t4", ".state.pkl"), "rb"))
-    R = st["R"]
     fetch_summary = json.load(open(os.path.join(data_dir, "t4", "fetch-summary.json")))
     coverage = json.load(open(os.path.join(T4_DIR, "coverage-counts.json")))
+    R = coverage["R"]
+    with open(os.path.join(T4_DIR, "tenures.csv"), newline="", encoding="utf-8") as f:
+        tenures = list(csv.DictReader(f))
     ledger = []
     ledger_path = os.path.join(data_dir, "t4", "bbr-request-ledger.jsonl")
     if os.path.exists(ledger_path):
         with open(ledger_path, encoding="utf-8") as f:
             ledger = [json.loads(l) for l in f if l.strip()]
+    http_rows = [r for r in ledger if r.get("action", "").startswith("http")]
+    legacy_starts = []
+    for row in http_rows:
+        stamp = row.get("ts_utc", "")
+        if "." not in stamp:
+            try:
+                legacy_starts.append(datetime.fromisoformat(stamp.replace("Z", "+00:00")))
+            except ValueError:
+                pass
+    legacy_starts.sort()
+    legacy_deltas = [(b - a).total_seconds()
+                     for a, b in zip(legacy_starts, legacy_starts[1:])]
+    legacy_min_delta = min(legacy_deltas) if legacy_deltas else None
 
     L = []
     A = L.append
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
-    era_counts = st["era_counts"]
-    tenures = st["tenures"]
+    era_counts = coverage["era_counts"]
     total = len(tenures)
-    interval_count = sum(1 for t in tenures if t["start"] is not None
-                         and t["end"] is not None)
+    interval_count = sum(1 for t in tenures if t["start_day"] and t["end_day"])
     no_interval_count = total - interval_count
     by_class = Counter(t["evidence_class"] for t in tenures)
     pairs = coverage["pair_analysis"]
     leg_diag = st["leg_diag"]
     fetch_fail_pages = sorted(fetch_summary.get("failures", {}).keys())
+    csv_era_counts = defaultdict(Counter)
+    for row in tenures:
+        if row["era"]:
+            csv_era_counts[row["era"]][row["evidence_class"]] += 1
+    class_counts_match = all(
+        by_class.get(cls, 0) == R.get("tenures-" + cls, 0) for cls in CLASS_ORDER)
+    if (total != R.get("tenures")
+            or interval_count != R.get("intervals-present")
+            or no_interval_count != R.get("intervals-absent")
+            or {e: dict(c) for e, c in csv_era_counts.items()} != era_counts
+            or not class_counts_match):
+        raise ValueError("coverage-counts.json does not match final tenures.csv")
 
     A("# T4 — Roster Tenure Reconstruction and Coverage Report")
     A("")
@@ -81,7 +106,7 @@ def main(argv=None):
     A("")
     A("Report generated %s by `scripts/t4_reconcile.py` + `scripts/t4_report.py`" % now)
     A("(fetch pass: `scripts/t4_fetch_bbr.py`; tests: `scripts/test_t4_core.py`,")
-    A("`scripts/test_t4_reconcile.py`). Artifacts retained under `docs/reports/t4/`.")
+    A("`scripts/test_t4_reconcile.py`, `scripts/test_t4_fetch_bbr.py`). Artifacts retained under `docs/reports/t4/`.")
     A("")
     A("> **No complete-coverage claim.** This report never claims complete exact-date")
     A("> coverage (spec: \"Do not claim complete date-level coverage until the evidence")
@@ -98,9 +123,13 @@ def main(argv=None):
          % (fmt(R["membership_rows"]), fmt(R.get("rows_S2", 0)),
             fmt(R.get("rows_S1_only_supplement", 0)))],
         ["tenure records (incl. multi-stint and unresolved membership rows)",
-         "%s records from %s membership rows; %s have interval bounds, %s remain unresolved without a constructible interval"
+         "%s records from %s membership rows; %s have interval bounds, %s have no constructible interval"
          % (fmt(total), fmt(R["membership_rows"]), fmt(interval_count),
             fmt(no_interval_count))],
+        ["season-window coverage on tenure records",
+         "%s with a season window; %s without one"
+         % (fmt(R.get("membership-window-present", 0)),
+            fmt(R.get("membership-window-missing", 0)))],
         ["directly evidenced tenures (both bounds from dated transactions)",
          "%s (%s)" % (fmt(by_class["directly-evidenced"]), pct(by_class["directly-evidenced"], total))],
         ["cross-checked (transaction + independent season-window agreement)",
@@ -159,6 +188,15 @@ def main(argv=None):
     A("   (trade-out/waive/release/sale) anchor the end. Fuzzy dates")
     A("   (\"February ?, 1947\") are NEVER resolved to a day — the rows are retained as")
     A("   `fuzzy_events` and only flag tenures for review.")
+    A("   A precise offseason arrival carries forward only when adjacent team-season")
+    A("   windows bracket the dated move and the same player/team has next-season")
+    A("   membership; its transaction date remains the tenure start boundary.")
+    atl = next((t for t in tenures if t["bbr_player_id"] == "abdursh01"
+                and t["season"] == "2002" and t["canonical_franchise"] == "HAWKS"), None)
+    if atl:
+        A("   **Cross-season example:** Shareef Abdur-Rahim's NBA_2001 VAN→ATL move")
+        A("   on 2001-06-27 anchors the 2002 ATL membership at 2001-06-27 (%s; %s)."
+          % (atl["evidence_class"], atl["interval_iso"]))
     A("3. **Stint walking** — arrivals/departures in day order produce stints;")
     A("   conventions as in §1. Ordering anomalies and same-day conflicts are flagged.")
     A("4. **Classification** — `classify_tenure`: unresolved reasons dominate;")
@@ -207,14 +245,20 @@ def main(argv=None):
     A("")
     A("`scripts/t4_fetch_bbr.py` fetched the bounded page set")
     A("`/leagues/{BAA|NBA}_{year}_transactions.html` (BAA 1947–1949, NBA 1950–2026 =")
-    A("%d pages) **cache-first, throttled ≥ %.1f s between request starts, with one" % (
-        fetch_summary["pages_targeted"], fetch_summary["throttle_seconds"]))
-    A("45 s back-off + single retry on 429/503/Cloudflare-1015**. Every request — and")
-    A("every cache hit — is timestamped in the request ledger")
-    A("(`docs/reports/t4/bbr-request-ledger.csv`). Numbers below separate the THIS")
-    A("pass (the report's own regeneration run) from the ledger's lifetime record.")
+    A("%d pages) **cache-first, with a code-enforced %.1f s minimum start spacing using a"
+      % (fetch_summary["pages_targeted"], fetch_summary["throttle_seconds"]))
+    A("monotonic clock, with one 45 s back-off + single retry on 429/503/Cloudflare-1015**.")
+    A("The historical request ledger has whole-second timestamps; its observed minimum")
+    if legacy_min_delta is not None:
+        A("adjacent timestamp delta was %.1f s, not proof of a ≥ %.1f s minimum. New HTTP ledger rows"
+          % (legacy_min_delta, fetch_summary["throttle_seconds"]))
+    else:
+        A("timestamp precision does not prove a ≥ %.1f s minimum. New HTTP ledger rows"
+          % fetch_summary["throttle_seconds"])
+    A("record subsecond UTC start times and measured monotonic elapsed spacing. Every")
+    A("request and cache hit is retained in `docs/reports/t4/bbr-request-ledger.csv`.")
+    A("Numbers below separate this pass from the ledger's lifetime record.")
     A("")
-    http_rows = [r for r in ledger if r.get("action", "").startswith("http")]
     statuses = Counter(r.get("status") for r in http_rows)
     A(md_table(["fetch metric", "value"], [
         ["pages targeted", fetch_summary["pages_targeted"]],
@@ -222,6 +266,9 @@ def main(argv=None):
         ["**this pass: cache hits (no request)**", fetch_summary.get("cache_hits", 0)],
         ["…this pass bytes fetched", fmt(fetch_summary.get("bytes_fetched", 0))],
         ["request ledger lifetime: HTTP requests issued", len(http_rows)],
+        ["historical whole-second timestamp precision / minimum adjacent delta",
+         "whole-second; %s s (not proof of configured minimum)"
+         % ("n/a" if legacy_min_delta is None else "%.1f" % legacy_min_delta)],
         ["…by status", ", ".join("%s: %s" % (k, v) for k, v in sorted(statuses.items(), key=lambda x: (x[0] is None, str(x[0]))))],
         ["request ledger lifetime: cache hits (no request issued)", sum(1 for r in ledger if r.get("action") == "cache-hit")],
         ["retry attempts", sum(1 for r in ledger if r.get("action") == "http-get-retry")],
@@ -273,15 +320,20 @@ def main(argv=None):
         ]))
         A("")
     if fetch_fail_pages:
-        A("**Unresolved fetches are recorded, never interpreted:** the %s page(s) %s"
-          % (len(fetch_fail_pages), ", ".join("`%s`" % p for p in fetch_fail_pages)))
-        A("could not be fetched in this pass (status/error per the ledger rows). Per")
-        A("the spec's standing rule, this is **not** proof that the underlying")
-        A("historical transaction records do not exist; any tenure whose only")
-        A("missing evidence is such a page is classified unresolved, and a later")
-        A("cache-warming run may fill it (re-running the fetch script is safe:")
-        A("cache-first, only missing pages are requested).")
-        A("")
+        A("**Unresolved fetches:** %s page(s) %s failed after the fetch retry."
+          % (len(fetch_fail_pages), ", ".join("`%s`" % page for page in fetch_fail_pages)))
+        A("These failures do not prove the underlying historical records are absent.")
+        A("Conservatively, reconcile marks all tenures in the failed page's league-season")
+        A("and the next membership season (offseason arrivals can cross-link from the")
+        A("prior page) `unresolved`, adding `fetch-failure:<league>_<year>`; this is not")
+        A("limited to tenures whose other evidence was already missing.")
+    else:
+        A("This pass had zero unresolved fetch failures. If a future fetch summary")
+        A("contains a persistently failed page, reconcile marks every tenure in")
+        A("that page's league-season and the next membership season unresolved with")
+        A("`fetch-failure:<league>_<year>`; absence of a fetched transaction page is")
+        A("never evidence that an underlying historical record did not exist.")
+    A("")
     A("Re-run idempotency: with the cache present the pass issues **zero** HTTP")
     A("requests and just re-parses the cached pages.")
     A("")
@@ -302,7 +354,7 @@ def main(argv=None):
     # count from the UNRESOLVED tenure rows' original reason LISTS: a reason's
     # own text can itself contain "; " inside a parenthetical, so splitting the
     # joined strings would fabricate tail-fragment keys
-    for t in tenures:
+    for t in st["tenures"]:
         if t["evidence_class"] != "unresolved":
             continue
         for reason in t["reasons"]:
@@ -395,7 +447,7 @@ def main(argv=None):
     A("# 3) this report (accepts the same data_dir argument)")
     A("python3 scripts/t4_report.py [data_dir]")
     A("# unit tests (no data dependency, plain python3)")
-    A("python3 -m unittest scripts.test_t4_core scripts.test_t4_reconcile")
+    A("python3 -m unittest scripts.test_t4_core scripts.test_t4_reconcile scripts.test_t4_fetch_bbr")
     A("```")
     A("")
     A("Python 3.9 stdlib only (`sqlite3`, `csv`, `urllib`, `html.parser`, `pickle`).")
@@ -420,9 +472,10 @@ def main(argv=None):
           % len(fetch_fail_pages))
         A("   no absence claim is derived from them.")
     else:
-        A("4. No unresolved fetches this pass; the standing rule holds regardless:")
-        A("   a future fetch failure would be recorded as unresolved, never as")
-        A("   proof that a historical record does not exist.")
+        A("4. No unresolved fetches this pass. On a future persistent page failure,")
+        A("   reconcile marks tenures in that page's league-season and the next")
+        A("   membership season unresolved with `fetch-failure:<league>_<year>`;")
+        A("   it is never proof that a historical record does not exist.")
     A("5. T3's 50 `S1-pbp-shows-other-teams-same-season` membership disagreements")
     A("   remain listed in `docs/reports/t3/membership-mismatches.csv`; T4 inherits")
     A("   the S2 row here (both rows appear when both sources carry them).")

@@ -2,40 +2,44 @@
   "R": {
     "era_classes": {
       "1950-66": {
-        "cross-checked": 414,
-        "directly-evidenced": 42,
-        "inferred": 1469,
+        "cross-checked": 433,
+        "directly-evidenced": 49,
+        "inferred": 1443,
         "unresolved": 263
       },
       "1967-80": {
-        "cross-checked": 784,
-        "directly-evidenced": 137,
-        "inferred": 1835,
-        "unresolved": 674
+        "cross-checked": 824,
+        "directly-evidenced": 147,
+        "inferred": 1785,
+        "unresolved": 675
       },
       "1981-99": {
-        "cross-checked": 2753,
-        "directly-evidenced": 615,
-        "inferred": 4247,
+        "cross-checked": 2938,
+        "directly-evidenced": 654,
+        "inferred": 4025,
         "unresolved": 218
       },
       "2000-2025/26": {
-        "cross-checked": 6278,
-        "directly-evidenced": 2633,
-        "inferred": 4980,
-        "unresolved": 4110
+        "cross-checked": 6412,
+        "directly-evidenced": 2711,
+        "inferred": 4773,
+        "unresolved": 4111
       },
       "BAA 1946-49": {
-        "cross-checked": 104,
-        "directly-evidenced": 2,
-        "inferred": 363,
+        "cross-checked": 106,
+        "directly-evidenced": 4,
+        "inferred": 359,
         "unresolved": 43
       }
     },
+    "intervals-absent": 2874,
+    "intervals-present": 29099,
+    "membership-window-missing": 3321,
+    "membership-window-present": 28652,
     "membership_rows": 28836,
-    "membership_rows_no_stint": 2872,
-    "membership_window_missing": 2806,
-    "membership_window_present": 26030,
+    "membership_rows_no_stint": 2866,
+    "membership_window_missing": 3321,
+    "membership_window_present": 28652,
     "row-aba-excluded": 1638,
     "row-summary-excluded": 2875,
     "rows_S1_only_supplement": 10,
@@ -43,50 +47,50 @@
     "s1_window_san_fixed_rows": 20,
     "s1_window_team_seasons": 1579,
     "s1_window_unresolved_abbr_keys": 20,
-    "tenures": 29092,
-    "tenures-cross-checked": 10333,
-    "tenures-directly-evidenced": 3429,
-    "tenures-inferred": 12894,
-    "tenures-unresolved": 2436
+    "tenures": 31973,
+    "tenures-cross-checked": 10713,
+    "tenures-directly-evidenced": 3565,
+    "tenures-inferred": 12385,
+    "tenures-unresolved": 5310
   },
   "era_counts": {
     "1950-66": {
-      "cross-checked": 414,
-      "directly-evidenced": 42,
-      "inferred": 1469,
+      "cross-checked": 433,
+      "directly-evidenced": 49,
+      "inferred": 1443,
       "unresolved": 263
     },
     "1967-80": {
-      "cross-checked": 784,
-      "directly-evidenced": 137,
-      "inferred": 1835,
-      "unresolved": 674
+      "cross-checked": 824,
+      "directly-evidenced": 147,
+      "inferred": 1785,
+      "unresolved": 675
     },
     "1981-99": {
-      "cross-checked": 2753,
-      "directly-evidenced": 615,
-      "inferred": 4247,
+      "cross-checked": 2938,
+      "directly-evidenced": 654,
+      "inferred": 4025,
       "unresolved": 218
     },
     "2000-2025/26": {
-      "cross-checked": 6278,
-      "directly-evidenced": 2633,
-      "inferred": 4980,
-      "unresolved": 4110
+      "cross-checked": 6412,
+      "directly-evidenced": 2711,
+      "inferred": 4773,
+      "unresolved": 4111
     },
     "BAA 1946-49": {
-      "cross-checked": 104,
-      "directly-evidenced": 2,
-      "inferred": 363,
+      "cross-checked": 106,
+      "directly-evidenced": 4,
+      "inferred": 359,
       "unresolved": 43
     }
   },
   "pair_analysis": {
-    "distinct_player_pairs_with_positive_overlap": 137668,
+    "distinct_player_pairs_with_positive_overlap": 137759,
     "pair_breakdown": {
-      "both-evidenced": 41140,
-      "involves-inferred": 86212,
-      "involves-unresolved": 10316
+      "both-evidenced": 44506,
+      "involves-inferred": 82839,
+      "involves-unresolved": 10414
     }
   }
 }

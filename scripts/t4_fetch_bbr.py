@@ -15,8 +15,8 @@ Fetches the bounded, ordered subset of BRef league transaction pages
   after a longer 45 s back-off — a second failure is recorded as an *unresolved
   fetch*, never as proof that the historical record does not exist
 * every request (and every cache hit) is recorded in a JSONL request ledger with
-  UTC timestamp, status, bytes — the ledger is copied into docs/reports/t4/ and
-  summarized in the coverage report
+  subsecond UTC event timestamps; HTTP rows also include elapsed monotonic
+  start-to-start spacing. Historical second-resolution rows are preserved as-is.
 
 Parsing (offline, from cache): each page's dated transaction rows become records
 with date text, date precision (precise / fuzzy / unknown — fuzzy rows are NEVER
@@ -94,6 +94,27 @@ def page_cache_path(paths, league, year):
 
 
 # ------------------------------------------------------------------ ledger --
+def utc_timestamp_now():
+    """UTC event time with sub-second precision for new ledger rows."""
+    return datetime.now(timezone.utc).isoformat(timespec="microseconds").replace("+00:00", "Z")
+
+
+def http_ledger_record(action, url, outcome, attempt, started_utc,
+                       elapsed_since_previous_start_seconds):
+    """Build one request-start event with wall-clock and monotonic spacing evidence."""
+    ts_utc = started_utc.isoformat(timespec="microseconds").replace("+00:00", "Z")
+    return {
+        "ts_utc": ts_utc, "action": action, "url": url,
+        "status": outcome.status,
+        "bytes": len(outcome.body) if outcome.body else 0,
+        "attempt": attempt, "error": outcome.error or "",
+        "note": "throttled-response" if outcome.throttled()
+                else ("ok" if outcome.ok else "failed"),
+        "elapsed_since_previous_start_seconds": elapsed_since_previous_start_seconds,
+        "start_spacing_seconds": elapsed_since_previous_start_seconds,
+    }
+
+
 def ledger_append(ledger_path, record):
     os.makedirs(os.path.dirname(ledger_path), exist_ok=True)
     with open(ledger_path, "a", encoding="utf-8") as f:
@@ -164,9 +185,11 @@ def fetch_page_throttled(paths, url, ledger_path, state):
     cache = page_cache_path(paths, league, int(year_s))
     if os.path.exists(cache) and os.path.getsize(cache) > 0:
         ledger_append(ledger_path, {
-            "ts_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "ts_utc": utc_timestamp_now(),
             "action": "cache-hit", "url": url, "status": None,
             "bytes": os.path.getsize(cache), "attempt": 0,
+            "elapsed_since_previous_start_seconds": None,
+            "start_spacing_seconds": None,
             "note": "cached (no request)",
         })
         state["cache_hits"] += 1
@@ -178,22 +201,16 @@ def fetch_page_throttled(paths, url, ledger_path, state):
         wait = state["min_spacing"] - (now - state["last_request_start"])
         if wait > 0:
             time.sleep(wait)
-        # ledger timestamp = request START so the ledger itself shows the
-        # enforced start-to-start spacing (response timestamps would drift by
-        # the round-trip time)
-        started_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-        state["last_request_start"] = time.monotonic()
+        previous_start = state["last_request_start"]
+        started_monotonic = time.monotonic()
+        elapsed = (started_monotonic - previous_start) if previous_start else None
+        started_utc = datetime.now(timezone.utc)
+        state["last_request_start"] = started_monotonic
         out = http_get(url)
         ok = out.ok
-        ledger_append(ledger_path, {
-            "ts_utc": started_utc,
-            "action": "http-get" if attempt == 1 else "http-get-retry",
-            "url": url, "status": out.status,
-            "bytes": len(out.body) if out.body else 0,
-            "attempt": attempt,
-            "error": out.error or "",
-            "note": "throttled-response" if out.throttled() else ("ok" if ok else "failed"),
-        })
+        ledger_append(ledger_path, http_ledger_record(
+            "http-get" if attempt == 1 else "http-get-retry", url, out,
+            attempt, started_utc, elapsed))
         if ok:
             with open(cache, "wb") as f:
                 f.write(out.body)
@@ -204,7 +221,6 @@ def fetch_page_throttled(paths, url, ledger_path, state):
             return out.body, "http"
         if attempt == 1 and (out.throttled() or out.status is None or out.error):
             time.sleep(RETRY_BACKOFF_SECONDS)
-            state["last_request_start"] = 0.0  # retry waits a full spacing after backoff
             continue
         state["fetch_failures"] += 1
         state["failures"][league_year] = {
@@ -747,11 +763,14 @@ def main(argv):
     with open(os.path.join(T4_DIR, "bbr-request-ledger.csv"), "w",
               newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(["ts_utc", "action", "url", "status", "bytes", "attempt", "error", "note"])
+        w.writerow(["ts_utc", "action", "url", "status", "bytes", "attempt", "error", "note",
+                    "elapsed_since_previous_start_seconds", "start_spacing_seconds"])
         for r in led:
             w.writerow([r.get("ts_utc", ""), r.get("action", ""), r.get("url", ""),
                         r.get("status", ""), r.get("bytes", ""), r.get("attempt", ""),
-                        r.get("error", ""), r.get("note", "")])
+                        r.get("error", ""), r.get("note", ""),
+                        r.get("elapsed_since_previous_start_seconds", ""),
+                        r.get("start_spacing_seconds", "")])
     print(json.dumps(summary, indent=2, sort_keys=True))
     return 0
 
