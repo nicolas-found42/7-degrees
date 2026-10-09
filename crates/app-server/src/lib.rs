@@ -4,6 +4,7 @@
 pub mod chain_view;
 mod fixture_data;
 mod jev;
+pub mod query;
 pub mod report_data;
 pub mod search;
 mod stats_view;
@@ -76,6 +77,8 @@ fn app(state: AppState) -> Router {
         .route("/api/coverage", get(coverage))
         .route("/api/coverage/{player}", get(player_coverage))
         .route("/api/players", get(players))
+        .route("/api/query", get(query::api))
+        .route("/query", get(query::page))
         .route("/api/search", get(search::api))
         .route("/search", get(search::page))
         .route("/players/{id}", get(search::profile))
