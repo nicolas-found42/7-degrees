@@ -1,5 +1,6 @@
 {
-  "method": "Exact numeric sum of all actual Rust result lines, including zero-test/doc targets.",
+  "method": "Exact numeric sum of every actual test result: ok line, including zero-test/doc targets; no model inference.",
+  "command": "python3 -c \"import pathlib,re; rows=[tuple(map(int,x)) for x in re.findall(r'test result: ok\\\\. (\\\\d+) passed; (\\\\d+) failed; (\\\\d+) ignored',pathlib.Path('docs/reports/final-verification/logs/02-rust-workspace.log').read_text())]; print(tuple(map(sum,zip(*rows))))\"",
   "result_rows": [
     [
       0,
@@ -72,7 +73,7 @@
       0
     ],
     [
-      11,
+      10,
       0,
       0
     ],
@@ -147,9 +148,8 @@
       0
     ]
   ],
-  "total": {
-    "passed": 103,
-    "failed": 0,
-    "ignored": 7
-  }
+  "passed": 102,
+  "failed": 0,
+  "ignored": 7,
+  "log_sha256": "dd95d2003a16af0f3c366afde93b4dcd58c0f089164fe83a4368862671dcee65"
 }

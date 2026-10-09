@@ -29,8 +29,8 @@ loading transaction legs ...
   "tenures-inferred": 0,
   "tenures-unresolved": 4
 }
-................
+..................
 ----------------------------------------------------------------------
-Ran 90 tests in 0.020s
+Ran 92 tests in 0.023s
 
 OK
