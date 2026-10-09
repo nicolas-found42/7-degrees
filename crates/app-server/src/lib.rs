@@ -6,6 +6,7 @@ mod fixture_data;
 mod jev;
 pub mod query;
 pub mod report_data;
+pub mod resolution;
 pub mod search;
 mod stats_view;
 mod ui;
@@ -80,6 +81,8 @@ fn app(state: AppState) -> Router {
         .route("/api/query", get(query::api))
         .route("/query", get(query::page))
         .route("/api/search", get(search::api))
+        .route("/api/resolve", get(resolution::api))
+        .route("/resolve", get(resolution::page))
         .route("/search", get(search::page))
         .route("/players/{id}", get(search::profile))
         .route("/api/semantic-status", get(semantic_status))
