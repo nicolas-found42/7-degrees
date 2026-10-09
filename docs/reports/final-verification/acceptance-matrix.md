@@ -14,10 +14,10 @@ These rows correspond to the 38 numbered criteria in [the spec](../../specs/nba-
 | 8 | Era/team filter changes view, same graph definition | API and synthetic browser compare filtered neighbors and restoration; connection filters restrict returned chain view. Unfiltered evidence/chain detail links are explicitly labeled. |
 | 9 | Clarify uncertain required arguments before path | Query HTTP low-confidence/missing/ambiguous argument checks and browser uncertainty journey; frozen `.95` operation/Choice thresholds used by deployed constructors. |
 | 10 | Positive same-team roster overlap yields undirected edge | Fixture data-to-graph HTTP seam plus actual Acy/Bogut API: 121 days, both anchored records. No shared appearance requirement. |
-| 11 | Nonoverlap across aliases/cities creates no edge | Fixture API overlap/nonoverlap and franchise alias tests; T3 canonical crosswalk; deterministic interval arithmetic. |
+| 11 | Nonoverlap across aliases/cities creates no edge | Fixture API overlap/nonoverlap tests; T3 canonical crosswalk; deterministic interval arithmetic. |
 | 12 | Mid-season move requires overlapping stint | Temporal fixture HTTP seam; T4 dated examples and exclusion of season-only memberships; historical audit retains complex/repeated stints. |
-| 13 | Injured/inactive roster occupant still teammate | Fixture ingestion accepts inactive overlap; graph API tests verify link without shared game minutes. |
-| 14 | Non-NBA/BAA associations do not create links | Fixture league eligibility tests; T4 semantic role/source-scope corrections and excluded events, including G League flags. Original audit model/host disagreement retained. |
+| 13 | Injured/inactive roster occupant still teammate | Graph inputs contain roster intervals and no game-minute or injury-status gate. Fixture API links are created from tenure overlap alone; no separate historical injury case was live-exercised. |
+| 14 | Non-NBA/BAA associations do not create links | Report import accepts NBA/BAA tenure leagues; T4 semantic role/source-scope corrections and excluded events, including G League flags. Original audit model/host disagreement retained. |
 | 15 | Deduplicate repeated seasons/source rows | Fixture API asserts one undirected pair edge and merged evidence; full graph has 1,517 unique edges. |
 | 16 | Direct/one-mutual minimum degrees 1/2 | API fixture and synthetic browser direct/indirect; real Acy/Bogut degree 1. |
 | 17 | Ordered chain count equals degree | Connection/path HTTP tests, accessible A/B/C browser list, real two-player path. Shortest-path arithmetic is Rust. |
