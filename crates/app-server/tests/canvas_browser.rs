@@ -299,8 +299,7 @@ async fn rust_wasm_canvas_supports_pointer_keyboard_expansion_and_retains_chain_
         "v1:00"
     );
     assert_eq!(browser.call(json!({"op":"errors"})), json!([]));
-    let screenshot =
-        std::env::var("CANVAS_SCREENSHOT").unwrap_or_else(|_| "target/canvas-browser.png".into());
+    let screenshot = artifact;
     // A locator screenshot scrolls this panel into view and waits for stable paint.
     // Full-page capture alone can leave an offscreen cross-origin frame unpainted.
     browser.call(json!({"op":"screenshot","selector":"#edge-provenance-panel","path":format!("{screenshot}.real-panel.png")}));
