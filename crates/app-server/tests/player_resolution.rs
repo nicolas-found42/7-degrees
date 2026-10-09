@@ -383,3 +383,14 @@ async fn live_resolution_smoke_uses_the_runtime_service_and_pinned_catalog() {
         std::fs::write(path, serde_json::to_string_pretty(&receipt).unwrap()).unwrap();
     }
 }
+
+#[tokio::test]
+async fn calibrated_identity_policy_keeps_a_point_nine_four_choice_for_clarification() {
+    let r = get(
+        app(judgment("candidate_00", 0.99, 0.94, 0.99)),
+        "/api/resolve?q=Shaq",
+    )
+    .await;
+    assert_eq!(r["status"], "clarification");
+    assert!(r["player"].is_null());
+}

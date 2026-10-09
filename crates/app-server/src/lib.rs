@@ -10,6 +10,7 @@ pub mod ranking;
 pub mod report_data;
 pub mod resolution;
 pub mod search;
+mod semantic_policy;
 mod stats_view;
 mod ui;
 

@@ -1,0 +1,23 @@
+{
+  "model": "typesafe/jev-1.13",
+  "provider": "OpenRouter",
+  "date_utc": "2026-10-09",
+  "source_sha256": {
+    "docs/reports/t3/player-universe.csv": "81031c7e3cf95845060119a3347d3cf37ec60c6a24b0ced9978fb7df2e7e651d",
+    "docs/reports/t4/tenures.csv": "5dbff2a790e87941b6bb9cd9c05c6f91414ae0f47ae1f2992d8d3c230a4fc24e",
+    "docs/data/player-search-aliases.csv": "ca2bbd3d838ea8881068d3ff34f8818f6a313f2fb06d94b0a76fd528a6e94e3d"
+  },
+  "integration_base": "b107788",
+  "calibration_cases": 21,
+  "heldout_cases": 23,
+  "variants": [
+    "baseline",
+    "wording",
+    "order"
+  ],
+  "protocol": "Policy selected using calibration only; heldout does not change selection. Two weak-context/vague-era supplemental cases labeled before their first inference under the existing frozen policy.",
+  "initial_abort": "The initial run completed 17 calibration cases then failed on invalid fixture cursor 0. Status log retained; receipts were not checkpointed yet, so its tokens/cost are unknown and excluded from measured totals.",
+  "pilot": "A combined Choice/presence pilot was retained. The final grid separates these dimensions; selection uses only the original 21 calibration captures. Pilot heldout provider calls were made before correction, but their outcomes were not inspected to select thresholds. They are excluded from final metrics and remain in measurements.json.",
+  "boundaries": "Exactly 0.5 presence always clarifies after an HTTP regression caught the boundary. No frozen receipt has presence exactly 0.5; offline replay verifies unchanged recorded outcomes.",
+  "metrics": "Each row elapsed_ms measures complete service latency including lexical retrieval, provider work and deterministic operation. Per-call elapsed_ms is provider-transport time. Null metadata means unknown, never zero. All retained attempts remain in measurements; summary filters the final frozen policy."
+}

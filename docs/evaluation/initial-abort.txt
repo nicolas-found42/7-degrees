@@ -1,0 +1,22 @@
+Validated 42 labeled cases with explicit disjoint case IDs and splits
+calibration resolution-01: onealsh01
+calibration resolution-02: jordami01
+calibration resolution-03: jordami01
+calibration resolution-04: clarification
+calibration resolution-05: jamesmi01
+calibration resolution-06: no_match
+calibration resolution-07: no_match
+calibration resolution-08: no_match
+calibration resolution-09: acyqu01
+calibration resolution-10: clarification
+calibration query-21: connect
+calibration query-22: profile
+calibration query-23: neighbors
+calibration query-24: compare
+calibration query-25: unsupported
+calibration query-26: unsupported
+calibration query-27: profile
+
+thread 'main' (2747705) panicked at crates/app-server/src/bin/semantic-eval.rs:247:14:
+valid ranking case: RankingError { error: "unsupported shortest-chain cursor", status: 400 }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
