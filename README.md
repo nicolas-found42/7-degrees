@@ -15,7 +15,7 @@ The default app builds the real canonical NBA/BAA graph from committed T3 player
 and T4 dated-tenure reports. No raw source artifact or database server is needed at runtime.
 
 ```sh
-cargo run -p app-server
+./scripts/run-app.sh
 ```
 
 The server listens on <http://127.0.0.1:3000>. Set `NBA_PORT` for another localhost port,
@@ -43,11 +43,23 @@ establish the full historical teammate graph. See [T5 graph report](docs/reports
 Run the unchanged synthetic fixture explicitly for browser tests:
 
 ```sh
-NBA_DATA_MODE=fixture cargo run -p app-server
+NBA_DATA_MODE=fixture ./scripts/run-app.sh
 ```
 
-All application code is Rust, including the server-rendered UI: the served pages are plain
-HTML and contain no JavaScript.
+All application UI and graph interaction code is Rust. The server renders accessible HTML;
+the canvas compiles to WASM. `scripts/run-app.sh` builds the matching WASM and generated
+wasm-bindgen loader before starting the server. It requires the `wasm32-unknown-unknown`
+Rust target and wasm-bindgen CLI **0.2.129**. Generated JavaScript is only binding/bootstrap
+glue; no JavaScript graph or UI library is used. `cargo run -p app-server` remains useful
+without canvas assets: accessible paths, lists and expansion forms stay available.
+
+- `/graph?from=acyqu01&to=bogutan01` — selected chain with Rust canvas exploration
+- `/graph?player=acyqu01&depth=2` — bounded nearby neighborhood without a second player
+- `/api/neighborhood?player=acyqu01&depth=1&limit=60` — deterministic node/context and
+  relationship facts; depth 1 or 2, maximum 200 nodes, explicit truncation warning
+
+WASM assets are generated under ignored `target/canvas-web`. Set `NBA_CANVAS_ASSET_DIR`
+when serving artifacts built elsewhere; the startup wrapper honors `CARGO_TARGET_DIR`.
 
 ## Jev (semantic) features and the safe fallback
 
@@ -77,3 +89,14 @@ Status: the canonical report loader and real dated-evidence graph (T5) are imple
 fixture API tests remain available unchanged. Server-side Jev client with safe fallback
 (T11) landed: see the "Jev (semantic) features and the safe fallback" section and
 `docs/reports/t11-jev-client.md`.
+Canvas browser smoke (after the WASM build):
+
+```sh
+./scripts/build-canvas.sh
+cargo test -p app-server --test canvas_browser -- --ignored --nocapture
+```
+
+The test starts its own fixture server with Jev unconfigured. The installed Node,
+Playwright and Chromium paths can be overridden with `BROWSER_NODE`,
+`PLAYWRIGHT_PACKAGE_PATH` and `BROWSER_EXECUTABLE`. Its screenshot defaults to
+ignored `target/canvas-browser.png` (`CANVAS_SCREENSHOT` overrides it).
