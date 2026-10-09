@@ -111,6 +111,17 @@ impl CanvasView {
         )));
         let _ = element.set_attribute("data-from", &e.from);
         let _ = element.set_attribute("data-to", &e.to);
+        let url = format!(
+            "/edge?from={}&to={}",
+            js_sys::encode_uri_component(&e.from).as_string().unwrap(),
+            js_sys::encode_uri_component(&e.to).as_string().unwrap()
+        );
+        if let Some(frame) = self.document.get_element_by_id("edge-provenance-frame") {
+            let _ = frame.set_attribute("src", &url);
+        }
+        if let Some(link) = self.document.get_element_by_id("open-selected-edge") {
+            let _ = link.set_attribute("href", &url);
+        }
         let detail = web_sys::CustomEventInit::new();
         detail.set_detail(&JsValue::from_str(&serde_json::to_string(e).unwrap()));
         if let Ok(event) =

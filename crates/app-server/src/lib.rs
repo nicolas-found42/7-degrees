@@ -5,6 +5,7 @@ pub mod chain_view;
 mod fixture_data;
 pub mod graph_view;
 mod jev;
+pub mod provenance;
 pub mod ranking;
 pub mod report_data;
 pub mod resolution;
@@ -78,6 +79,10 @@ pub fn app_with_jev_and_canvas_assets(
 
 fn app(state: AppState) -> Router {
     Router::new()
+        .route("/edge", get(provenance::page))
+        .route("/sources/tenure", get(provenance::source_record))
+        .route("/sources/manifest", get(provenance::manifest))
+        .route("/sources/transactions", get(provenance::transactions))
         .route("/assets/{asset}", get(graph_view::asset))
         .route("/graph", get(graph_view::page))
         .route("/api/neighborhood", get(graph_view::api))
@@ -145,7 +150,7 @@ pub fn app_with_report_data_and_canvas_assets(
     }))
 }
 
-fn edge_json(state: &AppState, edge: graph_core::TeammateEdge) -> serde_json::Value {
+pub(crate) fn edge_json(state: &AppState, edge: graph_core::TeammateEdge) -> serde_json::Value {
     let evidence: Vec<_> = edge.evidence.iter().map(|e| {
         let mut overlaps = Vec::new();
         if let Some(reports) = &state.reports {
@@ -159,6 +164,7 @@ fn edge_json(state: &AppState, edge: graph_core::TeammateEdge) -> serde_json::Va
                 }
             }
         }
+        else { overlaps = provenance::fixture_overlaps(state, &edge, &e.team); }
         // Each evidence item identifies a precise overlapping record pair.
         serde_json::json!({"team":e.team, "overlap_days":e.overlap_days,
             "records": overlaps.first().and_then(|v| v.get("records")).cloned().unwrap_or_else(|| serde_json::json!([])),

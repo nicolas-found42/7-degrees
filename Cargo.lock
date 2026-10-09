@@ -75,6 +75,7 @@ dependencies = [
  "api-types",
  "axum",
  "canvas-view",
+ "chrono",
  "csv",
  "env_logger",
  "fixture",
@@ -231,6 +232,15 @@ dependencies = [
  "cfg-if",
  "cpufeatures",
  "rand_core",
+]
+
+[[package]]
+name = "chrono"
+version = "0.4.45"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1aa79e62e7697b8e29b513a68abacf485adcd1fe8284a4316c5ae868e6633327"
+dependencies = [
+ "num-traits",
 ]
 
 [[package]]

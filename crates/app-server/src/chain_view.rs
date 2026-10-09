@@ -74,11 +74,13 @@ pub fn render_selected_chain(chain: &SelectedChain) -> String {
         .iter()
         .map(|link| {
             format!(
-                "<li>{} → {} — teammates on {}, overlapping roster tenure: {} day(s)</li>",
+                "<li>{} → {} — teammates on {}, overlapping roster tenure: {} day(s) <a href=\"/edge?from={}&amp;to={}\" target=\"_blank\" rel=\"noopener\">Open overlap evidence</a></li>",
                 ui::escape(name(&link.from)),
                 ui::escape(name(&link.to)),
                 ui::escape(&link.team),
                 link.overlap_days,
+                ui::url_encode(&link.from),
+                ui::url_encode(&link.to),
             )
         })
         .collect();
