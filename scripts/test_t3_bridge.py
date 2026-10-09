@@ -81,5 +81,22 @@ class BridgeRuleSafeguardTests(unittest.TestCase):
         self.assertEqual(result[:2], ("initial-surname+dob-window", "richano01"))
 
 
+
+
+class OfficialAppearanceUniverseTests(unittest.TestCase):
+    def test_postseason_only_player_survives_missing_season_metadata(self):
+        from t3_reconcile import s1_official_supplements
+        identities = {
+            '42': ('Playoff Only', 'S1-only-has-play-by-play', None),
+            '43': ('Inactive Only', 'S1-only-inactive-list-only', None),
+            '44': ('Already Known', 'name+dob', 'known01'),
+            '45': ('ABA Only', 'matches-ABA-only-player', 'aba01'),
+            '46': ('', 'S1-only-has-play-by-play', None),
+        }
+        appearances = [(2022, '42', 'MIL'), (2022, '44', 'MIL'), (2022, '46', 'MIL')]
+        expected = {'42': ('nba:42', 'Playoff Only', (2022,))}
+        self.assertEqual(s1_official_supplements(identities, appearances), expected)
+        self.assertEqual(s1_official_supplements(identities, list(reversed(appearances))), expected)
+
 if __name__ == "__main__":
     unittest.main()

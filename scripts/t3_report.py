@@ -56,7 +56,7 @@ def pbp_only_ids_bridged():
         "name+dob", "name-match-s2-dob-NA", "name-only", "lastname+dob",
         "initial-surname+dob-window", "curated-alias", "surname-fuzzy+dob-window",
         "lastname-s2dob-NA", "surname+career-span", "initial+surname",
-        "unique-surname", "DOB-conflict",
+        "unique-surname", "DOB-conflict", "S1-official-appearance",
     }
     pbp_only = set()
     with open(p, encoding="utf-8") as f:
@@ -120,12 +120,12 @@ def main():
     A("")
     total_s1 = R["s1_players"] + R["s1_pbp_ids_missing_from_player_table"]
     A(md_table(["question", "result"], [
-        ["canonical NBA/BAA player universe (S2, seasons 1947–2026)",
-         "**%s players** (31,701 NBA/BAA player-season rows; BAA 582 + NBA 31,119, minus"
-         " 2,875 duplicate `nTM` summary rows already excluded from the 31,701)" % f"{R['universe_size']:,}"],
+        ["canonical NBA/BAA player universe (S2 + official S1 appearances)",
+         "**%s players** (%s S2 NBA/BAA players + %s named S1 official-game players absent from S2)"
+         % (f"{R['universe_size']:,}", f"{R['s2_nba_baa_players']:,}", R.get("s1_official_supplements", 0))],
         ["S1-evidenced person IDs bridged into the universe (player table + recovered PBP-only IDs)",
          "%s of %s" % (f"{R.get('s1_universe_members', 0):,}", f"{total_s1:,}")],
-        ["S1-only people (no S2 row at all; not in the universe)",
+        ["Unresolved S1-only people (no canonical identity)",
          "%s (S1 pbp-only ids: %s; detailed in the register)" % (R["s1_no-match"], R["s1_pbp_ids_missing_from_player_table"])],
         ["ABA-only classifications (excluded from the universe)",
          "%s S2 players are ABA-only; %s S1 people match an ABA-only S2 player" % (R["s2_aba_only_players"], R.get("s1_matches-only-player", 0))],
@@ -162,12 +162,14 @@ def main():
     A("**Definition (spec):** a person with at least one official NBA/BAA regular-season or")
     A("postseason game appearance. ABA-only players are excluded.")
     A("")
-    A("**Resolution.** The universe is keyed on S2 BBR person slugs — the only source whose")
-    A("league tagging (BAA/NBA/ABA) and season-team rows exist for every era. S1 (NBA API ids)")
-    A("and S3 (NBA API ids) bridge into it by name + birth date; see §3.")
+    A("**Resolution.** S2 BBR person slugs establish the season-statistics baseline across")
+    A("NBA/BAA/ABA eras. Named S1 players with positive gameplay events in official")
+    A("regular-season or postseason games remain in scope even when S2 omits them.")
+    A("Their canonical key is `nba:<person_id>`; it is not a fabricated BBR slug.")
+    A("S1 and S3 identities bridge by name + birth date; see §3.")
     A("")
     A(md_table(["item", "count"], [
-        ["universe size (S2 NBA/BAA players, seasons 1947–2026)", f"**{R['universe_size']:,}**"],
+        ["universe size (S2 baseline plus official S1 appearances)", f"**{R['universe_size']:,}**"],
         ["S1 people inside the universe (bridged)", f"{R.get('s1_universe_members', 0):,}"],
         ["S1 people outside it", f"{total_s1 - R.get('s1_universe_members', 0):,}"],
         ["S2 universe players with an S3 id", f"{R['s2_to_s3_bridged']:,}"],
@@ -179,7 +181,7 @@ def main():
     A("`docs/reports/t3/player-universe.csv` — one row per universe player:")
     A("`bbr_player_id, display_name, birth_date, leagues, first_season, last_season,")
     A("nba_baa_season_rows, aba_only, s1_player_id, s1_match_class, s1_display_name,")
-    A("s3_person_id, s3_bridge_method`.")
+    A("s3_person_id, s3_bridge_method, universe_source`.")
     A("")
     A("## 3. Player-identity reconciliation (S1 ↔ S2 ↔ S3)")
     A("")
@@ -268,13 +270,22 @@ def main():
         A("- **%s** (%d): %s" % (cl, subcounts.get(cl, 0),
           "; ".join("%s (%s)" % (n, pid) for n, pid in rows)))
     A("")
-    A("### 3c. Unresolved name ambiguities (if any)")
+    A("### 3c. Official appearances absent from S2")
+    A("")
+    A(md_table(["S1 id", "canonical player key", "name", "official-game seasons"], [
+        [pid, key, name, ", ".join(map(str, seasons))]
+        for pid, (key, name, seasons) in sorted(st.get("s1_official_supplements", {}).items())
+    ]))
+    A("These players are included; missing S2 rows remain explicit identity and membership disagreements.")
+    A("Nameless S1 references remain in the review register rather than creating speculative duplicate people.")
+    A("")
+    A("### 3d. Unresolved name ambiguities (if any)")
     A("")
     for n, pid, s2p, cn, f in classes.get("ambiguous-name", [])[:3]:
         A("- S1 `%s` (%s): display-name only, DOB missing in S1, multiple S2 candidates —"
           " left unresolved (listed in the register)." % (n, pid))
     A("")
-    A("### 3d. S1 matches to ABA-only players")
+    A("### 3e. S1 matches to ABA-only players")
     A("")
     abam = classes.get("matches-ABA-only-player", [])
     A("Count: **%s**. Examples: %s" % (len(abam),
@@ -293,6 +304,7 @@ def main():
     ]))
     A("")
     A("S2→S3 bridge methods: " + json.dumps(R["s2_to_s3_methods"]))
+    A("All missing S3 identities and direct-name DOB conflicts are also listed in `unresolved-player-cases.csv`.")
     A("")
     A("## 5. Player-season-team membership reconciliation")
     A("")
@@ -302,7 +314,7 @@ def main():
     A("- **S1 side**: distinct (season, person, team) from `play_by_play` on Regular Season + Playoffs games, seasons 1997–2023 (S1 has no per-player evidence before 1996-97; `game` ends 2022-23).")
     A("")
     _pbp_only = pbp_only_ids_bridged()
-    A("+ %s S1 pbp references person ids that `player` omits (recovered from pbp names; %s of those bridged into the universe)."
+    A("+ %s S1 pbp references person ids that `player` omits (recovered from pbp names; %s of those included in the universe)."
       % (R["s1_pbp_ids_missing_from_player_table"],
          _pbp_only if _pbp_only is not None else "see register"))
     A("")
@@ -314,7 +326,7 @@ def main():
         ["S2-only (`S1-pbp-shows-other-teams-same-season`)", st["diff_shape_counts"].get("S1-pbp-shows-other-teams-same-season", 0),
          "both sources have the (season, player) but the team sets disagree — real disagreements, individually reviewed"],
         ["S1-only (S1 pbp row without an S2 row)", R["m2_rows_s1_only"],
-         "late-season 10-day/playoff stints S2's scrape missed — all %s individually listed below" % R["m2_rows_s1_only"]],
+         "S1 official-game memberships absent from S2 — all %s individually listed below" % R["m2_rows_s1_only"]],
         ["S2-only, season ≥2024", R["m1a_rows_s2_only_season_gt_2023"],
          "structural: S1 `game` ends 2022-23 — no S1 comparison possible"],
     ]))
@@ -324,7 +336,7 @@ def main():
     A("")
     mm_rows = list(csv.DictReader(open(os.path.join(T3_DIR, "membership-mismatches.csv"))))
     s1only = [r for r in mm_rows if r["class"] == "S1-only"]
-    A(md_table(["season", "player (S2 name)", "canonical franchise", "S1 id/name"], [
+    A(md_table(["season", "player (canonical name)", "canonical franchise", "S1 id/name"], [
         [r["season"], r["bbr_name"], r["canonical_franchise"], "%s / %s" % (r["s1_player_id"], r["s1_name"])]
         for r in s1only
     ]))
@@ -439,10 +451,9 @@ def main():
       % (R["s1_pbp_ids_missing_from_player_table"],
          max(0, R["s1_pbp_ids_missing_from_player_table"] - (_pbp_only or 0))))
     A("   listed in `unresolved-player-cases.csv`.")
-    no_s1 = {p for p in st["universe"] if p not in st["s2_to_s1"]}
-    no_s1_s3 = len([p for p in no_s1 if p in st["s2_to_s3"]])
+    no_s1_s3 = len([p for p in st["uni_no_s1_pre2023"] if p in st["s2_to_s3"]])
     A("5. %s universe players (debut ≤2023) with no S1 identity — S1's `player` export is"
-      " incomplete for recent seasons; S3 covers %s of them by name+dob."
+      " incomplete for recent seasons; S3 covers %s of those same players."
       % (R["uni_no_s1_pre2023"], no_s1_s3))
     A("6. The ticket's suggested `lg`-column location (\"Player Career Info.csv\") does not")
     A("   exist; ABA classification uses `Player Season Info.csv` `lg`. Recorded per the")

@@ -5,7 +5,7 @@ spec: `docs/specs/nba-teammate-degrees.md` · glossary: `GLOSSARY.md` ·
 inputs: T3 artifacts (`docs/reports/t3/`), S1 `game` season windows,
 cached Basketball-Reference transaction pages (this report §4).
 
-Report generated 2026-10-09 08:09 UTC by `scripts/t4_reconcile.py` + `scripts/t4_report.py`
+Report generated 2026-10-09 20:07 UTC by `scripts/t4_reconcile.py` + `scripts/t4_report.py`
 (fetch pass: `scripts/t4_fetch_bbr.py`; tests: `scripts/test_t4_core.py`,
 `scripts/test_t4_reconcile.py`, `scripts/test_t4_fetch_bbr.py`). Artifacts retained under `docs/reports/t4/`.
 
@@ -19,14 +19,14 @@ Report generated 2026-10-09 08:09 UTC by `scripts/t4_reconcile.py` + `scripts/t4
 
 | question | result |
 |---|---|
-| membership rows reconstructed (universe players, NBA/BAA) | 28,836 rows (S2 28,826 + S1-only supplements 10) |
-| tenure records (incl. multi-stint and unresolved membership rows) | 31,973 records from 28,836 membership rows; 29,099 have interval bounds, 2,874 have no constructible interval |
-| season-window coverage on tenure records | 28,652 with a season window; 3,321 without one |
-| directly evidenced tenures (both bounds from dated transactions) | 3,565 (11.2%) |
+| membership rows reconstructed (universe players, NBA/BAA) | 28,837 rows (S2 28,826 + S1-only supplements 11) |
+| tenure records (incl. multi-stint and unresolved membership rows) | 31,974 records from 28,837 membership rows; 29,100 have interval bounds, 2,874 have no constructible interval |
+| season-window coverage on tenure records | 28,653 with a season window; 3,321 without one |
+| directly evidenced tenures (both bounds from dated transactions) | 3,565 (11.1%) |
 | cross-checked (transaction + independent season-window agreement) | 10,713 (33.5%) |
-| inferred (season-window bracket only) | 12,385 (38.7%) |
+| inferred (season-window bracket only) | 12,386 (38.7%) |
 | unresolved (flagged, not invented) | 5,310 (16.6%) |
-| distinct player pairs with a positive tenure overlap (potential edges) | 137,759 (44,506 both-evidenced / 82,839 involves-inferred / 10,414 involves-unresolved) |
+| distinct player pairs with a positive tenure overlap (potential edges) | 137,788 (44,506 both-evidenced / 82,865 involves-inferred / 10,417 involves-unresolved) |
 | 1946-1950 BAA source coverage gap | explicitly carried (§6; BAA-era evidence is structurally thinner) |
 
 ## 1. What a tenure is here
@@ -43,7 +43,7 @@ of two tenures on the same franchise — adjacency alone (`[a,b)` + `[b,c)`)
 creates no edge day and no edge.
 
 Membership baseline: T3's canonical player-season-team rows (S2 NBA/BAA rows
-plus the 12 S1-only supplements from T3 §5), 5,105-player universe, canonical
+plus the 11 S1-only supplements from T3 §5), 5,106-player universe, canonical
 franchise ids from `franchise-crosswalk.csv`.
 
 ## 2. How tenures are constructed
@@ -86,9 +86,9 @@ For each (universe player, canonical franchise, season) membership row:
 
 | evidence class | tenures | share | meaning |
 |---|---|---|---|
-| directly-evidenced | 3,565 | 11.2% | both bounds anchored by dated transaction rows (season-window agreement recorded alongside when present) |
+| directly-evidenced | 3,565 | 11.1% | both bounds anchored by dated transaction rows (season-window agreement recorded alongside when present) |
 | cross-checked | 10,713 | 33.5% | one transaction-anchored bound + independent season-window agreement (two sources corroborate the bounds) |
-| inferred | 12,385 | 38.7% | season-window bracket only (membership season + S1 games) |
+| inferred | 12,386 | 38.7% | season-window bracket only (membership season + S1 games) |
 | unresolved | 5,310 | 16.6% | flagged: conflicts / fuzzy / same-day ordering / ambiguous source evidence — needs review |
 
 **Per era** (era boundaries per spec Source validation):
@@ -99,7 +99,7 @@ For each (universe player, canonical franchise, season) membership row:
 | 1950-66 | 2,188 | 49 | 433 | 1,443 | 263 |
 | 1967-80 | 3,431 | 147 | 824 | 1,785 | 675 |
 | 1981-99 | 7,835 | 654 | 2,938 | 4,025 | 218 |
-| 2000-2025/26 | 18,007 | 2,711 | 6,412 | 4,773 | 4,111 |
+| 2000-2025/26 | 18,008 | 2,711 | 6,412 | 4,774 | 4,111 |
 
 BAA-era tenures are mostly **inferred**: S1 `game` windows exist,
 but BBR 1946-50 transaction rows are sparse and partly fuzzy-dated;
@@ -130,7 +130,7 @@ Numbers below separate this pass from the ledger's lifetime record.
 | request ledger lifetime: HTTP requests issued | 79 |
 | historical whole-second timestamp precision / minimum adjacent delta | whole-second; 4.0 s (not proof of configured minimum) |
 | …by status | 200: 79 |
-| request ledger lifetime: cache hits (no request issued) | 641 |
+| request ledger lifetime: cache hits (no request issued) | 721 |
 | retry attempts | 0 |
 | retries that then succeeded | 0 |
 | **unresolved fetches (pages)** | 0 |
@@ -200,7 +200,7 @@ requests and just re-parses the cached pages.
 |---|---|
 | departure-after-closed-stint | 2748 |
 | no-season-window | 1349 |
-| same-day-arrival-and-departure | 1182 |
+| same-day-arrival-and-departure | 1188 |
 | open-stint-without-window | 1151 |
 | no-dated-evidence | 1009 |
 | repeat-signing-continues-open-stint | 665 |
@@ -251,12 +251,12 @@ Concretely:
 
 | item | count |
 |---|---|
-| tenure intervals with constructed bounds | 29,099 |
-| membership/franchise-season tenure records (incl. unresolved no-interval rows) | 31,973 |
-| distinct player pairs with positive tenure overlap (potential teammate edges, pre-dedup across teams) | 137,759 |
+| tenure intervals with constructed bounds | 29,100 |
+| membership/franchise-season tenure records (incl. unresolved no-interval rows) | 31,974 |
+| distinct player pairs with positive tenure overlap (potential teammate edges, pre-dedup across teams) | 137,788 |
 | …both tenures transaction/season-agreement evidenced | 44,506 |
-| …at least one inferred tenure | 82,839 |
-| …at least one unresolved tenure (edge blocked until resolved) | 10,414 |
+| …at least one inferred tenure | 82,865 |
+| …at least one unresolved tenure (edge blocked until resolved) | 10,417 |
 | membership duplicates/summary rows excluded (2TM/3TM/TOT) | 2,875 |
 
 Pair counts are *upper bounds on edges*: the graph build deduplicates

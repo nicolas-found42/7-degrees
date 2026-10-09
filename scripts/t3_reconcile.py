@@ -448,6 +448,23 @@ class Bridge:
         return None, None
 
 
+def s1_official_supplements(identities, appearance_rows):
+    """Preserve named official-game players absent from S2 under an NBA id key.
+
+    Callers supply RS/PO appearance evidence, never an inactive roster entry.
+    Nameless ids remain unresolved because inventing a person would duplicate
+    already-known players. The reserved namespace never pretends to be a BBR slug.
+    """
+    seasons = defaultdict(set)
+    for season, pid, _team in appearance_rows:
+        seasons[pid].add(season)
+    return {
+        pid: ("nba:" + pid, name, tuple(sorted(seasons[pid])))
+        for pid, (name, cls, target) in sorted(identities.items())
+        if target is None and name and cls == "S1-only-has-play-by-play" and pid in seasons
+    }
+
+
 # ---------------------------------------------------------------------- main --
 def main():
     data_dir = sys.argv[1] if len(sys.argv) > 1 else os.path.join(REPO, "data")
@@ -590,7 +607,7 @@ def main():
         s1_dob.setdefault(pid, s3_dob.get(pid) or None)
 
     s1_to_s2 = {}
-    for pid in set(s1["players"]) | set(pbp_only_names):
+    for pid in sorted(set(s1["players"]) | set(pbp_only_names), key=int):
         forms = set(s1_name_forms[pid])
         cls, s2pid, detail = bridge.match(forms, s1_dob.get(pid), s1_span=s1_span.get(pid))
         if cls == "no-match":
@@ -641,6 +658,34 @@ def main():
             sub = "S1-only-no-pbp-evidence"
         s1_to_s2[pid] = (name, sub, None)
         no_match_sub[pid] = sub
+
+    # S2 season metadata misses postseason-only players (e.g. Luca Vildoza).
+    # Require an actual scoring/shot/rebound/turnover event in an official game;
+    # a bench technical or roster/substitution reference alone is insufficient.
+    qualifying = []
+    for name, pid, _, _, _ in classes["no-match"]:
+        if not name or no_match_sub[pid] != "S1-only-has-play-by-play":
+            continue
+        for season, abbr in con.execute(
+            "select distinct substr(g.season_id,2,4)+1, p.player1_team_abbreviation "
+            "from play_by_play p join game g using(game_id) where p.player1_id=? "
+            "and p.eventmsgtype in (1,2,3,4,5) "
+            "and g.season_type in ('Regular Season','Playoffs')", (int(pid),)):
+            if resolve_s1_abbr(era_idx, int(season), abbr):
+                qualifying.append((int(season), pid, abbr))
+    supplements = s1_official_supplements(s1_to_s2, qualifying)
+    for pid, (key, name, seasons) in supplements.items():
+        nba_baa.add(key)
+        s2_cname[key] = name
+        s2_dob[key] = s1_dob.get(pid)
+        s2_lg[key] = {"NBA"}
+        s2_seasons[key] = list(seasons)
+        s1_to_s2[pid] = (name, "S1-official-appearance", key)
+        classes["S1-official-appearance"].append(
+            (name, pid, key, name, "Official RS/PO appearance; no S2 identity or season row"))
+    classes["no-match"] = [r for r in classes["no-match"] if r[1] not in supplements]
+    R["s1_no-match"] = len(classes["no-match"])
+    R["s1_official_supplements"] = len(supplements)
 
     # ---- universe composition ----------------------------------------------
     universe = sorted(nba_baa)
@@ -721,7 +766,7 @@ def main():
     bridged_classes = {"name+dob", "lastname+dob", "name-match-s2-dob-NA", "name-only",
                        "curated-alias", "DOB-conflict", "initial-surname+dob-window",
                        "surname-fuzzy+dob-window", "lastname-s2dob-NA", "surname+career-span",
-                       "initial+surname", "unique-surname"}
+                       "initial+surname", "unique-surname", "S1-official-appearance"}
     bridged_for_membership = {p for p, (_n, cls, _s) in s1_to_s2.items()
                               if cls in bridged_classes and _s is not None}
     s1_side = defaultdict(set)   # (season, s2pid) -> canon franchise ids seen in S1 pbp
@@ -837,7 +882,7 @@ def main():
             forms |= name_variants(f)
         dob = s2_dob.get(p)
         hit_s1 = s2_to_s1.get(p)
-        cand_s1p = [s1p for s1p, _ in (hit_s1 or [])]
+        cand_s1p = sorted([s1p for s1p, _ in (hit_s1 or []) if s1p in s3_by_id], key=int)
         # direct (S2 name form) -> S3 id, with DOB checks
         cands = set()
         for f in forms:
@@ -870,7 +915,7 @@ def main():
             samples[("S2-slug-vs-S3-id-mismatch", None)].append((s2_cname[p], p, s3p))
     for p, cands in s3_ambiguous[:50]:
         samples[("S2-to-S3-ambiguous", None)].append((s2_cname[p], p, ",".join(cands)))
-    uni_no_s3 = {p for p in uni_no_s1 if p not in s2_to_s3}
+    uni_no_s3 = {p for p in universe if p not in s2_to_s3}
     for p in sorted(uni_no_s3):
         samples[("S2-universe-no-S3-id", era_for_s2pid(p))].append((s2_cname[p], p))
 
@@ -886,25 +931,30 @@ def main():
     def s1_cls_of(p):
         return ";".join(sorted({c for _, c in s2_to_s1.get(p, [])})) or "no-S1-match"
     def s1_names_of(p):
-        return ";".join(sorted(s1["players"].get(s1p, "") for s1p, _c in s2_to_s1.get(p, [])))
+        return ";".join(sorted((s1["players"].get(s1p) or pbp_only_names.get(s1p, "")) for s1p, _c in s2_to_s1.get(p, [])))
     write_csv(
         os.path.join(T3_DIR, "player-universe.csv"),
         ["bbr_player_id", "display_name", "birth_date", "leagues", "first_season", "last_season",
          "nba_baa_season_rows", "aba_only", "s1_player_id", "s1_match_class", "s1_display_name",
-         "s3_person_id", "s3_bridge_method"],
+         "s3_person_id", "s3_bridge_method", "universe_source"],
         [[p, s2_cname[p], s2_dob.get(p) or "", "|".join(sorted(s2_lg[p])), min(s2_seasons[p]),
           max(s2_seasons[p]), s2_rowcount[p], "N",
-          s1_ids_of(p), s1_cls_of(p), s1_names_of(p), s3_id_of(p), s3_method_of(p)]
+          s1_ids_of(p), s1_cls_of(p), s1_names_of(p), s3_id_of(p), s3_method_of(p),
+          "S1-official-appearance" if p.startswith("nba:") else "S2-season-statistics"]
          for p in universe])
     write_csv(
         os.path.join(T3_DIR, "unresolved-player-cases.csv"),
         ["source", "class", "display_name", "source_id", "other_id", "other_name", "detail"],
         [[src, no_match_sub.get(row[1], cls) if cls == "no-match" else cls, *row]
-         for src, cc in (("S1", classes),) for cls, rows in cc.items() for row in rows]
+         for src, cc in (("S1", classes),) for cls, rows in sorted(cc.items()) for row in sorted(rows, key=lambda r: r[1])]
         + [["S2", "no-S1-match-pre-2023", s2_cname[p], p, "", "", ""] for p in sorted(uni_no_s1_pre2023)]
         + [["S2", "no-S1-match-2024-plus", s2_cname[p], p, "", "", ""] for p in sorted(uni_no_s1_post2023)]
         + [["S3", "S3-only-not-in-S1", s3_by_id[p]["DISPLAY_FIRST_LAST"], p, "", "", ""]
-           for p in sorted(s3_ids - set(s1["players"]))],
+           for p in sorted(s3_ids - set(s1["players"]))]
+        + [["S2", "no-S3-id", s2_cname[p], p, "", "", ""] for p in sorted(uni_no_s3)]
+        + [["S3", "name-DOB-conflict", s3_by_id[sp]["DISPLAY_FIRST_LAST"], sp, p,
+            s2_cname[p], "S3 DOB=" + str(s3_dob.get(sp)) + "; S2 DOB=" + str(s2_dob.get(p))]
+           for p, (sp, method) in sorted(s2_to_s3.items()) if method == "name-DOB-conflict"],
     )
     write_csv(
         os.path.join(T3_DIR, "membership-mismatches.csv"),
@@ -913,7 +963,7 @@ def main():
                 for s, p, c in sorted(m1a_lte2023)]
                + [["S2-only", s, c, p, s2_cname.get(p, ""), "", "", "S1-ends-2022-23"]
                   for s, p, c in sorted(m1a_gt2023)]
-               + [["S1-only", s, c, p, s2_cname.get(p, ""), sp, s1["players"].get(sp, ""), ""]
+               + [["S1-only", s, c, p, s2_cname.get(p, ""), sp, (s1["players"].get(sp) or pbp_only_names.get(sp, "")), ""]
                   for s, p, c in sorted(m2)
                   for sp in ([s1p for s1p, (_n, _c, s2p2) in s1_to_s2.items() if s2p2 == p][:1] or [""])]),
     )
@@ -951,7 +1001,7 @@ def main():
              "s2_to_s3": s2_to_s3, "s3_ambiguous": s3_ambiguous,
              "diff_shape_counts": dict(Counter(diff_shape.values())),
              "no_match_sub": no_match_sub, "pbp_only_names": pbp_only_names,
-             "uni_no_s3": sorted(uni_no_s3),
+             "uni_no_s3": sorted(uni_no_s3), "s1_official_supplements": supplements,
              "canon_counts": dict(Counter(canon_of_s2row.values())),
              "samples": dict(samples), "pbp_pids_size": len(pbp_pids), "inact_pids_size": len(inact_pids),
              "s1_dob_missing": sum(1 for v in s1_dob.values() if not v),

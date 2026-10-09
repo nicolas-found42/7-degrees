@@ -12,7 +12,7 @@ Sources (pinned snapshot, see the manifest for versions/checksums):
 - **S3** — Kaggle `romainmorleghem/nba-players-info-and-headlinestats-up-to-2025` v1,
   `data/romainmorleghem/CommonPlayerInfo_ALL.csv` (NBA API `commonplayerinfo` ids).
 
-Report generated 2026-10-09 07:58 UTC by `scripts/t3_reconcile.py` + `scripts/t3_report.py`
+Report generated 2026-10-09 20:07 UTC by `scripts/t3_reconcile.py` + `scripts/t3_report.py`
 (reproduce: `python3 scripts/t3_reconcile.py [data_dir] && python3 scripts/t3_report.py`).
 All artifacts referenced below are retained under `docs/reports/t3/`.
 
@@ -28,13 +28,13 @@ All artifacts referenced below are retained under `docs/reports/t3/`.
 
 | question | result |
 |---|---|
-| canonical NBA/BAA player universe (S2, seasons 1947–2026) | **5,105 players** (31,701 NBA/BAA player-season rows; BAA 582 + NBA 31,119, minus 2,875 duplicate `nTM` summary rows already excluded from the 31,701) |
-| S1-evidenced person IDs bridged into the universe (player table + recovered PBP-only IDs) | 4,793 of 4,824 |
-| S1-only people (no S2 row at all; not in the universe) | 31 (S1 pbp-only ids: 9; detailed in the register) |
+| canonical NBA/BAA player universe (S2 + official S1 appearances) | **5,106 players** (5,105 S2 NBA/BAA players + 1 named S1 official-game players absent from S2) |
+| S1-evidenced person IDs bridged into the universe (player table + recovered PBP-only IDs) | 4,794 of 4,824 |
+| Unresolved S1-only people (no canonical identity) | 30 (S1 pbp-only ids: 9; detailed in the register) |
 | ABA-only classifications (excluded from the universe) | 311 S2 players are ABA-only; 0 S1 people match an ABA-only S2 player |
-| S2↔S3 identity bridge | 5075 of 5105 universe players carry an S3 NBA-API id (99.4%) |
+| S2↔S3 identity bridge | 5076 of 5106 universe players carry an S3 NBA-API id (99.4%) |
 | franchise crosswalk | 1818 of 1818 S2 season-team rows resolve to one canonical franchise id; 0 ambiguous |
-| player-season-team membership diff (both directions, seasons ≤2023 usable for S1) | S2-only: 12,734 (shape breakdown below) · S1-only: 10 |
+| player-season-team membership diff (both directions, seasons ≤2023 usable for S1) | S2-only: 12,734 (shape breakdown below) · S1-only: 11 |
 
 ## 1. Sources and headline counts
 
@@ -56,16 +56,18 @@ All artifacts referenced below are retained under `docs/reports/t3/`.
 **Definition (spec):** a person with at least one official NBA/BAA regular-season or
 postseason game appearance. ABA-only players are excluded.
 
-**Resolution.** The universe is keyed on S2 BBR person slugs — the only source whose
-league tagging (BAA/NBA/ABA) and season-team rows exist for every era. S1 (NBA API ids)
-and S3 (NBA API ids) bridge into it by name + birth date; see §3.
+**Resolution.** S2 BBR person slugs establish the season-statistics baseline across
+NBA/BAA/ABA eras. Named S1 players with positive gameplay events in official
+regular-season or postseason games remain in scope even when S2 omits them.
+Their canonical key is `nba:<person_id>`; it is not a fabricated BBR slug.
+S1 and S3 identities bridge by name + birth date; see §3.
 
 | item | count |
 |---|---|
-| universe size (S2 NBA/BAA players, seasons 1947–2026) | **5,105** |
-| S1 people inside the universe (bridged) | 4,793 |
-| S1 people outside it | 31 |
-| S2 universe players with an S3 id | 5,075 |
+| universe size (S2 baseline plus official S1 appearances) | **5,106** |
+| S1 people inside the universe (bridged) | 4,794 |
+| S1 people outside it | 30 |
+| S2 universe players with an S3 id | 5,076 |
 | S2 universe players with no S1 row | 313 (of which 9 debut ≤2023) |
 | S2 universe players with no S3 id | 30 |
 | ABA-only players excluded (S2 classification) | 311 |
@@ -73,7 +75,7 @@ and S3 (NBA API ids) bridge into it by name + birth date; see §3.
 `docs/reports/t3/player-universe.csv` — one row per universe player:
 `bbr_player_id, display_name, birth_date, leagues, first_season, last_season,
 nba_baa_season_rows, aba_only, s1_player_id, s1_match_class, s1_display_name,
-s3_person_id, s3_bridge_method`.
+s3_person_id, s3_bridge_method, universe_source`.
 
 ## 3. Player-identity reconciliation (S1 ↔ S2 ↔ S3)
 
@@ -92,12 +94,12 @@ Basketball-Reference slugs in S2), so the bridge is **name + birth date**:
 | `initial+surname` | 0 | one-letter first name + surname, unique — accepted, flagged |
 | `DOB-conflict` | 142 | unique name but the sources disagree on the birth date — identity accepted, flagged for review |
 | `ambiguous-name` | 0 | same display name (no DOB disambiguation) — **not** bridged; listed below |
-| `no-match` → subclasses | 31 | no plausible S2 identity; subclassified into `S1-only-*` below |
+| `no-match` → subclasses | 30 | no plausible S2 identity; subclassified into `S1-only-*` below |
 | `matches-ABA-only-player` | 0 | S1 person matches an S2 ABA-only player (correctly outside the universe) |
 
 ### 3a. Every S1 ↔ S2 identity disagreement (register)
 
-`docs/reports/t3/unresolved-player-cases.csv` lists **all 5458 rows** (source, class, both ids, both names). Summaries:
+`docs/reports/t3/unresolved-player-cases.csv` lists **all 5493 rows** (source, class, both ids, both names). Summaries:
 
 | DOB-conflict magnitude (S1 vs S2 birth dates) | count |
 |---|---|
@@ -127,22 +129,30 @@ Top-10 `DOB-conflict` examples (S1 id ↔ S2 id, both names):
 
 | S1-only subclass | count | meaning |
 |---|---|---|
-| `S1-only-has-play-by-play` | 6 | S1 pbp evidences the person; S2 lacks the player entirely |
+| `S1-only-has-play-by-play` | 5 | S1 pbp evidences the person; S2 lacks the player entirely |
 | `S1-only-inactive-list-only` | 16 | present in S1 `inactive_players` (DNP roster slot) but never evidenced with stats by either source |
 | `S1-only-debut-2024-plus` | 0 | S1-only person debuting season 2024+ — S2 v56 (2026-04-13) predates their debut |
 | `S1-only-no-pbp-evidence` | 9 | S1 person with career years but no pbp-era evidence in either source (legacy-API ghost rows) |
 
 Top-10 by subclass (name — S1 id):
 
-- **S1-only-has-play-by-play** (6):  (471); Luca Vildoza (1630492);  (2794);  (775);  (1787);  (1277)
-- **S1-only-inactive-list-only** (16): Da'Sean Butler (202364); Tony Gaffney (202070); Trevon Bluiett (1629129); Curtis Jerrells (201998); Caleb Homesley (1630258); Diamon Simpson (202067); Magnum Rolle (202375); DJ Stewart (1630597); Kenny Wooten (1629624); Brian Butch (202221)
+- **S1-only-has-play-by-play** (5):  (471);  (775);  (1277);  (1787);  (2794)
+- **S1-only-inactive-list-only** (16): Herbert Hill (201195); Robert Vaden (201987); Curtis Jerrells (201998); Diamon Simpson (202067); Tony Gaffney (202070); Brian Butch (202221); Kenny Hasbrouck (202238); Terrico White (202358); Da'Sean Butler (202364); Magnum Rolle (202375)
 - **S1-only-debut-2024-plus** (0): 
-- **S1-only-no-pbp-evidence** (9): Marcus Mann (986); Marqus Blakely (202392); Wayne Englestad (76671); Rabbit Walthour (78448); Adolph Hoefer (77035); Francis Crossin (76479); Gene Gillette (76813); Buckshot O'Brien (77743); Herm Klotz (77284)
+- **S1-only-no-pbp-evidence** (9): Marcus Mann (986); Francis Crossin (76479); Wayne Englestad (76671); Gene Gillette (76813); Adolph Hoefer (77035); Herm Klotz (77284); Buckshot O'Brien (77743); Rabbit Walthour (78448); Marqus Blakely (202392)
 
-### 3c. Unresolved name ambiguities (if any)
+### 3c. Official appearances absent from S2
+
+| S1 id | canonical player key | name | official-game seasons |
+|---|---|---|---|
+| 1630492 | nba:1630492 | Luca Vildoza | 2022 |
+These players are included; missing S2 rows remain explicit identity and membership disagreements.
+Nameless S1 references remain in the review register rather than creating speculative duplicate people.
+
+### 3d. Unresolved name ambiguities (if any)
 
 
-### 3d. S1 matches to ABA-only players
+### 3e. S1 matches to ABA-only players
 
 Count: **0**. Examples: —
 
@@ -157,7 +167,8 @@ Count: **0**. Examples: —
 | …of those, with no S2 row at all | 34 | no NBA/BAA/ABA stats row in S2 |
 | S1 person absent from S3 | 1 | Makhtar N'Diaye (id 1626122; present in S1 `common_player_info`) |
 
-S2→S3 bridge methods: {"via-S1-bridge": 4792, "name-+dob": 278, "name-DOB-conflict": 5}
+S2→S3 bridge methods: {"via-S1-bridge": 4793, "name-+dob": 278, "name-DOB-conflict": 5}
+All missing S3 identities and direct-name DOB conflicts are also listed in `unresolved-player-cases.csv`.
 
 ## 5. Player-season-team membership reconciliation
 
@@ -166,20 +177,20 @@ Compared sets (season-scoped, canonical franchise ids on both sides):
 - **S2 side**: `Player Season Info.csv` NBA/BAA rows, excluding `2TM`/`3TM`/`4TM`/`5TM` summary rows — one row per (season, player, team).
 - **S1 side**: distinct (season, person, team) from `play_by_play` on Regular Season + Playoffs games, seasons 1997–2023 (S1 has no per-player evidence before 1996-97; `game` ends 2022-23).
 
-+ 9 S1 pbp references person ids that `player` omits (recovered from pbp names; 4 of those bridged into the universe).
++ 9 S1 pbp references person ids that `player` omits (recovered from pbp names; 4 of those included in the universe).
 
 | membership diff (S1-pbp era, seasons ≤2023) | rows | interpretation |
 |---|---|---|
 | S2-only (`S1-no-per-player-evidence-pre-1997`) | 12354 | structural: S1 has no per-player team evidence before 1996-97 — not a data disagreement |
 | S2-only (`S1-pbp-no-event-for-player`) | 330 | S1 pbp has no event for that player in that season — candidates: brief stints, pbp source gaps, identity edge cases |
 | S2-only (`S1-pbp-shows-other-teams-same-season`) | 50 | both sources have the (season, player) but the team sets disagree — real disagreements, individually reviewed |
-| S1-only (S1 pbp row without an S2 row) | 10 | late-season 10-day/playoff stints S2's scrape missed — all 10 individually listed below |
+| S1-only (S1 pbp row without an S2 row) | 11 | S1 official-game memberships absent from S2 — all 11 individually listed below |
 | S2-only, season ≥2024 | 1972 | structural: S1 `game` ends 2022-23 — no S1 comparison possible |
 
-**The 10 S1-only membership rows** (all verified against raw S2: the player's S2 rows)
+**The 11 S1-only membership rows** (all verified against raw S2: the player's S2 rows)
 skip that season or list only other teams):
 
-| season | player (S2 name) | canonical franchise | S1 id/name |
+| season | player (canonical name) | canonical franchise | S1 id/name |
 |---|---|---|---|
 | 2009 | Sam Cassell | CELTICS | 208 / Sam Cassell |
 | 2013 | Tracy McGrady | SPURS | 1503 / Tracy McGrady |
@@ -188,6 +199,7 @@ skip that season or list only other teams):
 | 2016 | Dorell Wright | HEAT | 2748 / Dorell Wright |
 | 2018 | Ty Lawson | WIZARDS | 201951 / Ty Lawson |
 | 2020 | Jaylen Adams | TRAIL BLAZERS | 1629121 / Jaylen Adams |
+| 2022 | Luca Vildoza | BUCKS | 1630492 / Luca Vildoza |
 | 2023 | DaQuan Jeffries | KNICKS | 1629610 / DaQuan Jeffries |
 | 2023 | Shaquille Harrison | LAKERS | 1627885 / Shaquille Harrison |
 | 2023 | Tristan Thompson | LAKERS | 202684 / Tristan Thompson |
@@ -198,7 +210,7 @@ S2 (his WSH 10-day contract is missing); Tristan Thompson's 2022-23 LAL stint (s
 Apr 2023) is missing from S2. These are genuine S2 (Basketball-Reference scrape)
 omissions and T4 must treat S2 as *incomplete* for late-season moves.
 
-`docs/reports/t3/membership-mismatches.csv` — all 14716 diff rows with the shape classification column (`diff_shape`).
+`docs/reports/t3/membership-mismatches.csv` — all 14717 diff rows with the shape classification column (`diff_shape`).
 
 ## 6. Franchise identities and the alias crosswalk
 
@@ -250,15 +262,15 @@ this report provides the sampling frames.
 
 | sample class | era | n | examples |
 |---|---|---|---|
-| DOB-conflict | — | 35 | ('Frank Mangiapane', '77453', 'Frank Mangiapane'); ('Joe Colone', '76422', 'Joe Colone'); ('Ray Wertis', '78494', 'Ray Wertis') … |
-| DOB-conflict | 1950-66 | 31 | ('Frank Reddout', '77925', 'Frank Reddout'); ('Win Wilfong', '78529', 'Win Wilfong'); ('Jim Walsh', '78446', 'Jim Walsh') … |
-| DOB-conflict | 1967-80 | 15 | ('George Carter', '76357', 'George Carter'); ('Mike Silliman', '78152', 'Mike Silliman'); ('Joe Thomas', '78321', 'Joe Thomas') … |
-| DOB-conflict | 1981-99 | 27 | ('Corey Williams', '101258', 'Corey Williams'); ('James Scott', '1109', 'James Scott'); ('Myles Patrick', '77808', 'Myles Patrick') … |
-| DOB-conflict | 2000-2025/26 | 34 | ('Hiram Fuller', '2673', 'Hiram Fuller'); ('Ben Uzoh', '202386', 'Ben Uzoh'); ('Matt Mooney', '1629760', 'Matt Mooney') … |
-| S1-player-no-S2-match | — | 9 | ('', '471'); ('', '2794'); ('', '775') … |
-| S1-player-no-S2-match | 1950-66 | 2 | ('Rabbit Walthour', '78448'); ("Buckshot O'Brien", '77743') |
+| DOB-conflict | — | 35 | ('Chet Aubuchon', '76071', 'Chet Aubuchon'); ('Don Carlson', '76344', 'Don Carlson'); ('Joe Colone', '76422', 'Joe Colone') … |
+| DOB-conflict | 1950-66 | 31 | ('Don Bielke', '76164', 'Don Bielke'); ('Bob Brannum', '76238', 'Bob Brannum'); ('Cal Christensen', '76394', 'Cal Christensen') … |
+| DOB-conflict | 1967-80 | 15 | ('Ron Brewer', '76249', 'Ron Brewer'); ('George Carter', '76357', 'George Carter'); ('Ben Clyde', '76409', 'Ben Clyde') … |
+| DOB-conflict | 1981-99 | 27 | ('Greg Minor', '65', 'Greg Minor'); ('Dwayne Morton', '132', 'Dwayne Morton'); ('Felton Spencer', '280', 'Felton Spencer') … |
+| DOB-conflict | 2000-2025/26 | 34 | ('Maceo Baston', '1766', 'Maceo Baston'); ('Tim James', '1906', 'Tim James'); ('Andy Panko', '1950', 'Andy Panko') … |
+| S1-player-no-S2-match | — | 9 | ('', '471'); ('', '775'); ('', '1277') … |
+| S1-player-no-S2-match | 1950-66 | 2 | ("Buckshot O'Brien", '77743'); ('Rabbit Walthour', '78448') |
 | S1-player-no-S2-match | 1981-99 | 2 | ('Marcus Mann', '986'); ('Wayne Englestad', '76671') |
-| S1-player-no-S2-match | 2000-2025/26 | 18 | ("Da'Sean Butler", '202364'); ('Tony Gaffney', '202070'); ('Luca Vildoza', '1630492') … |
+| S1-player-no-S2-match | 2000-2025/26 | 17 | ('Herbert Hill', '201195'); ('Robert Vaden', '201987'); ('Curtis Jerrells', '201998') … |
 | S2-player-no-S1-match-2024-plus | 2000-2025/26 | 304 | ('Trey Alexander', 'alexatr01'); ('Timmy Allen', 'allenti01'); ('Alex Antetokounmpo', 'antetal01') … |
 | S2-player-no-S1-match-pre-2023 | — | 4 | ('Chink Crossin', 'crossch01'); ('Gene Gallette', 'gillege01'); ('Charlie Hoefer', 'hoefech01') … |
 | S2-player-no-S1-match-pre-2023 | 1950-66 | 3 | ("Ralph O'Brien", 'obriera01'); ('Isaac Walthour', 'walthis01'); ('Bobby Watson', 'watsobo01') |
@@ -271,7 +283,7 @@ this report provides the sampling frames.
 | S3-only-but-NBA-per-S2 | — | 1 | ('Keshon Gilbert', '1642933') |
 | S3-only-but-NBA-per-S2 | 2000-2025/26 | 286 | ('Sasha Vezenkov', '1628426'); ('Chance Comanche', '1628435'); ('Jack McVeigh', '1629098') … |
 | S3-only-no-S2-row | — | 264 | ('CJ Miles', '101139'); ('Ike Austin', '1134'); ('RJ Hunter', '1626154') … |
-| membership-S1-only-vs-S2 | 2000-2025/26 | 10 | (2009, 'cassesa01', 'CELTICS'); (2013, 'machasc01', 'WARRIORS'); (2013, 'mcgratr01', 'SPURS') … |
+| membership-S1-only-vs-S2 | 2000-2025/26 | 11 | (2009, 'cassesa01', 'CELTICS'); (2013, 'machasc01', 'WARRIORS'); (2013, 'mcgratr01', 'SPURS') … |
 | membership-S2-only-vs-S1 | 1950-66 | 2187 | (1950, 'armstcu01', 'PISTONS'); (1950, 'barkecl01', 'OLYMPIANS'); (1950, 'barnhle01', 'STAGS') … |
 | membership-S2-only-vs-S1 | 1967-80 | 3419 | (1967, 'abdulma01', 'LAKERS'); (1967, 'akinhe01', 'KNICKS'); (1967, 'attleal01', 'WARRIORS') … |
 | membership-S2-only-vs-S1 | 1981-99 | 6244 | (1981, 'abdulka01', 'LAKERS'); (1981, 'abernto01', 'PACERS'); (1981, 'abernto01', 'WARRIORS') … |
@@ -301,12 +313,12 @@ Runtime: ~2–4 minutes (the play-by-play scan dominates). Python 3.9 stdlib onl
 
 1. 142 `DOB-conflict` identities accepted-but-flagged (§3a) — T4/T13 should confirm
    the DOB discrepancies are source errors, not distinct people.
-2. The 10 S1-only membership rows (§5) — S2 omissions for late-season moves;
+2. The 11 S1-only membership rows (§5) — S2 omissions for late-season moves;
    T4's transaction reconstruction must not rely on S2 completeness for those.
 3. 50 `S1-pbp-shows-other-teams-same-season` rows and 330 `S1-pbp-no-event-for-player` rows — retained in `membership-mismatches.csv` for T4 review.
 4. 9 S1 play-by-play people absent from `player` (5 unbridged) — S1's own export gap;
    listed in `unresolved-player-cases.csv`.
-5. 9 universe players (debut ≤2023) with no S1 identity — S1's `player` export is incomplete for recent seasons; S3 covers 283 of them by name+dob.
+5. 9 universe players (debut ≤2023) with no S1 identity — S1's `player` export is incomplete for recent seasons; S3 covers 1 of those same players.
 6. The ticket's suggested `lg`-column location ("Player Career Info.csv") does not
    exist; ABA classification uses `Player Season Info.csv` `lg`. Recorded per the
    "check exact column names first" instruction.
