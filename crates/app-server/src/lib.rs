@@ -1,14 +1,15 @@
 //! The 7-degrees local app server: Axum routes over the fixture-backed
-//! teammate graph.
+//! teammate graph, plus the minimal server-rendered UI.
 
 mod fixture_data;
+mod ui;
 
 use axum::{
-    extract::{Query, State},
-    http::StatusCode,
+    Router,
+    extract::{Path, Query, State},
+    http::{StatusCode, Uri},
     response::{IntoResponse, Json, Response},
     routing::get,
-    Router,
 };
 use serde::Deserialize;
 
@@ -37,19 +38,26 @@ fn app(state: AppState) -> Router {
         .route("/api/connection", get(connection))
         .route("/api/paths", get(all_paths))
         .route("/api/stats", get(stats))
+        .route("/", get(home))
+        .route("/chain", get(chain_page))
+        .route("/style.css", get(style_css))
         .fallback(not_found)
         .with_state(state)
 }
 
-async fn not_found() -> Response {
-    (
-        StatusCode::NOT_FOUND,
-        Json(ErrorResponse {
-            error: "not-found".to_string(),
-            message: "unknown route".to_string(),
-        }),
-    )
-        .into_response()
+/// Unknown routes: JSON 404s under `/api/`, an HTML 404 page elsewhere.
+async fn not_found(uri: Uri) -> Response {
+    if uri.path().starts_with("/api/") {
+        return (
+            StatusCode::NOT_FOUND,
+            Json(ErrorResponse {
+                error: "not-found".to_string(),
+                message: "unknown API route".to_string(),
+            }),
+        )
+            .into_response();
+    }
+    ui::not_found_page()
 }
 
 async fn fixture_summary(State(_state): State<AppState>) -> Json<api_types::FixtureSummary> {
@@ -61,10 +69,7 @@ async fn all_edges(State(_state): State<AppState>) -> Json<serde_json::Value> {
 }
 
 /// The teammate edges of one player, by id.
-async fn player_edges(
-    State(state): State<AppState>,
-    axum::extract::Path(player): axum::extract::Path<String>,
-) -> Response {
+async fn player_edges(State(state): State<AppState>, Path(player): Path<String>) -> Response {
     if !state.graph.contains_player(&player) {
         return player_not_found(&player, &player);
     }
@@ -87,26 +92,55 @@ async fn player_edges(
 
 #[derive(Deserialize)]
 struct ConnectQuery {
-    from: String,
-    to: String,
+    from: Option<String>,
+    to: Option<String>,
 }
 
-async fn connection(
-    State(state): State<AppState>,
-    Query(query): Query<ConnectQuery>,
-) -> Response {
-    connection_response(&state, &query.from, &query.to)
+async fn connection(State(state): State<AppState>, Query(query): Query<ConnectQuery>) -> Response {
+    connection_response(&state, query.from.as_deref(), query.to.as_deref())
 }
 
-async fn all_paths(
-    State(state): State<AppState>,
-    Query(query): Query<ConnectQuery>,
-) -> Response {
-    let (from, to) = (&query.from, &query.to);
+/// All shortest chains between the queried pair (alternative connections).
+async fn all_paths(State(state): State<AppState>, Query(query): Query<ConnectQuery>) -> Response {
+    connection_response_all(&state, query.from.as_deref(), query.to.as_deref())
+}
+
+fn connection_response(state: &AppState, from: Option<&str>, to: Option<&str>) -> Response {
+    let (Some(from), Some(to)) = (from, to) else {
+        return (
+            StatusCode::BAD_REQUEST,
+            Json(ErrorResponse {
+                error: "missing-parameter".to_string(),
+                message: "both from and to are required".to_string(),
+            }),
+        )
+            .into_response();
+    };
     if !state.graph.contains_player(from) || !state.graph.contains_player(to) {
         return player_not_found(from, to);
     }
-    let chains = state.graph.all_shortest_chains(from, to).expect("players exist");
+    let response = fixture_data::fixture_connection(from, to).expect("players exist");
+    Json(response).into_response()
+}
+
+fn connection_response_all(state: &AppState, from: Option<&str>, to: Option<&str>) -> Response {
+    let (Some(from), Some(to)) = (from, to) else {
+        return (
+            StatusCode::BAD_REQUEST,
+            Json(ErrorResponse {
+                error: "missing-parameter".to_string(),
+                message: "both from and to are required".to_string(),
+            }),
+        )
+            .into_response();
+    };
+    if !state.graph.contains_player(from) || !state.graph.contains_player(to) {
+        return player_not_found(from, to);
+    }
+    let chains = state
+        .graph
+        .all_shortest_chains(from, to)
+        .expect("players exist");
     let paths: Vec<api_types::PathDto> = chains
         .into_iter()
         .map(|chain| api_types::PathDto {
@@ -127,16 +161,12 @@ async fn all_paths(
     Json(serde_json::json!({ "paths": paths })).into_response()
 }
 
-fn connection_response(state: &AppState, from: &str, to: &str) -> Response {
-    if !state.graph.contains_player(from) || !state.graph.contains_player(to) {
-        return player_not_found(from, to);
-    }
-    let response = fixture_data::fixture_connection(from, to).expect("players exist");
-    Json(response).into_response()
-}
-
 fn player_not_found(from: &str, to: &str) -> Response {
-    let missing = if fixture_data::FIXTURE_PLAYERS.contains(&from) { to } else { from };
+    let missing = if fixture_data::FIXTURE_PLAYERS.contains(&from) {
+        to
+    } else {
+        from
+    };
     (
         StatusCode::NOT_FOUND,
         Json(ErrorResponse {
@@ -161,6 +191,35 @@ async fn stats(State(state): State<AppState>) -> Json<serde_json::Value> {
         "unreachable_pairs": stats.unreachable_pairs,
         "histogram": histogram,
     }))
+}
+
+/// The minimal UI home page: the connect form and the fixture edge list,
+/// rendered server-side in Rust.
+async fn home(State(state): State<AppState>) -> Response {
+    ui::home(&state.graph)
+}
+
+/// The `/chain` UI page: the shortest teammate chain between the queried pair
+/// as ordered players and links, with its degree of separation.
+#[derive(Deserialize)]
+struct ChainQuery {
+    from: Option<String>,
+    to: Option<String>,
+}
+
+async fn chain_page(State(state): State<AppState>, Query(query): Query<ChainQuery>) -> Response {
+    ui::chain(&state.graph, query.from, query.to)
+}
+
+/// The UI stylesheet, authored in the server crate and served as a static
+/// asset. No JavaScript ships anywhere in the UI.
+async fn style_css() -> Response {
+    (
+        StatusCode::OK,
+        [(axum::http::header::CONTENT_TYPE, "text/css; charset=utf-8")],
+        ui::STYLE_CSS,
+    )
+        .into_response()
 }
 
 /// Serve the fixture-backed app on localhost. Exposed for the binary entry

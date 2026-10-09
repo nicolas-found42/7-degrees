@@ -3,15 +3,6 @@ resolver = "2"
 members = [
     "crates/api-types",
     "crates/app-server",
-    "crates/app-ui",
-    "crates/fixture",
-    "crates/graph-core",
-]
-# `app-ui` targets wasm32 (built with trunk); keep host-side `cargo` commands at
-# the repo root focused on the server-side crates.
-default-members = [
-    "crates/api-types",
-    "crates/app-server",
     "crates/fixture",
     "crates/graph-core",
 ]
@@ -38,8 +29,3 @@ http-body-util = "0.1"
 petgraph = "0.8.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-
-# WASM UI side
-leptos = { version = "0.8", features = ["csr"] }
-reqwest = { version = "0.12", default-features = false, features = ["json"] }
-console_error_panic_hook = "0.1"

@@ -1,0 +1,248 @@
+//! The minimal UI: server-rendered HTML authored entirely in Rust.
+//!
+//! The spec's Rust constraint rules out JavaScript UI/graph libraries; the
+//! plain Axum-served HTML option is fully compliant and needs no WASM tooling
+//! (trunk is not installed here), so this module renders the UI on the server
+//! from `graph_core` data. No JavaScript ships.
+
+use axum::http::{StatusCode, header};
+use axum::response::{IntoResponse, Response};
+
+use graph_core::{Chain, Connection, Player, TeammateGraph};
+
+/// The stylesheet served at `/style.css`.
+pub const STYLE_CSS: &str = include_str!("style.css");
+
+/// Escape text for safe inclusion in HTML content and attribute values.
+fn escape(text: &str) -> String {
+    let mut out = String::with_capacity(text.len());
+    for c in text.chars() {
+        match c {
+            '&' => out.push_str("&amp;"),
+            '<' => out.push_str("&lt;"),
+            '>' => out.push_str("&gt;"),
+            '"' => out.push_str("&quot;"),
+            '\'' => out.push_str("&#39;"),
+            _ => out.push(c),
+        }
+    }
+    out
+}
+
+/// Percent-encode a query-string value (RFC 3986 unreserved characters pass
+/// through; everything else is escaped).
+fn url_encode(value: &str) -> String {
+    value
+        .chars()
+        .map(|c| {
+            if c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '.' | '~') {
+                c.to_string()
+            } else {
+                format!("%{:02X}", c as u32)
+            }
+        })
+        .collect()
+}
+
+/// The display name for a player id, falling back to the raw id.
+fn display_name<'a>(players: &'a [Player], id: &'a str) -> &'a str {
+    players
+        .iter()
+        .find(|player| player.id == id)
+        .map(|player| player.name.as_str())
+        .unwrap_or(id)
+}
+
+/// The document shell: status, escaped title, stylesheet link, and body.
+fn document(status: StatusCode, title: &str, body: &str) -> Response {
+    let html = format!(
+        "<!DOCTYPE html>\n<html lang=\"en\">\n<head><meta charset=\"utf-8\"><meta \
+         name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>{}</title><link \
+         rel=\"stylesheet\" href=\"/style.css\"></head>\n<body><main \
+         class=\"seven-degrees\">{}</main></body>\n</html>\n",
+        escape(title),
+        body
+    );
+    (
+        status,
+        [(header::CONTENT_TYPE, "text/html; charset=utf-8")],
+        html,
+    )
+        .into_response()
+}
+
+/// One `<select>` for the connect form, preselecting `selected`.
+fn player_select(players: &[Player], field: &str, label: &str, selected: &str) -> String {
+    let options: String = players
+        .iter()
+        .map(|player| {
+            let is_selected = if player.id == selected {
+                " selected"
+            } else {
+                ""
+            };
+            format!(
+                "<option value=\"{}\"{}>{}</option>",
+                escape(&player.id),
+                is_selected,
+                escape(&player.name)
+            )
+        })
+        .collect();
+    format!(
+        "<label for=\"{field}\">{label}</label><select id=\"{field}\" \
+         name=\"{field}\">{options}</select>",
+        field = field,
+        label = label,
+        options = options
+    )
+}
+
+/// The GET form that drives `/chain`, defaulting to the A→C demo pair.
+fn connect_form(players: &[Player], from: Option<&str>, to: Option<&str>) -> String {
+    format!(
+        "<form method=\"get\" action=\"/chain\" \
+         class=\"controls\">{}{}<button type=\"submit\">Connect</button></form>",
+        player_select(players, "from", "Player from", from.unwrap_or("A")),
+        player_select(players, "to", "Player to", to.unwrap_or("C")),
+    )
+}
+
+/// The shortest-chain section: ordered players and links with evidence.
+fn chain_section(chain: &Chain, players: &[Player]) -> String {
+    let items: String = chain
+        .path
+        .iter()
+        .map(|id| format!("<li>{}</li>", escape(display_name(players, id))))
+        .collect();
+    let links: String = chain
+        .links
+        .iter()
+        .map(|link| {
+            format!(
+                "<li>{} → {} — teammates on {}, overlapping roster tenure: {} day(s)</li>",
+                escape(display_name(players, &link.from)),
+                escape(display_name(players, &link.to)),
+                escape(&link.team),
+                link.overlap_days
+            )
+        })
+        .collect();
+    format!(
+        "<section class=\"chain\"><h2>Shortest teammate \
+         chain</h2><p class=\"degree\">Degree of separation: <strong>{}</strong></p><ol \
+         class=\"path\">{}</ol><ul class=\"links\">{}</ul></section>",
+        chain.links.len(),
+        items,
+        links
+    )
+}
+
+/// The home page: the connect form plus the whole fixture edge list.
+pub fn home(graph: &TeammateGraph) -> Response {
+    let players = &graph.roster.players;
+    let edges = graph.edges();
+    let edge_items: String = edges
+        .iter()
+        .map(|edge| {
+            let evidence: String = edge
+                .evidence
+                .iter()
+                .map(|e| format!("{} ({} day(s))", escape(&e.team), e.overlap_days))
+                .collect::<Vec<_>>()
+                .join(", ");
+            format!(
+                "<li><a href=\"/chain?from={}&amp;to={}\">{} — {}</a>: teammate edge on \
+                 {}</li>",
+                url_encode(&edge.a),
+                url_encode(&edge.b),
+                escape(display_name(players, &edge.a)),
+                escape(display_name(players, &edge.b)),
+                evidence
+            )
+        })
+        .collect();
+    let body = format!(
+        "<h1>7 Degrees</h1><p class=\"subtitle\">NBA teammate degrees of separation — fixture \
+         demo (Players A–D, Teams Red/Blue)</p>{}<h2>Teammate edges</h2><p>The fixture graph \
+         has {} teammate edges:</p><ul class=\"edges\">{}</ul><h2>JSON \
+         API</h2><p><a href=\"/api/fixture\">/api/fixture</a> · <a \
+         href=\"/api/connection?from=A&amp;to=C\">/api/connection?from=A&amp;to=C</a></p>",
+        connect_form(players, None, None),
+        edges.len(),
+        edge_items
+    );
+    document(StatusCode::OK, "7 Degrees — Teammate Explorer", &body)
+}
+
+/// The `/chain` page: the connect form plus the shortest teammate chain
+/// between the queried pair, an explanation when none exists, or an error
+/// when a player id is unknown.
+pub fn chain(graph: &TeammateGraph, from: Option<String>, to: Option<String>) -> Response {
+    let players = &graph.roster.players;
+    let back = "<p><a href=\"/\">← Back to the fixture</a></p>";
+    let (status, body) = match (from.as_deref(), to.as_deref()) {
+        (None, None) => (
+            StatusCode::OK,
+            format!(
+                "<h1>7 Degrees</h1>{}<p class=\"hint\">Pick two players and connect \
+                 them.</p>",
+                connect_form(players, None, None)
+            ),
+        ),
+        (from, to) => {
+            let from_id = from.unwrap_or("A");
+            let to_id = to.unwrap_or("C");
+            if !graph.contains_player(from_id) || !graph.contains_player(to_id) {
+                let missing = if graph.contains_player(from_id) {
+                    to_id
+                } else {
+                    from_id
+                };
+                (
+                    StatusCode::NOT_FOUND,
+                    format!(
+                        "<h1>7 Degrees</h1>{}{}<p class=\"error\">No player node for id \
+                         {:?}.</p>",
+                        connect_form(players, Some(from_id), Some(to_id)),
+                        back,
+                        missing
+                    ),
+                )
+            } else {
+                match graph.shortest_chain(from_id, to_id) {
+                    Some(Connection::Connected(chain)) => (
+                        StatusCode::OK,
+                        format!(
+                            "<h1>7 Degrees</h1>{}{}",
+                            back,
+                            chain_section(&chain, players)
+                        ),
+                    ),
+                    Some(Connection::Disconnected) | None => (
+                        StatusCode::OK,
+                        format!(
+                            "<h1>7 Degrees</h1>{}<section class=\"chain\"><h2>Shortest \
+                             teammate chain</h2><p class=\"hint\">No teammate chain connects {} \
+                             and {}.</p></section>",
+                            back,
+                            escape(display_name(players, from_id)),
+                            escape(display_name(players, to_id))
+                        ),
+                    ),
+                }
+            }
+        }
+    };
+    document(status, "7 Degrees — Teammate Explorer", &body)
+}
+
+/// The 404 page for unknown non-API routes.
+pub fn not_found_page() -> Response {
+    document(
+        StatusCode::NOT_FOUND,
+        "7 Degrees — Page not found",
+        "<h1>7 Degrees</h1><p class=\"error\">This page does not exist. <a href=\"/\">Back to \
+         the fixture</a>.</p>",
+    )
+}

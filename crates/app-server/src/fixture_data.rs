@@ -35,7 +35,10 @@ pub fn fixture_display_name(id: &str) -> String {
 fn fixture_players() -> Vec<FixturePlayer> {
     FIXTURE_PLAYERS
         .iter()
-        .map(|id| FixturePlayer { id: (*id).to_string(), name: fixture_display_name(id) })
+        .map(|id| FixturePlayer {
+            id: (*id).to_string(),
+            name: fixture_display_name(id),
+        })
         .collect()
 }
 
@@ -53,7 +56,10 @@ pub fn fixture_summary() -> FixtureSummary {
         players: summary
             .players
             .iter()
-            .map(|p| api_types::PlayerDto { id: p.id.clone(), name: p.name.clone() })
+            .map(|p| api_types::PlayerDto {
+                id: p.id.clone(),
+                name: p.name.clone(),
+            })
             .collect(),
         edges: summary
             .edges
@@ -84,21 +90,23 @@ pub fn fixture_edges() -> Vec<TeammateEdgeDto> {
 pub fn fixture_connection(from: &str, to: &str) -> Option<ConnectionResponse> {
     let players = fixture_players();
     match fixture_crate::fixture_connection(&players, from, to)? {
-        FixtureConnection::Connected { path, links, degree } => {
-            Some(ConnectionResponse::Connected {
-                path,
-                links: links
-                    .into_iter()
-                    .map(|l| LinkDto {
-                        from: l.from,
-                        to: l.to,
-                        team: l.team,
-                        overlap_days: l.overlap_days,
-                    })
-                    .collect(),
-                degree,
-            })
-        }
+        FixtureConnection::Connected {
+            path,
+            links,
+            degree,
+        } => Some(ConnectionResponse::Connected {
+            path,
+            links: links
+                .into_iter()
+                .map(|l| LinkDto {
+                    from: l.from,
+                    to: l.to,
+                    team: l.team,
+                    overlap_days: l.overlap_days,
+                })
+                .collect(),
+            degree,
+        }),
         FixtureConnection::Disconnected => Some(ConnectionResponse::Disconnected),
     }
 }

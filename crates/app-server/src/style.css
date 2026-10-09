@@ -1,0 +1,97 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    background: #f7f7f2;
+    color: #1d2733;
+}
+
+main.seven-degrees {
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 2rem 1rem 3rem;
+}
+
+h1 {
+    margin-bottom: 0.25rem;
+}
+
+.subtitle {
+    color: #5b6572;
+    margin-top: 0;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.controls label {
+    font-size: 0.9rem;
+    color: #5b6572;
+}
+
+.controls select {
+    padding: 0.35rem 0.5rem;
+    border: 1px solid #c8cfc0;
+    border-radius: 6px;
+    background: #fff;
+    min-width: 9rem;
+}
+
+.controls button {
+    padding: 0.4rem 1rem;
+    border: 1px solid #23405a;
+    border-radius: 6px;
+    background: #23405a;
+    color: #fff;
+    cursor: pointer;
+}
+
+.controls button:hover {
+    background: #33557a;
+}
+
+section.chain,
+section.stats {
+    background: #fff;
+    border: 1px solid #dfe3d8;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-top: 1rem;
+}
+
+ol.path {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    padding-left: 1.2rem;
+}
+
+ol.path li {
+    list-style: decimal;
+    font-weight: 600;
+}
+
+ul.links li,
+ul.edges li {
+    margin: 0.25rem 0;
+}
+
+.degree strong {
+    font-size: 1.1rem;
+}
+
+p.hint {
+    color: #5b6572;
+}
+
+p.error {
+    color: #a03030;
+    background: #fbeeee;
+    border: 1px solid #e5c2c2;
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+}
