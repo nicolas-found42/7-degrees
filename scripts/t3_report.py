@@ -85,6 +85,7 @@ def main():
     st = pickle.load(open(os.path.join(data_dir, "t3", ".state.pkl"), "rb"))
     R = st["R"]
     classes = st["classes"]
+    canonical_franchise_count = len(st.get("canon_counts", {}))
     L = []
     A = L.append
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
@@ -127,7 +128,7 @@ def main():
         ["S1-only people (no S2 row at all; not in the universe)",
          "%s (S1 pbp-only ids: %s; detailed in the register)" % (R["s1_no-match"], R["s1_pbp_ids_missing_from_player_table"])],
         ["ABA-only classifications (excluded from the universe)",
-         "%s S2 players are ABA-only; %s S1 people match an ABA-only S2 player" % (R["s2_aba_only_players"], R.get("s1_matches-ABA-only-player", 0))],
+         "%s S2 players are ABA-only; %s S1 people match an ABA-only S2 player" % (R["s2_aba_only_players"], R.get("s1_matches-only-player", 0))],
         ["S2↔S3 identity bridge", "%s of %s universe players carry an S3 NBA-API id (%s)"
          % (R["s2_to_s3_bridged"], R["universe_size"], pct(R["s2_to_s3_bridged"], R["universe_size"]))],
         ["franchise crosswalk", "%s of %s S2 season-team rows resolve to one canonical franchise id; 0 ambiguous"
@@ -188,22 +189,22 @@ def main():
     A(md_table(["S1 match class", "count", "rule / meaning"], [
         ["`name+dob`", R["s1_name-dob"], "a (name-form, birth-date) pair uniquely identifies one S2 player — trusted"],
         ["`lastname+dob`", R["s1_lastname-dob"], "unique (surname, birth-date) — trusted (handles \"Steven Smith\"/" "\"Steve Smith\"-style spellings)"],
-        ["`initial-surname+dob-window`", R.get("s1-initial-surname-dob-window", 0),
-         "same first-initial + surname with birth dates within ±2 years, unique candidate — identity accepted, flagged for review (handles \"Norman Richardson\"↔\"Norm Richardson\" year shifts and day/month swaps)"],
-        ["`surname-fuzzy+dob-window`", R.get("s1-surname-fuzzy-dob-window", 0),
+        ["`initial-surname+dob-window`", R.get("s1_initial-surname-dob-window", 0),
+         "same first-initial + surname with birth dates within ±2 years and a shared birth year or exact month/day — unique candidate, accepted and flagged for review (handles \"Norman Richardson\"↔\"Norm Richardson\" year shifts and day/month swaps)"],
+        ["`surname-fuzzy+dob-window`", R.get("s1_surname-fuzzy-dob-window", 0),
          "surname within one character edit + first-initial + DOB window, unique — accepted, flagged (handles Guðmundsson/Gudmundsson-style transliteration drift)"],
-        ["`unique-surname`", R.get("s1-unique-surname", 0),
+        ["`unique-surname`", R.get("s1_unique-surname", 0),
          "surname carried by exactly one S2 player, matched without a usable DOB — accepted, flagged"],
-        ["`lastname-s2dob-NA`", R.get("s1-lastname-s2dob-NA", 0),
+        ["`lastname-s2dob-NA`", R.get("s1_lastname-s2dob", 0),
          "full-name match where S2's birth date is NA — accepted, flagged"],
-        ["`surname+career-span`", R.get("s1-surname-career-span", 0),
-         "surname carried by several S2 players but exactly one overlaps this person's S1 career span — accepted, flagged (pre-pbp nickname pairs like \"Johnny Kerr\"↔\"Red Kerr\")"],
-        ["`initial+surname`", R.get("s1-initial-surname", 0),
+        ["`surname+career-span`", R.get("s1_surname-career-span", 0),
+         "surname carried by several S2 players but exactly one S2 career span fits inside the S1 career span — accepted, flagged (pre-pbp nickname pairs like \"Johnny Kerr\"↔\"Red Kerr\")"],
+        ["`initial+surname`", R.get("s1_initial-surname", 0),
          "one-letter first name + surname, unique — accepted, flagged"],
         ["`DOB-conflict`", R["s1_conflict"], "unique name but the sources disagree on the birth date — identity accepted, flagged for review"],
-        ["`ambiguous-name`", R["s1_ambiguous-name"], "same display name (no DOB disambiguation) — **not** bridged; listed below"],
+        ["`ambiguous-name`", R.get("s1_ambiguous-name", 0), "same display name (no DOB disambiguation) — **not** bridged; listed below"],
         ["`no-match` → subclasses", R["s1_no-match"], "no plausible S2 identity; subclassified into `S1-only-*` below"],
-        ["`matches-ABA-only-player`", R.get("s1_matches-ABA-only-player", 0), "S1 person matches an S2 ABA-only player (correctly outside the universe)"],
+        ["`matches-ABA-only-player`", R.get("s1_matches-only-player", 0), "S1 person matches an S2 ABA-only player (correctly outside the universe)"],
     ]))
     A("")
     A("### 3a. Every S1 ↔ S2 identity disagreement (register)")
@@ -221,12 +222,17 @@ def main():
         c = st["s1"]["cpi"].get(s1p, {}) or {}
         d1 = c.get("dob")
         d2 = s2dob.get(s2p)
-        if d1 and d2:
-            delta_years[abs((year_of(d1) or 0) - (year_of(d2) or 0))] += 1
+        y1, y2 = year_of(d1), year_of(d2)
+        if y1 is not None and y2 is not None:
+            delta_years[abs(y1 - y2)] += 1
+    missing_delta = len(conflicts) - sum(delta_years.values())
     A(md_table(["DOB-conflict magnitude (S1 vs S2 birth dates)", "count"], [
         ["same year, different day/month", delta_years.get(0, 0)],
         ["1 year apart", delta_years.get(1, 0)],
         ["2–5 years apart", sum(v for k, v in delta_years.items() if 2 <= k <= 5)],
+        [">5 years apart", sum(v for k, v in delta_years.items() if k > 5)],
+        ["one or both birth years unavailable/invalid", missing_delta],
+        ["total DOB-conflict rows", len(conflicts)],
     ]))
     A("")
     A("Top-10 `DOB-conflict` examples (S1 id ↔ S2 id, both names):")
@@ -262,7 +268,7 @@ def main():
         A("- **%s** (%d): %s" % (cl, subcounts.get(cl, 0),
           "; ".join("%s (%s)" % (n, pid) for n, pid in rows)))
     A("")
-    A("### 3c. The one unresolved ambiguity")
+    A("### 3c. Unresolved name ambiguities (if any)")
     A("")
     for n, pid, s2p, cn, f in classes.get("ambiguous-name", [])[:3]:
         A("- S1 `%s` (%s): display-name only, DOB missing in S1, multiple S2 candidates —"
@@ -308,12 +314,12 @@ def main():
         ["S2-only (`S1-pbp-shows-other-teams-same-season`)", st["diff_shape_counts"].get("S1-pbp-shows-other-teams-same-season", 0),
          "both sources have the (season, player) but the team sets disagree — real disagreements, individually reviewed"],
         ["S1-only (S1 pbp row without an S2 row)", R["m2_rows_s1_only"],
-         "late-season 10-day/playoff stints S2's scrape missed — all 12 individually listed below"],
+         "late-season 10-day/playoff stints S2's scrape missed — all %s individually listed below" % R["m2_rows_s1_only"]],
         ["S2-only, season ≥2024", R["m1a_rows_s2_only_season_gt_2023"],
          "structural: S1 `game` ends 2022-23 — no S1 comparison possible"],
     ]))
     A("")
-    A("**The 12 S1-only membership rows** (all verified against raw S2: the player's S2 rows")
+    A("**The %s S1-only membership rows** (all verified against raw S2: the player's S2 rows)" % R["m2_rows_s1_only"])
     A("skip that season or list only other teams):")
     A("")
     mm_rows = list(csv.DictReader(open(os.path.join(T3_DIR, "membership-mismatches.csv"))))
@@ -335,7 +341,7 @@ def main():
     A("## 6. Franchise identities and the alias crosswalk")
     A("")
     A("**Method.** `scripts/t3_franchise_seed.py` holds a curated per-franchise lineage table")
-    A("((league, season span) → name + abbreviation + S1 abbreviation) — 58 canonical franchise")
+    A("((league, season span) → name + abbreviation + S1 abbreviation) — %s canonical franchise identities" % canonical_franchise_count)
     A("ids covering every S2 era, each lineage assembled from historical franchise records")
     A("(relocations, renames, league transitions) and verified against the pinned sources")
     A("in the reconciliation run. Shared display names across genuinely distinct franchises")
@@ -354,9 +360,10 @@ def main():
     A("")
     A("Result: **%s of %s** `Team Abbrev.csv` rows resolve to exactly one canonical franchise id"
       " (0 ambiguous, %s unresolved → all %s New York Knicks rows until `NYK` was added to the seed;"
-      " now 0). The 96 S2 team names and 104 abbreviations map onto 58 canonical franchises"
+      " now 0). The 96 S2 team names and 104 abbreviations map onto %s canonical franchises"
       " (%s NBA/BAA-scope + ABA-only lineages kept separate on purpose)."
       % (R["s2_team_rows"], R["s2_team_rows"], R["f1_unresolved"], R["f1_unresolved"],
+         canonical_franchise_count,
          len([k for k in st.get("canon_counts", {}) if not str(k).startswith("ABA")])))
     A("")
     A("`docs/reports/t3/franchise-crosswalk.csv` — every S2 season-team row → canonical id.")
@@ -373,13 +380,11 @@ def main():
         ["S1 abbreviation collisions", "`WAS` = Wizards *and* Capitols (1947–51); `CHA` = Bobcats *and* Hornets-2; `BLB`/`BAL` = the two Bullets franchises; `DEN`/`DN` = the two Nuggets — all resolved by (season, league) scoping"],
     ]))
     A("")
-    A("**Known S2 franchise-data discrepancies** (retained, from §6 verification):")
+    A("**S2 franchise coverage notes** (checked against the raw tables):")
     A("")
-    A(md_table(["S2 `Team Abbrev.csv` discrepancy", "detail"], [
-        ["BAA season 1947 missing `BLB`", "the 1947-48 Baltimore Bullets are absent from `Team Abbrev.csv`"
-         " while 39 BAA-1947 player rows reference BLB — seed supplies the identity (S1 game rows corroborate)"],
-        ["BAA/NBA boundary", "S2 labels the 1949-50 Tri-Cities season (and all other 1949-50 teams) NBA;"
-         " the BAA's last season was 1948-49 — verified and modeled"],
+    A(md_table(["S2 `Team Abbrev.csv` / season fact", "detail"], [
+        ["BAA 1946-47 Baltimore coverage", "No roster gap: season 1947 has no BLB player rows; Baltimore joined the BAA in 1947-48, where S2 has 18 BLB player rows, and 21 in 1948-49. `Team Abbrev.csv` includes both seasons. BLB-1947 in `Draft Pick History.csv` is a draft-team entry, not a roster-season row."],
+        ["BAA/NBA boundary", "S2 labels the 1949-50 Tri-Cities season (and all other 1949-50 teams) NBA; the BAA's last season was 1948-49 — verified and modeled"],
         ["`CHO`/`CHA` for the renamed Hornets", "S2 uses CHO for 2015+ while pre-2004 Charlotte used CHH and 2004-14 CHA — distinct franchises, not aliases of one line"],
     ]))
     A("")
@@ -403,8 +408,10 @@ def main():
     A("")
     A("- ABA-only players (S2 `lg` == `ABA` for every season row): **%s** — all excluded from the universe." % f"{R['s2_aba_only_players']:,}")
     A("- Dual-league players (ABA + NBA/BAA): **%s** — included (official NBA/BAA appearance)." % R["s2_dual_players"])
-    A("- S1 people matching ABA-only S2 players: **%s** (e.g. %s) — correctly outside the universe; listed in the register."
-      % (R.get("s1_matches-ABA-only-player", 0), "; ".join(n for n, *_ in classes.get("matches-ABA-only-player", [])[:6])))
+    aba_matches = classes.get("matches-ABA-only-player", [])
+    aba_examples = "; ".join(n for n, *_ in aba_matches[:6])
+    A("- S1 people matching ABA-only S2 players: **%s**%s — correctly outside the universe; listed in the register."
+      % (R.get("s1_matches-only-player", 0), " (e.g. %s)" % aba_examples if aba_examples else ""))
     A("- ABA teams stay in the crosswalk as separate canonical ids so a wrong NBA merge can never happen silently.")
     A("")
     A("## 9. How to reproduce")
@@ -423,11 +430,14 @@ def main():
     A("")
     A("1. %s `DOB-conflict` identities accepted-but-flagged (§3a) — T4/T13 should confirm" % R["s1_conflict"])
     A("   the DOB discrepancies are source errors, not distinct people.")
-    A("2. The 12 S1-only membership rows (§5) — S2 omissions for late-season moves;")
+    A("2. The %s S1-only membership rows (§5) — S2 omissions for late-season moves;" % R["m2_rows_s1_only"])
     A("   T4's transaction reconstruction must not rely on S2 completeness for those.")
-    A("3. 50 `S1-pbp-shows-other-teams-same-season` rows and 429 `S1-pbp-no-event-for-player`")
-    A("   rows — retained in `membership-mismatches.csv` for T4 review.")
-    A("4. 9 S1 play-by-play people absent from `player` (1 unbridged) — S1's own export gap;")
+    A("3. %s `S1-pbp-shows-other-teams-same-season` rows and %s `S1-pbp-no-event-for-player` rows — retained in `membership-mismatches.csv` for T4 review."
+      % (st["diff_shape_counts"].get("S1-pbp-shows-other-teams-same-season", 0),
+         st["diff_shape_counts"].get("S1-pbp-no-event-for-player", 0)))
+    A("4. %s S1 play-by-play people absent from `player` (%s unbridged) — S1's own export gap;"
+      % (R["s1_pbp_ids_missing_from_player_table"],
+         max(0, R["s1_pbp_ids_missing_from_player_table"] - (_pbp_only or 0))))
     A("   listed in `unresolved-player-cases.csv`.")
     no_s1 = {p for p in st["universe"] if p not in st["s2_to_s1"]}
     no_s1_s3 = len([p for p in no_s1 if p in st["s2_to_s3"]])
