@@ -47,7 +47,7 @@ import time
 import urllib.request
 import urllib.error
 from datetime import datetime, timezone
-from collections import Counter
+from collections import Counter, defaultdict
 from html.parser import HTMLParser
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -497,6 +497,79 @@ def event_scope(event_class):
     return "unresolved"
 
 
+def apply_draft_roster_guard(data_dir, rows):
+    """Retain uncertain draft-year trades without treating them as occupancy.
+
+    Pinned draft and NBA/BAA season context identify new entrants. Missing an
+    earlier cached signing is uncertainty, never proof that no contract existed.
+    Only an earlier dated active-contract action supports transferring an active
+    rookie contract. A later signing remains independent arrival evidence.
+    """
+    source_dir = os.path.join(data_dir, "sumitrodatta")
+    draft_path = os.path.join(source_dir, "Draft Pick History.csv")
+    membership_path = os.path.join(source_dir, "Player Season Info.csv")
+    if not all(os.path.isfile(p) for p in (draft_path, membership_path)):
+        return {"applied": False, "reason": "draft-or-rookie-context-unavailable"}
+    draft_years = {}
+    with open(draft_path, newline="", encoding="utf-8-sig") as f:
+        for r in csv.DictReader(f):
+            if r["lg"] in ("NBA", "BAA") and r["season"].isdigit():
+                draft_years.setdefault(r["player_id"], set()).add(int(r["season"]))
+    prior_service = {}
+    with open(membership_path, newline="", encoding="utf-8-sig") as f:
+        for r in csv.DictReader(f):
+            if r["lg"] in ("NBA", "BAA") and r["season"].isdigit():
+                year = int(r["season"])
+                prior_service[r["player_id"]] = min(year, prior_service.get(r["player_id"], year))
+    dated_rows = defaultdict(list)
+    for row in rows:
+        if row["date_precision"] == "precise" and row["league"] in ("NBA", "BAA"):
+            dated_rows[row["date_iso"]].append(row)
+    active = defaultdict(set)
+    reviewed = set()
+    count = 0
+    for date_iso, same_day_rows in sorted(dated_rows.items()):
+        updates = []
+        for row in same_day_rows:
+            source_legs = json.loads(row["legs_json"])
+            for leg in source_legs:
+                slug = leg["slug"]
+                scope = leg.get("scope", event_scope(row["event_class"]))
+                action = leg.get("action_class", row["event_class"])
+                draft_year = int(date_iso[:4])
+                new_entrant = (draft_year in draft_years.get(slug, set())
+                               and prior_service.get(slug, draft_year + 1) > draft_year)
+                if (scope == "nba-roster" and action == "trade" and new_entrant
+                        and leg["depart"] not in active[slug]):
+                    leg["scope"] = "unresolved"
+                    leg["action_class"] = "draft-roster-status-unresolved"
+                    leg["scope_reason"] = ("draft-year=%s;prior-dated-active-contract-unestablished;"
+                                           "missing-signing-is-uncertainty-not-absence" % draft_year)
+                    count += 1
+                    reviewed.add(slug)
+                elif scope == "nba-roster":
+                    updates.append((slug, action, leg["depart"], leg["arrive"]))
+            row["legs_json"] = json.dumps(source_legs, sort_keys=True)
+            scopes = {l.get("scope", event_scope(row["event_class"])) for l in source_legs}
+            if scopes:
+                row["event_scope"] = next(iter(scopes)) if len(scopes) == 1 else "mixed"
+        # A date-only signing cannot establish that a same-day trade happened
+        # after it. Apply updates only after all actions on that date are guarded.
+        for slug, action, depart, arrive in updates:
+            if depart:
+                active[slug].discard(depart)
+            if arrive and action in {"sign", "resign", "claim", "trade", "dispersal"}:
+                active[slug].add(arrive)
+    source_hashes = {}
+    for label, path in (("draft_history_sha256", draft_path),
+                        ("nba_baa_membership_sha256", membership_path)):
+        with open(path, "rb") as f:
+            source_hashes[label] = hashlib.sha256(f.read()).hexdigest()
+    return {"applied": True, "reviewed_trade_legs": count,
+            "reviewed_players": len(reviewed), "pinned_drafted_players": len(draft_years),
+            **source_hashes}
+
+
 def movement_legs(items, event_class):
     """(player_slug, name, reported_from, reported_to, scope, action_class) legs.
 
@@ -814,6 +887,7 @@ def main(argv):
             r["legs_json"] = json.dumps(r["legs"], sort_keys=True)
             del r["legs"]
             all_rows.append(r)
+    draft_guard = apply_draft_roster_guard(paths["data_dir"], all_rows)
     excluded_legs = []
     leg_scopes = Counter()
     for row in all_rows:
@@ -829,6 +903,7 @@ def main(argv):
                     "player_slug": leg["slug"], "player_name": leg["name"],
                     "reported_from": leg["depart"], "reported_to": leg["arrive"],
                     "text": row["text"],
+                    "scope_reason": leg.get("scope_reason", ""),
                 })
     # summary
     summary = {
@@ -845,6 +920,7 @@ def main(argv):
         "failures": state["failures"],
         "parsed_rows": len(all_rows),
         "leg_scopes": dict(sorted(leg_scopes.items())),
+        "draft_roster_guard": draft_guard,
         "parse_failures": parse_failures,
         "note": ("A recorded fetch failure is an UNRESOLVED FETCH. It is never proof "
                  "that a historical transaction record does not exist."),
@@ -868,12 +944,17 @@ def main(argv):
             w.writerow({k: r.get(k, "") for k in CSV_COLUMNS})
     excluded_columns = ["page", "league", "season", "li_index", "paragraph_index",
                         "date_iso", "date_precision", "action_class", "scope", "player_slug",
-                        "player_name", "reported_from", "reported_to", "text"]
+                        "player_name", "reported_from", "reported_to", "text", "scope_reason"]
     with open(os.path.join(T4_DIR, "excluded-non-roster-events.csv"), "w",
               newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=excluded_columns)
         writer.writeheader()
         writer.writerows(excluded_legs)
+    with open(os.path.join(T4_DIR, "draft-roster-status-review.csv"), "w",
+              newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=excluded_columns)
+        writer.writeheader()
+        writer.writerows(r for r in excluded_legs if r["action_class"] == "draft-roster-status-unresolved")
     led = ledger_rows(ledger_path)
     with open(os.path.join(T4_DIR, "bbr-request-ledger.csv"), "w",
               newline="", encoding="utf-8") as f:

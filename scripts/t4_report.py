@@ -212,6 +212,15 @@ def main(argv=None):
     A("   Jerian Grant's June 25, 2015 draft transfer is retained under that scope;")
     A("   his independent July 29 signing establishes his Knicks arrival. Veteran")
     A("   trade pieces in the same paragraph retain their eligible roster legs.")
+    A("   **Draft-year contract guard:** pinned S2 draft history and NBA/BAA membership")
+    A("   identify new entrants. An ordinary named draft-year trade requires a strictly")
+    A("   earlier dated active-contract action for its outgoing team; otherwise its")
+    A("   roster status is unresolved and it supplies no occupancy boundary. Prior")
+    A("   NBA/BAA season context preserves veterans and ordinary later-career trades.")
+    A("   Missing a cached signing is uncertainty, never proof that no contract existed.")
+    A("   Separate actual signings establish arrival. `draft-roster-status-review.csv`")
+    A("   retains the source words, teams, date and uncertainty reason; source-file")
+    A("   hashes and this pass's census are in the fetch summary.")
     atl = next((t for t in tenures if t["bbr_player_id"] == "abdursh01"
                 and t["season"] == "2002" and t["canonical_franchise"] == "HAWKS"), None)
     if atl:
@@ -319,6 +328,10 @@ def main(argv=None):
         ["dated movement legs extracted", fmt(leg_diag.get("legs", 0))],
         ["source legs excluded: non-roster scope", fmt(leg_diag.get("leg-excluded-non-roster", 0))],
         ["source legs excluded: unresolved action scope", fmt(leg_diag.get("leg-excluded-unresolved", 0))],
+        ["draft-year trade legs reviewed by pinned contract guard",
+         fmt(fetch_summary.get("draft_roster_guard", {}).get("reviewed_trade_legs", 0))],
+        ["players reviewed by pinned draft-year contract guard",
+         fmt(fetch_summary.get("draft_roster_guard", {}).get("reviewed_players", 0))],
         ["legs usable as interval anchors (no blocking flags)", fmt(leg_diag.get("legs_usable", 0))],
         ["precise-dated legs re-bucketed from a different page season",
          fmt(leg_diag.get("leg-note:season-page-rebucketed", 0))],
