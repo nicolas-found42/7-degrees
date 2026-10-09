@@ -195,6 +195,23 @@ def main(argv=None):
     A("   A precise offseason arrival carries forward only when adjacent team-season")
     A("   windows bracket the dated move and the same player/team has next-season")
     A("   membership; its transaction date remains the tenure start boundary.")
+    A("   **Roster scope is checked per paragraph, sentence and linked player.**")
+    A("   G-League assignment, recall, loan and transfer do not end or start NBA")
+    A("   roster service. Draft/player rights transfers and eventual draft-pick")
+    A("   selections do not establish active roster occupancy. Coaching hires,")
+    A("   contract extensions and two-way-to-regular conversions supply no new")
+    A("   occupancy boundary. Unknown actions remain unresolved. Source rows,")
+    A("   linked identities and reported team directions remain in the parsed CSV;")
+    A("   excluded legs are retained in `excluded-non-roster-events.csv`. Actual")
+    A("   signings from the G-League and active players in mixed rights/pick trades")
+    A("   remain eligible. Explicit dated contract expiration is a departure.")
+    A("   `transaction-source-pages.csv` pins each original page URL, byte count and")
+    A("   SHA-256; parsed and excluded records reference its page plus raw LI and paragraph.")
+    A("   A named trade piece that is also the eventual pick selection in the same")
+    A("   paragraph has unresolved draft-roster status and cannot anchor occupancy.")
+    A("   Jerian Grant's June 25, 2015 draft transfer is retained under that scope;")
+    A("   his independent July 29 signing establishes his Knicks arrival. Veteran")
+    A("   trade pieces in the same paragraph retain their eligible roster legs.")
     atl = next((t for t in tenures if t["bbr_player_id"] == "abdursh01"
                 and t["season"] == "2002" and t["canonical_franchise"] == "HAWKS"), None)
     if atl:
@@ -209,6 +226,18 @@ def main(argv=None):
     A("   `tenures.csv.season_window_iso` — a confirmed-both-sides pair, the")
     A("   strongest possible bounds, is still reported as directly-evidenced);")
     A("   one bound + agreement → cross-checked; otherwise inferred.")
+    A("5. **Independent appearance-capacity audit** — compare S2 player appearances")
+    A("   with S1 regular-season games inside the union of all reconstructed stints")
+    A("   for that player/team/season. Allow every game missing from S1 relative to")
+    A("   S2's full team total inside the interval, plus all known departure-day games")
+    A("   that might precede the date-only move. More appearances than even this")
+    A("   optimistic capacity upper bound is a source")
+    A("   conflict: retain the disputed dates and anchors, mark the group unresolved,")
+    A("   and record it in `appearance-capacity-review.csv`. Cases fitting only with")
+    A("   departure-day games are ordering-unresolved, never certified by invention.")
+    A("   Missing/incomplete")
+    A("   schedules without team totals and missing interval bounds skip this audit;")
+    A("   they prove no absence. Excess S1 counts also skip the capacity comparison.")
     A("")
 
     # ------------------------------------------------------------- 3. counts
@@ -288,6 +317,8 @@ def main(argv=None):
         ["rows with precise dates", fmt(parsed_rows - leg_diag.get("row-fuzzy-or-undated", 0))],
         ["rows fuzzy/undated (kept, flagged; never guessed)", fmt(leg_diag.get("row-fuzzy-or-undated", 0))],
         ["dated movement legs extracted", fmt(leg_diag.get("legs", 0))],
+        ["source legs excluded: non-roster scope", fmt(leg_diag.get("leg-excluded-non-roster", 0))],
+        ["source legs excluded: unresolved action scope", fmt(leg_diag.get("leg-excluded-unresolved", 0))],
         ["legs usable as interval anchors (no blocking flags)", fmt(leg_diag.get("legs_usable", 0))],
         ["precise-dated legs re-bucketed from a different page season",
          fmt(leg_diag.get("leg-note:season-page-rebucketed", 0))],
@@ -299,6 +330,21 @@ def main(argv=None):
              + leg_diag.get("leg-flag:no-team-anchor-on-leg", 0)
              + leg_diag.get("leg-flag:depart-equals-arrive", 0))],
     ]))
+    A("")
+    A("**Independent count conflicts:** %s player/team/season groups conflict with"
+      % fmt(R.get("appearance-count-conflicts", 0)))
+    A("the games available inside their recorded bounds; %s team-seasons have a complete"
+      % fmt(R.get("complete-independent-schedule-team-seasons", 0)))
+    A("independent regular-season schedule matching S2. These conflicts remain unresolved;")
+    A("the audit supplies no replacement boundaries. Connie Simmons's 1949 Baltimore")
+    A("row retains the disputed February 11 exit: S2 says 60 appearances, while the")
+    A("complete 60-game S1 schedule permits only 45 within that interval.")
+    A("Lew Hitch's 1954 Milwaukee row retains the December 21 exit: 72 appearances")
+    A("cannot fit 24 known games before that exclusive exit even after allowing")
+    A("the departure-day game and one missing game inside the interval (upper bound 26).")
+    A("A further %s groups fit only by including departure-day games; their same-day"
+      % fmt(R.get("same-day-game-order-unresolved", 0)))
+    A("ordering remains unresolved, separately from confirmed count conflicts.")
     A("")
     rebucketed = leg_diag.get("leg-note:season-page-rebucketed", 0)
     s1_confirmed = leg_diag.get("leg-note:season-s1-window-confirmed", 0)
@@ -444,8 +490,8 @@ def main(argv=None):
     A("")
     A("```bash")
     A("# from the repo root; requires the pinned data snapshot under data/ (docs/data/source-manifest.md)")
-    A("# 1) one-time cached throttled fetch (~8 min; subsequent runs are cache-only, 0 requests)")
-    A("python3 scripts/t4_fetch_bbr.py [data_dir]")
+    A("# 1) offline parse of the pinned transaction cache (0 HTTP requests)")
+    A("python3 scripts/t4_fetch_bbr.py [data_dir] --no-fetch")
     A("# 2) reconstruction + classification")
     A("python3 scripts/t4_reconcile.py [data_dir]   # writes docs/reports/t4/*.csv + data/t4/.state.pkl")
     A("# 3) this report (accepts the same data_dir argument)")
