@@ -19,5 +19,26 @@
   "initial_abort": "The initial run completed 17 calibration cases then failed on invalid fixture cursor 0. Status log retained; receipts were not checkpointed yet, so its tokens/cost are unknown and excluded from measured totals.",
   "pilot": "A combined Choice/presence pilot was retained. The final grid separates these dimensions; selection uses only the original 21 calibration captures. Pilot heldout provider calls were made before correction, but their outcomes were not inspected to select thresholds. They are excluded from final metrics and remain in measurements.json.",
   "boundaries": "Exactly 0.5 presence always clarifies after an HTTP regression caught the boundary. No frozen receipt has presence exactly 0.5; offline replay verifies unchanged recorded outcomes.",
-  "metrics": "Each row elapsed_ms measures complete service latency including lexical retrieval, provider work and deterministic operation. Per-call elapsed_ms is provider-transport time. Null metadata means unknown, never zero. All retained attempts remain in measurements; summary filters the final frozen policy."
+  "metrics": "Each row elapsed_ms measures complete service latency including lexical retrieval, provider work and deterministic operation. Per-call elapsed_ms is provider-transport time. Null metadata means unknown, never zero. All retained attempts remain in measurements; summary filters the final frozen policy.",
+  "original_cases": {
+    "total": 42,
+    "calibration": 21,
+    "heldout": 21
+  },
+  "supplemental_heldout": {
+    "count": 2,
+    "ids": [
+      "resolution-43",
+      "query-44"
+    ],
+    "selection": "Weak context and vague era coverage requested during review; labels set before these new cases were inferred under the already selected policy. They did not enter calibration."
+  },
+  "inspection_chronology": [
+    "Initial abort statuses were inspected to repair invalid cursor, before any ranking measurement existed.",
+    "Original 21 calibration captures were inspected. The combined Choice/presence sweep exposed a coupling problem: no-match recognition drove down the Choice threshold.",
+    "Pilot heldout calls had already occurred, but their outcomes were not inspected for threshold selection. Original calibration captures were reused for the separated 16-combination identity grid; query/ranking selection objectives were unchanged.",
+    "Separate frozen policy was selected from calibration responses and written before the final frozen run. Only after completion were final heldout summaries inspected; no selected threshold changed.",
+    "Exactly0.5 presence boundary was repaired using a preexisting HTTP test; no frozen live receipt was at that boundary. All frozen outputs were replayed after the repair.",
+    "Two supplemental labels were added before their first calls to cover weak namesake context and vague eras; policy remained frozen."
+  ]
 }

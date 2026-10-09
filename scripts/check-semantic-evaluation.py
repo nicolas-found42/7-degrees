@@ -11,6 +11,8 @@ measurements = json.loads((DIR / 'measurements.json').read_text())['records']
 summary = json.loads((DIR / 'summary.json').read_text())
 manifest = json.loads((DIR / 'run-manifest.json').read_text())
 assert summary['policy'] == policy
+assert len({c['id'] for c in cases}) == len(cases)
+assert len({(c['component'], c['text'], c['context']) for c in cases}) == len(cases)
 for source, expected in manifest['source_sha256'].items():
     assert hashlib.sha256((ROOT / source).read_bytes()).hexdigest() == expected
 frozen = [r for r in measurements if r['policy'] == policy]
@@ -21,6 +23,17 @@ assert len(summary['groups']) == 18
 for group in summary['groups']:
     rows = [r for r in frozen if all(r['case'][k] == group[k] for k in ('split', 'component')) and r['variant'] == group['variant']]
     assert len(rows) == group['n']
+    def observed(row):
+        result, component = row['result'], row['case']['component']
+        if component == 'resolution':
+            return result['player']['id'] if result['player'] else result['status']
+        if component == 'query':
+            return result['operation'] if result['status'] in ('executed', 'unsupported') else 'abstain'
+        return result['chains'][0]['chain']['path'][1]['id'] if result['status'] == 'ranked' else 'abstain'
+    predictions = [(r, observed(r)) for r in rows]
+    assert sum(pred == r['case']['expected'] for r, pred in predictions) == group['correct']
+    assert sum(pred in ('clarification', 'unavailable', 'abstain') for _, pred in predictions) == group['abstain']
+    assert sum(pred != r['case']['expected'] and pred not in (('no_match', 'clarification', 'unavailable') if r['case']['component'] == 'resolution' else ('abstain',)) for r, pred in predictions) == group['false_automatic']
     calls = [call for row in rows for call in row['calls']]
     assert len(calls) == group['provider_calls']
     assert sum(c['outcome']['status'] == 'unavailable' for c in calls) == group['unavailable_calls']

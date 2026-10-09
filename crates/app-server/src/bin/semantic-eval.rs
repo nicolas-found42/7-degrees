@@ -438,6 +438,34 @@ fn equivalent(a: &Value, b: &Value) -> bool {
         _ => a == b,
     }
 }
+fn archive(dir: &Path) {
+    let stamp = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_nanos();
+    let target = dir
+        .join("archive")
+        .join(format!("{stamp}-{}", std::process::id()));
+    std::fs::create_dir_all(&target).unwrap();
+    for name in [
+        "measurements.json",
+        "summary.json",
+        "calibration.json",
+        "policy.json",
+        "cases.json",
+        "run-manifest.json",
+        "initial-abort.txt",
+    ] {
+        let source = dir.join(name);
+        if source.exists() {
+            std::fs::copy(source, target.join(name)).unwrap();
+        }
+    }
+    println!(
+        "Archived current artifacts under docs/evaluation/archive/{}",
+        target.file_name().unwrap().to_string_lossy()
+    );
+}
 fn main() {
     let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
     let dir = root.join("docs/evaluation");
@@ -445,12 +473,16 @@ fn main() {
         serde_json::from_slice(&std::fs::read(dir.join("cases.json")).unwrap()).unwrap();
     validate(&cases);
     let arg = std::env::args().nth(1).unwrap_or_default();
+    if arg == "--archive" {
+        archive(&dir);
+        return;
+    }
     if arg == "--validate" {
         return;
     }
     assert!(
         arg == "--live" || arg == "--replay",
-        "Usage: semantic-eval --validate | --replay | --live [prior-measurements.json] (live makes bounded paid provider calls)"
+        "Usage: semantic-eval --validate | --replay | --archive | --live [prior-measurements.json] (live makes bounded paid provider calls)"
     );
     let key = if arg == "--replay" {
         "offline-replay".into()
@@ -503,6 +535,7 @@ fn main() {
         );
         return;
     }
+    archive(&dir);
     let permissive = Policy {
         resolution: 0.,
         existence: 0.5,
