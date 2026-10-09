@@ -14,7 +14,7 @@ use graph_core::{Chain, Connection, Player, TeammateGraph};
 pub const STYLE_CSS: &str = include_str!("style.css");
 
 /// Escape text for safe inclusion in HTML content and attribute values.
-fn escape(text: &str) -> String {
+pub(crate) fn escape(text: &str) -> String {
     let mut out = String::with_capacity(text.len());
     for c in text.chars() {
         match c {
@@ -31,7 +31,7 @@ fn escape(text: &str) -> String {
 
 /// Percent-encode a query-string value (RFC 3986 unreserved characters pass
 /// through; everything else is escaped).
-fn url_encode(value: &str) -> String {
+pub(crate) fn url_encode(value: &str) -> String {
     value
         .bytes()
         .map(|c| {
@@ -238,7 +238,11 @@ pub fn home(
             semantic_status_line(semantic_status),
             coverage_line(coverage)
         ),
-        connect_form(players, Some(demo_from), Some(demo_to)),
+        format_args!(
+            "{}{}",
+            crate::search::form(""),
+            connect_form(players, Some(demo_from), Some(demo_to))
+        ),
         edges.len(),
         edge_items,
         url_encode(demo_from),
