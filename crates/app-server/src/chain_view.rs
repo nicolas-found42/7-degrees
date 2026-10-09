@@ -259,7 +259,8 @@ pub fn page(
         StatusCode::OK,
         "7 Degrees — Teammate Explorer",
         &format!(
-            "{shell}<p>Selected alternative {selected_number} on this page.</p><div data-selected-index=\"{}\" data-cursor=\"{}\">{}</div><section class=\"alternatives\" data-total-shortest=\"{}\"><h2>Equally short alternatives</h2><p>{} shortest chain(s); each has degree {}.</p><p>Showing {} alternative(s) on this page.</p><ol>{alternatives}</ol>{next}<p><a href=\"{}\">First shortest alternatives</a></p></section>",
+            "{shell}<p><a href=\"{}\">Explore selected chain in the graph</a></p><p>Selected alternative {selected_number} on this page.</p><div data-selected-index=\"{}\" data-cursor=\"{}\">{}</div><section class=\"alternatives\" data-total-shortest=\"{}\"><h2>Equally short alternatives</h2><p>{} shortest chain(s); each has degree {}.</p><p>Showing {} alternative(s) on this page.</p><ol>{alternatives}</ol>{next}<p><a href=\"{}\">First shortest alternatives</a></p></section>",
+            link(&current_cursor, query.selected.unwrap_or(0)).replacen("/chain?", "/graph?", 1),
             query.selected.unwrap_or(0),
             ui::escape(&current_cursor),
             render_selected_chain(&selected),

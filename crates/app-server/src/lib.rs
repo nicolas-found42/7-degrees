@@ -3,6 +3,7 @@
 
 pub mod chain_view;
 mod fixture_data;
+pub mod graph_view;
 mod jev;
 pub mod report_data;
 pub mod resolution;
@@ -66,6 +67,9 @@ pub fn app_with_jev(jev: JevHandle) -> Router {
 
 fn app(state: AppState) -> Router {
     Router::new()
+        .route("/assets/{asset}", get(graph_view::asset))
+        .route("/graph", get(graph_view::page))
+        .route("/api/neighborhood", get(graph_view::api))
         .route("/api/fixture", get(fixture_summary))
         .route("/api/graph", get(fixture_summary))
         .route("/api/edges", get(all_edges))
@@ -440,7 +444,7 @@ async fn chain_page(
 }
 
 /// The UI stylesheet, authored in the server crate and served as a static
-/// asset. No JavaScript ships anywhere in the UI.
+/// asset. Graph interactions are authored in Rust/WASM.
 async fn style_css() -> Response {
     (
         StatusCode::OK,

@@ -1,0 +1,16 @@
+[package]
+name = "canvas-view"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "=0.2.129"
+js-sys = "=0.3.106"
+web-sys = { version = "=0.3.106", features = ["Window", "Document", "Element", "HtmlElement", "HtmlCanvasElement", "CanvasRenderingContext2d", "Event", "EventTarget", "PointerEvent", "WheelEvent", "KeyboardEvent", "DomRect", "AddEventListenerOptions", "HtmlInputElement", "HtmlSelectElement", "HtmlFormElement", "CustomEvent", "CustomEventInit"] }
