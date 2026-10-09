@@ -1,5 +1,7 @@
 # Final application verification — T17 / issue #18
 
+Final Standards, Spec and stronger independent review have closed all findings at source HEAD `a13a2e2745f07b2067f8def23d7e8b9e7e47908f`. [Their recorded decisions and gate adjudication](independent-review.md) retain the original escalations and resolve the uncertain claims against actual receipts. This is independent acceptance; the model gates are not relabeled as automatic passes.
+
 The complete Rust application was started through `./scripts/run-app.sh` against the full committed report snapshot, with release WASM built first, no database service and semantic credentials removed from the launching environment. Actual HTTP responses and browser journeys confirm the implemented behavior. This is local evidence; no remote CI result or complete historical graph is claimed.
 
 [Ordered commands, results and hashes](commands-and-hashes.json) link the actual [raw check output](logs/). Machine-specific path prefixes were removed and redundant trailing empty lines normalized in published logs; hashes of the unchanged external originals are retained. Checks were repeated after the final review corrections; the command manifest identifies the source commit and exact rebuilt report hashes. Final review base is origin/main `f8e743ca30939476433c680e7a29169d70c3fa41`. Generated audit utilities were also executed against retained artifacts after the application test pipeline. Raw archives and source cache pages were unchanged; the isolated T4 reconciliation checkpoint was regenerated from those pinned inputs.
