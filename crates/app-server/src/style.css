@@ -135,3 +135,31 @@ section.alternatives {
     outline: 2px solid #23405a;
     outline-offset: 3px;
 }
+
+.graph-view {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid #c8cfc0;
+    background: #fff;
+    border-radius: 8px;
+}
+#graph-canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+    border: 1px solid #a4b4bd;
+    touch-action: none;
+}
+.graph-view button, .graph-view select { font: inherit; }
+.graph-view button:focus-visible, #graph-canvas:focus-visible { outline: 3px solid #b04f00; outline-offset: 3px; }
+#graph-players li, #graph-links li { margin: 0.5rem 0; }
+.graph-view select { max-width: 100%; }
+main.seven-degrees:has(.graph-view) { max-width: 70rem; }
+ol.path { padding-left: 0; gap: 0.75rem; }
+ol.path li {
+    list-style: decimal inside;
+    background: #edf3f8;
+    border: 1px solid #c8d8e3;
+    border-radius: 6px;
+    padding: 0.45rem 0.7rem;
+}
