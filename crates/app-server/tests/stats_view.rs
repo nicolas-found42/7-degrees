@@ -137,10 +137,21 @@ async fn isolate_only_and_empty_snapshots_show_zero_diameter_and_an_empty_histog
             serde_json::from_str::<serde_json::Value>(&api).unwrap(),
             expected
         );
-        let (status, html) = get(app, "/stats").await;
+        let (status, html) = get(app.clone(), "/stats").await;
         assert_eq!(status, StatusCode::OK);
         assert!(html.contains("No reachable distinct player pairs in this snapshot."));
         assert!(html.contains("<dt>Maximum finite diameter</dt><dd>0</dd>"));
         assert!(html.contains("<dt>Reachable unordered pairs</dt><dd>0</dd>"));
+        if players.is_empty() {
+            let (status, api) = get(app.clone(), "/api/network").await;
+            assert_eq!(status, StatusCode::OK);
+            let payload: serde_json::Value = serde_json::from_str(&api).unwrap();
+            assert_eq!(payload["nodes"], serde_json::json!([]));
+            assert_eq!(payload["links"], serde_json::json!([]));
+            assert_eq!(payload["full_network"], true);
+            let (status, html) = get(app, "/graph?all=true").await;
+            assert_eq!(status, StatusCode::OK);
+            assert!(html.contains("No players are present in this snapshot."));
+        }
     }
 }

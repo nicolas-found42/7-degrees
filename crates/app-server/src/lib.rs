@@ -1,6 +1,7 @@
 //! The 7-degrees local app server: Axum routes over a deterministic
 //! teammate graph, plus the minimal server-rendered UI.
 
+mod chain_map;
 pub mod chain_view;
 mod fixture_data;
 pub mod graph_view;
@@ -88,6 +89,7 @@ fn app(state: AppState) -> Router {
         .route("/assets/{asset}", get(graph_view::asset))
         .route("/graph", get(graph_view::page))
         .route("/api/neighborhood", get(graph_view::api))
+        .route("/api/network", get(graph_view::network_api))
         .route("/api/fixture", get(fixture_summary))
         .route("/api/graph", get(fixture_summary))
         .route("/api/edges", get(all_edges))

@@ -275,7 +275,8 @@ async fn rust_wasm_canvas_supports_pointer_keyboard_expansion_and_retains_chain_
         browser.call(json!({"op":"count","frame":"#edge-provenance-frame","selector":"section:not(.coverage) a[href^='/sources/tenure?record=']"})),
         2
     );
-    let standalone = browser.call(json!({"op":"open-link-text","selector":"#selected-chain a"}));
+    let standalone =
+        browser.call(json!({"op":"open-link-text","selector":"#selected-chain .links a"}));
     assert!(
         standalone
             .as_str()

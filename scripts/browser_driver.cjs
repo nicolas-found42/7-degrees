@@ -7,13 +7,14 @@ try { playwright = require('playwright'); } catch (_) {
 }
 let browser, page;
 const errors = [];
+const captureErrors = [];
 const responses = [], captures = [];
 function observe(surface) {
   surface.on('pageerror', e => errors.push(e.message));
   surface.on('console', e => { if(e.type()==='error') errors.push(e.text()); });
   surface.on('response', response => {
     if(response.status() < 300 || response.status() >= 400)
-      captures.push(response.body().then(body => responses.push(body)).catch(e => errors.push(String(e))));
+      captures.push(response.body().then(body => responses.push(body)).catch(e => captureErrors.push(String(e))));
   });
 }
 async function command(c) {
@@ -25,6 +26,7 @@ async function command(c) {
       observe(page);
       return browser.version();
     case 'goto': await page.goto(c.url); return page.url();
+    case 'viewport': await page.setViewportSize({width:c.width,height:c.height}); return true;
     case 'ready': await target().waitFor({state:'visible'}); return true;
     case 'click': await target().click(); return true;
     case 'fill': await target().fill(c.value); return true;
@@ -34,6 +36,10 @@ async function command(c) {
     case 'text': return target().textContent();
     case 'count': return target().count();
     case 'box': return target().boundingBox();
+    case 'payload-counts': return page.locator('#graph-payload').evaluate(element => {
+      const payload = JSON.parse(element.getAttribute('data-payload') || element.textContent);
+      return {players:payload.nodes.length, relationships:payload.links.length, full_network:payload.full_network, truncated:payload.truncated, path:payload.path, highlighted:payload.links.filter(e=>e.on_path).length};
+    });
     case 'focus': await target().focus(); return true;
     case 'key': await page.keyboard.press(c.key); return true;
     case 'mouse':
@@ -47,7 +53,11 @@ async function command(c) {
     case 'screenshot': if(c.selector) await target().screenshot({path:c.path}); else await page.screenshot({path:c.path,fullPage:true}); return true;
     case 'event-start': await page.evaluate(name => { window.browserEvents = []; document.addEventListener(name, event => window.browserEvents.push(event.detail)); }, c.name); return true;
     case 'events': return page.evaluate(() => window.browserEvents);
-    case 'response-contains': await page.waitForLoadState('networkidle'); await Promise.all(captures); return responses.some(body => body.includes(Buffer.from(c.text)));
+    case 'response-contains': await page.waitForLoadState('networkidle'); await Promise.all(captures); {
+      const found = responses.some(body => body.includes(Buffer.from(c.text)));
+      if (!found && captureErrors.length) throw new Error('Response capture incomplete: ' + captureErrors.join('\n'));
+      return found;
+    }
     case 'errors': return errors;
     case 'close': await browser.close(); return true;
     default: throw new Error('unknown browser operation');

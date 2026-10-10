@@ -21,6 +21,8 @@ pub struct GraphLink {
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct GraphPayload {
+    #[serde(default)]
+    pub full_network: bool,
     pub nodes: Vec<GraphNode>,
     pub links: Vec<GraphLink>,
     pub path: Vec<String>,

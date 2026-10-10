@@ -120,6 +120,121 @@ fn assert_chain(b: &mut Browser, degree: usize, names: &[&str]) {
         b.call(json!({"op":"count","selector":"#selected-chain .path li"})),
         names.len()
     );
+    for layout in ["desktop", "mobile"] {
+        assert_eq!(
+            b.call(json!({"op":"count","selector":format!(".chain-map-{layout} .map-player")})),
+            names.len()
+        );
+        assert_eq!(
+            b.call(json!({"op":"count","selector":format!(".chain-map-{layout} .map-connection")})),
+            degree
+        );
+    }
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "actual Chromium responsive player-chain visualizer"]
+async fn maravich_mcgrady_visualizer_links_profiles_and_evidence_on_desktop_and_mobile() {
+    let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../docs/reports");
+    let server = Server::start(
+        app_server::app_with_report_data(root, app_server::JevHandle::unconfigured()).unwrap(),
+    )
+    .await;
+    let mut b = Browser::start();
+    b.call(json!({"op":"launch"}));
+    let url = format!("{}/chain?from=maravpe01&to=mcgratr01", server.url);
+    b.call(json!({"op":"goto","url":url}));
+    assert_chain(
+        &mut b,
+        3,
+        &["Pete Maravich", "Larry Bird", "Dee Brown", "Tracy McGrady"],
+    );
+    assert_eq!(
+        b.call(json!({"op":"count","selector":".chain-map-desktop .map-player"})),
+        4
+    );
+    assert_eq!(
+        b.call(json!({"op":"count","selector":".chain-map-desktop .map-connection"})),
+        3
+    );
+    assert!(b.text(".chain-map-desktop").contains("≥ 35 shared games"));
+    screenshot(
+        &mut b,
+        "maravich-mcgrady-visualizer.png",
+        Some("#selected-chain"),
+    );
+    b.call(json!({"op":"focus","selector":".chain-map-desktop .map-player[data-player-id='birdla01']"}));
+    b.call(json!({"op":"key","key":"Enter"}));
+    assert_eq!(b.text("h1"), "Larry Bird");
+    b.call(json!({"op":"goto","url":url}));
+    b.call(json!({"op":"click","selector":".chain-map-desktop .map-connection[data-from='maravpe01'] .map-evidence"}));
+    assert!(b.text("main").contains("Pete Maravich ↔ Larry Bird"));
+    b.call(json!({"op":"viewport","width":390,"height":844}));
+    b.call(json!({"op":"goto","url":url}));
+    b.call(json!({"op":"ready","selector":".chain-map-mobile"}));
+    let desktop = b.call(json!({"op":"box","selector":".chain-map-desktop"}));
+    assert!(desktop.is_null());
+    let mobile = b.call(json!({"op":"box","selector":".chain-map-mobile"}));
+    assert!(mobile["width"].as_f64().unwrap() <= 390.0);
+    screenshot(&mut b, "maravich-mcgrady-mobile.png", Some(".chain-map"));
+    b.call(json!({"op":"click","selector":".chain-map-mobile .map-connection[data-from='brownde01'] .map-evidence"}));
+    assert!(b.text("main").contains("Dee Brown ↔ Tracy McGrady"));
+    assert_eq!(b.call(json!({"op":"errors"})), json!([]));
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "actual Chromium over every player and every teammate connection"]
+async fn whole_network_renders_all_connections_and_keeps_them_when_searching_and_zooming() {
+    let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../docs/reports");
+    let server = Server::start(
+        app_server::app_with_report_data(root, app_server::JevHandle::unconfigured()).unwrap(),
+    )
+    .await;
+    let mut b = Browser::start();
+    b.call(json!({"op":"launch"}));
+    let start = std::time::Instant::now();
+    b.call(json!({"op":"goto","url":format!("{}/graph?from=maravpe01&to=mcgratr01&all=true",server.url)}));
+    b.ready();
+    println!(
+        "Whole network: 5106 players / 101395 connections ready in {} ms",
+        start.elapsed().as_millis()
+    );
+    assert_eq!(b.attr("data-players"), "5106");
+    assert_eq!(b.attr("data-relationships"), "101395");
+    let counts = b.call(json!({"op":"payload-counts"}));
+    assert_eq!(
+        counts,
+        json!({"players":5106,"relationships":101395,"full_network":true,"truncated":false,"path":["maravpe01","birdla01","brownde01","mcgratr01"],"highlighted":3})
+    );
+    let overview_zoom = b.attr("data-zoom");
+    screenshot(&mut b, "all-player-network.png", Some("#graph-canvas"));
+    b.call(json!({"op":"fill","selector":"#network-search","value":"Tracy McGrady"}));
+    b.click("Find in network");
+    assert!(b.text("#graph-selection").contains("Tracy McGrady"));
+    assert_ne!(b.attr("data-zoom"), overview_zoom);
+    assert!(b.text("#network-player-links").contains("Dee Brown"));
+    assert_eq!(b.call(json!({"op":"payload-counts"})), counts);
+    b.call(json!({"op":"click","selector":"#network-player-links button","role":"button","name":"Dee Brown — RAPTORS"}));
+    assert!(b.text("#selected-edge").contains("Dee Brown"));
+    b.call(json!({"op":"fill","selector":"#network-search","value":"Timmy Allen"}));
+    b.click("Find in network");
+    assert!(b.text("#graph-selection").contains("Timmy Allen"));
+    assert_eq!(
+        b.call(json!({"op":"attribute","selector":"#open-selected-edge","name":"href"})),
+        serde_json::Value::Null
+    );
+    assert_eq!(
+        b.call(json!({"op":"attribute","selector":"#open-selected-edge","name":"hidden"})),
+        json!("")
+    );
+    assert_eq!(
+        b.call(json!({"op":"count","selector":"#network-player-links li"})),
+        0
+    );
+    b.click("Fit whole network");
+    assert_eq!(b.attr("data-zoom"), overview_zoom);
+    assert_eq!(b.call(json!({"op":"payload-counts"})), counts);
+    assert_eq!(b.call(json!({"op":"errors"})), json!([]));
 }
 fn screenshot(b: &mut Browser, name: &str, selector: Option<&str>) {
     let root = std::env::var("BROWSER_E2E_ARTIFACTS")

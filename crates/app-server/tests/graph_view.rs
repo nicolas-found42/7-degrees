@@ -27,6 +27,31 @@ async fn get(uri: &str) -> (u16, String) {
         String::from_utf8(bytes).expect("text endpoint response"),
     )
 }
+
+#[tokio::test]
+async fn whole_network_has_every_player_and_edge_including_isolates_without_caps() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../docs/reports");
+    let app =
+        app_server::app_with_report_data(&root, app_server::JevHandle::unconfigured()).unwrap();
+    let (status, _, bytes) = response(app, "/api/network").await;
+    assert_eq!(status, 200);
+    let payload: canvas_view::GraphPayload = serde_json::from_slice(&bytes).unwrap();
+    let (graph, _) = app_server::report_data::load(&root).unwrap();
+    let expected: std::collections::BTreeSet<_> =
+        graph.edges().into_iter().map(|e| (e.a, e.b)).collect();
+    let actual: std::collections::BTreeSet<_> = payload
+        .links
+        .iter()
+        .map(|e| (e.from.clone(), e.to.clone()))
+        .collect();
+    assert_eq!(actual, expected);
+    assert_eq!(payload.nodes.len(), graph.roster.players.len());
+    assert_eq!(payload.links.len(), expected.len());
+    assert_eq!(payload.nodes.len(), 5106);
+    assert_eq!(payload.links.len(), 101395);
+    assert!(payload.nodes.iter().any(|n| n.id == "allenti01"));
+    assert!(payload.full_network && !payload.truncated);
+}
 #[tokio::test]
 async fn direct_and_nearby_neighborhoods_expose_only_evidenced_fixture_connections() {
     let (status, body) = get("/api/neighborhood?player=A&depth=1").await;
@@ -199,7 +224,7 @@ async fn real_report_neighborhood_retains_source_context_and_coverage_without_ex
  {
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../docs/reports");
     let app =
-        app_server::app_with_report_data(root, app_server::JevHandle::unconfigured()).unwrap();
+        app_server::app_with_report_data(&root, app_server::JevHandle::unconfigured()).unwrap();
     let response = app
         .oneshot(
             Request::builder()

@@ -88,13 +88,14 @@ pub fn render_selected_chain(chain: &SelectedChain) -> String {
     let ids: Vec<_> = chain.path.iter().map(|p| p.id.as_str()).collect();
     let path = serde_json::to_string(&ids).expect("player ids serialize");
     let payload = serde_json::to_string(chain).expect("selected chain serializes");
+    let visualizer = crate::chain_map::render(chain);
     let relationship = match chain.degree {
         0 => "Same player; no teammate links are needed.",
         1 => "Direct teammates.",
         _ => "Indirect teammate connection.",
     };
     format!(
-        "<section class=\"chain\" id=\"selected-chain\" data-degree=\"{}\" data-path=\"{}\"><h2>Shortest teammate chain</h2><p class=\"degree\">Degree of separation: <strong>{}</strong></p><p>{relationship}</p><p>Teammate links in this chain: <strong>{}</strong></p><ol class=\"path\">{items}</ol><ul class=\"links\">{links}</ul><template id=\"selected-chain-payload\" data-payload=\"{}\"></template></section>",
+        "<section class=\"chain\" id=\"selected-chain\" data-degree=\"{}\" data-path=\"{}\"><h2>Shortest teammate chain</h2><p class=\"degree\">Degree of separation: <strong>{}</strong></p><p>{relationship}</p><p>Teammate links in this chain: <strong>{}</strong></p>{visualizer}<ol class=\"path\">{items}</ol><ul class=\"links\">{links}</ul><template id=\"selected-chain-payload\" data-payload=\"{}\"></template></section>",
         chain.degree,
         ui::escape(&path),
         chain.degree,
@@ -265,12 +266,16 @@ pub fn page(
         ui::url_encode(&current_cursor),
         limit.min(20)
     );
+    let graph_link =
+        link(&current_cursor, query.selected.unwrap_or(0)).replacen("/chain?", "/graph?", 1);
+    let network_link = format!("{graph_link}&amp;all=true");
     ui::document(
         StatusCode::OK,
         "7 Degrees — Teammate Explorer",
         &format!(
-            "{shell}{rank_link}<p><a href=\"{}\">Explore selected chain in the graph</a></p><p>Selected alternative {selected_number} on this page.</p><div data-selected-index=\"{}\" data-cursor=\"{}\">{}</div><section class=\"alternatives\" data-total-shortest=\"{}\"><h2>Equally short alternatives</h2><p>{} shortest chain(s); each has degree {}.</p><p>Showing {} alternative(s) on this page.</p><ol>{alternatives}</ol>{next}<p><a href=\"{}\">First shortest alternatives</a></p></section>",
-            link(&current_cursor, query.selected.unwrap_or(0)).replacen("/chain?", "/graph?", 1),
+            "{shell}{rank_link}<p><a href=\"{}\">Explore selected chain in the graph</a></p><p><a href=\"{}\">See all players and connections in one field</a></p><p>Selected alternative {selected_number} on this page.</p><div data-selected-index=\"{}\" data-cursor=\"{}\">{}</div><section class=\"alternatives\" data-total-shortest=\"{}\"><h2>Equally short alternatives</h2><p>{} shortest chain(s); each has degree {}.</p><p>Showing {} alternative(s) on this page.</p><ol>{alternatives}</ol>{next}<p><a href=\"{}\">First shortest alternatives</a></p></section>",
+            graph_link,
+            network_link,
             query.selected.unwrap_or(0),
             ui::escape(&current_cursor),
             render_selected_chain(&selected),

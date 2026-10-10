@@ -166,3 +166,40 @@ ol.path li {
 #edge-provenance-frame { width: 100%; min-height: 30rem; border: 1px solid #a4b4bd; background: #fff; }
 #edge-provenance-panel { margin: 1rem 0; }
 pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+main.seven-degrees:has(.chain-map) { max-width: 70rem; }
+.chain-map { margin: 1.5rem 0; padding: 1.25rem; border: 1px solid #d6e3e3; border-radius: 16px; background: #f4f9f8; }
+.map-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.map-heading h3 { margin: 0; font-size: 1.15rem; }
+.map-heading span { color: #34635e; font-size: .9rem; font-weight: 600; }
+.map-help, .chain-map figcaption { color: #52696a; font-size: .9rem; line-height: 1.5; }
+.chain-map-desktop { overflow-x: auto; }
+.chain-map svg { display: block; margin: auto; font-family: inherit; }
+.chain-map-desktop svg { width: 100%; min-width: 720px; height: auto; }
+.chain-map-mobile { display: none; }
+.chain-map text { text-anchor: middle; pointer-events: none; }
+.map-connection line { stroke: #6a9991; stroke-width: 3; }
+.map-evidence rect { fill: #fff; stroke: #8cafaa; stroke-width: 1.5; }
+.map-team { fill: #25584f; font-size: 14px; font-weight: 700; letter-spacing: .6px; }
+.map-proof { fill: #456963; font-size: 12px; }
+.map-player circle { fill: #fff; stroke: #2d7d72; stroke-width: 3; }
+.map-player.start circle { fill: #2d7d72; }
+.map-player.destination circle { fill: #23405a; stroke: #23405a; }
+.map-initials { fill: #2d7d72; font-weight: 700; font-size: 20px; }
+.start .map-initials, .destination .map-initials { fill: #fff; }
+.map-name { fill: #1d2733; font-size: 17px; font-weight: 650; }
+.map-role { fill: #637879; font-size: 12px; }
+.map-player:hover circle, .map-player:focus-visible circle { stroke: #b04f00; stroke-width: 5; }
+.map-evidence:hover rect, .map-evidence:focus-visible rect { fill: #e8f3f0; stroke: #b04f00; stroke-width: 3; }
+.chain-map a:focus-visible { outline: none; }
+#network-player-links { max-height: 16rem; overflow-y: auto; padding: .5rem 1rem 1rem 2rem; border: 1px solid #d6e3e3; border-radius: 8px; }
+#network-player-links li { margin: .4rem 0; }
+.network-legend { color: #52696a; line-height: 1.5; }
+#network-search { font: inherit; padding: .4rem .6rem; border: 1px solid #a4b4bd; border-radius: 6px; }
+@media (max-width: 640px) {
+    .chain-map { padding: 1rem .25rem; }
+    .map-heading, .map-help, .chain-map figcaption { padding-inline: .75rem; }
+    .chain-map-desktop { display: none; }
+    .chain-map-mobile { display: block; }
+    .chain-map-mobile svg { width: 100%; max-width: 340px; height: auto; }
+}
