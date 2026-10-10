@@ -58,7 +58,7 @@ pub(crate) fn document(status: StatusCode, title: &str, body: &str) -> Response 
     let html = format!(
         "<!DOCTYPE html>\n<html lang=\"en\">\n<head><meta charset=\"utf-8\"><meta \
          name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>{}</title><link \
-         rel=\"stylesheet\" href=\"/style.css\"></head>\n<body><main \
+         rel=\"stylesheet\" href=\"/style.css\"><link rel=\"icon\" href=\"data:,\"></head>\n<body><main \
          class=\"seven-degrees\"><nav aria-label=\"Main navigation\"><a href=\"/\">Explorer</a> · <a href=\"/stats\">Network statistics</a> · <a href=\"/graph?all=true\">All player connections</a></nav>{}</main></body>\n</html>\n",
         escape(title),
         body

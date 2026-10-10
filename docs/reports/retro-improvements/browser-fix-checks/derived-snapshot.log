@@ -1,0 +1,9 @@
+{
+  "archives": [],
+  "cached_transaction_pages_verified": 0,
+  "derived_sha256": {
+    "docs/reports/t3/player-universe.csv": "81031c7e3cf95845060119a3347d3cf37ec60c6a24b0ced9978fb7df2e7e651d",
+    "docs/reports/t4/tenures.csv": "2bd2106ba3c0819b1a065246950f527a4267feb5f8a2054a11318205c04a1ab1"
+  },
+  "network_requests": 0
+}

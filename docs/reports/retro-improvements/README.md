@@ -18,3 +18,7 @@ The PR helper reads just the maintained prefix and composes a replacement while 
 - [Final utility receipts](utility-checks/manifest.json): all eight verification/PR-helper regressions passed after adding compact-summary publication. The earlier full-profile receipt predates that final utility-only change; its source state is retained accurately.
 
 These are local execution receipts. Remote workflow outcomes should be read from the current GitHub Actions run, not inferred from these files. No historical coverage expansion or graph-data regeneration was performed for this maintenance work.
+
+## Fresh-runner browser correction
+
+The first GitHub browser job exposed resource 404 errors on every page in full Chromium. Local headless-shell runs had not requested the implicit favicon. The document shell now declares an inline empty icon, and the driver reports HTTP error URLs independently of optional response-body capture. The fixture journey passed locally with full Chromium after this correction. [Fresh full-profile receipts](browser-fix-checks/manifest.json) again record 112 Rust, 102 Python and seven explicit browser tests passing, plus all format, Clippy and data/audit checks. The original failed GitHub run remains visible in Actions; subsequent run results should be read there.

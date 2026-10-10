@@ -14,6 +14,7 @@ function observe(surface) {
   surface.on('pageerror', e => errors.push(e.message));
   surface.on('console', e => { if(e.type()==='error') errors.push(e.text()); });
   surface.on('response', response => {
+    if(response.status() >= 400) errors.push(`HTTP ${response.status()} ${response.url()}`);
     if(captureResponses && (response.status() < 300 || response.status() >= 400))
       captures.push(response.body().then(body => responses.push(body)).catch(e => captureErrors.push(String(e))));
   });
