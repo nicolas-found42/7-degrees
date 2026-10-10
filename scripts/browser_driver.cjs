@@ -1,6 +1,7 @@
 // Browser protocol plumbing only. Cases and assertions are owned by Rust tests.
 const readline = require('node:readline');
 const path = require('node:path');
+const fs = require('node:fs');
 let playwright;
 try { playwright = require('playwright'); } catch (_) {
   playwright = require(process.env.PLAYWRIGHT_PACKAGE_PATH || path.join(process.env.HOME, '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'));
@@ -45,8 +46,14 @@ async function command(c) {
         await popup.close(); return text;
       } catch(error) {
         const link = await target().evaluate(e=>({href:e.href,target:e.target,html:e.outerHTML}));
-        await page.screenshot({path:path.join(__dirname,'../target/browser-e2e/tab-failure.png'),fullPage:true});
-        throw new Error(`${error}; clicked=${clicked}; link=${JSON.stringify(link)}; pages=${JSON.stringify(page.context().pages().map(p=>p.url()))}`);
+        let screenshot = 'tab-failure.png';
+        try {
+          const failurePath = path.join(__dirname,'../target/browser-e2e/tab-failure.png');
+          fs.mkdirSync(path.dirname(failurePath), {recursive:true});
+          await page.screenshot({path:failurePath,fullPage:true});
+          screenshot = failurePath;
+        } catch(screenshotError) { screenshot = `unavailable (${screenshotError})`; }
+        throw new Error(`${error}; clicked=${clicked}; link=${JSON.stringify(link)}; pages=${JSON.stringify(page.context().pages().map(p=>p.url()))}; screenshot=${screenshot}`);
       }
     }
     case 'select': await target().selectOption(c.value); return true;

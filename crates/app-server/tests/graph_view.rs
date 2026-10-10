@@ -249,3 +249,52 @@ async fn real_report_neighborhood_retains_source_context_and_coverage_without_ex
     assert!(v["coverage"].as_str().unwrap().contains("evidence"));
     assert_eq!(v["truncated"], true);
 }
+
+#[tokio::test]
+async fn full_network_page_keeps_a_text_fallback_without_a_selected_chain() {
+    let (status, html) = get("/graph?all=true").await;
+    assert_eq!(status, 200);
+    assert!(html.contains("id=\"network-text-fallback\""), "{html}");
+    assert!(html.contains("id=\"list-connections\""), "{html}");
+    let players = html
+        .split("<ul id=\"graph-players\">")
+        .nth(1)
+        .and_then(|rest| rest.split("</ul>").next())
+        .unwrap();
+    assert!(players.contains("data-select-player"), "{players}");
+    let links = html
+        .split("<ul id=\"graph-links\">")
+        .nth(1)
+        .and_then(|rest| rest.split("</ul>").next())
+        .unwrap();
+    assert!(links.contains("data-select-edge-from"), "{links}");
+}
+
+#[tokio::test]
+async fn canvas_loader_is_only_referenced_when_assets_exist() {
+    use app_server::{JevHandle, app_with_jev_and_canvas_assets, graph_view::CanvasAssets};
+    let missing =
+        app_with_jev_and_canvas_assets(JevHandle::unconfigured(), CanvasAssets::Unavailable);
+    let (status, _, bytes) = response(missing, "/graph?all=true").await;
+    assert_eq!(status, 200);
+    let html = String::from_utf8(bytes).unwrap();
+    assert!(
+        !html.contains("canvas-loader.js"),
+        "a page without assets must not import a module that will 503"
+    );
+    assert!(html.contains("Canvas unavailable"), "{html}");
+}
+
+#[tokio::test]
+async fn neighborhood_and_chain_links_name_the_same_team_for_a_pair() {
+    let (_, body) = get("/api/neighborhood?player=A&depth=1&limit=50").await;
+    let payload: Value = serde_json::from_str(&body).unwrap();
+    for link in payload["links"].as_array().unwrap() {
+        let (from, to) = (link["from"].as_str().unwrap(), link["to"].as_str().unwrap());
+        let (_, chain) = get(&format!("/api/connection?from={from}&to={to}")).await;
+        let chain: Value = serde_json::from_str(&chain).unwrap();
+        if chain["links"].as_array().map(Vec::len) == Some(1) {
+            assert_eq!(link["team"], chain["links"][0]["team"], "{from}-{to}");
+        }
+    }
+}

@@ -15,8 +15,9 @@ use std::sync::{Arc, Mutex};
 enum JevState {
     /// No key in the environment: semantic features are off by construction.
     Unconfigured,
-    /// A client exists; `degraded` latches once the provider fails a
-    /// judgment call (fail-soft status for the UI line).
+    /// A client exists; `degraded` follows the most recent call: set when
+    /// the provider fails or a consumer rejects its reply, cleared by the
+    /// next successful judgment (fail-soft status for the UI line).
     Client {
         handle: Arc<HandleInner>,
         degraded: Arc<AtomicBool>,
@@ -24,7 +25,7 @@ enum JevState {
 }
 
 impl JevState {
-    /// `true` when a configured provider has failed at least one call.
+    /// `true` when the configured provider's most recent call failed.
     fn degraded(&self) -> bool {
         match self {
             JevState::Unconfigured => false,
@@ -100,7 +101,7 @@ impl JevHandle {
     }
 
     /// One judgment through the underlying client; `Unavailable` without a
-    /// configured provider. A failed call latches the degraded status.
+    /// configured provider. The degraded status tracks the latest call.
     pub fn judge(&self, request: &JevRequest) -> JevOutcome {
         self.judge_measured(request).outcome
     }
@@ -110,9 +111,7 @@ impl JevHandle {
             JevState::Unconfigured => JevEvaluation::unavailable(),
             JevState::Client { handle, degraded } => {
                 let evaluation = handle.judge_measured(request);
-                if !evaluation.outcome.is_available() {
-                    degraded.store(true, Ordering::SeqCst);
-                }
+                degraded.store(!evaluation.outcome.is_available(), Ordering::SeqCst);
                 evaluation
             }
         }

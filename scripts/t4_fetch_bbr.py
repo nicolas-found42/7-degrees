@@ -135,6 +135,23 @@ def ledger_rows(ledger_path):
 
 
 # ------------------------------------------------------------------ fetcher --
+TRANSACTIONS_MARKER = b'id="transactions_link"'
+
+
+def is_transactions_page(body):
+    """True when the body carries the transaction-list anchor the parser walks from."""
+    return bool(body) and TRANSACTIONS_MARKER in body
+
+
+def cached_page_body(cache):
+    """Cached bytes when the file is a valid transaction page, else None."""
+    if not (os.path.exists(cache) and os.path.getsize(cache) > 0):
+        return None
+    with open(cache, "rb") as f:
+        body = f.read()
+    return body if is_transactions_page(body) and not FetchOutcome(200, body).throttled() else None
+
+
 class FetchOutcome(object):
     __slots__ = ("status", "body", "error")
 
@@ -145,7 +162,14 @@ class FetchOutcome(object):
 
     @property
     def ok(self):
-        return self.status == 200 and self.body
+        return (self.status == 200 and bool(self.body)
+                and not self.throttled() and is_transactions_page(self.body))
+
+    @property
+    def retryable(self):
+        """Transient failures only; permanent 4xx responses are not retried."""
+        return (self.throttled() or self.status is None
+                or (self.status is not None and self.status >= 500))
 
     def throttled(self):
         """429 / 503 / Cloudflare 1015 rate-limit markers."""
@@ -185,18 +209,18 @@ def fetch_page_throttled(paths, url, ledger_path, state):
     league_year = url.rsplit("/", 1)[-1].replace("_transactions.html", "")
     league, year_s = league_year.split("_", 1)
     cache = page_cache_path(paths, league, int(year_s))
-    if os.path.exists(cache) and os.path.getsize(cache) > 0:
+    cached = cached_page_body(cache)
+    if cached is not None:
         ledger_append(ledger_path, {
             "ts_utc": utc_timestamp_now(),
             "action": "cache-hit", "url": url, "status": None,
-            "bytes": os.path.getsize(cache), "attempt": 0,
+            "bytes": len(cached), "attempt": 0,
             "elapsed_since_previous_start_seconds": None,
             "start_spacing_seconds": None,
             "note": "cached (no request)",
         })
         state["cache_hits"] += 1
-        with open(cache, "rb") as f:
-            return f.read(), "cache"
+        return cached, "cache"
     for attempt in (1, 2):
         # hard throttle spacing measured between request STARTS
         now = time.monotonic()
@@ -221,12 +245,14 @@ def fetch_page_throttled(paths, url, ledger_path, state):
             if attempt == 2:
                 state["retries_ok"] += 1
             return out.body, "http"
-        if attempt == 1 and (out.throttled() or out.status is None or out.error):
+        if attempt == 1 and out.retryable:
             time.sleep(RETRY_BACKOFF_SECONDS)
             continue
         state["fetch_failures"] += 1
+        invalid = out.status == 200 and bool(out.body) and not out.throttled()
         state["failures"][league_year] = {
-            "status": out.status, "error": out.error or "",
+            "status": out.status,
+            "error": out.error or ("invalid-transaction-page" if invalid else ""),
         }
         return None, "failed"
     return None, "failed"
@@ -728,11 +754,8 @@ def movement_legs(items, event_class):
 
 def parse_transactions_html(html, league, season):
     parser = TxnListParser()
-    try:
-        parser.feed(html)
-        parser.close()
-    except Exception:
-        pass
+    parser.feed(html)
+    parser.close()
     # page bounding window: "Transactions listed are from <strong>X</strong> to
     # <strong>Y</strong>." — tag-tolerant: strip tags in a window after the prose
     win_i = html.find("Transactions listed are from")
@@ -860,22 +883,26 @@ def main(argv):
     for league, year in PAGES:
         url = page_url(league, year)
         if no_fetch:
-            cache = page_cache_path(paths, league, year)
-            if os.path.exists(cache) and os.path.getsize(cache) > 0:
-                with open(cache, "rb") as f:
-                    body = f.read()
+            body = cached_page_body(page_cache_path(paths, league, year))
+            if body is not None:
                 state["cache_hits"] += 1
             else:
                 state["fetch_failures"] += 1
-                state["failures"]["%s_%d" % (league, year)] = {"status": None,
-                                                               "error": "not-cached (--no-fetch)"}
+                state["failures"]["%s_%d" % (league, year)] = {
+                    "status": None, "error": "not-cached-or-invalid (--no-fetch)"}
                 continue
         else:
             body, _how = fetch_page_throttled(paths, url, ledger_path, state)
         if body is None:
             continue
         html = body.decode("utf-8", "replace")
-        rows, wf, wt = parse_transactions_html(html, league, year)
+        try:
+            rows, wf, wt = parse_transactions_html(html, league, year)
+        except Exception as e:
+            state["fetch_failures"] += 1
+            state["failures"]["%s_%d" % (league, year)] = {
+                "status": 200, "error": "parse-error: %s: %s" % (type(e).__name__, e)}
+            continue
         state.setdefault("parsed_rows", 0)
         state["parsed_rows"] += len(rows)
         state.setdefault("pages_parsed", []).append(
@@ -888,14 +915,18 @@ def main(argv):
     source_pages = []
     parse_failures = []
     for league, year in PAGES:
-        cache = page_cache_path(paths, league, year)
-        if not (os.path.exists(cache) and os.path.getsize(cache) > 0):
-            parse_failures.append({"page": "%s_%d" % (league, year), "reason": "not-cached"})
+        body = cached_page_body(page_cache_path(paths, league, year))
+        if body is None:
+            parse_failures.append({"page": "%s_%d" % (league, year),
+                                   "reason": "not-cached-or-invalid"})
             continue
-        with open(cache, "rb") as f:
-            body = f.read()
         html = body.decode("utf-8", "replace")
-        rows, wf, wt = parse_transactions_html(html, league, year)
+        try:
+            rows, wf, wt = parse_transactions_html(html, league, year)
+        except Exception as e:
+            parse_failures.append({"page": "%s_%d" % (league, year),
+                                   "reason": "parse-error: %s: %s" % (type(e).__name__, e)})
+            continue
         source_pages.append({"page": "%s_%d" % (league, year),
                              "url": page_url(league, year), "sha256": hashlib.sha256(body).hexdigest(),
                              "bytes": len(body), "parsed_rows": len(rows),

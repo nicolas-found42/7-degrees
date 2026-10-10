@@ -11,12 +11,15 @@ def publish(raw, output):
     manifest = validate_receipts(raw)  # Validate every receipt before any output mutation.
     if output.exists():
         raise ValueError('Choose a new evidence directory; existing receipts are immutable')
-    output.mkdir(parents=True)
     published = json.loads(json.dumps(manifest))
-    for check in published['checks']:
+    sanitized = {}
+    for check in published['checks']:  # Decode and sanitize everything before creating the destination.
         source = raw / check['log']
-        text = source.read_text().replace(str(ROOT), '<checkout>')
-        text = re.sub(r'/Users/[^/\s]+', '<user-home>', text)
+        text = source.read_bytes().decode('utf-8', 'replace').replace(str(ROOT), '<checkout>')
+        sanitized[check['log']] = re.sub(r'/Users/[^/\s]+', '<user-home>', text)
+    output.mkdir(parents=True)
+    for check in published['checks']:
+        text = sanitized[check['log']]
         dest = output / check['log']
         dest.write_text(text.rstrip('\n') + '\n' if text else '')
         check['raw_sha256'] = check.pop('sha256')

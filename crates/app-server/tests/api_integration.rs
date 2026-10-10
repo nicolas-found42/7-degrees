@@ -622,6 +622,51 @@ async fn ui_reports_semantic_features_available_with_a_provider() {
 }
 
 #[tokio::test]
+async fn edge_listings_are_paged_and_bounded() {
+    let (status, body) = get("/api/edges?limit=1").await;
+    assert_eq!(status, StatusCode::OK);
+    let page = body.expect("JSON body present");
+    let total = page["total_edges"].as_u64().unwrap();
+    assert!(total >= 2, "the fixture has several edges");
+    assert_eq!(page["edges"].as_array().unwrap().len(), 1);
+    assert_eq!(page["next_offset"], 1);
+    let (_, rest) = get(&format!("/api/graph?offset={}&limit=5000", 1)).await;
+    let rest = rest.expect("JSON body present");
+    assert_eq!(rest["edges"].as_array().unwrap().len() as u64, total - 1);
+    assert!(rest["next_offset"].is_null());
+    assert!(rest["players"].as_array().is_some_and(|p| !p.is_empty()));
+    for bad in ["/api/edges?limit=0", "/api/edges?limit=5001"] {
+        assert_eq!(get(bad).await.0, StatusCode::BAD_REQUEST, "{bad}");
+    }
+}
+
+#[tokio::test]
+async fn degraded_status_clears_after_a_later_successful_judgment() {
+    let handle = scripted_handle(vec![
+        JevOutcome::Unavailable,
+        JevOutcome::Answers(vec![("pick".to_string(), JevAnswer::Noul(0.0))]),
+    ]);
+    let request = jev_client::JevRequest {
+        state: json!({ "candidates": ["Player B"] }),
+        questions: vec![(
+            "pick".to_string(),
+            jev_client::JevQuestion::Noul {
+                instructions: "Is there any candidate?".to_string(),
+                criteria: None,
+            },
+        )],
+    };
+    assert_eq!(handle.status(), (true, "available"));
+    assert_eq!(handle.judge(&request), JevOutcome::Unavailable);
+    assert_eq!(handle.status(), (false, "degraded"));
+    assert!(handle.judge(&request).is_available());
+    assert_eq!(
+        handle.status(),
+        (true, "available"),
+        "one hiccup must not stick"
+    );
+}
+#[tokio::test]
 async fn unreachable_provider_fails_soft_and_features_keep_working() {
     // A configured client whose provider always fails transport-wise: after
     // one judgment attempt (the recording point for semantic features), the

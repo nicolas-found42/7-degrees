@@ -561,7 +561,12 @@ fn main() {
     let key = if arg == "--replay" {
         "offline-replay".into()
     } else {
-        std::env::var("OPENROUTER_API_KEY").expect("OPENROUTER_API_KEY required")
+        match jev_client::config_from_env() {
+            jev_client::EnvConfig::Configured(config, _source) => config.api_key,
+            jev_client::EnvConfig::NoConfig => {
+                panic!("TYPESAFE_API_KEY or OPENROUTER_API_KEY required for --live")
+            }
+        }
     };
     assert!(!key.trim().is_empty());
     let (graph, reports) = if arg == "--replay" {
@@ -632,7 +637,7 @@ fn main() {
     for c in cases.iter().filter(|c| c.split == "calibration") {
         if let Some(r) = raw
             .iter()
-            .find(|r| r["case"]["id"] == c.id && r["policy"]["query"] == 0.)
+            .find(|r| r["case"]["id"] == c.id && r["policy"] == json!(permissive))
         {
             captured.push((c, decode_packets(r)));
             continue;

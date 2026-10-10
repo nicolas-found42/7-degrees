@@ -7,6 +7,8 @@ import json
 import zipfile
 from pathlib import Path
 
+from t4_fetch_bbr import PAGES
+
 ROOT = Path(__file__).resolve().parents[1]
 
 def sha(path):
@@ -14,6 +16,10 @@ def sha(path):
     with path.open('rb') as f:
         for b in iter(lambda: f.read(1024 * 1024), b''): h.update(b)
     return h.hexdigest()
+
+def assert_page_set(pages):
+    expected = sorted('%s_%d' % page for page in PAGES)
+    assert sorted(p['page'] for p in pages) == expected, 'ledger pages differ from the expected distinct page set'
 
 def main(data, derived_only=False):
     pins = json.loads((ROOT / 'docs/data/snapshot-pins.json').read_text())
@@ -27,7 +33,7 @@ def main(data, derived_only=False):
             assert len(entries) == p['files'], path.name + ' inventory mismatch'
             results.append(dict(artifact=p['artifact'], sha256=p['sha256'], files=len(entries), uncompressed_bytes=sum(i.file_size for i in entries)))
     pages = [] if derived_only else list(csv.DictReader((ROOT / 'docs/reports/t4/transaction-source-pages.csv').open()))
-    if not derived_only: assert len(pages) == 80
+    if not derived_only: assert_page_set(pages)
     for p in pages:
         path = data / 'cache/bbr' / (p['page'] + '_transactions.html')
         assert path.stat().st_size == int(p['bytes']) and sha(path) == p['sha256'], p['page'] + ' cache mismatch'

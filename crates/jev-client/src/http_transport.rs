@@ -189,10 +189,32 @@ impl HttpJevTransport {
     }
 }
 
+/// Upper bound on a provider reply body; larger replies fail soft.
+const MAX_RESPONSE_BYTES: usize = 1024 * 1024;
+
+/// Reads the body in chunks, refusing a declared or streamed size over the cap.
+async fn read_capped_body(mut response: reqwest::Response) -> Option<String> {
+    if response
+        .content_length()
+        .is_some_and(|length| length > MAX_RESPONSE_BYTES as u64)
+    {
+        warn!("Jev provider reply exceeds the size limit");
+        return None;
+    }
+    let mut body = Vec::new();
+    while let Ok(Some(chunk)) = response.chunk().await {
+        if body.len() + chunk.len() > MAX_RESPONSE_BYTES {
+            warn!("Jev provider reply exceeds the size limit");
+            return None;
+        }
+        body.extend_from_slice(&chunk);
+    }
+    String::from_utf8(body).ok()
+}
+
 async fn parse_answers(response: reqwest::Response) -> crate::JevEvaluation {
-    let text = match response.text().await {
-        Ok(text) => text,
-        Err(_) => return crate::JevEvaluation::unavailable(),
+    let Some(text) = read_capped_body(response).await else {
+        return crate::JevEvaluation::unavailable();
     };
     let outcome = parse_answers_from_str(&text);
     let metadata = serde_json::from_str::<Value>(&text)

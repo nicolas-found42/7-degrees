@@ -12,7 +12,39 @@ from datetime import datetime, timezone
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-from t4_fetch_bbr import FetchOutcome, http_ledger_record, parse_transactions_html  # noqa: E402
+from t4_fetch_bbr import (FetchOutcome, cached_page_body, http_ledger_record,  # noqa: E402
+                          is_transactions_page, parse_transactions_html)
+
+
+VALID_PAGE = b'<span id="transactions_link"></span><ul><li><span>June 16, 1975</span><p>x</p></ul>'
+
+
+class TestFetchValidation(unittest.TestCase):
+    def test_challenge_page_with_200_is_not_a_successful_fetch(self):
+        challenge = b'<html><title>Error 1015</title>Cloudflare rate limited</html>'
+        out = FetchOutcome(status=200, body=challenge)
+        self.assertTrue(out.throttled())
+        self.assertFalse(out.ok)
+        self.assertTrue(out.retryable)
+
+    def test_200_page_without_transaction_list_is_not_ok(self):
+        self.assertFalse(FetchOutcome(status=200, body=b'<html>blocked</html>').ok)
+        self.assertTrue(FetchOutcome(status=200, body=VALID_PAGE).ok)
+        self.assertFalse(is_transactions_page(b''))
+
+    def test_permanent_client_errors_are_not_retried(self):
+        self.assertFalse(FetchOutcome(status=404, body=b'nf', error='HTTP Error 404').retryable)
+        self.assertTrue(FetchOutcome(status=500, body=b'', error='HTTP Error 500').retryable)
+        self.assertTrue(FetchOutcome(status=None, error='URLError: timed out').retryable)
+
+    def test_cached_page_must_be_a_valid_transaction_page(self):
+        with tempfile.TemporaryDirectory() as d:
+            good, bad, missing = (os.path.join(d, n) for n in ('good.html', 'bad.html', 'none.html'))
+            open(good, 'wb').write(VALID_PAGE)
+            open(bad, 'wb').write(b'<html>truncated')
+            self.assertEqual(cached_page_body(good), VALID_PAGE)
+            self.assertIsNone(cached_page_body(bad))
+            self.assertIsNone(cached_page_body(missing))
 
 
 class TestOptionalListItemEndTags(unittest.TestCase):

@@ -188,7 +188,57 @@ pub(crate) fn edge_json(state: &AppState, edge: graph_core::TeammateEdge) -> ser
     }).collect();
     serde_json::json!({"a":edge.a,"b":edge.b,"overlap_days":edge.overlap_days(),"evidence":evidence})
 }
-async fn fixture_summary(State(state): State<AppState>) -> Json<serde_json::Value> {
+/// Bounded edge pages keep `/api/graph`, `/api/fixture` and `/api/edges` from serializing
+/// the whole network in one response.
+#[derive(Deserialize)]
+struct EdgePageQuery {
+    limit: Option<usize>,
+    offset: Option<usize>,
+}
+
+const DEFAULT_EDGE_PAGE: usize = 1000;
+const MAX_EDGE_PAGE: usize = 5000;
+
+fn edge_page(
+    state: &AppState,
+    query: &EdgePageQuery,
+) -> Result<serde_json::Value, (StatusCode, Json<ErrorResponse>)> {
+    let limit = query.limit.unwrap_or(DEFAULT_EDGE_PAGE);
+    let offset = query.offset.unwrap_or(0);
+    if !(1..=MAX_EDGE_PAGE).contains(&limit) {
+        return Err((
+            StatusCode::BAD_REQUEST,
+            Json(ErrorResponse {
+                error: "invalid-limit".into(),
+                message: format!("limit must be between 1 and {MAX_EDGE_PAGE}"),
+            }),
+        ));
+    }
+    let total = state.graph.edge_count();
+    let edges: Vec<_> = state
+        .graph
+        .edges_page(offset, limit)
+        .into_iter()
+        .map(|e| edge_json(state, e))
+        .collect();
+    let next = offset.saturating_add(edges.len());
+    Ok(serde_json::json!({
+        "edges": edges,
+        "total_edges": total,
+        "offset": offset,
+        "limit": limit,
+        "next_offset": (next < total).then_some(next),
+    }))
+}
+
+async fn fixture_summary(
+    State(state): State<AppState>,
+    Query(query): Query<EdgePageQuery>,
+) -> Response {
+    let mut page = match edge_page(&state, &query) {
+        Ok(page) => page,
+        Err(error) => return error.into_response(),
+    };
     let players: Vec<_> = state
         .graph
         .roster
@@ -196,22 +246,14 @@ async fn fixture_summary(State(state): State<AppState>) -> Json<serde_json::Valu
         .iter()
         .map(|p| serde_json::json!({"id":p.id,"name":p.name}))
         .collect();
-    let edges: Vec<_> = state
-        .graph
-        .edges()
-        .into_iter()
-        .map(|e| edge_json(&state, e))
-        .collect();
-    Json(serde_json::json!({"players":players,"edges":edges}))
+    page["players"] = serde_json::json!(players);
+    Json(page).into_response()
 }
-async fn all_edges(State(state): State<AppState>) -> Json<serde_json::Value> {
-    let edges: Vec<_> = state
-        .graph
-        .edges()
-        .into_iter()
-        .map(|e| edge_json(&state, e))
-        .collect();
-    Json(serde_json::json!({"edges":edges}))
+async fn all_edges(State(state): State<AppState>, Query(query): Query<EdgePageQuery>) -> Response {
+    match edge_page(&state, &query) {
+        Ok(page) => Json(page).into_response(),
+        Err(error) => error.into_response(),
+    }
 }
 
 /// The teammate edges of one player, by id.
@@ -221,9 +263,8 @@ async fn player_edges(State(state): State<AppState>, Path(player): Path<String>)
     }
     let edges: Vec<_> = state
         .graph
-        .edges()
+        .edges_of(&player)
         .into_iter()
-        .filter(|edge| edge.a == player || edge.b == player)
         .map(|edge| edge_json(&state, edge))
         .collect();
     Json(serde_json::json!({ "edges": edges })).into_response()
@@ -390,7 +431,31 @@ fn player_not_found(graph: &graph_core::TeammateGraph, from: &str, to: &str) -> 
         .into_response()
 }
 
+/// The first statistics request runs a search from every player; keep that off the async
+/// workers so other routes stay responsive while it fills the cache.
+async fn compute_statistics(state: &AppState) -> Option<graph_core::GraphStatistics> {
+    let graph = state.graph.clone();
+    tokio::task::spawn_blocking(move || graph.statistics())
+        .await
+        .ok()
+}
+
+fn statistics_failed() -> Response {
+    (
+        StatusCode::INTERNAL_SERVER_ERROR,
+        Json(ErrorResponse {
+            error: "statistics-failed".into(),
+            message: "statistics could not be computed".into(),
+        }),
+    )
+        .into_response()
+}
+
 async fn statistics_page(State(state): State<AppState>) -> Response {
+    // Warms the graph's statistics cache off the async workers; the page then reads it.
+    if compute_statistics(&state).await.is_none() {
+        return statistics_failed();
+    }
     stats_view::page(
         &state.graph,
         state.jev.status(),
@@ -398,8 +463,10 @@ async fn statistics_page(State(state): State<AppState>) -> Response {
     )
 }
 
-async fn stats(State(state): State<AppState>) -> Json<serde_json::Value> {
-    let stats = state.graph.statistics();
+async fn stats(State(state): State<AppState>) -> Response {
+    let Some(stats) = compute_statistics(&state).await else {
+        return statistics_failed();
+    };
     let histogram: serde_json::Map<String, serde_json::Value> = stats
         .histogram
         .iter()
@@ -412,6 +479,7 @@ async fn stats(State(state): State<AppState>) -> Json<serde_json::Value> {
         "unreachable_pairs": stats.unreachable_pairs,
         "histogram": histogram,
     }))
+    .into_response()
 }
 
 /// Historical uncertainty is served independently of graph facts.

@@ -157,9 +157,27 @@ pub struct TeammateEdge {
 }
 
 impl TeammateEdge {
-    /// Sum of certified dated overlaps; unknown if any certificate lacks full dates.
+    /// The entry every view shows for this pair: the largest dated overlap, so chain text,
+    /// canvas links and the full network name the same team.
+    pub fn strongest_evidence(&self) -> &EdgeEvidence {
+        self.evidence
+            .iter()
+            .max_by_key(|e| e.overlap_days)
+            .expect("edge has at least one evidence entry")
+    }
+
+    /// Sum of certified dated overlaps across teams. A team with a dated certificate is
+    /// known even when it also carries undated corroboration (appearance proofs or game
+    /// witnesses); the total is unknown only when some team has no dated certificate.
     pub fn overlap_days(&self) -> Option<u32> {
-        self.evidence.iter().map(|e| e.overlap_days).sum()
+        let mut per_team: BTreeMap<&str, Option<u32>> = BTreeMap::new();
+        for e in &self.evidence {
+            let slot = per_team.entry(e.team.as_str()).or_insert(None);
+            if let Some(days) = e.overlap_days {
+                *slot = Some(slot.unwrap_or(0) + days);
+            }
+        }
+        per_team.into_values().sum()
     }
 }
 
@@ -433,6 +451,67 @@ impl TeammateGraph {
         edges
     }
 
+    /// Number of teammate edges (one per pair).
+    pub fn edge_count(&self) -> usize {
+        self.graph.edge_count()
+    }
+
+    /// A window of `edges()` in the same stable order, without cloning the whole list.
+    /// Edges are inserted in sorted (a, b) order at build time, so insertion order is the
+    /// stable order.
+    pub fn edges_page(&self, offset: usize, limit: usize) -> Vec<TeammateEdge> {
+        self.graph
+            .edge_references()
+            .skip(offset)
+            .take(limit)
+            .map(|edge| TeammateEdge {
+                a: self.graph[edge.source()].id.clone(),
+                b: self.graph[edge.target()].id.clone(),
+                evidence: edge.weight().clone(),
+            })
+            .collect()
+    }
+
+    /// Every edge touching `id`, in the stable (a, b) order of `edges()`.
+    pub fn edges_of(&self, id: &str) -> Vec<TeammateEdge> {
+        let mut edges: Vec<_> = self
+            .neighbor_ids(id)
+            .into_iter()
+            .filter_map(|other| self.edge_between(id, other))
+            .collect();
+        edges.sort_by(|x, y| (&x.a, &x.b).cmp(&(&y.a, &y.b)));
+        edges
+    }
+
+    /// Direct teammates of `id` in stable id order; empty for an unknown player.
+    pub fn neighbor_ids(&self, id: &str) -> Vec<&str> {
+        self.by_id
+            .get(id)
+            .map(|node| {
+                self.neighbors[node.index()]
+                    .iter()
+                    .map(|n| self.graph[*n].id.as_str())
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
+
+    /// The teammate edge between two players, if any, without scanning the full edge list.
+    pub fn edge_between(&self, a: &str, b: &str) -> Option<TeammateEdge> {
+        let (x, y) = (*self.by_id.get(a)?, *self.by_id.get(b)?);
+        let edge = self
+            .graph
+            .edges(x)
+            .find(|edge| edge.target() == y)
+            .or_else(|| self.graph.edges(y).find(|edge| edge.target() == x))?;
+        let (a, b) = ordered_pair(&self.graph[edge.source()].id, &self.graph[edge.target()].id);
+        Some(TeammateEdge {
+            a: a.to_string(),
+            b: b.to_string(),
+            evidence: edge.weight().clone(),
+        })
+    }
+
     /// Shortest teammate chain from `from` to `to`, by BFS over teammate edges.
     ///
     /// The chain is minimal: BFS stops at the first layer that reaches the
@@ -575,10 +654,12 @@ impl TeammateGraph {
                 .or_else(|| self.graph.edges(b).find(|edge| edge.target() == a))
                 .map(|edge| edge.weight().clone())
                 .expect("consecutive chain nodes share a teammate edge");
-            let evidence = weight
-                .iter()
-                .max_by_key(|e| e.overlap_days)
-                .expect("edge has at least one evidence entry");
+            let evidence = TeammateEdge {
+                a: String::new(),
+                b: String::new(),
+                evidence: weight,
+            };
+            let evidence = evidence.strongest_evidence();
             links.push(LinkEvidence {
                 from: self.graph[a].id.clone(),
                 to: self.graph[b].id.clone(),
@@ -835,4 +916,93 @@ pub struct ChainPage {
     pub next_offset: Option<u64>,
     /// Resumable continuation for every rank, including beyond integer limits.
     pub next_cursor: Option<String>,
+}
+
+#[cfg(test)]
+mod overlap_total_tests {
+    use super::*;
+
+    fn dated(team: &str, days: u32) -> EdgeEvidence {
+        EdgeEvidence {
+            team: team.into(),
+            overlap_days: Some(days),
+            appearance_proof: None,
+            game_witness: None,
+        }
+    }
+
+    fn undated(team: &str) -> EdgeEvidence {
+        EdgeEvidence {
+            team: team.into(),
+            overlap_days: None,
+            appearance_proof: None,
+            game_witness: None,
+        }
+    }
+
+    fn edge(evidence: Vec<EdgeEvidence>) -> TeammateEdge {
+        TeammateEdge {
+            a: "a".into(),
+            b: "b".into(),
+            evidence,
+        }
+    }
+
+    #[test]
+    fn undated_corroboration_on_a_dated_team_keeps_the_known_total() {
+        let e = edge(vec![dated("BOS", 40), undated("BOS"), dated("LAL", 2)]);
+        assert_eq!(e.overlap_days(), Some(42));
+    }
+
+    fn two_team_graph() -> TeammateGraph {
+        let player = |id: &str| Player {
+            id: id.into(),
+            name: id.into(),
+        };
+        let stint = |p: &str, t: &str, s: u32, e: u32| LocatedTenure {
+            player: p.into(),
+            team: t.into(),
+            tenure: Tenure {
+                start: Day(s),
+                end: Day(e),
+            },
+        };
+        TeammateGraph::build(RosterData {
+            players: ["a", "b", "c", "d"].map(player).to_vec(),
+            teams: vec![],
+            tenures: vec![
+                stint("a", "T", 0, 10),
+                stint("b", "T", 5, 15),
+                stint("c", "T", 12, 20),
+                stint("d", "U", 0, 5),
+            ],
+        })
+    }
+
+    #[test]
+    fn bounded_lookups_match_the_full_edge_list() {
+        let g = two_team_graph();
+        let all = g.edges();
+        assert_eq!(g.edge_count(), all.len());
+        assert_eq!(g.edges_page(1, 1), all[1..2].to_vec());
+        assert_eq!(g.edges_page(0, 99), all);
+        assert!(g.edges_page(99, 5).is_empty());
+        let touching_b: Vec<_> = all
+            .iter()
+            .filter(|e| e.a == "b" || e.b == "b")
+            .cloned()
+            .collect();
+        assert_eq!(g.edges_of("b"), touching_b);
+        assert_eq!(g.neighbor_ids("b"), vec!["a", "c"]);
+        assert!(g.neighbor_ids("d").is_empty() && g.neighbor_ids("zz").is_empty());
+        assert_eq!(g.edge_between("c", "b"), Some(touching_b[1].clone()));
+        assert_eq!(g.edge_between("a", "c"), None);
+    }
+
+    #[test]
+    fn a_team_with_only_undated_evidence_makes_the_total_unknown() {
+        let e = edge(vec![dated("BOS", 40), undated("LAL")]);
+        assert_eq!(e.overlap_days(), None);
+        assert_eq!(edge(vec![undated("BOS")]).overlap_days(), None);
+    }
 }

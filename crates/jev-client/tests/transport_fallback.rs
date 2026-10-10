@@ -161,6 +161,25 @@ async fn a_malformed_envelope_fails_soft() {
 }
 
 #[tokio::test]
+async fn an_oversized_reply_fails_soft_without_being_parsed() {
+    let routes = Router::new().route(
+        "/v1/systemone",
+        post(|| async {
+            let padding = "x".repeat(2 * 1024 * 1024);
+            Json(json!({
+                "answers": { "pick": { "type": "noul", "noul": 0.5 } },
+                "padding": padding,
+            }))
+        }),
+    );
+    let port = stub(routes).await;
+    let outcome = tokio::task::spawn_blocking(move || judge(config_at(port)))
+        .await
+        .expect("join");
+    assert_eq!(outcome, JevOutcome::Unavailable);
+}
+
+#[tokio::test]
 async fn a_provider_timeout_fails_soft() {
     let routes = Router::new().route(
         "/v1/systemone",

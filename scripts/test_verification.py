@@ -16,6 +16,7 @@ def module(name, filename):
 
 publisher = module('publisher', 'publish-final-evidence.py')
 pr = module('pr', 'pr-body.py')
+snapshot = module('snapshot', 'verify-source-snapshot.py')
 
 
 class VerificationTests(unittest.TestCase):
@@ -82,3 +83,17 @@ class VerificationTests(unittest.TestCase):
         self.assertEqual(pr.compose('old\n\n' + suffix, 'new\n'), 'new\n\n' + suffix)
         self.assertEqual(pr.compose('old', 'new'), 'new\n')
         with self.assertRaises(ValueError): pr.split_body('unexpected PR Summary by Qodo')
+
+    def test_non_utf8_log_still_publishes(self):
+        raw = self.base / 'raw'
+        code = 'import sys; sys.stdout.buffer.write(b"ok \\xff\\n")'
+        self.assertEqual(run_checks([('bytes', [sys.executable, '-c', code])], raw), 0)
+        output = self.base / 'published'; publisher.publish(raw, output)
+        self.assertIn('ok \ufffd', (output / 'bytes.log').read_text())
+
+    def test_source_page_set_must_be_exact_and_distinct(self):
+        pages = [{'page': '%s_%d' % page} for page in snapshot.PAGES]
+        snapshot.assert_page_set(pages)
+        duplicated = pages[:-1] + [pages[0]]
+        with self.assertRaises(AssertionError): snapshot.assert_page_set(duplicated)
+        with self.assertRaises(AssertionError): snapshot.assert_page_set(pages[:-1])

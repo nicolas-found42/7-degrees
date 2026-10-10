@@ -406,7 +406,11 @@ pub fn execute(
                 measurements,
             });
         };
-        if filter.selected.starts_with("Unsupported") {
+        // Several distinct era expressions cannot be reduced to one of them without
+        // silently dropping part of the stated request.
+        let ambiguous_era =
+            field == "era" && era_values.len() > 1 && filter.selected.starts_with("Era filter: ");
+        if filter.selected.starts_with("Unsupported") || ambiguous_era {
             out.reason="The stated filter is unsupported or ambiguous. Use a canonical team/name, a season-ending year, year range (1990-1999), or decade (1990s).".into();
             return Ok(QueryCall {
                 result: out,
@@ -982,8 +986,43 @@ fn team_candidates(graph: &TeammateGraph, text: &str) -> Vec<String> {
 fn era_candidates(text: &str) -> Vec<(String, u32, u32)> {
     let mut eras = Vec::new();
     let year = |s: &str| s.parse::<u32>().ok().filter(|v| (1946..=2100).contains(v));
-    for raw in text.split_whitespace() {
-        let token = raw.trim_matches(|c: char| !c.is_alphanumeric());
+    let tokens: Vec<&str> = text
+        .split_whitespace()
+        .map(|raw| raw.trim_matches(|c: char| !c.is_alphanumeric()))
+        .collect();
+    let word = |i: usize| tokens.get(i).map(|t| t.to_lowercase()).unwrap_or_default();
+    let mut push = |label: String, a: u32, b: u32| {
+        if !eras.iter().any(|(l, _, _)| l == &label) {
+            eras.push((label, a, b));
+        }
+    };
+    let mut i = 0;
+    while i < tokens.len() {
+        let token = tokens[i];
+        // "from 1990 to 2000" / "between 1990 and 2000" is one two-year range, never two
+        // separate single-year filters.
+        if matches!(word(i).as_str(), "from" | "between")
+            && matches!(
+                word(i + 2).as_str(),
+                "to" | "and" | "through" | "thru" | "until"
+            )
+            && let Some((a, b)) = year(tokens.get(i + 1).copied().unwrap_or(""))
+                .zip(year(tokens.get(i + 3).copied().unwrap_or("")))
+                .filter(|(a, b)| a <= b)
+        {
+            push(
+                format!(
+                    "Era filter: {} {} {} (season-ending years {a}–{b})",
+                    tokens[i + 1],
+                    word(i + 2),
+                    tokens[i + 3]
+                ),
+                a,
+                b,
+            );
+            i += 4;
+            continue;
+        }
         let candidate = if let Some(decade) = token
             .strip_suffix('s')
             .and_then(year)
@@ -996,11 +1035,13 @@ fn era_candidates(text: &str) -> Vec<(String, u32, u32)> {
             year(token).map(|y| (y, y))
         };
         if let Some((a, b)) = candidate {
-            let label = format!("Era filter: {token} (season-ending years {a}–{b})");
-            if !eras.iter().any(|(l, _, _)| l == &label) {
-                eras.push((label, a, b));
-            }
+            push(
+                format!("Era filter: {token} (season-ending years {a}–{b})"),
+                a,
+                b,
+            );
         }
+        i += 1;
     }
     eras
 }
@@ -1201,5 +1242,40 @@ mod evidence_filter_tests {
             assert_eq!(edges.len(), 1);
             assert_eq!((edges[0].a.as_str(), edges[0].b.as_str()), expected);
         }
+    }
+}
+
+#[cfg(test)]
+mod era_candidate_tests {
+    use super::era_candidates;
+
+    #[test]
+    fn a_stated_range_is_one_candidate_not_two_single_years() {
+        for text in [
+            "teammates from 1990 to 2000",
+            "teammates between 1990 and 2000",
+            "teammates 1990-2000",
+        ] {
+            let eras = era_candidates(text);
+            assert_eq!(eras.len(), 1, "{text}: {eras:?}");
+            assert_eq!((eras[0].1, eras[0].2), (1990, 2000), "{text}");
+        }
+    }
+
+    #[test]
+    fn unrelated_year_mentions_stay_separate_candidates() {
+        let eras = era_candidates("compare 1990 with 2000");
+        assert_eq!(eras.len(), 2);
+        assert_eq!((eras[0].1, eras[0].2), (1990, 1990));
+        assert_eq!((eras[1].1, eras[1].2), (2000, 2000));
+        assert_eq!(
+            era_candidates("the 1990s")[0].1..=era_candidates("the 1990s")[0].2,
+            1990..=1999
+        );
+    }
+
+    #[test]
+    fn reversed_or_out_of_range_phrases_are_not_merged() {
+        assert_eq!(era_candidates("from 2000 to 1990").len(), 2);
     }
 }

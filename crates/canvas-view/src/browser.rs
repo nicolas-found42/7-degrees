@@ -263,20 +263,37 @@ impl CanvasView {
             self.select(&id);
             return;
         }
+        // The nearest link within reach wins, and in the complete network only links that are
+        // drawn prominently (selected chain, selected player's links, current selection) are
+        // targets, so a click in empty space never selects a faint background link.
+        let full_network = self.graph.full_network;
         let edge = self
             .graph
             .links
             .iter()
             .enumerate()
-            .find(|(_, e)| {
+            .filter(|(i, e)| {
+                !full_network
+                    || e.on_path
+                    || e.from == self.selected
+                    || e.to == self.selected
+                    || self.edge == Some(*i)
+            })
+            .filter_map(|(i, e)| {
                 let a = self.screen(self.at(&e.from));
                 let b = self.screen(self.at(&e.to));
                 let vx = b.0 - a.0;
                 let vy = b.1 - a.1;
-                let t = ((p.0 - a.0) * vx + (p.1 - a.1) * vy) / (vx * vx + vy * vy);
-                let t = t.clamp(0.0, 1.0);
-                (p.0 - a.0 - t * vx).hypot(p.1 - a.1 - t * vy) < 8.0
+                let length = vx * vx + vy * vy;
+                let t = if length == 0.0 {
+                    0.0
+                } else {
+                    (((p.0 - a.0) * vx + (p.1 - a.1) * vy) / length).clamp(0.0, 1.0)
+                };
+                let distance = (p.0 - a.0 - t * vx).hypot(p.1 - a.1 - t * vy);
+                (distance < 8.0).then_some((i, distance))
             })
+            .min_by(|a, b| a.1.total_cmp(&b.1))
             .map(|(i, _)| i);
         if let Some(index) = edge {
             self.select_edge(index);
@@ -289,11 +306,24 @@ impl CanvasView {
             self.ctx.set_stroke_style_str("rgba(66,109,122,0.075)");
             self.ctx.set_line_width(0.6);
             self.ctx.begin_path();
-            for &(a, b) in &self.indexed_links {
-                let a = self.screen(self.points[a]);
-                let b = self.screen(self.points[b]);
-                self.ctx.move_to(a.0, a.1);
-                self.ctx.line_to(b.0, b.1);
+            // The faint background lattice is the expensive part of a 100k-link frame: it is
+            // skipped while a drag is moving (the pointer-up redraw restores it) and links
+            // wholly off one side of the canvas are never submitted.
+            let dragging = matches!(self.drag, Some((_, _, _, _, true)));
+            if !dragging {
+                for &(a, b) in &self.indexed_links {
+                    let a = self.screen(self.points[a]);
+                    let b = self.screen(self.points[b]);
+                    if (a.0 < 0.0 && b.0 < 0.0)
+                        || (a.0 > 1000.0 && b.0 > 1000.0)
+                        || (a.1 < 0.0 && b.1 < 0.0)
+                        || (a.1 > 600.0 && b.1 > 600.0)
+                    {
+                        continue;
+                    }
+                    self.ctx.move_to(a.0, a.1);
+                    self.ctx.line_to(b.0, b.1);
+                }
             }
             self.ctx.stroke();
             self.ctx.set_stroke_style_str("rgba(176,79,0,0.45)");
@@ -720,7 +750,9 @@ pub fn start() -> Result<(), JsValue> {
     })?;
     let state = view.clone();
     listen(canvas.as_ref(), "pointercancel", move |_| {
-        state.borrow_mut().drag = None;
+        let mut v = state.borrow_mut();
+        v.drag = None;
+        v.draw();
     })?;
     let state = view.clone();
     let wheel = Closure::<dyn FnMut(WheelEvent)>::new(move |e: WheelEvent| {
