@@ -1,0 +1,44 @@
+............................................................................loading S1 season windows ...
+loading membership ...
+loading transaction legs ...
+{
+  "appearance-count-conflicts": 0,
+  "complete-independent-schedule-team-seasons": 0,
+  "era_classes": {
+    "2000-2025/26": {
+      "unresolved": 4
+    }
+  },
+  "intervals-absent": 4,
+  "intervals-present": 0,
+  "membership-window-missing": 4,
+  "membership-window-present": 0,
+  "membership_rows": 4,
+  "membership_rows_no_stint": 4,
+  "membership_window_missing": 4,
+  "membership_window_present": 0,
+  "rows_S1_only_supplement": 0,
+  "rows_S2": 4,
+  "s1_window_san_fixed_rows": 0,
+  "s1_window_team_seasons": 0,
+  "s1_window_unresolved_abbr_keys": 0,
+  "same-day-game-order-unresolved": 0,
+  "tenures": 4,
+  "tenures-cross-checked": 0,
+  "tenures-directly-evidenced": 0,
+  "tenures-inferred": 0,
+  "tenures-unresolved": 4
+}
+..................Checking example
+example failed (exit 9); see /var/folders/vj/z460ltg56p122lsl4_s8pd140000gp/T/tmpctfy1m_e/raw/example.log
+..Checking failure
+failure failed (exit 3); see /var/folders/vj/z460ltg56p122lsl4_s8pd140000gp/T/tmpsm_mjww5/raw/failure.log
+.Checking example
+.Checking example
+..Checking example
+..
+----------------------------------------------------------------------
+Ran 102 tests in 0.692s
+
+OK
+Published 1 verified receipts to /var/folders/vj/z460ltg56p122lsl4_s8pd140000gp/T/tmpd0ac8mah/published

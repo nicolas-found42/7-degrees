@@ -1,0 +1,13 @@
+Checking example
+example failed (exit 9); see /var/folders/vj/z460ltg56p122lsl4_s8pd140000gp/T/tmp1awiyjil/raw/example.log
+..Checking failure
+failure failed (exit 3); see /var/folders/vj/z460ltg56p122lsl4_s8pd140000gp/T/tmpycznidy8/raw/failure.log
+.Checking example
+.Checking example
+..Checking example
+..
+----------------------------------------------------------------------
+Ran 8 tests in 0.369s
+
+OK
+Published 1 verified receipts to /var/folders/vj/z460ltg56p122lsl4_s8pd140000gp/T/tmpxxai84z3/published

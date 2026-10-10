@@ -399,7 +399,7 @@ fn ask(b: &mut Browser, server: &Server, q: &str) {
 async fn alternatives_filters_uncertainty_and_provider_failure_are_visible_user_outcomes() {
     let server = Server::start(synthetic_diamond()).await;
     let mut b = Browser::start();
-    b.call(json!({"op":"launch"}));
+    b.call(json!({"op":"launch","captureResponses":true}));
     b.call(json!({"op":"goto","url":format!("{}/chain?from=a&to=g&limit=1",server.url)}));
     assert_chain(&mut b, 2, &["Player Alpha", "Player Beta", "Player Goal"]);
     assert!(b.text(".alternatives").contains("2 shortest chain(s)"));
@@ -599,7 +599,7 @@ fn real_slice() -> axum::Router {
 async fn real_lookup_disambiguation_and_selected_edge_provenance_remain_honest() {
     let server = Server::start(real_slice()).await;
     let mut b = Browser::start();
-    b.call(json!({"op":"launch"}));
+    b.call(json!({"op":"launch","captureResponses":true}));
     b.call(json!({"op":"goto","url":format!("{}/",server.url)}));
     b.call(
         json!({"op":"fill","selector":"#network-query","value":"connect Dee Brown to Quincy Acy"}),

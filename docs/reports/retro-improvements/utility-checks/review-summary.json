@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "profile": "custom",
+  "source_commit": "7f510961a8c07c49a1a00cbf0335917f6c7abb7d",
+  "working_tree_status": " M AGENTS.md\n M README.md\n M crates/app-server/tests/browser_e2e.rs\n M docs/data/snapshot-pins.json\n M docs/data/source-manifest.md\n M scripts/browser_driver.cjs\n M scripts/publish-final-evidence.py\n M scripts/verify-source-snapshot.py\n?? .github/\n?? docs/agents/source-coverage.md\n?? docs/agents/verification.md\n?? docs/reports/retro-improvements/\n?? scripts/check.py\n?? scripts/pr-body.py\n?? scripts/test_verification.py\n?? scripts/verification.py\n",
+  "working_tree_diff_sha256": "e988559af9232205a1d74178ac9a36b7c80fd7a54d2c60443b33aa3db1c91cd5",
+  "untracked_sha256": {
+    ".github/workflows/check.yml": "ecb27d8c527802d7d05641d52362c0e7c893880348b6202ab2f0a5c91413ea61",
+    "docs/agents/source-coverage.md": "9847c9244cbbe601b04074110367304adca9a288858a7760eadfce76e3777b49",
+    "docs/agents/verification.md": "1540a59a4785a537b3e2d0fec5c932fb58de4e17cd9e008315048ca88721df88",
+    "docs/reports/retro-improvements/checks/browser-matrix.log": "9debca118956e695f6d4c3713699fa4fc5989460fb66d9ad1be6e4298eea61f7",
+    "docs/reports/retro-improvements/checks/clippy-host.log": "5604fc8f0c276397a55db4bd7008236712075c0ad37d3b3a0f1fe362b1b85a36",
+    "docs/reports/retro-improvements/checks/clippy-wasm.log": "a5f4c585ee974ca44916ac30a98bbc189e067a7e0a6bc6d2e8d6bc525be724af",
+    "docs/reports/retro-improvements/checks/derived-snapshot.log": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84",
+    "docs/reports/retro-improvements/checks/format.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/reports/retro-improvements/checks/historical-audit.log": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232",
+    "docs/reports/retro-improvements/checks/manifest.json": "fe0f7c7b014a04922de56a5c220d4327728c9488edf95d2fb96ad69ba7273ab7",
+    "docs/reports/retro-improvements/checks/python-tests.log": "721099520005ed1e973a5c9b1f6c6d9404bf073785d8764a09f48c9124494b2c",
+    "docs/reports/retro-improvements/checks/review-summary.json": "7d7f396c77e550306474947f8e0bd6500547dd102d33109ddd7ee148efd0bd59",
+    "docs/reports/retro-improvements/checks/rust-workspace.log": "54d60d8e6fa29536c5bc6be65cd6f9b4a16b82cc2ccbdbcd982e98e5db753a68",
+    "docs/reports/retro-improvements/checks/semantic-audit.log": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0",
+    "docs/reports/retro-improvements/checks/wasm-build.log": "0b5fe2277fd2b29cc111b76604c482f8ec516047dbc0954657203c5614f4e4db",
+    "docs/reports/retro-improvements/raw-checks/manifest.json": "8983ddf5d533bc7993a2959d46789cea988127a308ae71e18305e8c67392194e",
+    "docs/reports/retro-improvements/raw-checks/raw-snapshot.log": "1e68189e82e9ed77907dac9407f6a1f5e22e8f44772fa814b4187b7e9e75d00a",
+    "docs/reports/retro-improvements/raw-checks/review-summary.json": "37588bf294ddc74031af74bc9770de2bc99e337cf043b975bf4c705a84a2077d",
+    "scripts/check.py": "27aac0c173345a862b360674218e98d6e5bd99c93c49bb9fda7cdfa0557390b2",
+    "scripts/pr-body.py": "a116665cf6ab143bdc08068d577b306b150ff21228aa25fa204ae535ce74d42b",
+    "scripts/test_verification.py": "f47d380e2719c313371aac8d2874e9306a7781ffe7afd54205babad50b5e39c3",
+    "scripts/verification.py": "f92c8518558d285c35694fc0b8308af57fac7f3d29cc8f63d8527852e5db7582"
+  },
+  "started_at": "2026-10-10T20:25:38.434795+00:00",
+  "completed": true,
+  "expected_checks": [
+    "verification-regressions"
+  ],
+  "finished_at": "2026-10-10T20:25:38.849446+00:00",
+  "checks": [
+    {
+      "name": "verification-regressions",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_verification.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-10T20:25:38.434958+00:00",
+      "finished_at": "2026-10-10T20:25:38.849095+00:00",
+      "log": "verification-regressions.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": {
+          "tests": 8,
+          "result": "OK"
+        }
+      },
+      "raw_sha256": "1f0404dcf6a572ab820fdade524cccdb34345a528dda403fc219fb29e14c3b25",
+      "published_sha256": "1f0404dcf6a572ab820fdade524cccdb34345a528dda403fc219fb29e14c3b25"
+    }
+  ]
+}

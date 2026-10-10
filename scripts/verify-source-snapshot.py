@@ -15,10 +15,10 @@ def sha(path):
         for b in iter(lambda: f.read(1024 * 1024), b''): h.update(b)
     return h.hexdigest()
 
-def main(data):
+def main(data, derived_only=False):
     pins = json.loads((ROOT / 'docs/data/snapshot-pins.json').read_text())
     results = []
-    for p in pins['archives']:
+    for p in ([] if derived_only else pins['archives']):
         path = data / p['artifact']
         assert path.stat().st_size == p['bytes'], path.name + ' size mismatch'
         assert sha(path) == p['sha256'], path.name + ' SHA mismatch'
@@ -26,8 +26,8 @@ def main(data):
             entries = [i for i in z.infolist() if not i.is_dir()]
             assert len(entries) == p['files'], path.name + ' inventory mismatch'
             results.append(dict(artifact=p['artifact'], sha256=p['sha256'], files=len(entries), uncompressed_bytes=sum(i.file_size for i in entries)))
-    pages = list(csv.DictReader((ROOT / 'docs/reports/t4/transaction-source-pages.csv').open()))
-    assert len(pages) == 80
+    pages = [] if derived_only else list(csv.DictReader((ROOT / 'docs/reports/t4/transaction-source-pages.csv').open()))
+    if not derived_only: assert len(pages) == 80
     for p in pages:
         path = data / 'cache/bbr' / (p['page'] + '_transactions.html')
         assert path.stat().st_size == int(p['bytes']) and sha(path) == p['sha256'], p['page'] + ' cache mismatch'
@@ -38,4 +38,6 @@ def main(data):
 if __name__ == '__main__':
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--data-dir', type=Path, default=ROOT / 'data')
-    main(p.parse_args().data_dir)
+    p.add_argument('--derived-only', action='store_true', help='Check committed derived files without ignored archives/cache')
+    args = p.parse_args()
+    main(args.data_dir, args.derived_only)

@@ -58,6 +58,8 @@ The [44-case labeled experiment](docs/evaluation/README.md) separates calibratio
 
 ## Verify and rebuild data
 
+The reproducible check runner is `python3 scripts/check.py --profile full`. GitHub Actions runs the portable and browser profiles; raw-source verification is available separately. See [verification and receipts](docs/agents/verification.md) and [current source coverage navigation](docs/agents/source-coverage.md). The commands below remain useful for individual pipeline operations.
+
 ```sh
 ./scripts/build-canvas.sh
 cargo test --workspace

@@ -6,6 +6,7 @@ try { playwright = require('playwright'); } catch (_) {
   playwright = require(process.env.PLAYWRIGHT_PACKAGE_PATH || path.join(process.env.HOME, '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'));
 }
 let browser, page;
+let captureResponses = false;
 const errors = [];
 const captureErrors = [];
 const responses = [], captures = [];
@@ -13,7 +14,7 @@ function observe(surface) {
   surface.on('pageerror', e => errors.push(e.message));
   surface.on('console', e => { if(e.type()==='error') errors.push(e.text()); });
   surface.on('response', response => {
-    if(response.status() < 300 || response.status() >= 400)
+    if(captureResponses && (response.status() < 300 || response.status() >= 400))
       captures.push(response.body().then(body => responses.push(body)).catch(e => captureErrors.push(String(e))));
   });
 }
@@ -21,6 +22,7 @@ async function command(c) {
   const target = () => { const surface = c.frame ? page.frameLocator(c.frame) : page; return c.role ? surface.getByRole(c.role, {name:c.name, exact:true}) : surface.locator(c.selector); };
   switch (c.op) {
     case 'launch':
+      captureResponses = c.captureResponses === true;
       browser = await playwright.chromium.launch({headless:true, executablePath:process.env.BROWSER_EXECUTABLE || path.join(process.env.HOME, 'Library/Caches/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell')});
       page = await browser.newPage({viewport:{width:1200,height:1000}});
       observe(page);
@@ -53,7 +55,9 @@ async function command(c) {
     case 'screenshot': if(c.selector) await target().screenshot({path:c.path}); else await page.screenshot({path:c.path,fullPage:true}); return true;
     case 'event-start': await page.evaluate(name => { window.browserEvents = []; document.addEventListener(name, event => window.browserEvents.push(event.detail)); }, c.name); return true;
     case 'events': return page.evaluate(() => window.browserEvents);
-    case 'response-contains': await page.waitForLoadState('networkidle'); await Promise.all(captures); {
+    case 'response-contains':
+      if (!captureResponses) throw new Error('Launch with captureResponses:true before testing response contents');
+      await page.waitForLoadState('networkidle'); await Promise.all(captures); {
       const found = responses.some(body => body.includes(Buffer.from(c.text)));
       if (!found && captureErrors.length) throw new Error('Response capture incomplete: ' + captureErrors.join('\n'));
       return found;
