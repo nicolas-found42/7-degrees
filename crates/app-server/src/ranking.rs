@@ -237,12 +237,15 @@ pub fn rank(
             || c.links.iter().enumerate().any(|(i, l)| {
                 l.from != c.path[i]
                     || l.to != c.path[i + 1]
-                    || l.overlap_days == 0
+                    || l.overlap_days == Some(0)
+                    || (l.overlap_days.is_none() && l.minimum_shared_games.is_none())
                     || !edges.iter().any(|e| {
                         ((e.a == l.from && e.b == l.to) || (e.a == l.to && e.b == l.from))
-                            && e.evidence
-                                .iter()
-                                .any(|v| v.team == l.team && v.overlap_days == l.overlap_days)
+                            && e.evidence.iter().any(|v| {
+                                v.team == l.team
+                                    && v.overlap_days == l.overlap_days
+                                    && v.minimum_shared_games() == l.minimum_shared_games
+                            })
                     })
             })
         {

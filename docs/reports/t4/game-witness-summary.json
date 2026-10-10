@@ -1,0 +1,217 @@
+{
+  "method": "Unique canonical NBA identities with player-action events on the same canonical team in the same dated official game; no full roster interval inferred",
+  "target_players_without_count_proof": 84,
+  "targets_with_unique_nba_ids": 57,
+  "source_games_considered": 158,
+  "witness_records": 437,
+  "target_players_with_dated_witness": 33,
+  "remaining_without_dated_witness": [
+    {
+      "id": "allenti01",
+      "name": "Timmy Allen"
+    },
+    {
+      "id": "balad01",
+      "name": "Adama-Alpha Bal"
+    },
+    {
+      "id": "ballce01",
+      "name": "Cedric Ball"
+    },
+    {
+      "id": "brownda04",
+      "name": "Darius Brown II"
+    },
+    {
+      "id": "brynto01",
+      "name": "Torgeir Bryn"
+    },
+    {
+      "id": "cartege01",
+      "name": "George Carter"
+    },
+    {
+      "id": "cartodj01",
+      "name": "D.J. Carton"
+    },
+    {
+      "id": "cazalma01",
+      "name": "Malcolm Cazalon"
+    },
+    {
+      "id": "chomcul01",
+      "name": "Ulrich Chomche"
+    },
+    {
+      "id": "davisty01",
+      "name": "Tyler Davis"
+    },
+    {
+      "id": "dennibl01",
+      "name": "Blaine Denning"
+    },
+    {
+      "id": "edwarja02",
+      "name": "Jay Edwards"
+    },
+    {
+      "id": "eichhdi01",
+      "name": "Rich Eichhorst"
+    },
+    {
+      "id": "enarutr01",
+      "name": "Tristan Enaruna"
+    },
+    {
+      "id": "essenno01",
+      "name": "Noa Essengue"
+    },
+    {
+      "id": "garcian01",
+      "name": "Andersson Garcia"
+    },
+    {
+      "id": "grayha01",
+      "name": "Hayden Gray"
+    },
+    {
+      "id": "grayra01",
+      "name": "RaiQuan Gray"
+    },
+    {
+      "id": "gueyemo01",
+      "name": "Mouhamadou Gueye"
+    },
+    {
+      "id": "hurtma01",
+      "name": "Matthew Hurt"
+    },
+    {
+      "id": "kingda01",
+      "name": "Dan King"
+    },
+    {
+      "id": "kulboar01",
+      "name": "Arnoldas Kulboka"
+    },
+    {
+      "id": "lalicpe01",
+      "name": "Pete Lalich"
+    },
+    {
+      "id": "lamplji01",
+      "name": "Jim Lampley"
+    },
+    {
+      "id": "lewissc01",
+      "name": "Scottie Lewis"
+    },
+    {
+      "id": "loverla01",
+      "name": "Lawson Lovering"
+    },
+    {
+      "id": "maddoja01",
+      "name": "Jack Maddox"
+    },
+    {
+      "id": "mccalta01",
+      "name": "Tahjere McCall"
+    },
+    {
+      "id": "mooreta02",
+      "name": "Taze Moore"
+    },
+    {
+      "id": "napolpa01",
+      "name": "Paul Napolitano"
+    },
+    {
+      "id": "nelsogr02",
+      "name": "Grant Nelson"
+    },
+    {
+      "id": "nowelma01",
+      "name": "Markquis Nowell"
+    },
+    {
+      "id": "okanito01",
+      "name": "Toby Okani"
+    },
+    {
+      "id": "olivaqu01",
+      "name": "Quincy Olivari"
+    },
+    {
+      "id": "pereima01",
+      "name": "M\u00e3ozinha Pereira"
+    },
+    {
+      "id": "poleedw01",
+      "name": "Dwayne Polee"
+    },
+    {
+      "id": "rosero01",
+      "name": "Rob Rose"
+    },
+    {
+      "id": "sallihu01",
+      "name": "Hunter Sallis"
+    },
+    {
+      "id": "sandfpa01",
+      "name": "Payton Sandfort"
+    },
+    {
+      "id": "scholda01",
+      "name": "Dave Scholz"
+    },
+    {
+      "id": "simsja01",
+      "name": "Jaylen Sims"
+    },
+    {
+      "id": "singlmc01",
+      "name": "McKinley Singleton"
+    },
+    {
+      "id": "sprinji01",
+      "name": "Jim Springer"
+    },
+    {
+      "id": "spruiji01",
+      "name": "Jim Spruill"
+    },
+    {
+      "id": "steveba01",
+      "name": "Barry Stevens"
+    },
+    {
+      "id": "steveis01",
+      "name": "Isaiah Stevens"
+    },
+    {
+      "id": "sumptba01",
+      "name": "Barry Sumpter"
+    },
+    {
+      "id": "viannjo01",
+      "name": "Jo\u00e3o Vianna"
+    },
+    {
+      "id": "wheelph02",
+      "name": "Phillip Wheeler"
+    },
+    {
+      "id": "willilu01",
+      "name": "Lucas Williamson"
+    },
+    {
+      "id": "willima11",
+      "name": "Malik Williams"
+    }
+  ],
+  "source_version": "S1 v238",
+  "sqlite_sha256": "65b6412234d2d8817678d04f7cd2548aec82fec02b6c5b86679cade7572c21c7",
+  "export_sha256": "c23d9bcb6c8ca631a75ce9c1dfaa2e538ce33182d8ee417b88df8531f20ad6ab"
+}

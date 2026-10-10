@@ -14,7 +14,9 @@ pub struct PlayerDto {
 pub struct TeammateEdgeDto {
     pub a: String,
     pub b: String,
-    pub overlap_days: u32,
+    pub overlap_days: Option<u32>,
+    #[serde(default)]
+    pub minimum_shared_games: Option<u32>,
 }
 
 /// One teammate link in a connection result, including its evidence.
@@ -23,7 +25,9 @@ pub struct LinkDto {
     pub from: String,
     pub to: String,
     pub team: String,
-    pub overlap_days: u32,
+    pub overlap_days: Option<u32>,
+    #[serde(default)]
+    pub minimum_shared_games: Option<u32>,
 }
 
 /// Answer to "connect from → to": the shortest teammate chain as ordered
@@ -61,4 +65,15 @@ pub struct FixtureSummary {
 pub struct ErrorResponse {
     pub error: String,
     pub message: String,
+}
+
+/// Explain a relationship without converting shared games into invented days.
+pub fn overlap_description(days: Option<u32>, minimum_shared_games: Option<u32>) -> String {
+    match (days, minimum_shared_games) {
+        (Some(days), _) => format!("{days} overlapping roster day(s)"),
+        (_, Some(games)) => {
+            format!("at least {games} shared team game(s); roster overlap dates unknown")
+        }
+        _ => "Roster overlap duration unknown".into(),
+    }
 }

@@ -211,6 +211,22 @@ pub async fn page(State(state): State<AppState>, Query(query): Query<EdgeQuery>)
             "<section><h2>Canonical franchise: {}</h2>",
             ui::escape(item["team"].as_str().unwrap())
         ));
+        if let Some(proof) = item.get("appearance_proof").filter(|p| !p.is_null()) {
+            evidence.push_str(&format!(
+                "<p>Regular-season appearance proof, season ending {}: {} + {} − {} = at least {} shared team game(s).</p><p>This proves simultaneous team membership. Exact overlap dates and roster duration are unknown.</p><p>Player source records: {} and {}. Team source record: {}.</p><p><a href=\"https://www.kaggle.com/datasets/sumitrodatta/nba-aba-baa-stats\">Pinned Basketball-Reference-derived statistics, S2 v56</a></p>",
+                proof["season"], proof["a_games"], proof["b_games"], proof["team_games"], proof["minimum_shared_games"],
+                ui::escape(proof["player_records"][0].as_str().unwrap_or("")),
+                ui::escape(proof["player_records"][1].as_str().unwrap_or("")),
+                ui::escape(proof["team_record"].as_str().unwrap_or("")),
+            ));
+        }
+        if let Some(witness) = item.get("game_witness").filter(|w| !w.is_null()) {
+            evidence.push_str(&format!(
+                "<p>Both players are identified participants of the same team game on {} (NBA game {}). This establishes a teammate relationship; full roster overlap dates and duration remain unknown.</p><p>Official event source records: {} and {}.</p><p><a href=\"https://www.kaggle.com/datasets/wyattowalsh/basketball\">Pinned NBA-derived game records, S1 v238</a></p>",
+                ui::escape(witness["date"].as_str().unwrap_or("")), ui::escape(witness["game_id"].as_str().unwrap_or("")),
+                ui::escape(witness["sources"][0].as_str().unwrap_or("")), ui::escape(witness["sources"][1].as_str().unwrap_or("")),
+            ));
+        }
         for overlap in item["overlaps"].as_array().unwrap() {
             evidence.push_str(&format!(
                 "<p>Overlap: {} — {} day(s); end exclusive.</p><ul>",
@@ -235,7 +251,7 @@ pub async fn page(State(state): State<AppState>, Query(query): Query<EdgeQuery>)
             if synthetic {
                 "<p>Synthetic fixture: these are worked example intervals, not historical records.</p>"
             } else {
-                "<p>Positive dated tenure overlap admitted by the deterministic graph.</p>"
+                "<p>Teammate relationship admitted by the deterministic graph. The evidence below states which dates or shared games are proved.</p>"
             }
         ),
     )

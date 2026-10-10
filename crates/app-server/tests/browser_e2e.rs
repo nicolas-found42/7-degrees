@@ -401,7 +401,7 @@ fn real_slice() -> axum::Router {
         ),
         (
             "t4/tenures.csv",
-            "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+            "2bd2106ba3c0819b1a065246950f527a4267feb5f8a2054a11318205c04a1ab1",
         ),
     ] {
         let bytes = std::fs::read(source.join(file)).unwrap();
@@ -671,4 +671,51 @@ async fn real_lookup_disambiguation_and_selected_edge_provenance_remain_honest()
     println!(
         "Real slice: typo/alias, same-name context and clarification/choice, sourced Acy/Bogut chain/panel/native page, excluded postseason-only Vildoza and unresolved coverage passed."
     );
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "actual Chromium/WASM over the repaired full historical graph"]
+async fn historical_chain_and_appearance_evidence_render_without_fabricated_dates() {
+    let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../docs/reports");
+    let (graph, _) = app_server::report_data::load(&root).unwrap();
+    let chains = graph.all_shortest_chains("maravpe01", "abdulka01").unwrap();
+    let selected = chains
+        .iter()
+        .position(|c| c.path == ["maravpe01", "goodrga01", "abdulka01"])
+        .unwrap();
+    let server = Server::start(
+        app_server::app_with_report_data(root, app_server::JevHandle::unconfigured()).unwrap(),
+    )
+    .await;
+    let mut b = Browser::start();
+    b.call(json!({"op":"launch"}));
+    b.call(json!({"op":"goto","url":format!("{}/chain?from=maravpe01&to=abdulka01&selected={selected}",server.url)}));
+    assert_chain(
+        &mut b,
+        2,
+        &["Pete Maravich", "Gail Goodrich", "Kareem Abdul-Jabbar"],
+    );
+    assert!(b.text("#selected-chain").contains("shared team game(s)"));
+    assert!(
+        b.text("#selected-chain")
+            .contains("roster overlap dates unknown")
+    );
+    screenshot(
+        &mut b,
+        "maravich-kareem-repaired.png",
+        Some("#selected-chain"),
+    );
+    b.call(json!({"op":"goto","url":format!("{}/edge?from=maravpe01&to=goodrga01",server.url)}));
+    let evidence = b.text("main");
+    assert!(evidence.contains("27 + 73 − 82 = at least 18"));
+    assert!(evidence.contains("Teammate relationship admitted"));
+    assert!(!evidence.contains("Positive dated tenure overlap"));
+    assert!(evidence.contains("Player Totals.csv:"));
+    screenshot(&mut b, "maravich-goodrich-proof.png", None);
+    b.call(json!({"op":"goto","url":format!("{}/graph?from=maravpe01&to=abdulka01&selected={selected}",server.url)}));
+    b.ready();
+    b.click("Gail Goodrich ↔ Pete Maravich");
+    assert!(b.text("#selected-edge").contains("shared team game(s)"));
+    b.call(json!({"op":"ready","frame":"#edge-provenance-frame","selector":"h1"}));
+    assert_eq!(b.call(json!({"op":"errors"})), json!([]));
 }

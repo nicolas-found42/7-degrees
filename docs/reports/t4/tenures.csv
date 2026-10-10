@@ -11,7 +11,7 @@ abdulka01,Kareem Abdul-Jabbar,1971,NBA,1967-80,BUCKS,S2,inferred,9216,9251,"[197
 abdulka01,Kareem Abdul-Jabbar,1972,NBA,1967-80,BUCKS,S2,inferred,9417,9609,"[1971-10-14, 1972-04-23)",0,0,"[1971-10-14, 1972-04-23)",,,
 abdulka01,Kareem Abdul-Jabbar,1973,NBA,1967-80,BUCKS,S2,inferred,9782,9965,"[1972-10-13, 1973-04-14)",0,0,"[1972-10-13, 1973-04-14)",,,
 abdulka01,Kareem Abdul-Jabbar,1974,NBA,1967-80,BUCKS,S2,inferred,10146,10359,"[1973-10-12, 1974-05-13)",0,0,"[1973-10-12, 1974-05-13)",,,
-abdulka01,Kareem Abdul-Jabbar,1975,NBA,1967-80,BUCKS,S2,inferred,10517,10688,"[1974-10-18, 1975-04-07)",0,0,"[1974-10-18, 1975-04-07)",,,
+abdulka01,Kareem Abdul-Jabbar,1975,NBA,1967-80,BUCKS,S2,cross-checked,10517,10758,"[1974-10-18, 1975-06-16)",0,1,"[1974-10-18, 1975-04-07)",,,10758
 abdulka01,Kareem Abdul-Jabbar,1976,NBA,1967-80,LAKERS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
 abdulka01,Kareem Abdul-Jabbar,1977,NBA,1967-80,LAKERS,S2,inferred,11432,11456,"[1977-04-20, 1977-05-14)",0,0,"[1977-04-20, 1977-05-14)",,,
 abdulka01,Kareem Abdul-Jabbar,1978,NBA,1967-80,LAKERS,S2,inferred,11613,11794,"[1977-10-18, 1978-04-17)",0,0,"[1977-10-18, 1978-04-17)",,,
@@ -202,8 +202,8 @@ adelmri01,Rick Adelman,1974,NBA,1967-80,BULLS,S2,cross-checked,10148,10339,"[197
 adelmri01,Rick Adelman,1975,NBA,1967-80,BULLS,S2,cross-checked,10517,10541,"[1974-10-18, 1974-11-11)",0,1,"[1974-10-18, 1975-05-15)",,,10541
 adelmri01,Rick Adelman,1975,NBA,1967-80,KINGS,S2,cross-checked,10623,10705,"[1975-02-01, 1975-04-24)",1,0,"[1974-10-19, 1975-04-24)",,10623,
 adelmri01,Rick Adelman,1975,NBA,1967-80,JAZZ,S2,directly-evidenced,10541,10623,"[1974-11-11, 1975-02-01)",1,1,"[1974-10-17, 1975-04-07)",,10541,10623
-adrieje01,Jeff Adrien,2011,NBA,2000-2025/26,WARRIORS,S2,cross-checked,23675,23718,"[2010-10-27, 2010-12-09)",1,1,"[2010-10-27, 2011-04-14)",,23796,23718
-adrieje01,Jeff Adrien,2011,NBA,2000-2025/26,WARRIORS,S2,cross-checked,23796,23844,"[2011-02-25, 2011-04-14)",1,1,"[2010-10-27, 2011-04-14)",,23796,23718
+adrieje01,Jeff Adrien,2011,NBA,2000-2025/26,WARRIORS,S2,cross-checked,23675,23718,"[2010-10-27, 2010-12-09)",1,1,"[2010-10-27, 2011-04-14)",,23796,"23718,23921"
+adrieje01,Jeff Adrien,2011,NBA,2000-2025/26,WARRIORS,S2,directly-evidenced,23796,23921,"[2011-02-25, 2011-06-30)",1,1,"[2010-10-27, 2011-04-14)",,23796,"23718,23921"
 adrieje01,Jeff Adrien,2012,NBA,2000-2025/26,ROCKETS,S2,directly-evidenced,24094,24143,"[2011-12-20, 2012-02-07)",1,1,"[2011-12-26, 2012-04-27)",,24094,24143
 adrieje01,Jeff Adrien,2013,NBA,2000-2025/26,BOBCATS-HORNETS2,S2,unresolved,24374,24385,"[2012-09-25, 2012-10-06)",0,0,,open-stint-without-window,"24374,24449",24385
 adrieje01,Jeff Adrien,2014,NBA,2000-2025/26,BOBCATS-HORNETS2,S2,cross-checked,24774,24887,"[2013-10-30, 2014-02-20)",0,1,"[2013-10-30, 2014-04-29)",,,24887
@@ -343,7 +343,7 @@ alexani01,Nickeil Alexander-Walker,2022,NBA,2000-2025/26,HORNETS-PELICANS,S2,cro
 alexani01,Nickeil Alexander-Walker,2022,NBA,2000-2025/26,JAZZ,S2,cross-checked,27798,27877,"[2022-02-09, 2022-04-29)",1,0,"[2021-10-20, 2022-04-29)",,27798,
 alexani01,Nickeil Alexander-Walker,2023,NBA,2000-2025/26,TIMBERWOLVES,S2,cross-checked,28163,28239,"[2023-02-09, 2023-04-26)",1,0,"[2022-10-19, 2023-04-26)",,28163,
 alexani01,Nickeil Alexander-Walker,2023,NBA,2000-2025/26,JAZZ,S2,cross-checked,28050,28163,"[2022-10-19, 2023-02-09)",0,1,"[2022-10-19, 2023-04-10)",,,28163
-alexani01,Nickeil Alexander-Walker,2024,NBA,2000-2025/26,TIMBERWOLVES,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
+alexani01,Nickeil Alexander-Walker,2024,NBA,2000-2025/26,TIMBERWOLVES,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,28313,
 alexani01,Nickeil Alexander-Walker,2025,NBA,2000-2025/26,TIMBERWOLVES,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
 alexani01,Nickeil Alexander-Walker,2026,NBA,2000-2025/26,HAWKS,S2,unresolved,,,,0,0,,same-day-arrival-to-multiple-franchises(ordering-unresolved),29041,
 alexatr01,Trey Alexander,2025,NBA,2000-2025/26,NUGGETS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,28673,
@@ -588,7 +588,7 @@ anderja01,James Anderson,2011,NBA,2000-2025/26,SPURS,S2,inferred,23675,23860,"[2
 anderja01,James Anderson,2012,NBA,2000-2025/26,SPURS,S2,inferred,24100,24264,"[2011-12-26, 2012-06-07)",0,0,"[2011-12-26, 2012-06-07)",,,
 anderja01,James Anderson,2013,NBA,2000-2025/26,ROCKETS,S2,cross-checked,24473,24595,"[2013-01-02, 2013-05-04)",1,0,"[2013-04-21, 2013-05-04)",,24473,
 anderja01,James Anderson,2013,NBA,2000-2025/26,SPURS,S2,unresolved,24431,24460,"[2012-11-21, 2012-12-20)",0,0,"[2013-04-21, 2013-06-21)",stint-entirely-outside-team-season-window(stands-on-transactions-alone),24431,24460
-anderja01,James Anderson,2014,NBA,2000-2025/26,76ERS,S2,cross-checked,24667,24943,"[2013-07-15, 2014-04-17)",1,0,"[2013-10-30, 2014-04-17)",,24667,
+anderja01,James Anderson,2014,NBA,2000-2025/26,76ERS,S2,directly-evidenced,24667,25017,"[2013-07-15, 2014-06-30)",1,1,"[2013-10-30, 2014-04-17)",,24667,25017
 anderja01,James Anderson,2016,NBA,2000-2025/26,KINGS,S2,cross-checked,25398,25671,"[2015-07-16, 2016-04-14)",1,0,"[2015-10-28, 2016-04-14)",,25398,
 anderje01,Jerome Anderson,1976,NBA,1967-80,CELTICS,S2,inferred,11068,11115,"[1976-04-21, 1976-06-07)",0,0,"[1976-04-21, 1976-06-07)",,,
 anderje01,Jerome Anderson,1977,NBA,1967-80,PACERS,S2,directly-evidenced,11263,11339,"[1976-11-02, 1977-01-17)",1,1,,,"11263,11357","11339,11366"
@@ -718,7 +718,7 @@ anieldo01,Don Anielak,1955,NBA,1950-66,KNICKS,S2,inferred,3224,3365,"[1954-10-30
 anigbik01,Ike Anigbogu,2018,NBA,2000-2025/26,PACERS,S2,cross-checked,26125,26417,"[2017-07-12, 2018-04-30)",1,0,"[2017-10-18, 2018-04-30)",,26125,
 anigbik01,Ike Anigbogu,2019,NBA,2000-2025/26,PACERS,S2,cross-checked,26587,26700,"[2018-10-17, 2019-02-07)",0,1,"[2018-10-17, 2019-04-22)",,,26700
 anslemi01,Michael Ansley,1990,NBA,1981-99,MAGIC,S2,inferred,16013,16183,"[1989-11-04, 1990-04-23)",0,0,"[1989-11-04, 1990-04-23)",,,
-anslemi01,Michael Ansley,1991,NBA,1981-99,MAGIC,S2,inferred,16376,16547,"[1990-11-02, 1991-04-22)",0,0,"[1990-11-02, 1991-04-22)",,,
+anslemi01,Michael Ansley,1991,NBA,1981-99,MAGIC,S2,cross-checked,16376,16614,"[1990-11-02, 1991-06-28)",0,1,"[1990-11-02, 1991-04-22)",,,16614
 anslemi01,Michael Ansley,1992,NBA,1981-99,HORNETS-PELICANS,S2,cross-checked,16740,16802,"[1991-11-01, 1992-01-02)",1,1,"[1991-11-01, 1992-04-20)",,16810,16802
 anslemi01,Michael Ansley,1992,NBA,1981-99,HORNETS-PELICANS,S2,cross-checked,16810,16911,"[1992-01-10, 1992-04-20)",1,1,"[1991-11-01, 1992-04-20)",,16810,16802
 anslemi01,Michael Ansley,1992,NBA,1981-99,76ERS,S2,directly-evidenced,16772,16806,"[1991-12-03, 1992-01-06)",1,1,"[1991-11-01, 1992-04-19)",,16772,16806
@@ -1552,7 +1552,7 @@ barnhjo01,John Barnhill,1969,NBA,1967-80,WIZARDS,S2,unresolved,,,,0,0,,flagged-t
 barnhle01,Leo Barnhorst,1950,NBA,1950-66,STAGS,S2,inferred,1400,1545,"[1949-11-01, 1950-03-26)",0,0,"[1949-11-01, 1950-03-26)",,,
 barnhle01,Leo Barnhorst,1951,NBA,1950-66,OLYMPIANS,S2,unresolved,,,,0,0,,flagged-transaction-legs(team-unresolved),,
 barnhle01,Leo Barnhorst,1952,NBA,1950-66,OLYMPIANS,S2,inferred,2132,2276,"[1951-11-03, 1952-03-26)",0,0,"[1951-11-03, 1952-03-26)",,,
-barnhle01,Leo Barnhorst,1953,NBA,1950-66,OLYMPIANS,S2,inferred,2495,2639,"[1952-10-31, 1953-03-24)",0,0,"[1952-10-31, 1953-03-24)",,,
+barnhle01,Leo Barnhorst,1953,NBA,1950-66,OLYMPIANS,S2,unresolved,,,,0,0,,fuzzy-dated-rows-bear-on-this-tenure,,
 barnhle01,Leo Barnhorst,1954,NBA,1950-66,BULLETS-DEFUNCT,S2,unresolved,2860,2964,"[1953-10-31, 1954-02-12)",0,1,"[1953-10-31, 1954-03-15)","same-day-game-order-unresolved(S2-player-games=55,S1-season-games=71,S2-team-games=72,interval-capacity=53,departure-day-allowance=1,missing-games-allowance=1,capacity-upper-bound=55)",,2964
 barnhle01,Leo Barnhorst,1954,NBA,1950-66,PISTONS,S2,cross-checked,2964,3002,"[1954-02-12, 1954-03-22)",1,0,"[1953-11-01, 1954-03-22)",,2964,
 barnhno01,Norton Barnhill,1977,NBA,1967-80,THUNDER,S2,unresolved,,,,0,0,,"no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); departure-after-closed-stint(prior-spell-exit,or-source-noise)",,11262
@@ -2875,7 +2875,7 @@ bowmaky01,Ky Bowman,2020,NBA,2000-2025/26,WARRIORS,S2,cross-checked,26866,27098,
 bowmana01,Nate Bowman,1967,NBA,1967-80,BULLS,S2,inferred,7749,7754,"[1967-03-21, 1967-03-26)",0,0,"[1967-03-21, 1967-03-26)",,,
 bowmana01,Nate Bowman,1968,NBA,1967-80,KNICKS,S2,inferred,7959,8127,"[1967-10-17, 1968-04-02)",0,0,"[1967-10-17, 1968-04-02)",,,
 bowmana01,Nate Bowman,1969,NBA,1967-80,KNICKS,S2,inferred,8323,8483,"[1968-10-15, 1969-03-24)",0,0,"[1968-10-15, 1969-03-24)",,,
-bowmana01,Nate Bowman,1970,NBA,1967-80,KNICKS,S2,inferred,8687,8894,"[1969-10-14, 1970-05-09)",0,0,"[1969-10-14, 1970-05-09)",,,
+bowmana01,Nate Bowman,1970,NBA,1967-80,KNICKS,S2,unresolved,,,,0,0,,flagged-transaction-legs(team-unresolved),,
 bowmana01,Nate Bowman,1971,NBA,1967-80,CLIPPERS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
 boycedo01,Donnie Boyce,1996,NBA,1981-99,HAWKS,S2,inferred,18203,18374,"[1995-11-03, 1996-04-22)",0,0,"[1995-11-03, 1996-04-22)",,,
 boycedo01,Donnie Boyce,1997,NBA,1981-99,HAWKS,S2,cross-checked,18567,18690,"[1996-11-01, 1997-03-04)",0,1,"[1996-11-01, 1997-05-14)",,,18690
@@ -2896,7 +2896,7 @@ boykiea01,Earl Boykins,2000,NBA,2000-2025/26,CAVALIERS,S2,unresolved,19761,19781
 boykiea01,Earl Boykins,2000,NBA,2000-2025/26,CAVALIERS,S2,unresolved,19781,19833,"[2000-02-28, 2000-04-20)",0,0,"[1999-11-02, 2000-04-20)","departure-after-closed-stint(prior-spell-exit,or-source-noise)","19761,19781",19658
 boykiea01,Earl Boykins,2000,NBA,2000-2025/26,MAGIC,S2,directly-evidenced,19676,19711,"[1999-11-15, 1999-12-20)",1,1,"[1999-11-02, 2000-04-20)",,19676,19711
 boykiea01,Earl Boykins,2001,NBA,2000-2025/26,CLIPPERS,S2,cross-checked,19995,20196,"[2000-09-29, 2001-04-18)",1,0,"[2000-10-31, 2001-04-18)",,19995,
-boykiea01,Earl Boykins,2002,NBA,2000-2025/26,CLIPPERS,S2,inferred,20391,20561,"[2001-10-30, 2002-04-18)",0,0,"[2001-10-30, 2002-04-18)",,,
+boykiea01,Earl Boykins,2002,NBA,2000-2025/26,CLIPPERS,S2,cross-checked,20391,20632,"[2001-10-30, 2002-06-28)",0,1,"[2001-10-30, 2002-04-18)",,,20632
 boykiea01,Earl Boykins,2003,NBA,2000-2025/26,WARRIORS,S2,cross-checked,20784,20925,"[2002-11-27, 2003-04-17)",1,0,"[2002-10-30, 2003-04-17)",,20784,
 boykiea01,Earl Boykins,2004,NBA,2000-2025/26,NUGGETS,S2,cross-checked,21048,21305,"[2003-08-18, 2004-05-01)",1,0,"[2003-10-29, 2004-05-01)",,21048,
 boykiea01,Earl Boykins,2005,NBA,2000-2025/26,NUGGETS,S2,inferred,21490,21674,"[2004-11-02, 2005-05-05)",0,0,"[2004-11-02, 2005-05-05)",,,
@@ -3302,7 +3302,7 @@ brookaa01,Aaron Brooks,2009,NBA,2000-2025/26,ROCKETS,S2,inferred,22947,23148,"[2
 brookaa01,Aaron Brooks,2010,NBA,2000-2025/26,ROCKETS,S2,inferred,23310,23480,"[2009-10-27, 2010-04-15)",0,0,"[2009-10-27, 2010-04-15)",,,
 brookaa01,Aaron Brooks,2011,NBA,2000-2025/26,ROCKETS,S2,cross-checked,23674,23795,"[2010-10-26, 2011-02-24)",0,1,"[2010-10-26, 2011-04-14)",,,23795
 brookaa01,Aaron Brooks,2011,NBA,2000-2025/26,SUNS,S2,cross-checked,23795,23844,"[2011-02-24, 2011-04-14)",1,0,"[2010-10-26, 2011-04-14)",,23795,
-brookaa01,Aaron Brooks,2013,NBA,2000-2025/26,ROCKETS,S2,cross-checked,24535,24595,"[2013-03-05, 2013-05-04)",1,0,"[2013-04-21, 2013-05-04)",,24535,
+brookaa01,Aaron Brooks,2013,NBA,2000-2025/26,ROCKETS,S2,directly-evidenced,24535,24652,"[2013-03-05, 2013-06-30)",1,1,"[2013-04-21, 2013-05-04)",,24535,24652
 brookaa01,Aaron Brooks,2013,NBA,2000-2025/26,KINGS,S2,directly-evidenced,24303,24531,"[2012-07-16, 2013-03-01)",1,1,,,24303,24531
 brookaa01,Aaron Brooks,2014,NBA,2000-2025/26,NUGGETS,S2,cross-checked,24887,24943,"[2014-02-20, 2014-04-17)",1,0,"[2013-10-30, 2014-04-17)",,24887,
 brookaa01,Aaron Brooks,2014,NBA,2000-2025/26,ROCKETS,S2,directly-evidenced,24671,24887,"[2013-07-19, 2014-02-20)",1,1,"[2013-10-30, 2014-05-03)",,24671,24887
@@ -3900,8 +3900,8 @@ burresc01,Scott Burrell,1999,NBA,1981-99,NETS,S2,cross-checked,19391,19483,"[199
 burresc01,Scott Burrell,2000,NBA,2000-2025/26,NETS,S2,inferred,19663,19833,"[1999-11-02, 2000-04-20)",0,0,"[1999-11-02, 2000-04-20)",,,
 burresc01,Scott Burrell,2001,NBA,2000-2025/26,HORNETS-PELICANS,S2,cross-checked,20188,20229,"[2001-04-10, 2001-05-21)",1,0,"[2000-10-31, 2001-05-21)",,20188,
 burriar01,Art Burris,1951,NBA,1950-66,PISTONS,S2,inferred,1765,1909,"[1950-11-01, 1951-03-25)",0,0,"[1950-11-01, 1951-03-25)",,,
-burriar01,Art Burris,1952,NBA,1950-66,PISTONS,S2,inferred,2130,2271,"[1951-11-01, 1952-03-21)",0,0,"[1951-11-01, 1952-03-21)",,,
-burriar01,Art Burris,1952,NBA,1950-66,HAWKS,S2,inferred,2132,2266,"[1951-11-03, 1952-03-16)",0,0,"[1951-11-03, 1952-03-16)",,,
+burriar01,Art Burris,1952,NBA,1950-66,PISTONS,S2,cross-checked,2130,2232,"[1951-11-01, 1952-02-11)",0,1,"[1951-11-01, 1952-03-21)",,,2232
+burriar01,Art Burris,1952,NBA,1950-66,HAWKS,S2,cross-checked,2232,2266,"[1952-02-11, 1952-03-16)",1,0,"[1951-11-03, 1952-03-16)",,2232,
 burrobo01,Bob Burrow,1957,NBA,1950-66,KINGS,S2,cross-checked,3952,4124,"[1956-10-27, 1957-04-17)",0,1,"[1956-10-27, 1957-03-14)",,,4124
 burrobo01,Bob Burrow,1958,NBA,1950-66,LAKERS,S2,cross-checked,4124,4454,"[1957-04-17, 1958-03-13)",1,0,"[1957-10-26, 1958-03-13)",,4124,
 burroju01,Junior Burrough,1996,NBA,1981-99,CELTICS,S2,inferred,18203,18374,"[1995-11-03, 1996-04-22)",0,0,"[1995-11-03, 1996-04-22)",,,
@@ -4102,8 +4102,8 @@ cagemi01,Michael Cage,1993,NBA,1981-99,THUNDER,S2,inferred,17111,17323,"[1992-11
 cagemi01,Michael Cage,1994,NBA,1981-99,THUNDER,S2,inferred,17476,17646,"[1993-11-06, 1994-04-25)",0,0,"[1993-11-06, 1994-04-25)",,,
 cagemi01,Michael Cage,1995,NBA,1981-99,CAVALIERS,S2,cross-checked,17745,18021,"[1994-08-02, 1995-05-05)",1,0,"[1994-11-05, 1995-05-05)",,17745,
 cagemi01,Michael Cage,1996,NBA,1981-99,CAVALIERS,S2,inferred,18203,18374,"[1995-11-03, 1996-04-22)",0,0,"[1995-11-03, 1996-04-22)",,,
-cagemi01,Michael Cage,1997,NBA,1981-99,76ERS,S2,cross-checked,18496,18737,"[1996-08-22, 1997-04-20)",1,0,"[1996-11-01, 1997-04-20)",,18496,
-cagemi01,Michael Cage,1998,NBA,1981-99,NETS,S2,inferred,18931,19112,"[1997-10-31, 1998-04-30)",0,0,"[1997-10-31, 1998-04-30)",,,
+cagemi01,Michael Cage,1997,NBA,1981-99,76ERS,S2,directly-evidenced,18496,18805,"[1996-08-22, 1997-06-27)",1,1,"[1996-11-01, 1997-04-20)",,18496,18805
+cagemi01,Michael Cage,1998,NBA,1981-99,NETS,S2,cross-checked,18805,19112,"[1997-06-27, 1998-04-30)",1,0,"[1997-10-31, 1998-04-30)",,18805,
 cagemi01,Michael Cage,2000,NBA,2000-2025/26,NETS,S2,directly-evidenced,19614,19767,"[1999-09-14, 2000-02-14)",1,1,"[1999-11-02, 2000-04-20)",,19614,19767
 cainja01,Jamal Cain,2023,NBA,2000-2025/26,HEAT,S2,unresolved,28040,28287,"[2022-10-09, 2023-06-13)",0,0,"[2022-10-19, 2023-06-13)",flagged-transaction-legs(no-team-anchor-on-leg),28040,
 cainja01,Jamal Cain,2024,NBA,2000-2025/26,HEAT,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,28346,
@@ -4172,8 +4172,8 @@ calhoco01,Corky Calhoun,1975,NBA,1967-80,LAKERS,S2,cross-checked,10557,10688,"[1
 calhoco01,Corky Calhoun,1975,NBA,1967-80,SUNS,S2,cross-checked,10516,10557,"[1974-10-17, 1974-11-27)",0,1,"[1974-10-17, 1975-04-07)",,,10557
 calhoco01,Corky Calhoun,1976,NBA,1967-80,LAKERS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
 calhoco01,Corky Calhoun,1977,NBA,1967-80,TRAIL BLAZERS,S2,cross-checked,11252,11479,"[1976-10-22, 1977-06-06)",1,0,"[1977-04-12, 1977-06-06)",,11252,
-calhoco01,Corky Calhoun,1978,NBA,1967-80,TRAIL BLAZERS,S2,inferred,11616,11809,"[1977-10-21, 1978-05-02)",0,0,"[1977-10-21, 1978-05-02)",,,
-calhoco01,Corky Calhoun,1979,NBA,1967-80,PACERS,S2,inferred,11973,12151,"[1978-10-13, 1979-04-09)",0,0,"[1978-10-13, 1979-04-09)",,,
+calhoco01,Corky Calhoun,1978,NBA,1967-80,TRAIL BLAZERS,S2,cross-checked,11616,11868,"[1977-10-21, 1978-06-30)",0,1,"[1977-10-21, 1978-05-02)",,,11868
+calhoco01,Corky Calhoun,1979,NBA,1967-80,PACERS,S2,cross-checked,11868,12151,"[1978-06-30, 1979-04-09)",1,0,"[1978-10-13, 1979-04-09)",,11868,
 calhoco01,Corky Calhoun,1980,NBA,1967-80,PACERS,S2,cross-checked,12337,12357,"[1979-10-12, 1979-11-01)",0,1,"[1979-10-12, 1980-03-31)",,,12357
 calipde01,Demetrius Calip,1992,NBA,1981-99,LAKERS,S2,unresolved,16708,16732,"[1991-09-30, 1991-10-24)",0,0,"[1991-11-01, 1992-05-04)",stint-entirely-outside-team-season-window(stands-on-transactions-alone),"16708,16737,16758","16732,16753,16775"
 calipde01,Demetrius Calip,1992,NBA,1981-99,LAKERS,S2,directly-evidenced,16737,16753,"[1991-10-29, 1991-11-14)",1,1,"[1991-11-01, 1992-05-04)",,"16708,16737,16758","16732,16753,16775"
@@ -4251,7 +4251,7 @@ canaais01,Isaiah Canaan,2014,NBA,2000-2025/26,ROCKETS,S2,cross-checked,24667,249
 canaais01,Isaiah Canaan,2015,NBA,2000-2025/26,ROCKETS,S2,cross-checked,25137,25251,"[2014-10-28, 2015-02-19)",0,1,"[2014-10-28, 2015-05-28)",,,25251
 canaais01,Isaiah Canaan,2015,NBA,2000-2025/26,76ERS,S2,cross-checked,25251,25307,"[2015-02-19, 2015-04-16)",1,0,"[2014-10-29, 2015-04-16)",,25251,
 canaais01,Isaiah Canaan,2016,NBA,2000-2025/26,76ERS,S2,inferred,25502,25671,"[2015-10-28, 2016-04-14)",0,0,"[2015-10-28, 2016-04-14)",,,
-canaais01,Isaiah Canaan,2017,NBA,2000-2025/26,BULLS,S2,cross-checked,25768,26051,"[2016-07-20, 2017-04-29)",1,0,"[2016-10-27, 2017-04-29)",,25768,
+canaais01,Isaiah Canaan,2017,NBA,2000-2025/26,BULLS,S2,directly-evidenced,25768,26113,"[2016-07-20, 2017-06-30)",1,1,"[2016-10-27, 2017-04-29)",,25768,26113
 canaais01,Isaiah Canaan,2018,NBA,2000-2025/26,ROCKETS,S2,directly-evidenced,26229,26233,"[2017-10-24, 2017-10-28)",1,1,"[2017-10-17, 2018-05-29)",,26229,26233
 canaais01,Isaiah Canaan,2018,NBA,2000-2025/26,SUNS,S2,directly-evidenced,26279,26336,"[2017-12-13, 2018-02-08)",1,1,"[2017-10-18, 2018-04-11)",,26279,26336
 canaais01,Isaiah Canaan,2019,NBA,2000-2025/26,BUCKS,S2,directly-evidenced,26718,26724,"[2019-02-25, 2019-03-03)",1,1,"[2018-10-17, 2019-05-26)",,26718,26724
@@ -4574,8 +4574,8 @@ cassesa01,Sam Cassell,1999,NBA,1981-99,NETS,S2,cross-checked,19394,19427,"[1999-
 cassesa01,Sam Cassell,2000,NBA,2000-2025/26,BUCKS,S2,inferred,19663,19833,"[1999-11-02, 2000-04-20)",0,0,"[1999-11-02, 2000-04-20)",,,
 cassesa01,Sam Cassell,2001,NBA,2000-2025/26,BUCKS,S2,inferred,20027,20243,"[2000-10-31, 2001-06-04)",0,0,"[2000-10-31, 2001-06-04)",,,
 cassesa01,Sam Cassell,2002,NBA,2000-2025/26,BUCKS,S2,inferred,20391,20561,"[2001-10-30, 2002-04-18)",0,0,"[2001-10-30, 2002-04-18)",,,
-cassesa01,Sam Cassell,2003,NBA,2000-2025/26,BUCKS,S2,inferred,20756,20940,"[2002-10-30, 2003-05-02)",0,0,"[2002-10-30, 2003-05-02)",,,
-cassesa01,Sam Cassell,2004,NBA,2000-2025/26,TIMBERWOLVES,S2,inferred,21120,21336,"[2003-10-29, 2004-06-01)",0,0,"[2003-10-29, 2004-06-01)",,,
+cassesa01,Sam Cassell,2003,NBA,2000-2025/26,BUCKS,S2,cross-checked,20756,20996,"[2002-10-30, 2003-06-27)",0,1,"[2002-10-30, 2003-05-02)",,,20996
+cassesa01,Sam Cassell,2004,NBA,2000-2025/26,TIMBERWOLVES,S2,cross-checked,20996,21336,"[2003-06-27, 2004-06-01)",1,0,"[2003-10-29, 2004-06-01)",,20996,
 cassesa01,Sam Cassell,2005,NBA,2000-2025/26,TIMBERWOLVES,S2,inferred,21491,21660,"[2004-11-03, 2005-04-21)",0,0,"[2004-11-03, 2005-04-21)",,,
 cassesa01,Sam Cassell,2006,NBA,2000-2025/26,CLIPPERS,S2,cross-checked,21773,22024,"[2005-08-12, 2006-04-20)",1,0,"[2005-11-02, 2006-04-20)",,21773,
 cassesa01,Sam Cassell,2007,NBA,2000-2025/26,CLIPPERS,S2,inferred,22219,22388,"[2006-11-01, 2007-04-19)",0,0,"[2006-11-01, 2007-04-19)",,,
@@ -4583,8 +4583,8 @@ cassesa01,Sam Cassell,2008,NBA,2000-2025/26,CELTICS,S2,cross-checked,22707,22814
 cassesa01,Sam Cassell,2008,NBA,2000-2025/26,CLIPPERS,S2,cross-checked,22585,22703,"[2007-11-02, 2008-02-28)",0,1,"[2007-11-02, 2008-04-17)",,,22703
 cassesa01,Sam Cassell,2009,NBA,2000-2025/26,CELTICS,S1-only-supplement,cross-checked,22946,23058,"[2008-10-28, 2009-02-17)",0,1,"[2008-10-28, 2009-05-18)",,,23058
 casspom01,Omri Casspi,2010,NBA,2000-2025/26,KINGS,S2,inferred,23311,23479,"[2009-10-28, 2010-04-14)",0,0,"[2009-10-28, 2010-04-14)",,,
-casspom01,Omri Casspi,2011,NBA,2000-2025/26,KINGS,S2,inferred,23675,23844,"[2010-10-27, 2011-04-14)",0,0,"[2010-10-27, 2011-04-14)",,,
-casspom01,Omri Casspi,2012,NBA,2000-2025/26,CAVALIERS,S2,inferred,24100,24223,"[2011-12-26, 2012-04-27)",0,0,"[2011-12-26, 2012-04-27)",,,
+casspom01,Omri Casspi,2011,NBA,2000-2025/26,KINGS,S2,cross-checked,23675,23921,"[2010-10-27, 2011-06-30)",0,1,"[2010-10-27, 2011-04-14)",,,23921
+casspom01,Omri Casspi,2012,NBA,2000-2025/26,CAVALIERS,S2,cross-checked,23921,24223,"[2011-06-30, 2012-04-27)",1,0,"[2011-12-26, 2012-04-27)",,23921,
 casspom01,Omri Casspi,2013,NBA,2000-2025/26,CAVALIERS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
 casspom01,Omri Casspi,2014,NBA,2000-2025/26,ROCKETS,S2,cross-checked,24668,24959,"[2013-07-16, 2014-05-03)",1,0,"[2013-10-30, 2014-05-03)",,24668,
 casspom01,Omri Casspi,2015,NBA,2000-2025/26,KINGS,S2,cross-checked,25097,25307,"[2014-09-18, 2015-04-16)",1,0,"[2014-10-29, 2015-04-16)",,25097,
@@ -5901,8 +5901,8 @@ cummipa01,Pat Cummings,1980,NBA,1967-80,BUCKS,S2,inferred,12337,12529,"[1979-10-
 cummipa01,Pat Cummings,1981,NBA,1981-99,BUCKS,S2,inferred,12701,12893,"[1980-10-10, 1981-04-20)",0,0,"[1980-10-10, 1981-04-20)",,,
 cummipa01,Pat Cummings,1982,NBA,1981-99,BUCKS,S2,cross-checked,13086,13327,"[1981-10-30, 1982-06-28)",0,1,"[1981-10-30, 1982-05-08)",,,13327
 cummipa01,Pat Cummings,1983,NBA,1981-99,MAVERICKS,S2,cross-checked,13327,13620,"[1982-06-28, 1983-04-17)",1,0,"[1982-10-29, 1983-04-17)",,13327,
-cummipa01,Pat Cummings,1984,NBA,1981-99,MAVERICKS,S2,inferred,13815,14008,"[1983-10-29, 1984-05-09)",0,0,"[1983-10-29, 1984-05-09)",,,
-cummipa01,Pat Cummings,1985,NBA,1981-99,KNICKS,S2,inferred,14179,14348,"[1984-10-27, 1985-04-14)",0,0,"[1984-10-27, 1985-04-14)",,,
+cummipa01,Pat Cummings,1984,NBA,1981-99,MAVERICKS,S2,cross-checked,13815,14057,"[1983-10-29, 1984-06-27)",0,1,"[1983-10-29, 1984-05-09)",,,14057
+cummipa01,Pat Cummings,1985,NBA,1981-99,KNICKS,S2,cross-checked,14057,14348,"[1984-06-27, 1985-04-14)",1,0,"[1984-10-27, 1985-04-14)",,14057,
 cummipa01,Pat Cummings,1986,NBA,1981-99,KNICKS,S2,inferred,14543,14712,"[1985-10-26, 1986-04-13)",0,0,"[1985-10-26, 1986-04-13)",,,
 cummipa01,Pat Cummings,1987,NBA,1981-99,KNICKS,S2,inferred,14913,15083,"[1986-10-31, 1987-04-19)",0,0,"[1986-10-31, 1987-04-19)",,,
 cummipa01,Pat Cummings,1988,NBA,1981-99,KNICKS,S2,inferred,15284,15467,"[1987-11-06, 1988-05-07)",0,0,"[1987-11-06, 1988-05-07)",,,
@@ -6444,9 +6444,9 @@ davisjo02,Josh Davis,2012,NBA,2000-2025/26,GRIZZLIES,S2,directly-evidenced,24084
 davisjo06,Johnny Davis,2023,NBA,2000-2025/26,WIZARDS,S2,cross-checked,27940,28223,"[2022-07-01, 2023-04-10)",1,0,"[2022-10-19, 2023-04-10)",,27940,
 davisjo06,Johnny Davis,2024,NBA,2000-2025/26,WIZARDS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
 davisjo06,Johnny Davis,2025,NBA,2000-2025/26,WIZARDS,S2,unresolved,,,,0,0,,"no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); departure-after-closed-stint(prior-spell-exit,or-source-noise)",,28891
-davisma01,Mark Davis,1989,NBA,1981-99,BUCKS,S2,cross-checked,15648,15690,"[1988-11-04, 1988-12-16)",1,1,"[1988-11-04, 1989-05-16)",,"15720,15731",15690
-davisma01,Mark Davis,1989,NBA,1981-99,BUCKS,S2,unresolved,15720,15731,"[1989-01-15, 1989-01-26)",0,0,"[1988-11-04, 1989-05-16)",repeat-signing-prior-end-unknown,"15720,15731",15690
-davisma01,Mark Davis,1989,NBA,1981-99,BUCKS,S2,cross-checked,15731,15841,"[1989-01-26, 1989-05-16)",1,1,"[1988-11-04, 1989-05-16)",,"15720,15731",15690
+davisma01,Mark Davis,1989,NBA,1981-99,BUCKS,S2,directly-evidenced,15556,15690,"[1988-08-04, 1988-12-16)",1,1,"[1988-11-04, 1989-05-16)",,"15556,15720,15731",15690
+davisma01,Mark Davis,1989,NBA,1981-99,BUCKS,S2,unresolved,15720,15731,"[1989-01-15, 1989-01-26)",0,0,"[1988-11-04, 1989-05-16)",repeat-signing-prior-end-unknown,"15556,15720,15731",15690
+davisma01,Mark Davis,1989,NBA,1981-99,BUCKS,S2,cross-checked,15731,15841,"[1989-01-26, 1989-05-16)",1,1,"[1988-11-04, 1989-05-16)",,"15556,15720,15731",15690
 davisma01,Mark Davis,1989,NBA,1981-99,SUNS,S2,directly-evidenced,15704,15719,"[1988-12-30, 1989-01-14)",1,1,"[1988-11-04, 1989-05-29)",,15704,15719
 davisma02,Mark Davis,1996,NBA,1981-99,TIMBERWOLVES,S2,inferred,18203,18373,"[1995-11-03, 1996-04-21)",0,0,"[1995-11-03, 1996-04-21)",,,
 davisma02,Mark Davis,1997,NBA,1981-99,76ERS,S2,cross-checked,18516,18737,"[1996-09-11, 1997-04-20)",1,0,"[1996-11-01, 1997-04-20)",,18516,
@@ -6639,8 +6639,8 @@ dedmode01,Dewayne Dedmon,2021,NBA,2000-2025/26,HEAT,S2,cross-checked,27491,27543
 dedmode01,Dewayne Dedmon,2022,NBA,2000-2025/26,HEAT,S2,cross-checked,27611,27908,"[2021-08-06, 2022-05-30)",1,0,"[2021-10-21, 2022-05-30)",,27611,
 dedmode01,Dewayne Dedmon,2023,NBA,2000-2025/26,HEAT,S2,directly-evidenced,27945,28161,"[2022-07-06, 2023-02-07)",1,1,"[2022-10-19, 2023-06-13)",,27945,28161
 dedmode01,Dewayne Dedmon,2023,NBA,2000-2025/26,76ERS,S2,cross-checked,28168,28258,"[2023-02-14, 2023-05-15)",1,0,"[2022-10-18, 2023-05-15)",,28168,
-deesar01,Archie Dees,1959,NBA,1950-66,KINGS,S2,inferred,4677,4817,"[1958-10-22, 1959-03-11)",0,0,"[1958-10-22, 1959-03-11)",,,
-deesar01,Archie Dees,1960,NBA,1950-66,PISTONS,S2,inferred,5038,5186,"[1959-10-18, 1960-03-14)",0,0,"[1959-10-18, 1960-03-14)",,,
+deesar01,Archie Dees,1959,NBA,1950-66,KINGS,S2,cross-checked,4677,4837,"[1958-10-22, 1959-03-31)",0,1,"[1958-10-22, 1959-03-11)",,,4837
+deesar01,Archie Dees,1960,NBA,1950-66,PISTONS,S2,cross-checked,4837,5186,"[1959-03-31, 1960-03-14)",1,0,"[1959-10-18, 1960-03-14)",,4837,
 deesar01,Archie Dees,1961,NBA,1950-66,PISTONS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
 deesar01,Archie Dees,1962,NBA,1950-66,WIZARDS,S2,unresolved,,,,0,0,,"no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); departure-after-closed-stint(prior-spell-exit,or-source-noise)",,5803
 deesar01,Archie Dees,1962,NBA,1950-66,HAWKS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,5803,
@@ -6682,7 +6682,7 @@ delfica01,Carlos Delfino,2008,NBA,2000-2025/26,RAPTORS,S2,cross-checked,22445,22
 delfica01,Carlos Delfino,2010,NBA,2000-2025/26,BUCKS,S2,cross-checked,23240,23498,"[2009-08-18, 2010-05-03)",1,0,"[2009-10-30, 2010-05-03)",,23240,
 delfica01,Carlos Delfino,2011,NBA,2000-2025/26,BUCKS,S2,inferred,23675,23844,"[2010-10-27, 2011-04-14)",0,0,"[2010-10-27, 2011-04-14)",,,
 delfica01,Carlos Delfino,2012,NBA,2000-2025/26,BUCKS,S2,inferred,24100,24223,"[2011-12-26, 2012-04-27)",0,0,"[2011-12-26, 2012-04-27)",,,
-delfica01,Carlos Delfino,2013,NBA,2000-2025/26,ROCKETS,S2,cross-checked,24338,24595,"[2012-08-20, 2013-05-04)",1,0,"[2013-04-21, 2013-05-04)",,24338,
+delfica01,Carlos Delfino,2013,NBA,2000-2025/26,ROCKETS,S2,directly-evidenced,24338,24652,"[2012-08-20, 2013-06-30)",1,1,"[2013-04-21, 2013-05-04)",,24338,24652
 delgaan01,Ángel Delgado,2019,NBA,2000-2025/26,CLIPPERS,S2,cross-checked,26483,26779,"[2018-07-05, 2019-04-27)",1,0,"[2018-10-17, 2019-04-27)",,26483,
 delkto01,Tony Delk,1997,NBA,1981-99,HORNETS-PELICANS,S2,inferred,18568,18746,"[1996-11-02, 1997-04-29)",0,0,"[1996-11-02, 1997-04-29)",,,
 delkto01,Tony Delk,1998,NBA,1981-99,HORNETS-PELICANS,S2,cross-checked,18931,18938,"[1997-10-31, 1997-11-07)",0,1,"[1997-10-31, 1998-05-14)",,,18938
@@ -7084,7 +7084,7 @@ doolike01,Keyon Dooling,2010,NBA,2000-2025/26,NETS,S2,inferred,23311,23480,"[200
 doolike01,Keyon Dooling,2011,NBA,2000-2025/26,BUCKS,S2,cross-checked,23575,23844,"[2010-07-19, 2011-04-14)",1,0,"[2010-10-27, 2011-04-14)",,23575,
 doolike01,Keyon Dooling,2012,NBA,2000-2025/26,CELTICS,S2,cross-checked,24083,24267,"[2011-12-09, 2012-06-10)",1,0,"[2011-12-25, 2012-06-10)",,24083,
 doolike01,Keyon Dooling,2013,NBA,2000-2025/26,GRIZZLIES,S2,cross-checked,24564,24619,"[2013-04-03, 2013-05-28)",1,0,"[2013-04-20, 2013-05-28)",,24564,
-dorseja01,Jacky Dorsey,1978,NBA,1967-80,NUGGETS,S2,cross-checked,11614,11640,"[1977-10-19, 1977-11-14)",0,1,"[1977-10-19, 1978-05-18)",,,11640
+dorseja01,Jacky Dorsey,1978,NBA,1967-80,NUGGETS,S2,directly-evidenced,11486,11640,"[1977-06-13, 1977-11-14)",1,1,"[1977-10-19, 1978-05-18)",,11486,11640
 dorseja01,Jacky Dorsey,1978,NBA,1967-80,TRAIL BLAZERS,S2,directly-evidenced,11770,11781,"[1978-03-24, 1978-04-04)",1,1,"[1977-10-21, 1978-05-02)",,11770,11781
 dorseja01,Jacky Dorsey,1979,NBA,1967-80,ROCKETS,S2,cross-checked,11818,12156,"[1978-05-11, 1979-04-14)",1,0,"[1978-10-13, 1979-04-14)",,11818,
 dorseja01,Jacky Dorsey,1981,NBA,1981-99,THUNDER,S2,cross-checked,12802,12872,"[1981-01-19, 1981-03-30)",1,0,"[1980-10-10, 1981-03-30)",,12802,
@@ -7475,7 +7475,7 @@ dunlemi02,Mike Dunleavy,2013,NBA,2000-2025/26,BUCKS,S2,inferred,24582,24590,"[20
 dunlemi02,Mike Dunleavy,2014,NBA,2000-2025/26,BULLS,S2,cross-checked,24662,24956,"[2013-07-10, 2014-04-30)",1,0,"[2013-10-29, 2014-04-30)",,24662,
 dunlemi02,Mike Dunleavy,2015,NBA,2000-2025/26,BULLS,S2,inferred,25138,25336,"[2014-10-29, 2015-05-15)",0,0,"[2014-10-29, 2015-05-15)",,,
 dunlemi02,Mike Dunleavy,2016,NBA,2000-2025/26,BULLS,S2,cross-checked,25396,25671,"[2015-07-14, 2016-04-14)",1,0,"[2015-10-27, 2016-04-14)",,25396,
-dunlemi02,Mike Dunleavy,2017,NBA,2000-2025/26,HAWKS,S2,cross-checked,25939,26051,"[2017-01-07, 2017-04-29)",1,0,"[2016-10-27, 2017-04-29)",,25939,
+dunlemi02,Mike Dunleavy,2017,NBA,2000-2025/26,HAWKS,S2,directly-evidenced,25939,26113,"[2017-01-07, 2017-06-30)",1,1,"[2016-10-27, 2017-04-29)",,25939,26113
 dunlemi02,Mike Dunleavy,2017,NBA,2000-2025/26,CAVALIERS,S2,directly-evidenced,25755,25939,"[2016-07-07, 2017-01-07)",1,1,"[2016-10-25, 2017-06-13)",,25755,25939
 dunnkr01,Kris Dunn,2017,NBA,2000-2025/26,TIMBERWOLVES,S2,directly-evidenced,25755,26105,"[2016-07-07, 2017-06-22)",1,1,"[2016-10-26, 2017-04-13)",,25755,26105
 dunnkr01,Kris Dunn,2018,NBA,2000-2025/26,BULLS,S2,cross-checked,26105,26399,"[2017-06-22, 2018-04-12)",1,0,"[2017-10-19, 2018-04-12)",,26105,
@@ -7619,8 +7619,8 @@ eddieja01,Jarell Eddie,2018,NBA,2000-2025/26,BULLS,S2,cross-checked,26357,26399,
 eddiepa01,Patrick Eddie,1992,NBA,1981-99,KNICKS,S2,cross-checked,16661,16939,"[1991-08-14, 1992-05-18)",1,0,"[1991-11-01, 1992-05-18)",,16661,
 eddledi01,Dike Eddleman,1950,NBA,1950-66,HAWKS,S2,inferred,1397,1544,"[1949-10-29, 1950-03-25)",0,0,"[1949-10-29, 1950-03-25)",,,
 eddledi01,Dike Eddleman,1951,NBA,1950-66,HAWKS,S2,inferred,1766,1903,"[1950-11-02, 1951-03-19)",0,0,"[1950-11-02, 1951-03-19)",,,
-eddledi01,Dike Eddleman,1952,NBA,1950-66,PISTONS,S2,inferred,2130,2271,"[1951-11-01, 1952-03-21)",0,0,"[1951-11-01, 1952-03-21)",,,
-eddledi01,Dike Eddleman,1952,NBA,1950-66,HAWKS,S2,inferred,2132,2266,"[1951-11-03, 1952-03-16)",0,0,"[1951-11-03, 1952-03-16)",,,
+eddledi01,Dike Eddleman,1952,NBA,1950-66,PISTONS,S2,cross-checked,2232,2271,"[1952-02-11, 1952-03-21)",1,0,"[1951-11-01, 1952-03-21)",,2232,
+eddledi01,Dike Eddleman,1952,NBA,1950-66,HAWKS,S2,cross-checked,2132,2232,"[1951-11-03, 1952-02-11)",0,1,"[1951-11-03, 1952-03-16)",,,2232
 eddledi01,Dike Eddleman,1953,NBA,1950-66,PISTONS,S2,inferred,2496,2649,"[1952-11-01, 1953-04-03)",0,0,"[1952-11-01, 1953-04-03)",,,
 edelike01,Kenton Edelin,1985,NBA,1981-99,PACERS,S2,unresolved,14254,14332,"[1985-01-10, 1985-03-29)",0,0,"[1984-10-27, 1985-04-14)","departure-after-closed-stint(prior-spell-exit,or-source-noise); repeat-signing-prior-end-unknown","14254,14332",14176
 edelike01,Kenton Edelin,1985,NBA,1981-99,PACERS,S2,unresolved,14332,14348,"[1985-03-29, 1985-04-14)",0,0,"[1984-10-27, 1985-04-14)","departure-after-closed-stint(prior-spell-exit,or-source-noise)","14254,14332",14176
@@ -7850,7 +7850,7 @@ ellisda01,Dale Ellis,1995,NBA,1981-99,NUGGETS,S2,cross-checked,17808,18019,"[199
 ellisda01,Dale Ellis,1996,NBA,1981-99,NUGGETS,S2,inferred,18203,18374,"[1995-11-03, 1996-04-22)",0,0,"[1995-11-03, 1996-04-22)",,,
 ellisda01,Dale Ellis,1997,NBA,1981-99,NUGGETS,S2,inferred,18567,18737,"[1996-11-01, 1997-04-20)",0,0,"[1996-11-01, 1997-04-20)",,,
 ellisda01,Dale Ellis,1998,NBA,1981-99,THUNDER,S2,cross-checked,18902,19125,"[1997-10-02, 1998-05-13)",1,0,"[1997-10-31, 1998-05-13)",,18902,
-ellisda01,Dale Ellis,1999,NBA,1981-99,THUNDER,S2,inferred,19393,19483,"[1999-02-05, 1999-05-06)",0,0,"[1999-02-05, 1999-05-06)",,,
+ellisda01,Dale Ellis,1999,NBA,1981-99,THUNDER,S2,cross-checked,19393,19538,"[1999-02-05, 1999-06-30)",0,1,"[1999-02-05, 1999-05-06)",,,19538
 ellisda01,Dale Ellis,2000,NBA,2000-2025/26,HORNETS-PELICANS,S2,cross-checked,19740,19833,"[2000-01-18, 2000-04-20)",1,0,"[1999-11-02, 2000-04-20)",,19740,
 ellisda01,Dale Ellis,2000,NBA,2000-2025/26,BUCKS,S2,directly-evidenced,19588,19740,"[1999-08-19, 2000-01-18)",1,1,"[1999-11-02, 2000-04-20)",,19588,19740
 ellisha01,Harold Ellis,1994,NBA,1981-99,CLIPPERS,S2,cross-checked,17538,17646,"[1994-01-07, 1994-04-25)",1,0,"[1993-11-05, 1994-04-25)",,17538,
@@ -8225,7 +8225,7 @@ farieke01,Kenneth Faried,2019,NBA,2000-2025/26,NETS,S2,directly-evidenced,26491,
 farieke01,Kenneth Faried,2019,NBA,2000-2025/26,ROCKETS,S2,cross-checked,26683,26793,"[2019-01-21, 2019-05-11)",1,0,"[2018-10-17, 2019-05-11)",,26683,
 farledi01,Dick Farley,1955,NBA,1950-66,76ERS,S2,inferred,3225,3387,"[1954-10-31, 1955-04-11)",0,0,"[1954-10-31, 1955-04-11)",,,
 farledi01,Dick Farley,1956,NBA,1950-66,76ERS,S2,inferred,3595,3741,"[1955-11-05, 1956-03-30)",0,0,"[1955-11-05, 1956-03-30)",,,
-farledi01,Dick Farley,1959,NBA,1950-66,PISTONS,S2,inferred,4674,4818,"[1958-10-19, 1959-03-12)",0,0,"[1958-10-19, 1959-03-12)",,,
+farledi01,Dick Farley,1959,NBA,1950-66,PISTONS,S2,cross-checked,4543,4818,"[1958-06-10, 1959-03-12)",1,0,"[1958-10-19, 1959-03-12)",,4543,
 farmajo01,Jordan Farmar,2007,NBA,2000-2025/26,LAKERS,S2,inferred,22218,22402,"[2006-10-31, 2007-05-03)",0,0,"[2006-10-31, 2007-05-03)",,,
 farmajo01,Jordan Farmar,2008,NBA,2000-2025/26,LAKERS,S2,inferred,22582,22814,"[2007-10-30, 2008-06-18)",0,0,"[2007-10-30, 2008-06-18)",,,
 farmajo01,Jordan Farmar,2009,NBA,2000-2025/26,LAKERS,S2,inferred,22946,23176,"[2008-10-28, 2009-06-15)",0,0,"[2008-10-28, 2009-06-15)",,,
@@ -8720,7 +8720,7 @@ fostemi02,Michael Foster Jr.,2023,NBA,2000-2025/26,76ERS,S2,directly-evidenced,2
 fostero01,Rod Foster,1984,NBA,1981-99,SUNS,S2,inferred,13815,14025,"[1983-10-29, 1984-05-26)",0,0,"[1983-10-29, 1984-05-26)",,,
 fostero01,Rod Foster,1985,NBA,1981-99,SUNS,S2,inferred,14178,14358,"[1984-10-26, 1985-04-24)",0,0,"[1984-10-26, 1985-04-24)",,,
 fostero01,Rod Foster,1986,NBA,1981-99,SUNS,S2,cross-checked,14542,14768,"[1985-10-25, 1986-06-08)",0,1,"[1985-10-25, 1986-04-14)",,,14768
-fotsian01,Antonis Fotsis,2002,NBA,2000-2025/26,GRIZZLIES,S2,inferred,20393,20561,"[2001-11-01, 2002-04-18)",0,0,"[2001-11-01, 2002-04-18)",,,
+fotsian01,Antonis Fotsis,2002,NBA,2000-2025/26,GRIZZLIES,S2,cross-checked,20393,20632,"[2001-11-01, 2002-06-28)",0,1,"[2001-11-01, 2002-04-18)",,,20632
 fournev01,Evan Fournier,2013,NBA,2000-2025/26,NUGGETS,S2,inferred,24581,24594,"[2013-04-20, 2013-05-03)",0,0,"[2013-04-20, 2013-05-03)",,,
 fournev01,Evan Fournier,2014,NBA,2000-2025/26,NUGGETS,S2,cross-checked,24774,25014,"[2013-10-30, 2014-06-27)",0,1,"[2013-10-30, 2014-04-17)",,,25014
 fournev01,Evan Fournier,2015,NBA,2000-2025/26,MAGIC,S2,cross-checked,25014,25307,"[2014-06-27, 2015-04-16)",1,0,"[2014-10-28, 2015-04-16)",,25014,
@@ -8938,7 +8938,7 @@ fryech01,Channing Frye,2017,NBA,2000-2025/26,CAVALIERS,S2,inferred,25865,26096,"
 fryech01,Channing Frye,2018,NBA,2000-2025/26,CAVALIERS,S2,cross-checked,26222,26336,"[2017-10-17, 2018-02-08)",0,1,"[2017-10-17, 2018-06-09)",,,26336
 fryech01,Channing Frye,2018,NBA,2000-2025/26,LAKERS,S2,cross-checked,26336,26399,"[2018-02-08, 2018-04-12)",1,0,"[2017-10-19, 2018-04-12)",,26336,
 fryech01,Channing Frye,2019,NBA,2000-2025/26,CAVALIERS,S2,cross-checked,26497,26762,"[2018-07-19, 2019-04-10)",1,0,"[2018-10-17, 2019-04-10)",,26497,
-fryerbe01,Bernie Fryer,1974,NBA,1967-80,TRAIL BLAZERS,S2,unresolved,10147,10234,"[1973-10-13, 1974-01-08)",0,1,"[1973-10-13, 1974-03-28)","appearance-count-conflict(S2-player-games=80,S1-season-games=82,S2-team-games=82,interval-capacity=41,departure-day-allowance=1,missing-games-allowance=0,capacity-upper-bound=42)",,10234
+fryerbe01,Bernie Fryer,1974,NBA,1967-80,TRAIL BLAZERS,S2,unresolved,10039,10234,"[1973-06-27, 1974-01-08)",1,1,"[1973-10-13, 1974-03-28)","appearance-count-conflict(S2-player-games=80,S1-season-games=82,S2-team-games=82,interval-capacity=41,departure-day-allowance=1,missing-games-allowance=0,capacity-upper-bound=42)",10039,10234
 fryerbe01,Bernie Fryer,1975,NBA,1967-80,JAZZ,S2,cross-checked,10623,10688,"[1975-02-01, 1975-04-07)",1,0,"[1974-10-17, 1975-04-07)",,10623,
 fucarfr01,Frank Fucarino,1947,BAA,BAA 1946-49,HUSKIES,S2,inferred,304,453,"[1946-11-01, 1947-03-30)",0,0,"[1946-11-01, 1947-03-30)",,,
 fudgeal01,Alex Fudge,2024,NBA,2000-2025/26,MAVERICKS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,28552,
@@ -9068,7 +9068,7 @@ gallida01,Danilo Gallinari,2018,NBA,2000-2025/26,CLIPPERS,S2,unresolved,,,,0,0,,
 gallida01,Danilo Gallinari,2019,NBA,2000-2025/26,CLIPPERS,S2,inferred,26587,26779,"[2018-10-17, 2019-04-27)",0,0,"[2018-10-17, 2019-04-27)",,,
 gallida01,Danilo Gallinari,2020,NBA,2000-2025/26,THUNDER,S2,cross-checked,26853,27274,"[2019-07-10, 2020-09-03)",1,0,"[2019-10-23, 2020-09-03)",,26853,
 gallida01,Danilo Gallinari,2021,NBA,2000-2025/26,HAWKS,S2,unresolved,,,,0,0,,same-day-arrival-to-multiple-franchises(ordering-unresolved),27356,
-gallida01,Danilo Gallinari,2022,NBA,2000-2025/26,HAWKS,S2,inferred,27687,27875,"[2021-10-21, 2022-04-27)",0,0,"[2021-10-21, 2022-04-27)",,,
+gallida01,Danilo Gallinari,2022,NBA,2000-2025/26,HAWKS,S2,cross-checked,27687,27939,"[2021-10-21, 2022-06-30)",0,1,"[2021-10-21, 2022-04-27)",,,27939
 gallida01,Danilo Gallinari,2024,NBA,2000-2025/26,PISTONS,S2,directly-evidenced,28502,28527,"[2024-01-14, 2024-02-08)",1,1,,,28502,28527
 gallida01,Danilo Gallinari,2024,NBA,2000-2025/26,BUCKS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,28537,
 gallida01,Danilo Gallinari,2024,NBA,2000-2025/26,WIZARDS,S2,unresolved,,,,0,0,,"no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); departure-after-closed-stint(prior-spell-exit,or-source-noise)",,28502
@@ -9585,9 +9585,9 @@ gilmoar01,Artis Gilmore,1983,NBA,1981-99,SPURS,S2,cross-checked,13351,13654,"[19
 gilmoar01,Artis Gilmore,1984,NBA,1981-99,SPURS,S2,inferred,13815,13985,"[1983-10-29, 1984-04-16)",0,0,"[1983-10-29, 1984-04-16)",,,
 gilmoar01,Artis Gilmore,1985,NBA,1981-99,SPURS,S2,inferred,14179,14363,"[1984-10-27, 1985-04-29)",0,0,"[1984-10-27, 1985-04-29)",,,
 gilmoar01,Artis Gilmore,1986,NBA,1981-99,SPURS,S2,inferred,14543,14723,"[1985-10-26, 1986-04-24)",0,0,"[1985-10-26, 1986-04-24)",,,
-gilmoar01,Artis Gilmore,1987,NBA,1981-99,SPURS,S2,inferred,14913,15084,"[1986-10-31, 1987-04-20)",0,0,"[1986-10-31, 1987-04-20)",,,
+gilmoar01,Artis Gilmore,1987,NBA,1981-99,SPURS,S2,cross-checked,14913,15147,"[1986-10-31, 1987-06-22)",0,1,"[1986-10-31, 1987-04-20)",,,15147
 gilmoar01,Artis Gilmore,1988,NBA,1981-99,CELTICS,S2,cross-checked,15347,15495,"[1988-01-08, 1988-06-04)",1,0,"[1987-11-06, 1988-06-04)",,15347,
-gilmoar01,Artis Gilmore,1988,NBA,1981-99,BULLS,S2,cross-checked,15285,15334,"[1987-11-07, 1987-12-26)",0,1,"[1987-11-07, 1988-05-19)",,,15334
+gilmoar01,Artis Gilmore,1988,NBA,1981-99,BULLS,S2,directly-evidenced,15147,15334,"[1987-06-22, 1987-12-26)",1,1,"[1987-11-07, 1988-05-19)",,15147,15334
 gilmowa01,Walt Gilmore,1971,NBA,1967-80,TRAIL BLAZERS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
 gilmuch01,Chuck Gilmur,1947,BAA,BAA 1946-49,STAGS,S2,inferred,305,477,"[1946-11-02, 1947-04-23)",0,0,"[1946-11-02, 1947-04-23)",,,
 gilmuch01,Chuck Gilmur,1948,BAA,BAA 1946-49,STAGS,S2,inferred,681,829,"[1947-11-13, 1948-04-09)",0,0,"[1947-11-13, 1948-04-09)",,,
@@ -9614,7 +9614,7 @@ ginobma01,Manu Ginóbili,2015,NBA,2000-2025/26,SPURS,S2,inferred,25137,25324,"[2
 ginobma01,Manu Ginóbili,2016,NBA,2000-2025/26,SPURS,S2,cross-checked,25402,25700,"[2015-07-20, 2016-05-13)",1,0,"[2015-10-28, 2016-05-13)",,25402,
 ginobma01,Manu Ginóbili,2017,NBA,2000-2025/26,SPURS,S2,cross-checked,25762,26075,"[2016-07-14, 2017-05-23)",1,0,"[2016-10-25, 2017-05-23)",,25762,
 ginobma01,Manu Ginóbili,2018,NBA,2000-2025/26,SPURS,S2,cross-checked,26168,26412,"[2017-08-24, 2018-04-25)",1,0,"[2017-10-18, 2018-04-25)",,26168,
-giricgo01,Gordan Giriček,2003,NBA,2000-2025/26,GRIZZLIES,S2,cross-checked,20756,20868,"[2002-10-30, 2003-02-19)",0,1,"[2002-10-30, 2003-04-17)",,,20868
+giricgo01,Gordan Giriček,2003,NBA,2000-2025/26,GRIZZLIES,S2,directly-evidenced,20632,20868,"[2002-06-28, 2003-02-19)",1,1,"[2002-10-30, 2003-04-17)",,20632,20868
 giricgo01,Gordan Giriček,2003,NBA,2000-2025/26,MAGIC,S2,cross-checked,20868,20943,"[2003-02-19, 2003-05-05)",1,0,"[2002-10-29, 2003-05-05)",,20868,
 giricgo01,Gordan Giriček,2004,NBA,2000-2025/26,MAGIC,S2,cross-checked,21120,21233,"[2003-10-29, 2004-02-19)",0,1,"[2003-10-29, 2004-04-15)",,,21233
 giricgo01,Gordan Giriček,2004,NBA,2000-2025/26,JAZZ,S2,cross-checked,21233,21289,"[2004-02-19, 2004-04-15)",1,0,"[2003-10-29, 2004-04-15)",,21233,
@@ -9870,7 +9870,7 @@ govedba01,Bato Govedarica,1954,NBA,1950-66,76ERS,S2,inferred,2860,3024,"[1953-10
 grabojo01,Joe Graboski,1949,BAA,BAA 1946-49,STAGS,S2,inferred,1040,1179,"[1948-11-06, 1949-03-25)",0,0,"[1948-11-06, 1949-03-25)",,,
 grabojo01,Joe Graboski,1950,NBA,1950-66,STAGS,S2,inferred,1400,1545,"[1949-11-01, 1950-03-26)",0,0,"[1949-11-01, 1950-03-26)",,,
 grabojo01,Joe Graboski,1952,NBA,1950-66,OLYMPIANS,S2,inferred,2132,2276,"[1951-11-03, 1952-03-26)",0,0,"[1951-11-03, 1952-03-26)",,,
-grabojo01,Joe Graboski,1953,NBA,1950-66,OLYMPIANS,S2,inferred,2495,2639,"[1952-10-31, 1953-03-24)",0,0,"[1952-10-31, 1953-03-24)",,,
+grabojo01,Joe Graboski,1953,NBA,1950-66,OLYMPIANS,S2,unresolved,,,,0,0,,fuzzy-dated-rows-bear-on-this-tenure,,
 grabojo01,Joe Graboski,1954,NBA,1950-66,WARRIORS,S2,inferred,2860,2995,"[1953-10-31, 1954-03-15)",0,0,"[1953-10-31, 1954-03-15)",,,
 grabojo01,Joe Graboski,1955,NBA,1950-66,WARRIORS,S2,inferred,3238,3360,"[1954-11-13, 1955-03-15)",0,0,"[1954-11-13, 1955-03-15)",,,
 grabojo01,Joe Graboski,1956,NBA,1950-66,WARRIORS,S2,inferred,3595,3750,"[1955-11-05, 1956-04-08)",0,0,"[1955-11-05, 1956-04-08)",,,
@@ -10012,8 +10012,8 @@ grantho01,Horace Grant,1995,NBA,1981-99,MAGIC,S2,cross-checked,17793,18062,"[199
 grantho01,Horace Grant,1996,NBA,1981-99,MAGIC,S2,inferred,18203,18374,"[1995-11-03, 1996-04-22)",0,0,"[1995-11-03, 1996-04-22)",,,
 grantho01,Horace Grant,1997,NBA,1981-99,MAGIC,S2,inferred,18567,18752,"[1996-11-01, 1997-05-05)",0,0,"[1996-11-01, 1997-05-05)",,,
 grantho01,Horace Grant,1998,NBA,1981-99,MAGIC,S2,inferred,18931,19102,"[1997-10-31, 1998-04-20)",0,0,"[1997-10-31, 1998-04-20)",,,
-grantho01,Horace Grant,1999,NBA,1981-99,MAGIC,S2,inferred,19393,19493,"[1999-02-05, 1999-05-16)",0,0,"[1999-02-05, 1999-05-16)",,,
-grantho01,Horace Grant,2000,NBA,2000-2025/26,THUNDER,S2,inferred,19663,19833,"[1999-11-02, 2000-04-20)",0,0,"[1999-11-02, 2000-04-20)",,,
+grantho01,Horace Grant,1999,NBA,1981-99,MAGIC,S2,cross-checked,19393,19538,"[1999-02-05, 1999-06-30)",0,1,"[1999-02-05, 1999-05-16)",,,19538
+grantho01,Horace Grant,2000,NBA,2000-2025/26,THUNDER,S2,cross-checked,19538,19833,"[1999-06-30, 2000-04-20)",1,0,"[1999-11-02, 2000-04-20)",,19538,
 grantho01,Horace Grant,2001,NBA,2000-2025/26,LAKERS,S2,cross-checked,19986,20255,"[2000-09-20, 2001-06-16)",1,0,"[2000-10-31, 2001-06-16)",,19986,
 grantho01,Horace Grant,2002,NBA,2000-2025/26,MAGIC,S2,cross-checked,20288,20561,"[2001-07-19, 2002-04-18)",1,0,"[2001-10-30, 2002-04-18)",,20288,
 grantho01,Horace Grant,2003,NBA,2000-2025/26,MAGIC,S2,inferred,20755,20943,"[2002-10-29, 2003-05-05)",0,0,"[2002-10-29, 2003-05-05)",,,
@@ -10100,9 +10100,9 @@ grayst01,Stuart Gray,1990,NBA,1981-99,HORNETS-PELICANS,S2,directly-evidenced,158
 grayst01,Stuart Gray,1990,NBA,1981-99,KNICKS,S2,cross-checked,16123,16206,"[1990-02-22, 1990-05-16)",1,0,"[1989-11-03, 1990-05-16)",,16123,
 grayst01,Stuart Gray,1991,NBA,1981-99,KNICKS,S2,cross-checked,16376,16458,"[1990-11-02, 1991-01-23)",0,1,"[1990-11-02, 1991-05-01)",,,16458
 graysy01,Sylvester Gray,1989,NBA,1981-99,HEAT,S2,inferred,15649,15818,"[1988-11-05, 1989-04-23)",0,0,"[1988-11-05, 1989-04-23)",,,
-graywy01,Wyndol Gray,1947,BAA,BAA 1946-49,CELTICS,S2,inferred,305,454,"[1946-11-02, 1947-03-31)",0,0,"[1946-11-02, 1947-03-31)",,,
+graywy01,Wyndol Gray,1947,BAA,BAA 1946-49,CELTICS,S2,cross-checked,305,483,"[1946-11-02, 1947-04-29)",0,1,"[1946-11-02, 1947-03-31)",,,483
 graywy01,Wyndol Gray,1948,BAA,BAA 1946-49,STEAMROLLERS,S2,cross-checked,728,810,"[1947-12-30, 1948-03-21)",1,0,"[1947-11-13, 1948-03-21)",,728,
-graywy01,Wyndol Gray,1948,BAA,BAA 1946-49,BOMBERS,S2,cross-checked,681,728,"[1947-11-13, 1947-12-30)",0,1,"[1947-11-13, 1948-04-07)",,,728
+graywy01,Wyndol Gray,1948,BAA,BAA 1946-49,BOMBERS,S2,directly-evidenced,483,728,"[1947-04-29, 1947-12-30)",1,1,"[1947-11-13, 1948-04-07)",,483,728
 greacbo01,Bob Greacen,1970,NBA,1967-80,BUCKS,S2,inferred,8691,8876,"[1969-10-18, 1970-04-21)",0,0,"[1969-10-18, 1970-04-21)",,,
 greacbo01,Bob Greacen,1971,NBA,1967-80,BUCKS,S2,inferred,9216,9251,"[1971-03-27, 1971-05-01)",0,0,"[1971-03-27, 1971-05-01)",,,
 greenac01,A.C. Green,1986,NBA,1981-99,LAKERS,S2,inferred,14543,14751,"[1985-10-26, 1986-05-22)",0,0,"[1985-10-26, 1986-05-22)",,,
@@ -10352,8 +10352,8 @@ greenwi01,Willie Green,2010,NBA,2000-2025/26,76ERS,S2,inferred,23311,23480,"[200
 greenwi01,Willie Green,2011,NBA,2000-2025/26,HORNETS-PELICANS,S2,cross-checked,23641,23859,"[2010-09-23, 2011-04-29)",1,0,"[2010-10-27, 2011-04-29)",,23641,
 greenwi01,Willie Green,2012,NBA,2000-2025/26,HAWKS,S2,cross-checked,24096,24237,"[2011-12-22, 2012-05-11)",1,0,"[2011-12-27, 2012-05-11)",,24096,
 greenwi01,Willie Green,2013,NBA,2000-2025/26,CLIPPERS,S2,cross-checked,24317,24595,"[2012-07-30, 2013-05-04)",1,0,"[2013-04-20, 2013-05-04)",,24317,
-greenwi01,Willie Green,2014,NBA,2000-2025/26,CLIPPERS,S2,cross-checked,24773,25016,"[2013-10-29, 2014-06-29)",0,1,"[2013-10-29, 2014-05-16)",,,25016
-greenwi01,Willie Green,2015,NBA,2000-2025/26,MAGIC,S2,inferred,25137,25307,"[2014-10-28, 2015-04-16)",0,0,"[2014-10-28, 2015-04-16)",,,
+greenwi01,Willie Green,2014,NBA,2000-2025/26,CLIPPERS,S2,unresolved,24773,25016,"[2013-10-29, 2014-06-29)",0,0,"[2013-10-29, 2014-05-16)","departure-after-closed-stint(prior-spell-exit,or-source-noise)",,"25016,25017"
+greenwi01,Willie Green,2015,NBA,2000-2025/26,MAGIC,S2,cross-checked,25017,25307,"[2014-06-30, 2015-04-16)",1,0,"[2014-10-28, 2015-04-16)",,25017,
 greerha01,Hal Greer,1959,NBA,1950-66,76ERS,S2,inferred,4674,4818,"[1958-10-19, 1959-03-12)",0,0,"[1958-10-19, 1959-03-12)",,,
 greerha01,Hal Greer,1960,NBA,1950-66,76ERS,S2,inferred,5044,5187,"[1959-10-24, 1960-03-15)",0,0,"[1959-10-24, 1960-03-15)",,,
 greerha01,Hal Greer,1961,NBA,1950-66,76ERS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
@@ -10583,7 +10583,7 @@ haffnsc01,Scott Haffner,1991,NBA,1981-99,HORNETS-PELICANS,S2,unresolved,16457,16
 haffnsc01,Scott Haffner,1991,NBA,1981-99,HORNETS-PELICANS,S2,cross-checked,16477,16546,"[1991-02-11, 1991-04-21)",1,0,"[1990-11-02, 1991-04-21)",,"16457,16477",
 haganas01,Ashton Hagans,2021,NBA,2000-2025/26,TIMBERWOLVES,S2,directly-evidenced,27351,27437,"[2020-11-19, 2021-02-13)",1,1,"[2020-12-23, 2021-05-17)",,27351,27437
 haganas01,Ashton Hagans,2024,NBA,2000-2025/26,TRAIL BLAZERS,S2,unresolved,28527,28542,"[2024-02-08, 2024-02-23)",0,0,,same-day-arrival-and-departure(ordering-flagged); open-stint-without-window; repeat-signing-prior-end-unknown,"28397,28527,28542",28397
-hagancl01,Cliff Hagan,1957,NBA,1950-66,HAWKS,S2,inferred,3952,4121,"[1956-10-27, 1957-04-14)",0,0,"[1956-10-27, 1957-04-14)",,,
+hagancl01,Cliff Hagan,1957,NBA,1950-66,HAWKS,S2,cross-checked,3772,4121,"[1956-04-30, 1957-04-14)",1,0,"[1956-10-27, 1957-04-14)",,3772,
 hagancl01,Cliff Hagan,1958,NBA,1950-66,HAWKS,S2,inferred,4312,4453,"[1957-10-22, 1958-03-12)",0,0,"[1957-10-22, 1958-03-12)",,,
 hagancl01,Cliff Hagan,1959,NBA,1950-66,HAWKS,S2,inferred,4678,4818,"[1958-10-23, 1959-03-12)",0,0,"[1958-10-23, 1959-03-12)",,,
 hagancl01,Cliff Hagan,1960,NBA,1950-66,HAWKS,S2,inferred,5044,5213,"[1959-10-24, 1960-04-10)",0,0,"[1959-10-24, 1960-04-10)",,,
@@ -10774,8 +10774,8 @@ hancoda01,Darrin Hancock,1997,NBA,1981-99,BUCKS,S2,directly-evidenced,18538,1860
 hancoda01,Darrin Hancock,1997,NBA,1981-99,SPURS,S2,cross-checked,18655,18738,"[1997-01-28, 1997-04-21)",1,0,"[1996-11-01, 1997-04-21)",,18655,
 handlbe01,Ben Handlogten,2004,NBA,2000-2025/26,JAZZ,S2,directly-evidenced,21091,21233,"[2003-09-30, 2004-02-19)",1,1,"[2003-10-29, 2004-04-15)",,21091,21233
 handlbe01,Ben Handlogten,2005,NBA,2000-2025/26,JAZZ,S2,unresolved,21637,21660,"[2005-03-29, 2005-04-21)",1,0,"[2004-11-03, 2005-04-21)","appearance-count-conflict(S2-player-games=21,S1-season-games=82,S2-team-games=82,interval-capacity=12,departure-day-allowance=0,missing-games-allowance=0,capacity-upper-bound=12)",21637,
-hankice01,Cecil Hankins,1947,BAA,BAA 1946-49,BOMBERS,S2,inferred,305,461,"[1946-11-02, 1947-04-07)",0,0,"[1946-11-02, 1947-04-07)",,,
-hankice01,Cecil Hankins,1948,BAA,BAA 1946-49,CELTICS,S2,inferred,681,823,"[1947-11-13, 1948-04-03)",0,0,"[1947-11-13, 1948-04-03)",,,
+hankice01,Cecil Hankins,1947,BAA,BAA 1946-49,BOMBERS,S2,cross-checked,305,483,"[1946-11-02, 1947-04-29)",0,1,"[1946-11-02, 1947-04-07)",,,483
+hankice01,Cecil Hankins,1948,BAA,BAA 1946-49,CELTICS,S2,cross-checked,483,823,"[1947-04-29, 1948-04-03)",1,0,"[1947-11-13, 1948-04-03)",,483,
 hankiph01,Phil Hankinson,1974,NBA,1967-80,CELTICS,S2,inferred,10146,10359,"[1973-10-12, 1974-05-13)",0,0,"[1973-10-12, 1974-05-13)",,,
 hankiph01,Phil Hankinson,1975,NBA,1967-80,CELTICS,S2,inferred,10517,10723,"[1974-10-18, 1975-05-12)",0,0,"[1974-10-18, 1975-05-12)",,,
 hannadu01,Dusty Hannahs,2019,NBA,2000-2025/26,GRIZZLIES,S2,directly-evidenced,26751,26756,"[2019-03-30, 2019-04-04)",1,1,"[2018-10-17, 2019-04-11)",,26751,26756
@@ -11121,8 +11121,8 @@ harrike01,Kevon Harris,2024,NBA,2000-2025/26,MAGIC,S2,unresolved,,,,0,0,,no-date
 harrilu01,Lucious Harris,1994,NBA,1981-99,MAVERICKS,S2,inferred,17475,17646,"[1993-11-05, 1994-04-25)",0,0,"[1993-11-05, 1994-04-25)",,,
 harrilu01,Lucious Harris,1995,NBA,1981-99,MAVERICKS,S2,inferred,17840,18010,"[1994-11-05, 1995-04-24)",0,0,"[1994-11-05, 1995-04-24)",,,
 harrilu01,Lucious Harris,1996,NBA,1981-99,MAVERICKS,S2,inferred,18203,18374,"[1995-11-03, 1996-04-22)",0,0,"[1995-11-03, 1996-04-22)",,,
-harrilu01,Lucious Harris,1997,NBA,1981-99,76ERS,S2,cross-checked,18466,18737,"[1996-07-23, 1997-04-20)",1,0,"[1996-11-01, 1997-04-20)",,18466,
-harrilu01,Lucious Harris,1998,NBA,1981-99,NETS,S2,inferred,18931,19112,"[1997-10-31, 1998-04-30)",0,0,"[1997-10-31, 1998-04-30)",,,
+harrilu01,Lucious Harris,1997,NBA,1981-99,76ERS,S2,directly-evidenced,18466,18805,"[1996-07-23, 1997-06-27)",1,1,"[1996-11-01, 1997-04-20)",,18466,18805
+harrilu01,Lucious Harris,1998,NBA,1981-99,NETS,S2,cross-checked,18805,19112,"[1997-06-27, 1998-04-30)",1,0,"[1997-10-31, 1998-04-30)",,18805,
 harrilu01,Lucious Harris,1999,NBA,1981-99,NETS,S2,inferred,19394,19483,"[1999-02-06, 1999-05-06)",0,0,"[1999-02-06, 1999-05-06)",,,
 harrilu01,Lucious Harris,2000,NBA,2000-2025/26,NETS,S2,inferred,19663,19833,"[1999-11-02, 2000-04-20)",0,0,"[1999-11-02, 2000-04-20)",,,
 harrilu01,Lucious Harris,2001,NBA,2000-2025/26,NETS,S2,inferred,20027,20196,"[2000-10-31, 2001-04-18)",0,0,"[2000-10-31, 2001-04-18)",,,
@@ -11158,7 +11158,7 @@ harriot01,Othella Harrington,2008,NBA,2000-2025/26,BOBCATS-HORNETS2,S2,inferred,
 harrish01,Shaquille Harrison,2018,NBA,2000-2025/26,SUNS,S2,unresolved,26349,26359,"[2018-02-21, 2018-03-03)",0,0,"[2017-10-18, 2018-04-11)",repeat-signing-prior-end-unknown,"26349,26359,26369",
 harrish01,Shaquille Harrison,2018,NBA,2000-2025/26,SUNS,S2,unresolved,26359,26369,"[2018-03-03, 2018-03-13)",0,0,"[2017-10-18, 2018-04-11)",repeat-signing-prior-end-unknown,"26349,26359,26369",
 harrish01,Shaquille Harrison,2018,NBA,2000-2025/26,SUNS,S2,cross-checked,26369,26398,"[2018-03-13, 2018-04-11)",1,0,"[2017-10-18, 2018-04-11)",,"26349,26359,26369",
-harrish01,Shaquille Harrison,2019,NBA,2000-2025/26,BULLS,S2,unresolved,26588,26763,"[2018-10-18, 2019-04-11)",0,0,"[2018-10-18, 2019-04-11)",multi-team-season(ordering-unresolved): player has dated moves to other franchises this season; bracket-only stint cannot be ordered against them,,
+harrish01,Shaquille Harrison,2019,NBA,2000-2025/26,BULLS,S2,cross-checked,26591,26763,"[2018-10-21, 2019-04-11)",1,0,"[2018-10-18, 2019-04-11)",,26591,
 harrish01,Shaquille Harrison,2020,NBA,2000-2025/26,BULLS,S2,unresolved,26861,27098,"[2019-07-18, 2020-03-11)",0,0,"[2019-10-23, 2020-03-11)","departure-after-closed-stint(prior-spell-exit,or-source-noise)",26861,26849
 harrish01,Shaquille Harrison,2021,NBA,2000-2025/26,NUGGETS,S2,cross-checked,27492,27558,"[2021-04-09, 2021-06-14)",1,0,"[2020-12-23, 2021-06-14)",,27492,
 harrish01,Shaquille Harrison,2021,NBA,2000-2025/26,JAZZ,S2,directly-evidenced,27371,27448,"[2020-12-09, 2021-02-24)",1,1,"[2020-12-23, 2021-06-19)",,27371,27448
@@ -11427,7 +11427,7 @@ hayesch01,Chuck Hayes,2016,NBA,2000-2025/26,ROCKETS,S2,directly-evidenced,25506,
 hayesel01,Elvin Hayes,1969,NBA,1967-80,ROCKETS,S2,inferred,8325,8484,"[1968-10-17, 1969-03-25)",0,0,"[1968-10-17, 1969-03-25)",,,
 hayesel01,Elvin Hayes,1970,NBA,1967-80,ROCKETS,S2,inferred,8689,8847,"[1969-10-16, 1970-03-23)",0,0,"[1969-10-16, 1970-03-23)",,,
 hayesel01,Elvin Hayes,1971,NBA,1967-80,ROCKETS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
-hayesel01,Elvin Hayes,1972,NBA,1967-80,ROCKETS,S2,inferred,9417,9582,"[1971-10-14, 1972-03-27)",0,0,"[1971-10-14, 1972-03-27)",,,
+hayesel01,Elvin Hayes,1972,NBA,1967-80,ROCKETS,S2,unresolved,,,,0,0,,flagged-transaction-legs(team-unresolved),,
 hayesel01,Elvin Hayes,1973,NBA,1967-80,WIZARDS,S2,inferred,9779,9960,"[1972-10-10, 1973-04-09)",0,0,"[1972-10-10, 1973-04-09)",,,
 hayesel01,Elvin Hayes,1974,NBA,1967-80,WIZARDS,S2,inferred,10143,10329,"[1973-10-09, 1974-04-13)",0,0,"[1973-10-09, 1974-04-13)",,,
 hayesel01,Elvin Hayes,1975,NBA,1967-80,WIZARDS,S2,inferred,10518,10737,"[1974-10-19, 1975-05-26)",0,0,"[1974-10-19, 1975-05-26)",,,
@@ -11603,7 +11603,7 @@ hendege02,Gerald Henderson,2013,NBA,2000-2025/26,BOBCATS-HORNETS2,S2,unresolved,
 hendege02,Gerald Henderson,2014,NBA,2000-2025/26,BOBCATS-HORNETS2,S2,cross-checked,24682,24955,"[2013-07-30, 2014-04-29)",1,0,"[2013-10-30, 2014-04-29)",,24682,
 hendege02,Gerald Henderson,2015,NBA,2000-2025/26,BOBCATS-HORNETS2,S2,cross-checked,25138,25376,"[2014-10-29, 2015-06-24)",0,1,"[2014-10-29, 2015-04-16)",,,25376
 hendege02,Gerald Henderson,2016,NBA,2000-2025/26,TRAIL BLAZERS,S2,cross-checked,25376,25699,"[2015-06-24, 2016-05-12)",1,0,"[2015-10-28, 2016-05-12)",,25376,
-hendege02,Gerald Henderson,2017,NBA,2000-2025/26,76ERS,S2,cross-checked,25757,26035,"[2016-07-09, 2017-04-13)",1,0,"[2016-10-26, 2017-04-13)",,25757,
+hendege02,Gerald Henderson,2017,NBA,2000-2025/26,76ERS,S2,directly-evidenced,25757,26113,"[2016-07-09, 2017-06-30)",1,1,"[2016-10-26, 2017-04-13)",,25757,26113
 hendeje01,Jerome Henderson,1986,NBA,1981-99,LAKERS,S2,cross-checked,14678,14751,"[1986-03-10, 1986-05-22)",1,0,"[1985-10-26, 1986-05-22)",,14678,
 hendeje01,Jerome Henderson,1987,NBA,1981-99,BUCKS,S2,cross-checked,15067,15112,"[1987-04-03, 1987-05-18)",1,0,"[1986-10-31, 1987-05-18)",,15067,
 hendejr01,J.R. Henderson,1999,NBA,1981-99,GRIZZLIES,S2,inferred,19395,19483,"[1999-02-07, 1999-05-06)",0,0,"[1999-02-07, 1999-05-06)",,,
@@ -11698,7 +11698,7 @@ hernaju01,Juancho Hernangómez,2020,NBA,2000-2025/26,TIMBERWOLVES,S2,cross-check
 hernaju01,Juancho Hernangómez,2021,NBA,2000-2025/26,TIMBERWOLVES,S2,cross-checked,27359,27530,"[2020-11-27, 2021-05-17)",1,0,"[2020-12-23, 2021-05-17)",,27359,
 hernaju01,Juancho Hernangómez,2022,NBA,2000-2025/26,CELTICS,S2,directly-evidenced,27651,27777,"[2021-09-15, 2022-01-19)",1,1,"[2021-10-20, 2022-06-17)",,27651,27777
 hernaju01,Juancho Hernangómez,2022,NBA,2000-2025/26,SPURS,S2,directly-evidenced,27777,27798,"[2022-01-19, 2022-02-09)",1,1,"[2021-10-20, 2022-04-11)",,27777,27798
-hernaju01,Juancho Hernangómez,2022,NBA,2000-2025/26,JAZZ,S2,cross-checked,27798,27877,"[2022-02-09, 2022-04-29)",1,0,"[2021-10-20, 2022-04-29)",,27798,
+hernaju01,Juancho Hernangómez,2022,NBA,2000-2025/26,JAZZ,S2,directly-evidenced,27798,27939,"[2022-02-09, 2022-06-30)",1,1,"[2021-10-20, 2022-04-29)",,27798,27939
 hernaju01,Juancho Hernangómez,2023,NBA,2000-2025/26,RAPTORS,S2,directly-evidenced,27966,28182,"[2022-07-27, 2023-02-28)",1,1,"[2022-10-19, 2023-04-10)",,27966,28182
 hernawi01,Willy Hernangómez,2017,NBA,2000-2025/26,KNICKS,S2,cross-checked,25756,26035,"[2016-07-08, 2017-04-13)",1,0,"[2016-10-25, 2017-04-13)",,25756,
 hernawi01,Willy Hernangómez,2018,NBA,2000-2025/26,BOBCATS-HORNETS2,S2,cross-checked,26335,26398,"[2018-02-07, 2018-04-11)",1,0,"[2017-10-18, 2018-04-11)",,26335,
@@ -11779,9 +11779,9 @@ hicksis01,Isaiah Hicks,2018,NBA,2000-2025/26,KNICKS,S2,cross-checked,26225,26399
 hicksis01,Isaiah Hicks,2019,NBA,2000-2025/26,KNICKS,S2,cross-checked,26481,26763,"[2018-07-03, 2019-04-11)",1,0,"[2018-10-17, 2019-04-11)",,26481,
 hicksjj01,J.J. Hickson,2009,NBA,2000-2025/26,CAVALIERS,S2,inferred,22946,23161,"[2008-10-28, 2009-05-31)",0,0,"[2008-10-28, 2009-05-31)",,,
 hicksjj01,J.J. Hickson,2010,NBA,2000-2025/26,CAVALIERS,S2,inferred,23310,23509,"[2009-10-27, 2010-05-14)",0,0,"[2009-10-27, 2010-05-14)",,,
-hicksjj01,J.J. Hickson,2011,NBA,2000-2025/26,CAVALIERS,S2,inferred,23675,23844,"[2010-10-27, 2011-04-14)",0,0,"[2010-10-27, 2011-04-14)",,,
+hicksjj01,J.J. Hickson,2011,NBA,2000-2025/26,CAVALIERS,S2,cross-checked,23675,23921,"[2010-10-27, 2011-06-30)",0,1,"[2010-10-27, 2011-04-14)",,,23921
 hicksjj01,J.J. Hickson,2012,NBA,2000-2025/26,TRAIL BLAZERS,S2,cross-checked,24186,24223,"[2012-03-21, 2012-04-27)",1,0,"[2011-12-26, 2012-04-27)",,24186,
-hicksjj01,J.J. Hickson,2012,NBA,2000-2025/26,KINGS,S2,cross-checked,24100,24184,"[2011-12-26, 2012-03-19)",0,1,"[2011-12-26, 2012-04-27)",,,24184
+hicksjj01,J.J. Hickson,2012,NBA,2000-2025/26,KINGS,S2,directly-evidenced,23921,24184,"[2011-06-30, 2012-03-19)",1,1,"[2011-12-26, 2012-04-27)",,23921,24184
 hicksjj01,J.J. Hickson,2013,NBA,2000-2025/26,TRAIL BLAZERS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
 hicksjj01,J.J. Hickson,2014,NBA,2000-2025/26,NUGGETS,S2,cross-checked,24663,24943,"[2013-07-11, 2014-04-17)",1,0,"[2013-10-30, 2014-04-17)",,24663,
 hicksjj01,J.J. Hickson,2015,NBA,2000-2025/26,NUGGETS,S2,inferred,25138,25307,"[2014-10-29, 2015-04-16)",0,0,"[2014-10-29, 2015-04-16)",,,
@@ -11826,7 +11826,7 @@ higgiro01,Rod Higgins,1992,NBA,1981-99,WARRIORS,S2,inferred,16740,16922,"[1991-1
 higgiro01,Rod Higgins,1993,NBA,1981-99,KINGS,S2,cross-checked,17132,17281,"[1992-11-27, 1993-04-25)",1,0,"[1992-11-06, 1993-04-25)",,17132,
 higgiro01,Rod Higgins,1994,NBA,1981-99,CAVALIERS,S2,cross-checked,17523,17646,"[1993-12-23, 1994-04-25)",1,0,"[1993-11-05, 1994-04-25)",,17523,
 higgiro01,Rod Higgins,1995,NBA,1981-99,WARRIORS,S2,directly-evidenced,17810,17851,"[1994-10-06, 1994-11-16)",1,1,"[1994-11-04, 1995-04-24)",,17810,17851
-higgise01,Sean Higgins,1991,NBA,1981-99,SPURS,S2,inferred,16377,16559,"[1990-11-03, 1991-05-04)",0,0,"[1990-11-03, 1991-05-04)",,,
+higgise01,Sean Higgins,1991,NBA,1981-99,SPURS,S2,cross-checked,16314,16559,"[1990-09-01, 1991-05-04)",1,0,"[1990-11-03, 1991-05-04)",,16314,
 higgise01,Sean Higgins,1992,NBA,1981-99,MAGIC,S2,unresolved,16810,16830,"[1992-01-10, 1992-01-30)",0,0,"[1991-11-01, 1992-04-19)",repeat-signing-prior-end-unknown,"16810,16830",
 higgise01,Sean Higgins,1992,NBA,1981-99,MAGIC,S2,cross-checked,16830,16910,"[1992-01-30, 1992-04-19)",1,0,"[1991-11-01, 1992-04-19)",,"16810,16830",
 higgise01,Sean Higgins,1992,NBA,1981-99,SPURS,S2,cross-checked,16740,16782,"[1991-11-01, 1991-12-13)",0,1,"[1991-11-01, 1992-04-30)",,,16782
@@ -12923,7 +12923,7 @@ jackja01,Jarrett Jack,2012,NBA,2000-2025/26,HORNETS-PELICANS,S2,inferred,24100,2
 jackja01,Jarrett Jack,2013,NBA,2000-2025/26,WARRIORS,S2,cross-checked,24298,24608,"[2012-07-11, 2013-05-17)",1,0,"[2013-04-20, 2013-05-17)",,24298,
 jackja01,Jarrett Jack,2014,NBA,2000-2025/26,CAVALIERS,S2,cross-checked,24664,24943,"[2013-07-12, 2014-04-17)",1,0,"[2013-10-30, 2014-04-17)",,24664,
 jackja01,Jarrett Jack,2015,NBA,2000-2025/26,NETS,S2,cross-checked,25027,25323,"[2014-07-10, 2015-05-02)",1,0,"[2014-10-29, 2015-05-02)",,25027,
-jackja01,Jarrett Jack,2016,NBA,2000-2025/26,NETS,S2,inferred,25502,25671,"[2015-10-28, 2016-04-14)",0,0,"[2015-10-28, 2016-04-14)",,,
+jackja01,Jarrett Jack,2016,NBA,2000-2025/26,NETS,S2,cross-checked,25502,25748,"[2015-10-28, 2016-06-30)",0,1,"[2015-10-28, 2016-04-14)",,,25748
 jackja01,Jarrett Jack,2017,NBA,2000-2025/26,HORNETS-PELICANS,S2,cross-checked,25987,26035,"[2017-02-24, 2017-04-13)",1,0,"[2016-10-26, 2017-04-13)",,25987,
 jackja01,Jarrett Jack,2018,NBA,2000-2025/26,KNICKS,S2,cross-checked,26190,26399,"[2017-09-15, 2018-04-12)",1,0,"[2017-10-19, 2018-04-12)",,26190,
 jacksaa01,Aaron Jackson,2018,NBA,2000-2025/26,ROCKETS,S2,cross-checked,26398,26446,"[2018-04-11, 2018-05-29)",1,0,"[2017-10-17, 2018-05-29)",,26398,
@@ -13004,9 +13004,9 @@ jacksji01,Jim Jackson,1994,NBA,1981-99,MAVERICKS,S2,inferred,17475,17646,"[1993-
 jacksji01,Jim Jackson,1995,NBA,1981-99,MAVERICKS,S2,inferred,17840,18010,"[1994-11-05, 1995-04-24)",0,0,"[1994-11-05, 1995-04-24)",,,
 jacksji01,Jim Jackson,1996,NBA,1981-99,MAVERICKS,S2,inferred,18203,18374,"[1995-11-03, 1996-04-22)",0,0,"[1995-11-03, 1996-04-22)",,,
 jacksji01,Jim Jackson,1997,NBA,1981-99,MAVERICKS,S2,cross-checked,18567,18675,"[1996-11-01, 1997-02-17)",0,1,"[1996-11-01, 1997-04-20)",,,18675
-jacksji01,Jim Jackson,1997,NBA,1981-99,NETS,S2,cross-checked,18675,18738,"[1997-02-17, 1997-04-21)",1,0,"[1996-11-01, 1997-04-21)",,18675,
+jacksji01,Jim Jackson,1997,NBA,1981-99,NETS,S2,directly-evidenced,18675,18805,"[1997-02-17, 1997-06-27)",1,1,"[1996-11-01, 1997-04-21)",,18675,18805
 jacksji01,Jim Jackson,1998,NBA,1981-99,WARRIORS,S2,cross-checked,19040,19101,"[1998-02-17, 1998-04-19)",1,0,"[1997-10-31, 1998-04-19)",,19040,
-jacksji01,Jim Jackson,1998,NBA,1981-99,76ERS,S2,cross-checked,18931,19040,"[1997-10-31, 1998-02-17)",0,1,"[1997-10-31, 1998-04-20)",,,19040
+jacksji01,Jim Jackson,1998,NBA,1981-99,76ERS,S2,directly-evidenced,18805,19040,"[1997-06-27, 1998-02-17)",1,1,"[1997-10-31, 1998-04-20)",,18805,19040
 jacksji01,Jim Jackson,1999,NBA,1981-99,TRAIL BLAZERS,S2,cross-checked,19390,19515,"[1999-02-02, 1999-06-07)",1,0,"[1999-02-07, 1999-06-07)",,19390,
 jacksji01,Jim Jackson,2000,NBA,2000-2025/26,HAWKS,S2,cross-checked,19571,19833,"[1999-08-02, 2000-04-20)",1,0,"[1999-11-02, 2000-04-20)",,19571,
 jacksji01,Jim Jackson,2001,NBA,2000-2025/26,HAWKS,S2,cross-checked,20027,20090,"[2000-10-31, 2001-01-02)",0,1,"[2000-10-31, 2001-04-18)",,,20090
@@ -13054,8 +13054,8 @@ jacksma01,Mark Jackson,1990,NBA,1981-99,KNICKS,S2,inferred,16012,16206,"[1989-11
 jacksma01,Mark Jackson,1991,NBA,1981-99,KNICKS,S2,inferred,16376,16556,"[1990-11-02, 1991-05-01)",0,0,"[1990-11-02, 1991-05-01)",,,
 jacksma01,Mark Jackson,1992,NBA,1981-99,KNICKS,S2,inferred,16740,16939,"[1991-11-01, 1992-05-18)",0,0,"[1991-11-01, 1992-05-18)",,,
 jacksma01,Mark Jackson,1993,NBA,1981-99,CLIPPERS,S2,cross-checked,17066,17295,"[1992-09-22, 1993-05-09)",1,0,"[1992-11-06, 1993-05-09)",,17066,
-jacksma01,Mark Jackson,1994,NBA,1981-99,CLIPPERS,S2,inferred,17475,17646,"[1993-11-05, 1994-04-25)",0,0,"[1993-11-05, 1994-04-25)",,,
-jacksma01,Mark Jackson,1995,NBA,1981-99,PACERS,S2,inferred,17839,18052,"[1994-11-04, 1995-06-05)",0,0,"[1994-11-04, 1995-06-05)",,,
+jacksma01,Mark Jackson,1994,NBA,1981-99,CLIPPERS,S2,cross-checked,17475,17712,"[1993-11-05, 1994-06-30)",0,1,"[1993-11-05, 1994-04-25)",,,17712
+jacksma01,Mark Jackson,1995,NBA,1981-99,PACERS,S2,cross-checked,17712,18052,"[1994-06-30, 1995-06-05)",1,0,"[1994-11-04, 1995-06-05)",,17712,
 jacksma01,Mark Jackson,1996,NBA,1981-99,PACERS,S2,cross-checked,18203,18426,"[1995-11-03, 1996-06-13)",0,1,"[1995-11-03, 1996-04-22)",,,18426
 jacksma01,Mark Jackson,1997,NBA,1981-99,NUGGETS,S2,directly-evidenced,18426,18678,"[1996-06-13, 1997-02-20)",1,1,"[1996-11-01, 1997-04-20)",,18426,18678
 jacksma01,Mark Jackson,1997,NBA,1981-99,PACERS,S2,cross-checked,18678,18738,"[1997-02-20, 1997-04-21)",1,0,"[1996-11-01, 1997-04-21)",,18678,
@@ -13679,8 +13679,8 @@ johnser02,Ervin Johnson,1999,NBA,1981-99,BUCKS,S2,inferred,19394,19491,"[1999-02
 johnser02,Ervin Johnson,2000,NBA,2000-2025/26,BUCKS,S2,inferred,19663,19833,"[1999-11-02, 2000-04-20)",0,0,"[1999-11-02, 2000-04-20)",,,
 johnser02,Ervin Johnson,2001,NBA,2000-2025/26,BUCKS,S2,inferred,20027,20243,"[2000-10-31, 2001-06-04)",0,0,"[2000-10-31, 2001-06-04)",,,
 johnser02,Ervin Johnson,2002,NBA,2000-2025/26,BUCKS,S2,inferred,20391,20561,"[2001-10-30, 2002-04-18)",0,0,"[2001-10-30, 2002-04-18)",,,
-johnser02,Ervin Johnson,2003,NBA,2000-2025/26,BUCKS,S2,inferred,20756,20940,"[2002-10-30, 2003-05-02)",0,0,"[2002-10-30, 2003-05-02)",,,
-johnser02,Ervin Johnson,2004,NBA,2000-2025/26,TIMBERWOLVES,S2,inferred,21120,21336,"[2003-10-29, 2004-06-01)",0,0,"[2003-10-29, 2004-06-01)",,,
+johnser02,Ervin Johnson,2003,NBA,2000-2025/26,BUCKS,S2,cross-checked,20756,20996,"[2002-10-30, 2003-06-27)",0,1,"[2002-10-30, 2003-05-02)",,,20996
+johnser02,Ervin Johnson,2004,NBA,2000-2025/26,TIMBERWOLVES,S2,cross-checked,20996,21336,"[2003-06-27, 2004-06-01)",1,0,"[2003-10-29, 2004-06-01)",,20996,
 johnser02,Ervin Johnson,2005,NBA,2000-2025/26,TIMBERWOLVES,S2,inferred,21491,21660,"[2004-11-03, 2005-04-21)",0,0,"[2004-11-03, 2005-04-21)",,,
 johnser02,Ervin Johnson,2006,NBA,2000-2025/26,BUCKS,S2,cross-checked,21790,22023,"[2005-08-29, 2006-04-19)",1,0,"[2005-11-01, 2006-04-19)",,21790,
 johnsfr01,Frank Johnson,1982,NBA,1981-99,WIZARDS,S2,cross-checked,13057,13274,"[1981-10-01, 1982-05-06)",1,0,"[1981-10-30, 1982-05-06)",,13057,
@@ -13950,8 +13950,8 @@ johnsst03,Steve Johnson,1983,NBA,1981-99,KINGS,S2,inferred,13450,13621,"[1982-10
 johnsst03,Steve Johnson,1984,NBA,1981-99,BULLS,S2,cross-checked,13924,13985,"[1984-02-15, 1984-04-16)",1,0,"[1983-10-29, 1984-04-16)",,13924,
 johnsst03,Steve Johnson,1984,NBA,1981-99,KINGS,S2,cross-checked,13814,13924,"[1983-10-28, 1984-02-15)",0,1,"[1983-10-28, 1984-04-23)",,,13924
 johnsst03,Steve Johnson,1985,NBA,1981-99,BULLS,S2,cross-checked,14178,14413,"[1984-10-26, 1985-06-18)",0,1,"[1984-10-26, 1985-04-27)",,,14413
-johnsst03,Steve Johnson,1986,NBA,1981-99,SPURS,S2,cross-checked,14413,14723,"[1985-06-18, 1986-04-24)",1,0,"[1985-10-26, 1986-04-24)",,14413,
-johnsst03,Steve Johnson,1987,NBA,1981-99,TRAIL BLAZERS,S2,inferred,14913,15095,"[1986-10-31, 1987-05-01)",0,0,"[1986-10-31, 1987-05-01)",,,
+johnsst03,Steve Johnson,1986,NBA,1981-99,SPURS,S2,directly-evidenced,14413,14779,"[1985-06-18, 1986-06-19)",1,1,"[1985-10-26, 1986-04-24)",,14413,14779
+johnsst03,Steve Johnson,1987,NBA,1981-99,TRAIL BLAZERS,S2,cross-checked,14779,15095,"[1986-06-19, 1987-05-01)",1,0,"[1986-10-31, 1987-05-01)",,14779,
 johnsst03,Steve Johnson,1988,NBA,1981-99,TRAIL BLAZERS,S2,inferred,15284,15467,"[1987-11-06, 1988-05-07)",0,0,"[1987-11-06, 1988-05-07)",,,
 johnsst03,Steve Johnson,1989,NBA,1981-99,TRAIL BLAZERS,S2,inferred,15648,15829,"[1988-11-04, 1989-05-04)",0,0,"[1988-11-04, 1989-05-04)",,,
 johnsst03,Steve Johnson,1990,NBA,1981-99,TIMBERWOLVES,S2,cross-checked,16012,16123,"[1989-11-03, 1990-02-22)",0,1,"[1989-11-03, 1990-04-23)",,,16123
@@ -14238,7 +14238,7 @@ jonesja02,James Jones,2006,NBA,2000-2025/26,SUNS,S2,cross-checked,21786,22024,"[
 jonesja02,James Jones,2007,NBA,2000-2025/26,SUNS,S2,inferred,22218,22418,"[2006-10-31, 2007-05-19)",0,0,"[2006-10-31, 2007-05-19)",,,
 jonesja02,James Jones,2008,NBA,2000-2025/26,TRAIL BLAZERS,S2,cross-checked,22471,22752,"[2007-07-11, 2008-04-17)",1,0,"[2007-10-30, 2008-04-17)",,22471,
 jonesja02,James Jones,2009,NBA,2000-2025/26,HEAT,S2,cross-checked,22835,23134,"[2008-07-09, 2009-05-04)",1,0,"[2008-10-29, 2009-05-04)",,22835,
-jonesja02,James Jones,2010,NBA,2000-2025/26,HEAT,S2,inferred,23311,23493,"[2009-10-28, 2010-04-28)",0,0,"[2009-10-28, 2010-04-28)",,,
+jonesja02,James Jones,2010,NBA,2000-2025/26,HEAT,S2,cross-checked,23311,23556,"[2009-10-28, 2010-06-30)",0,1,"[2009-10-28, 2010-04-28)",,,23556
 jonesja02,James Jones,2011,NBA,2000-2025/26,HEAT,S2,inferred,23674,23904,"[2010-10-26, 2011-06-13)",0,0,"[2010-10-26, 2011-06-13)",,,
 jonesja02,James Jones,2012,NBA,2000-2025/26,HEAT,S2,inferred,24099,24279,"[2011-12-25, 2012-06-22)",0,0,"[2011-12-25, 2012-06-22)",,,
 jonesja02,James Jones,2013,NBA,2000-2025/26,HEAT,S2,inferred,24582,24643,"[2013-04-21, 2013-06-21)",0,0,"[2013-04-21, 2013-06-21)",,,
@@ -14460,8 +14460,8 @@ jordawa01,Walter Jordan,1981,NBA,1981-99,CAVALIERS,S2,cross-checked,12643,12872,
 jordoph01,Phil Jordon,1957,NBA,1950-66,KNICKS,S2,inferred,3952,4090,"[1956-10-27, 1957-03-14)",0,0,"[1956-10-27, 1957-03-14)",,,
 jordoph01,Phil Jordon,1958,NBA,1950-66,PISTONS,S2,inferred,4313,4451,"[1957-10-23, 1958-03-10)",0,0,"[1957-10-23, 1958-03-10)",,,
 jordoph01,Phil Jordon,1958,NBA,1950-66,KNICKS,S2,inferred,4313,4454,"[1957-10-23, 1958-03-13)",0,0,"[1957-10-23, 1958-03-13)",,,
-jordoph01,Phil Jordon,1959,NBA,1950-66,PISTONS,S2,inferred,4674,4818,"[1958-10-19, 1959-03-12)",0,0,"[1958-10-19, 1959-03-12)",,,
-jordoph01,Phil Jordon,1960,NBA,1950-66,KINGS,S2,inferred,5037,5182,"[1959-10-17, 1960-03-10)",0,0,"[1959-10-17, 1960-03-10)",,,
+jordoph01,Phil Jordon,1959,NBA,1950-66,PISTONS,S2,cross-checked,4674,4837,"[1958-10-19, 1959-03-31)",0,1,"[1958-10-19, 1959-03-12)",,,4837
+jordoph01,Phil Jordon,1960,NBA,1950-66,KINGS,S2,cross-checked,4837,5182,"[1959-03-31, 1960-03-10)",1,0,"[1959-10-17, 1960-03-10)",,4837,
 jordoph01,Phil Jordon,1961,NBA,1950-66,KINGS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
 jordoph01,Phil Jordon,1961,NBA,1950-66,KNICKS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
 jordoph01,Phil Jordon,1962,NBA,1950-66,KNICKS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
@@ -14615,7 +14615,7 @@ keefead01,Adam Keefe,1998,NBA,1981-99,JAZZ,S2,inferred,18931,19158,"[1997-10-31,
 keefead01,Adam Keefe,1999,NBA,1981-99,JAZZ,S2,inferred,19393,19505,"[1999-02-05, 1999-05-28)",0,0,"[1999-02-05, 1999-05-28)",,,
 keefead01,Adam Keefe,2000,NBA,2000-2025/26,JAZZ,S2,inferred,19663,19833,"[1999-11-02, 2000-04-20)",0,0,"[1999-11-02, 2000-04-20)",,,
 keefead01,Adam Keefe,2001,NBA,2000-2025/26,WARRIORS,S2,cross-checked,19951,20197,"[2000-08-16, 2001-04-19)",1,0,"[2000-10-31, 2001-04-19)",,19951,
-keeliha01,Harold Keeling,1986,NBA,1981-99,MAVERICKS,S2,cross-checked,14632,14738,"[1986-01-23, 1986-05-09)",1,0,"[1985-10-26, 1986-05-09)",,14632,
+keeliha01,Harold Keeling,1986,NBA,1981-99,MAVERICKS,S2,directly-evidenced,14632,14779,"[1986-01-23, 1986-06-19)",1,1,"[1985-10-26, 1986-05-09)",,14632,14779
 keelstr01,Trevor Keels,2023,NBA,2000-2025/26,KNICKS,S2,unresolved,27949,28177,"[2022-07-10, 2023-02-23)",0,0,"[2022-10-19, 2023-05-13)",same-day-arrival-and-departure(ordering-flagged),"27949,28177,28194",28177
 keelstr01,Trevor Keels,2023,NBA,2000-2025/26,KNICKS,S2,unresolved,28194,28256,"[2023-03-12, 2023-05-13)",0,0,"[2022-10-19, 2023-05-13)",same-day-arrival-and-departure(ordering-flagged),"27949,28177,28194",28177
 keelstr01,Trevor Keels,2026,NBA,2000-2025/26,HEAT,S2,unresolved,29108,29136,"[2025-09-11, 2025-10-09)",0,0,,open-stint-without-window,"29108,29268",29136
@@ -15071,7 +15071,7 @@ knighbr01,Brevin Knight,2004,NBA,2000-2025/26,SUNS,S2,directly-evidenced,21091,2
 knighbr01,Brevin Knight,2004,NBA,2000-2025/26,WIZARDS,S2,directly-evidenced,21127,21245,"[2003-11-05, 2004-03-02)",1,1,"[2003-10-29, 2004-04-15)",,21127,21245
 knighbr01,Brevin Knight,2005,NBA,2000-2025/26,BOBCATS-HORNETS2,S2,cross-checked,21427,21660,"[2004-08-31, 2005-04-21)",1,0,"[2004-11-04, 2005-04-21)",,21427,
 knighbr01,Brevin Knight,2006,NBA,2000-2025/26,BOBCATS-HORNETS2,S2,inferred,21855,22024,"[2005-11-02, 2006-04-20)",0,0,"[2005-11-02, 2006-04-20)",,,
-knighbr01,Brevin Knight,2007,NBA,2000-2025/26,BOBCATS-HORNETS2,S2,inferred,22219,22388,"[2006-11-01, 2007-04-19)",0,0,"[2006-11-01, 2007-04-19)",,,
+knighbr01,Brevin Knight,2007,NBA,2000-2025/26,BOBCATS-HORNETS2,S2,cross-checked,22219,22460,"[2006-11-01, 2007-06-30)",0,1,"[2006-11-01, 2007-04-19)",,,22460
 knighbr01,Brevin Knight,2008,NBA,2000-2025/26,CLIPPERS,S2,cross-checked,22504,22752,"[2007-08-13, 2008-04-17)",1,0,"[2007-11-02, 2008-04-17)",,22504,
 knighbr01,Brevin Knight,2009,NBA,2000-2025/26,JAZZ,S2,cross-checked,22849,23128,"[2008-07-23, 2009-04-28)",1,0,"[2008-10-29, 2009-04-28)",,22849,
 knighbr02,Brandin Knight,2005,NBA,2000-2025/26,ROCKETS,S2,directly-evidenced,21564,21568,"[2005-01-15, 2005-01-19)",1,1,"[2004-11-02, 2005-05-08)",,21564,21568
@@ -15472,7 +15472,7 @@ lamban01,Anthony Lamb,2023,NBA,2000-2025/26,WARRIORS,S2,unresolved,28036,28045,"
 lamban01,Anthony Lamb,2023,NBA,2000-2025/26,WARRIORS,S2,cross-checked,28045,28256,"[2022-10-14, 2023-05-13)",1,0,"[2022-10-18, 2023-05-13)",,"28036,28045",
 lambdo01,Doron Lamb,2013,NBA,2000-2025/26,BUCKS,S2,unresolved,,,,0,0,,"departure-after-closed-stint(prior-spell-exit,or-source-noise)",,24523
 lambdo01,Doron Lamb,2013,NBA,2000-2025/26,MAGIC,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,24523,
-lambdo01,Doron Lamb,2014,NBA,2000-2025/26,MAGIC,S2,inferred,24773,24943,"[2013-10-29, 2014-04-17)",0,0,"[2013-10-29, 2014-04-17)",,,
+lambdo01,Doron Lamb,2014,NBA,2000-2025/26,MAGIC,S2,cross-checked,24773,25017,"[2013-10-29, 2014-06-30)",0,1,"[2013-10-29, 2014-04-17)",,,25017
 lambejo01,John Lambert,1976,NBA,1967-80,CAVALIERS,S2,inferred,11060,11096,"[1976-04-13, 1976-05-19)",0,0,"[1976-04-13, 1976-05-19)",,,
 lambejo01,John Lambert,1977,NBA,1967-80,CAVALIERS,S2,inferred,11425,11430,"[1977-04-13, 1977-04-18)",0,0,"[1977-04-13, 1977-04-18)",,,
 lambejo01,John Lambert,1978,NBA,1967-80,CAVALIERS,S2,inferred,11613,11792,"[1977-10-18, 1978-04-15)",0,0,"[1977-10-18, 1978-04-15)",,,
@@ -15508,7 +15508,7 @@ lampje01,Jeff Lamp,1989,NBA,1981-99,LAKERS,S2,inferred,15648,15870,"[1988-11-04,
 lamplji01,Jim Lampley,1987,NBA,1981-99,76ERS,S2,directly-evidenced,14938,14961,"[1986-11-25, 1986-12-18)",1,1,"[1986-10-31, 1987-05-04)",,14938,14961
 lamplse01,Sean Lampley,2003,NBA,2000-2025/26,HEAT,S2,inferred,20756,20924,"[2002-10-30, 2003-04-16)",0,0,"[2002-10-30, 2003-04-16)",,,
 lamplse01,Sean Lampley,2004,NBA,2000-2025/26,WARRIORS,S2,directly-evidenced,21136,21166,"[2003-11-14, 2003-12-14)",1,1,"[2003-10-29, 2004-04-15)",,21136,21166
-landajo01,Jock Landale,2022,NBA,2000-2025/26,SPURS,S2,cross-checked,27624,27859,"[2021-08-19, 2022-04-11)",1,0,"[2021-10-20, 2022-04-11)",,27624,
+landajo01,Jock Landale,2022,NBA,2000-2025/26,SPURS,S2,directly-evidenced,27624,27939,"[2021-08-19, 2022-06-30)",1,1,"[2021-10-20, 2022-04-11)",,27624,27939
 landajo01,Jock Landale,2023,NBA,2000-2025/26,SUNS,S2,cross-checked,27945,28255,"[2022-07-06, 2023-05-12)",1,0,"[2022-10-19, 2023-05-12)",,27945,
 landajo01,Jock Landale,2024,NBA,2000-2025/26,ROCKETS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,28310,
 landajo01,Jock Landale,2025,NBA,2000-2025/26,ROCKETS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
@@ -15670,7 +15670,7 @@ lavinza01,Zach LaVine,2025,NBA,2000-2025/26,KINGS,S2,unresolved,,,,0,0,,no-seaso
 lavinza01,Zach LaVine,2026,NBA,2000-2025/26,KINGS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
 lavoybo01,Bob Lavoy,1951,NBA,1950-66,OLYMPIANS,S2,inferred,1765,1910,"[1950-11-01, 1951-03-26)",0,0,"[1950-11-01, 1951-03-26)",,,
 lavoybo01,Bob Lavoy,1952,NBA,1950-66,OLYMPIANS,S2,inferred,2132,2276,"[1951-11-03, 1952-03-26)",0,0,"[1951-11-03, 1952-03-26)",,,
-lavoybo01,Bob Lavoy,1953,NBA,1950-66,OLYMPIANS,S2,inferred,2495,2639,"[1952-10-31, 1953-03-24)",0,0,"[1952-10-31, 1953-03-24)",,,
+lavoybo01,Bob Lavoy,1953,NBA,1950-66,OLYMPIANS,S2,unresolved,,,,0,0,,fuzzy-dated-rows-bear-on-this-tenure,,
 lavoybo01,Bob Lavoy,1954,NBA,1950-66,HAWKS,S2,cross-checked,2859,2883,"[1953-10-30, 1953-11-23)",0,1,"[1953-10-30, 1954-03-15)",,,2883
 lavoybo01,Bob Lavoy,1954,NBA,1950-66,76ERS,S2,cross-checked,2883,3024,"[1953-11-23, 1954-04-13)",1,0,"[1953-10-31, 1954-04-13)",,2883,
 lawac01,Acie Law,2008,NBA,2000-2025/26,HAWKS,S2,inferred,22585,22770,"[2007-11-02, 2008-05-05)",0,0,"[2007-11-02, 2008-05-05)",,,
@@ -15850,7 +15850,7 @@ legleti01,Tim Legler,1991,NBA,1981-99,NUGGETS,S2,cross-checked,16432,16547,"[199
 legleti01,Tim Legler,1993,NBA,1981-99,MAVERICKS,S2,unresolved,17227,17247,"[1993-03-02, 1993-03-22)",0,0,"[1992-11-07, 1993-04-25)",repeat-signing-prior-end-unknown,"17227,17247",
 legleti01,Tim Legler,1993,NBA,1981-99,MAVERICKS,S2,cross-checked,17247,17281,"[1993-03-22, 1993-04-25)",1,0,"[1992-11-07, 1993-04-25)",,"17227,17247",
 legleti01,Tim Legler,1993,NBA,1981-99,JAZZ,S2,directly-evidenced,17072,17130,"[1992-09-28, 1992-11-25)",1,1,"[1992-11-06, 1993-05-09)",,17072,17130
-legleti01,Tim Legler,1994,NBA,1981-99,MAVERICKS,S2,inferred,17475,17646,"[1993-11-05, 1994-04-25)",0,0,"[1993-11-05, 1994-04-25)",,,
+legleti01,Tim Legler,1994,NBA,1981-99,MAVERICKS,S2,cross-checked,17475,17712,"[1993-11-05, 1994-06-30)",0,1,"[1993-11-05, 1994-04-25)",,,17712
 legleti01,Tim Legler,1995,NBA,1981-99,WARRIORS,S2,unresolved,17962,17982,"[1995-03-07, 1995-03-27)",0,0,"[1994-11-04, 1995-04-24)",repeat-signing-prior-end-unknown,"17962,17982",
 legleti01,Tim Legler,1995,NBA,1981-99,WARRIORS,S2,cross-checked,17982,18010,"[1995-03-27, 1995-04-24)",1,0,"[1994-11-04, 1995-04-24)",,"17962,17982",
 legleti01,Tim Legler,1996,NBA,1981-99,WIZARDS,S2,cross-checked,18166,18374,"[1995-09-27, 1996-04-22)",1,0,"[1995-11-03, 1996-04-22)",,18166,
@@ -16177,8 +16177,8 @@ lloydea01,Earl Lloyd,1954,NBA,1950-66,76ERS,S2,inferred,2860,3024,"[1953-10-31, 
 lloydea01,Earl Lloyd,1955,NBA,1950-66,76ERS,S2,inferred,3225,3387,"[1954-10-31, 1955-04-11)",0,0,"[1954-10-31, 1955-04-11)",,,
 lloydea01,Earl Lloyd,1956,NBA,1950-66,76ERS,S2,inferred,3595,3741,"[1955-11-05, 1956-03-30)",0,0,"[1955-11-05, 1956-03-30)",,,
 lloydea01,Earl Lloyd,1957,NBA,1950-66,76ERS,S2,inferred,3952,4101,"[1956-10-27, 1957-03-25)",0,0,"[1956-10-27, 1957-03-25)",,,
-lloydea01,Earl Lloyd,1958,NBA,1950-66,76ERS,S2,inferred,4315,4454,"[1957-10-25, 1958-03-13)",0,0,"[1957-10-25, 1958-03-13)",,,
-lloydea01,Earl Lloyd,1959,NBA,1950-66,PISTONS,S2,inferred,4674,4818,"[1958-10-19, 1959-03-12)",0,0,"[1958-10-19, 1959-03-12)",,,
+lloydea01,Earl Lloyd,1958,NBA,1950-66,76ERS,S2,cross-checked,4315,4543,"[1957-10-25, 1958-06-10)",0,1,"[1957-10-25, 1958-03-13)",,,4543
+lloydea01,Earl Lloyd,1959,NBA,1950-66,PISTONS,S2,cross-checked,4543,4818,"[1958-06-10, 1959-03-12)",1,0,"[1958-10-19, 1959-03-12)",,4543,
 lloydea01,Earl Lloyd,1960,NBA,1950-66,PISTONS,S2,inferred,5038,5186,"[1959-10-18, 1960-03-14)",0,0,"[1959-10-18, 1960-03-14)",,,
 lloydle01,Lewis Lloyd,1982,NBA,1981-99,WARRIORS,S2,inferred,13086,13256,"[1981-10-30, 1982-04-18)",0,0,"[1981-10-30, 1982-04-18)",,,
 lloydle01,Lewis Lloyd,1983,NBA,1981-99,WARRIORS,S2,inferred,13450,13620,"[1982-10-29, 1983-04-17)",0,0,"[1982-10-29, 1983-04-17)",,,
@@ -16415,7 +16415,7 @@ lovelcl01,Clyde Lovellette,1959,NBA,1950-66,HAWKS,S2,cross-checked,4599,4818,"[1
 lovelcl01,Clyde Lovellette,1960,NBA,1950-66,HAWKS,S2,inferred,5044,5213,"[1959-10-24, 1960-04-10)",0,0,"[1959-10-24, 1960-04-10)",,,
 lovelcl01,Clyde Lovellette,1961,NBA,1950-66,HAWKS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
 lovelcl01,Clyde Lovellette,1962,NBA,1950-66,HAWKS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
-lovelcl01,Clyde Lovellette,1963,NBA,1950-66,CELTICS,S2,inferred,6136,6323,"[1962-10-20, 1963-04-25)",0,0,"[1962-10-20, 1963-04-25)",,,
+lovelcl01,Clyde Lovellette,1963,NBA,1950-66,CELTICS,S2,cross-checked,6131,6323,"[1962-10-15, 1963-04-25)",1,0,"[1962-10-20, 1963-04-25)",,6131,
 lovelcl01,Clyde Lovellette,1964,NBA,1950-66,CELTICS,S2,inferred,6497,6691,"[1963-10-16, 1964-04-27)",0,0,"[1963-10-16, 1964-04-27)",,,
 loverla01,Lawson Lovering,2026,NBA,2000-2025/26,GRIZZLIES,S2,unresolved,29103,29145,"[2025-09-06, 2025-10-18)",0,0,,open-stint-without-window,"29103,29259",29145
 lovest01,Stan Love,1972,NBA,1967-80,WIZARDS,S2,inferred,9418,9598,"[1971-10-15, 1972-04-12)",0,0,"[1971-10-15, 1972-04-12)",,,
@@ -16582,8 +16582,8 @@ macaued01,Ed Macauley,1952,NBA,1950-66,CELTICS,S2,inferred,2133,2277,"[1951-11-0
 macaued01,Ed Macauley,1953,NBA,1950-66,CELTICS,S2,inferred,2495,2645,"[1952-10-31, 1953-03-30)",0,0,"[1952-10-31, 1953-03-30)",,,
 macaued01,Ed Macauley,1954,NBA,1950-66,CELTICS,S2,inferred,2861,3008,"[1953-11-01, 1954-03-28)",0,0,"[1953-11-01, 1954-03-28)",,,
 macaued01,Ed Macauley,1955,NBA,1950-66,CELTICS,S2,inferred,3224,3373,"[1954-10-30, 1955-03-28)",0,0,"[1954-10-30, 1955-03-28)",,,
-macaued01,Ed Macauley,1956,NBA,1950-66,CELTICS,S2,inferred,3595,3733,"[1955-11-05, 1956-03-22)",0,0,"[1955-11-05, 1956-03-22)",,,
-macaued01,Ed Macauley,1957,NBA,1950-66,HAWKS,S2,inferred,3952,4121,"[1956-10-27, 1957-04-14)",0,0,"[1956-10-27, 1957-04-14)",,,
+macaued01,Ed Macauley,1956,NBA,1950-66,CELTICS,S2,cross-checked,3595,3772,"[1955-11-05, 1956-04-30)",0,1,"[1955-11-05, 1956-03-22)",,,3772
+macaued01,Ed Macauley,1957,NBA,1950-66,HAWKS,S2,cross-checked,3772,4121,"[1956-04-30, 1957-04-14)",1,0,"[1956-10-27, 1957-04-14)",,3772,
 macaued01,Ed Macauley,1958,NBA,1950-66,HAWKS,S2,inferred,4312,4453,"[1957-10-22, 1958-03-12)",0,0,"[1957-10-22, 1958-03-12)",,,
 macaued01,Ed Macauley,1959,NBA,1950-66,HAWKS,S2,inferred,4678,4818,"[1958-10-23, 1959-03-12)",0,0,"[1958-10-23, 1959-03-12)",,,
 maccuto01,Todd MacCulloch,2000,NBA,2000-2025/26,76ERS,S2,inferred,19663,19832,"[1999-11-02, 2000-04-19)",0,0,"[1999-11-02, 2000-04-19)",,,
@@ -16633,9 +16633,9 @@ macledo01,Don MacLean,1993,NBA,1981-99,WIZARDS,S2,inferred,17111,17282,"[1992-11
 macledo01,Don MacLean,1994,NBA,1981-99,WIZARDS,S2,inferred,17475,17646,"[1993-11-05, 1994-04-25)",0,0,"[1993-11-05, 1994-04-25)",,,
 macledo01,Don MacLean,1995,NBA,1981-99,WIZARDS,S2,inferred,17839,18010,"[1994-11-04, 1995-04-24)",0,0,"[1994-11-04, 1995-04-24)",,,
 macledo01,Don MacLean,1996,NBA,1981-99,NUGGETS,S2,cross-checked,18199,18374,"[1995-10-30, 1996-04-22)",1,0,"[1995-11-03, 1996-04-22)",,18199,
-macledo01,Don MacLean,1997,NBA,1981-99,76ERS,S2,cross-checked,18459,18737,"[1996-07-16, 1997-04-20)",1,0,"[1996-11-01, 1997-04-20)",,18459,
-macledo01,Don MacLean,1998,NBA,1981-99,NETS,S2,inferred,18931,19112,"[1997-10-31, 1998-04-30)",0,0,"[1997-10-31, 1998-04-30)",,,
-macledo01,Don MacLean,1999,NBA,1981-99,THUNDER,S2,cross-checked,19378,19483,"[1999-01-21, 1999-05-06)",1,0,"[1999-02-05, 1999-05-06)",,19378,
+macledo01,Don MacLean,1997,NBA,1981-99,76ERS,S2,directly-evidenced,18459,18805,"[1996-07-16, 1997-06-27)",1,1,"[1996-11-01, 1997-04-20)",,18459,18805
+macledo01,Don MacLean,1998,NBA,1981-99,NETS,S2,cross-checked,18805,19112,"[1997-06-27, 1998-04-30)",1,0,"[1997-10-31, 1998-04-30)",,18805,
+macledo01,Don MacLean,1999,NBA,1981-99,THUNDER,S2,directly-evidenced,19378,19538,"[1999-01-21, 1999-06-30)",1,1,"[1999-02-05, 1999-05-06)",,19378,19538
 macledo01,Don MacLean,2000,NBA,2000-2025/26,SUNS,S2,unresolved,19784,19795,"[2000-03-02, 2000-03-13)",0,0,"[1999-11-02, 2000-04-20)",repeat-signing-prior-end-unknown,"19784,19795",
 macledo01,Don MacLean,2000,NBA,2000-2025/26,SUNS,S2,cross-checked,19795,19833,"[2000-03-13, 2000-04-20)",1,0,"[1999-11-02, 2000-04-20)",,"19784,19795",
 macledo01,Don MacLean,2001,NBA,2000-2025/26,HEAT,S2,cross-checked,19972,20206,"[2000-09-06, 2001-04-28)",1,0,"[2000-11-01, 2001-04-28)",,19972,
@@ -16677,8 +16677,8 @@ madsema01,Mark Madsen,2009,NBA,2000-2025/26,TIMBERWOLVES,S2,inferred,22947,23116
 magerno01,Norm Mager,1951,NBA,1950-66,BULLETS-DEFUNCT,S2,inferred,1765,1902,"[1950-11-01, 1951-03-18)",0,0,"[1950-11-01, 1951-03-18)",,,
 magetjo01,Josh Magette,2018,NBA,2000-2025/26,HAWKS,S2,cross-checked,26180,26398,"[2017-09-05, 2018-04-11)",1,0,"[2017-10-18, 2018-04-11)",,26180,
 magetjo01,Josh Magette,2020,NBA,2000-2025/26,MAGIC,S2,unresolved,26866,27038,"[2019-07-23, 2020-01-11)",0,0,"[2019-10-23, 2020-08-30)","same-day-arrival-and-departure(ordering-flagged); departure-after-closed-stint(prior-spell-exit,or-source-noise)","26866,27038","27038,27041"
-maggeco01,Corey Maggette,2000,NBA,2000-2025/26,MAGIC,S2,inferred,19663,19833,"[1999-11-02, 2000-04-20)",0,0,"[1999-11-02, 2000-04-20)",,,
-maggeco01,Corey Maggette,2001,NBA,2000-2025/26,CLIPPERS,S2,inferred,20027,20196,"[2000-10-31, 2001-04-18)",0,0,"[2000-10-31, 2001-04-18)",,,
+maggeco01,Corey Maggette,2000,NBA,2000-2025/26,MAGIC,S2,cross-checked,19663,19902,"[1999-11-02, 2000-06-28)",0,1,"[1999-11-02, 2000-04-20)",,,19902
+maggeco01,Corey Maggette,2001,NBA,2000-2025/26,CLIPPERS,S2,cross-checked,19902,20196,"[2000-06-28, 2001-04-18)",1,0,"[2000-10-31, 2001-04-18)",,19902,
 maggeco01,Corey Maggette,2002,NBA,2000-2025/26,CLIPPERS,S2,inferred,20391,20561,"[2001-10-30, 2002-04-18)",0,0,"[2001-10-30, 2002-04-18)",,,
 maggeco01,Corey Maggette,2003,NBA,2000-2025/26,CLIPPERS,S2,inferred,20756,20925,"[2002-10-30, 2003-04-17)",0,0,"[2002-10-30, 2003-04-17)",,,
 maggeco01,Corey Maggette,2004,NBA,2000-2025/26,CLIPPERS,S2,inferred,21121,21289,"[2003-10-30, 2004-04-15)",0,0,"[2003-10-30, 2004-04-15)",,,
@@ -16951,7 +16951,7 @@ marinja01,Jack Marin,1968,NBA,1967-80,WIZARDS,S2,inferred,7960,8115,"[1967-10-18
 marinja01,Jack Marin,1969,NBA,1967-80,WIZARDS,S2,inferred,8324,8483,"[1968-10-16, 1969-03-24)",0,0,"[1968-10-16, 1969-03-24)",,,
 marinja01,Jack Marin,1970,NBA,1967-80,WIZARDS,S2,inferred,8688,8862,"[1969-10-15, 1970-04-07)",0,0,"[1969-10-15, 1970-04-07)",,,
 marinja01,Jack Marin,1971,NBA,1967-80,WIZARDS,S2,inferred,9213,9251,"[1971-03-24, 1971-05-01)",0,0,"[1971-03-24, 1971-05-01)",,,
-marinja01,Jack Marin,1972,NBA,1967-80,WIZARDS,S2,inferred,9418,9598,"[1971-10-15, 1972-04-12)",0,0,"[1971-10-15, 1972-04-12)",,,
+marinja01,Jack Marin,1972,NBA,1967-80,WIZARDS,S2,unresolved,,,,0,0,,flagged-transaction-legs(team-unresolved),,
 marinja01,Jack Marin,1973,NBA,1967-80,ROCKETS,S2,inferred,9782,9949,"[1972-10-13, 1973-03-29)",0,0,"[1972-10-13, 1973-03-29)",,,
 marinja01,Jack Marin,1974,NBA,1967-80,CLIPPERS,S2,cross-checked,10258,10329,"[1974-02-01, 1974-04-13)",1,0,"[1973-10-09, 1974-04-13)",,10258,
 marinja01,Jack Marin,1974,NBA,1967-80,ROCKETS,S2,cross-checked,10143,10258,"[1973-10-09, 1974-02-01)",0,1,"[1973-10-09, 1974-03-27)",,,10258
@@ -17573,7 +17573,7 @@ mccloge01,George McCloud,1995,NBA,1981-99,MAVERICKS,S2,cross-checked,17949,18010
 mccloge01,George McCloud,1996,NBA,1981-99,MAVERICKS,S2,inferred,18203,18374,"[1995-11-03, 1996-04-22)",0,0,"[1995-11-03, 1996-04-22)",,,
 mccloge01,George McCloud,1997,NBA,1981-99,MAVERICKS,S2,cross-checked,18567,18675,"[1996-11-01, 1997-02-17)",0,1,"[1996-11-01, 1997-04-20)",,,18675
 mccloge01,George McCloud,1997,NBA,1981-99,LAKERS,S2,cross-checked,18678,18760,"[1997-02-20, 1997-05-13)",1,0,"[1996-11-01, 1997-05-13)",,18678,
-mccloge01,George McCloud,1998,NBA,1981-99,SUNS,S2,cross-checked,18872,19112,"[1997-09-02, 1998-04-30)",1,0,"[1997-10-31, 1998-04-30)",,18872,
+mccloge01,George McCloud,1998,NBA,1981-99,SUNS,S2,directly-evidenced,18872,19173,"[1997-09-02, 1998-06-30)",1,1,"[1997-10-31, 1998-04-30)",,18872,19173
 mccloge01,George McCloud,1999,NBA,1981-99,SUNS,S2,inferred,19393,19490,"[1999-02-05, 1999-05-13)",0,0,"[1999-02-05, 1999-05-13)",,,
 mccloge01,George McCloud,2000,NBA,2000-2025/26,NUGGETS,S2,cross-checked,19572,19833,"[1999-08-03, 2000-04-20)",1,0,"[1999-11-02, 2000-04-20)",,19572,
 mccloge01,George McCloud,2001,NBA,2000-2025/26,NUGGETS,S2,inferred,20028,20197,"[2000-11-01, 2001-04-19)",0,0,"[2000-11-01, 2001-04-19)",,,
@@ -17735,7 +17735,7 @@ mcdowha01,Hank McDowell,1986,NBA,1981-99,ROCKETS,S2,inferred,14542,14769,"[1985-
 mcdowha01,Hank McDowell,1987,NBA,1981-99,BUCKS,S2,directly-evidenced,14930,14952,"[1986-11-17, 1986-12-09)",1,1,"[1986-10-31, 1987-05-18)",,14930,14952
 mcdyean01,Antonio McDyess,1996,NBA,1981-99,NUGGETS,S2,inferred,18203,18374,"[1995-11-03, 1996-04-22)",0,0,"[1995-11-03, 1996-04-22)",,,
 mcdyean01,Antonio McDyess,1997,NBA,1981-99,NUGGETS,S2,inferred,18567,18737,"[1996-11-01, 1997-04-20)",0,0,"[1996-11-01, 1997-04-20)",,,
-mcdyean01,Antonio McDyess,1998,NBA,1981-99,SUNS,S2,cross-checked,18901,19112,"[1997-10-01, 1998-04-30)",1,0,"[1997-10-31, 1998-04-30)",,18901,
+mcdyean01,Antonio McDyess,1998,NBA,1981-99,SUNS,S2,directly-evidenced,18901,19173,"[1997-10-01, 1998-06-30)",1,1,"[1997-10-31, 1998-04-30)",,18901,19173
 mcdyean01,Antonio McDyess,1999,NBA,1981-99,NUGGETS,S2,cross-checked,19379,19483,"[1999-01-22, 1999-05-06)",1,0,"[1999-02-05, 1999-05-06)",,19379,
 mcdyean01,Antonio McDyess,2000,NBA,2000-2025/26,NUGGETS,S2,inferred,19663,19833,"[1999-11-02, 2000-04-20)",0,0,"[1999-11-02, 2000-04-20)",,,
 mcdyean01,Antonio McDyess,2001,NBA,2000-2025/26,NUGGETS,S2,inferred,20028,20197,"[2000-11-01, 2001-04-19)",0,0,"[2000-11-01, 2001-04-19)",,,
@@ -18187,7 +18187,7 @@ melchbi01,Bill Melchionni,1967,NBA,1967-80,76ERS,S2,inferred,7749,7784,"[1967-03
 melchbi01,Bill Melchionni,1968,NBA,1967-80,76ERS,S2,inferred,7960,8145,"[1967-10-18, 1968-04-20)",0,0,"[1967-10-18, 1968-04-20)",,,
 melchga01,Gary Melchionni,1974,NBA,1967-80,SUNS,S2,inferred,10144,10313,"[1973-10-10, 1974-03-28)",0,0,"[1973-10-10, 1974-03-28)",,,
 melchga01,Gary Melchionni,1975,NBA,1967-80,SUNS,S2,inferred,10516,10688,"[1974-10-17, 1975-04-07)",0,0,"[1974-10-17, 1975-04-07)",,,
-mellini01,Nicolò Melli,2020,NBA,2000-2025/26,HORNETS-PELICANS,S2,inferred,26957,27254,"[2019-10-22, 2020-08-14)",0,0,"[2019-10-22, 2020-08-14)",,,
+mellini01,Nicolò Melli,2020,NBA,2000-2025/26,HORNETS-PELICANS,S2,cross-checked,26843,27254,"[2019-06-30, 2020-08-14)",1,0,"[2019-10-22, 2020-08-14)",,26843,
 mellini01,Nicolò Melli,2021,NBA,2000-2025/26,MAVERICKS,S2,cross-checked,27477,27551,"[2021-03-25, 2021-06-07)",1,0,"[2020-12-23, 2021-06-07)",,27477,
 mellini01,Nicolò Melli,2021,NBA,2000-2025/26,HORNETS-PELICANS,S2,cross-checked,27385,27477,"[2020-12-23, 2021-03-25)",0,1,"[2020-12-23, 2021-05-17)",,,27477
 melofa01,Fab Melo,2013,NBA,2000-2025/26,CELTICS,S2,inferred,24581,24595,"[2013-04-20, 2013-05-04)",0,0,"[2013-04-20, 2013-05-04)",,,
@@ -18477,7 +18477,7 @@ milleed01,Eddie Miller,1954,NBA,1950-66,BULLETS-DEFUNCT,S2,inferred,2860,2995,"[
 milleem01,Emanuel Miller,2025,NBA,2000-2025/26,BULLS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,28850,
 milleem01,Emanuel Miller,2026,NBA,2000-2025/26,BULLS,S2,unresolved,,,,0,0,,"no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); departure-after-closed-stint(prior-spell-exit,or-source-noise)",,29251
 milleha01,Harry Miller,1947,BAA,BAA 1946-49,HUSKIES,S2,inferred,304,453,"[1946-11-01, 1947-03-30)",0,0,"[1946-11-01, 1947-03-30)",,,
-milleja01,Jay Miller,1968,NBA,1967-80,HAWKS,S2,inferred,7956,8128,"[1967-10-14, 1968-04-03)",0,0,"[1967-10-14, 1968-04-03)",,,
+milleja01,Jay Miller,1968,NBA,1967-80,HAWKS,S2,cross-checked,7842,8128,"[1967-06-22, 1968-04-03)",1,0,"[1967-10-14, 1968-04-03)",,7842,
 milleja01,Jay Miller,1969,NBA,1967-80,BUCKS,S2,inferred,8324,8483,"[1968-10-16, 1969-03-24)",0,0,"[1968-10-16, 1969-03-24)",,,
 millejo02,Jordan Miller,2024,NBA,2000-2025/26,CLIPPERS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,28342,
 millejo02,Jordan Miller,2025,NBA,2000-2025/26,CLIPPERS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
@@ -18888,9 +18888,9 @@ montgho01,Howie Montgomery,1963,NBA,1950-66,WARRIORS,S2,inferred,6139,6284,"[196
 montrer01,Eric Montross,1995,NBA,1981-99,CELTICS,S2,inferred,17839,18022,"[1994-11-04, 1995-05-06)",0,0,"[1994-11-04, 1995-05-06)",,,
 montrer01,Eric Montross,1996,NBA,1981-99,CELTICS,S2,cross-checked,18203,18434,"[1995-11-03, 1996-06-21)",0,1,"[1995-11-03, 1996-04-22)",,,18434
 montrer01,Eric Montross,1997,NBA,1981-99,MAVERICKS,S2,directly-evidenced,18434,18675,"[1996-06-21, 1997-02-17)",1,1,"[1996-11-01, 1997-04-20)",,18434,18675
-montrer01,Eric Montross,1997,NBA,1981-99,NETS,S2,cross-checked,18675,18738,"[1997-02-17, 1997-04-21)",1,0,"[1996-11-01, 1997-04-21)",,18675,
+montrer01,Eric Montross,1997,NBA,1981-99,NETS,S2,directly-evidenced,18675,18805,"[1997-02-17, 1997-06-27)",1,1,"[1996-11-01, 1997-04-21)",,18675,18805
 montrer01,Eric Montross,1998,NBA,1981-99,PISTONS,S2,cross-checked,18979,19102,"[1997-12-18, 1998-04-20)",1,0,"[1997-10-31, 1998-04-20)",,18979,
-montrer01,Eric Montross,1998,NBA,1981-99,76ERS,S2,cross-checked,18931,18979,"[1997-10-31, 1997-12-18)",0,1,"[1997-10-31, 1998-04-20)",,,18979
+montrer01,Eric Montross,1998,NBA,1981-99,76ERS,S2,directly-evidenced,18805,18979,"[1997-06-27, 1997-12-18)",1,1,"[1997-10-31, 1998-04-20)",,18805,18979
 montrer01,Eric Montross,1999,NBA,1981-99,PISTONS,S2,inferred,19393,19494,"[1999-02-05, 1999-05-17)",0,0,"[1999-02-05, 1999-05-17)",,,
 montrer01,Eric Montross,2000,NBA,2000-2025/26,PISTONS,S2,inferred,19663,19833,"[1999-11-02, 2000-04-20)",0,0,"[1999-11-02, 2000-04-20)",,,
 montrer01,Eric Montross,2001,NBA,2000-2025/26,PISTONS,S2,cross-checked,20027,20141,"[2000-10-31, 2001-02-22)",0,1,"[2000-10-31, 2001-04-19)",,,20141
@@ -19263,7 +19263,7 @@ murdoer01,Eric Murdock,1996,NBA,1981-99,GRIZZLIES,S2,cross-checked,18227,18374,"
 murdoer01,Eric Murdock,1997,NBA,1981-99,NUGGETS,S2,directly-evidenced,18536,18592,"[1996-10-01, 1996-11-26)",1,1,"[1996-11-01, 1997-04-20)",,18536,18592
 murdoer01,Eric Murdock,1998,NBA,1981-99,HEAT,S2,cross-checked,18880,19116,"[1997-09-10, 1998-05-04)",1,0,"[1997-10-31, 1998-05-04)",,18880,
 murdoer01,Eric Murdock,1999,NBA,1981-99,NETS,S2,cross-checked,19378,19483,"[1999-01-21, 1999-05-06)",1,0,"[1999-02-06, 1999-05-06)",,19378,
-murdoer01,Eric Murdock,2000,NBA,2000-2025/26,CLIPPERS,S2,cross-checked,19623,19833,"[1999-09-23, 2000-04-20)",1,0,"[1999-11-02, 2000-04-20)",,19623,
+murdoer01,Eric Murdock,2000,NBA,2000-2025/26,CLIPPERS,S2,directly-evidenced,19623,19902,"[1999-09-23, 2000-06-28)",1,1,"[1999-11-02, 2000-04-20)",,19623,19902
 muresgh01,Gheorghe Mureșan,1994,NBA,1981-99,WIZARDS,S2,inferred,17475,17646,"[1993-11-05, 1994-04-25)",0,0,"[1993-11-05, 1994-04-25)",,,
 muresgh01,Gheorghe Mureșan,1995,NBA,1981-99,WIZARDS,S2,inferred,17839,18010,"[1994-11-04, 1995-04-24)",0,0,"[1994-11-04, 1995-04-24)",,,
 muresgh01,Gheorghe Mureșan,1996,NBA,1981-99,WIZARDS,S2,inferred,18203,18374,"[1995-11-03, 1996-04-22)",0,0,"[1995-11-03, 1996-04-22)",,,
@@ -19327,8 +19327,8 @@ murrade01,Dejounte Murray,2017,NBA,2000-2025/26,SPURS,S2,cross-checked,25762,260
 murrade01,Dejounte Murray,2018,NBA,2000-2025/26,SPURS,S2,inferred,26223,26412,"[2017-10-18, 2018-04-25)",0,0,"[2017-10-18, 2018-04-25)",,,
 murrade01,Dejounte Murray,2020,NBA,2000-2025/26,SPURS,S2,cross-checked,26956,27254,"[2019-10-21, 2020-08-14)",1,0,"[2019-10-23, 2020-08-14)",,26956,
 murrade01,Dejounte Murray,2021,NBA,2000-2025/26,SPURS,S2,inferred,27385,27530,"[2020-12-23, 2021-05-17)",0,0,"[2020-12-23, 2021-05-17)",,,
-murrade01,Dejounte Murray,2022,NBA,2000-2025/26,SPURS,S2,inferred,27686,27859,"[2021-10-20, 2022-04-11)",0,0,"[2021-10-20, 2022-04-11)",,,
-murrade01,Dejounte Murray,2023,NBA,2000-2025/26,HAWKS,S2,inferred,28050,28241,"[2022-10-19, 2023-04-28)",0,0,"[2022-10-19, 2023-04-28)",,,
+murrade01,Dejounte Murray,2022,NBA,2000-2025/26,SPURS,S2,cross-checked,27686,27939,"[2021-10-20, 2022-06-30)",0,1,"[2021-10-20, 2022-04-11)",,,27939
+murrade01,Dejounte Murray,2023,NBA,2000-2025/26,HAWKS,S2,cross-checked,27939,28241,"[2022-06-30, 2023-04-28)",1,0,"[2022-10-19, 2023-04-28)",,27939,
 murrade01,Dejounte Murray,2024,NBA,2000-2025/26,HAWKS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
 murrade01,Dejounte Murray,2025,NBA,2000-2025/26,HORNETS-PELICANS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,28676,
 murrade01,Dejounte Murray,2026,NBA,2000-2025/26,HORNETS-PELICANS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
@@ -19627,7 +19627,7 @@ ndiayma02,Mamadou N'Diaye,2004,NBA,2000-2025/26,HAWKS,S2,cross-checked,21232,212
 ndiayma02,Mamadou N'Diaye,2004,NBA,2000-2025/26,MAVERICKS,S2,cross-checked,21189,21304,"[2004-01-06, 2004-04-30)",1,0,"[2003-10-28, 2004-04-30)",,21189,
 ndiayma02,Mamadou N'Diaye,2005,NBA,2000-2025/26,CLIPPERS,S2,directly-evidenced,21412,21729,"[2004-08-16, 2005-06-29)",1,1,"[2004-11-03, 2005-04-21)",,21412,21729
 ndongbo01,Boniface N'Dong,2006,NBA,2000-2025/26,CLIPPERS,S2,cross-checked,21823,22024,"[2005-10-01, 2006-04-20)",1,0,"[2005-11-02, 2006-04-20)",,21823,
-ndourma01,Maurice Ndour,2017,NBA,2000-2025/26,KNICKS,S2,cross-checked,25762,26035,"[2016-07-14, 2017-04-13)",1,0,"[2016-10-25, 2017-04-13)",,25762,
+ndourma01,Maurice Ndour,2017,NBA,2000-2025/26,KNICKS,S2,directly-evidenced,25762,26113,"[2016-07-14, 2017-06-30)",1,1,"[2016-10-25, 2017-04-13)",,25762,26113
 nealcr01,Craig Neal,1989,NBA,1981-99,HEAT,S2,unresolved,15719,15739,"[1989-01-14, 1989-02-03)",0,0,"[1988-11-05, 1989-04-23)",repeat-signing-prior-end-unknown,"15719,15739",
 nealcr01,Craig Neal,1989,NBA,1981-99,HEAT,S2,cross-checked,15739,15818,"[1989-02-03, 1989-04-23)",1,0,"[1988-11-05, 1989-04-23)",,"15719,15739",
 nealcr01,Craig Neal,1989,NBA,1981-99,TRAIL BLAZERS,S2,cross-checked,15648,15716,"[1988-11-04, 1989-01-11)",0,1,"[1988-11-04, 1989-05-04)",,,15716
@@ -19690,7 +19690,7 @@ nelsoja01,Jameer Nelson,2010,NBA,2000-2025/26,MAGIC,S2,inferred,23311,23524,"[20
 nelsoja01,Jameer Nelson,2011,NBA,2000-2025/26,MAGIC,S2,inferred,23676,23859,"[2010-10-28, 2011-04-29)",0,0,"[2010-10-28, 2011-04-29)",,,
 nelsoja01,Jameer Nelson,2012,NBA,2000-2025/26,MAGIC,S2,inferred,24099,24235,"[2011-12-25, 2012-05-09)",0,0,"[2011-12-25, 2012-05-09)",,,
 nelsoja01,Jameer Nelson,2013,NBA,2000-2025/26,MAGIC,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
-nelsoja01,Jameer Nelson,2014,NBA,2000-2025/26,MAGIC,S2,inferred,24773,24943,"[2013-10-29, 2014-04-17)",0,0,"[2013-10-29, 2014-04-17)",,,
+nelsoja01,Jameer Nelson,2014,NBA,2000-2025/26,MAGIC,S2,cross-checked,24773,25017,"[2013-10-29, 2014-06-30)",0,1,"[2013-10-29, 2014-04-17)",,,25017
 nelsoja01,Jameer Nelson,2015,NBA,2000-2025/26,CELTICS,S2,directly-evidenced,25188,25214,"[2014-12-18, 2015-01-13)",1,1,"[2014-10-29, 2015-04-27)",,25188,25214
 nelsoja01,Jameer Nelson,2015,NBA,2000-2025/26,MAVERICKS,S2,directly-evidenced,25041,25188,"[2014-07-24, 2014-12-18)",1,1,"[2014-10-28, 2015-04-29)",,25041,25188
 nelsoja01,Jameer Nelson,2015,NBA,2000-2025/26,NUGGETS,S2,cross-checked,25214,25307,"[2015-01-13, 2015-04-16)",1,0,"[2014-10-29, 2015-04-16)",,25214,
@@ -19871,7 +19871,7 @@ niemari01,Rich Niemann,1970,NBA,1967-80,CELTICS,S2,cross-checked,8687,8847,"[196
 niemiri01,Richie Niemiera,1949,BAA,BAA 1946-49,PISTONS,S2,inferred,1037,1175,"[1948-11-03, 1949-03-21)",0,0,"[1948-11-03, 1949-03-21)",,,
 niemiri01,Richie Niemiera,1950,NBA,1950-66,PACKERS-ANDERSON,S2,directly-evidenced,1478,1575,"[1950-01-18, 1950-04-25)",1,1,"[1949-11-03, 1950-04-07)",,1478,1575
 niemiri01,Richie Niemiera,1950,NBA,1950-66,PISTONS,S2,cross-checked,1402,1478,"[1949-11-03, 1950-01-18)",0,1,"[1949-11-03, 1950-03-29)",,,1478
-nilesmi01,Mike Niles,1981,NBA,1981-99,SUNS,S2,inferred,12701,12893,"[1980-10-10, 1981-04-20)",0,0,"[1980-10-10, 1981-04-20)",,,
+nilesmi01,Mike Niles,1981,NBA,1981-99,SUNS,S2,cross-checked,12594,12893,"[1980-06-25, 1981-04-20)",1,0,"[1980-10-10, 1981-04-20)",,12594,
 nimphku01,Kurt Nimphius,1982,NBA,1981-99,MAVERICKS,S2,cross-checked,13028,13256,"[1981-09-02, 1982-04-18)",1,0,"[1981-10-30, 1982-04-18)",,13028,
 nimphku01,Kurt Nimphius,1983,NBA,1981-99,MAVERICKS,S2,inferred,13450,13620,"[1982-10-29, 1983-04-17)",0,0,"[1982-10-29, 1983-04-17)",,,
 nimphku01,Kurt Nimphius,1984,NBA,1981-99,MAVERICKS,S2,inferred,13815,14008,"[1983-10-29, 1984-05-09)",0,0,"[1983-10-29, 1984-05-09)",,,
@@ -20467,8 +20467,8 @@ onealro01,Royce O'Neale,2018,NBA,2000-2025/26,JAZZ,S2,cross-checked,26132,26426,
 onealro01,Royce O'Neale,2019,NBA,2000-2025/26,JAZZ,S2,inferred,26587,26777,"[2018-10-17, 2019-04-25)",0,0,"[2018-10-17, 2019-04-25)",,,
 onealro01,Royce O'Neale,2020,NBA,2000-2025/26,JAZZ,S2,unresolved,27046,27273,"[2020-01-19, 2020-09-02)",1,0,"[2019-10-23, 2020-09-02)","appearance-count-conflict(S2-player-games=71,S1-season-games=72,S2-team-games=72,interval-capacity=30,departure-day-allowance=0,missing-games-allowance=0,capacity-upper-bound=30)",27046,
 onealro01,Royce O'Neale,2021,NBA,2000-2025/26,JAZZ,S2,inferred,27385,27563,"[2020-12-23, 2021-06-19)",0,0,"[2020-12-23, 2021-06-19)",,,
-onealro01,Royce O'Neale,2022,NBA,2000-2025/26,JAZZ,S2,inferred,27686,27877,"[2021-10-20, 2022-04-29)",0,0,"[2021-10-20, 2022-04-29)",,,
-onealro01,Royce O'Neale,2023,NBA,2000-2025/26,NETS,S2,inferred,28050,28236,"[2022-10-19, 2023-04-23)",0,0,"[2022-10-19, 2023-04-23)",,,
+onealro01,Royce O'Neale,2022,NBA,2000-2025/26,JAZZ,S2,cross-checked,27686,27939,"[2021-10-20, 2022-06-30)",0,1,"[2021-10-20, 2022-04-29)",,,27939
+onealro01,Royce O'Neale,2023,NBA,2000-2025/26,NETS,S2,cross-checked,27939,28236,"[2022-06-30, 2023-04-23)",1,0,"[2022-10-19, 2023-04-23)",,27939,
 onealro01,Royce O'Neale,2024,NBA,2000-2025/26,NETS,S2,unresolved,,,,0,0,,"no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); departure-after-closed-stint(prior-spell-exit,or-source-noise)",,28527
 onealro01,Royce O'Neale,2024,NBA,2000-2025/26,SUNS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,28527,
 onealro01,Royce O'Neale,2025,NBA,2000-2025/26,SUNS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,28676,
@@ -20490,8 +20490,8 @@ onealsh01,Shaquille O'Neal,2006,NBA,2000-2025/26,HEAT,S2,inferred,21855,22024,"[
 onealsh01,Shaquille O'Neal,2007,NBA,2000-2025/26,HEAT,S2,inferred,22218,22399,"[2006-10-31, 2007-04-30)",0,0,"[2006-10-31, 2007-04-30)",,,
 onealsh01,Shaquille O'Neal,2008,NBA,2000-2025/26,HEAT,S2,cross-checked,22584,22681,"[2007-11-01, 2008-02-06)",0,1,"[2007-11-01, 2008-04-17)",,,22681
 onealsh01,Shaquille O'Neal,2008,NBA,2000-2025/26,SUNS,S2,cross-checked,22681,22765,"[2008-02-06, 2008-04-30)",1,0,"[2007-11-01, 2008-04-30)",,22681,
-onealsh01,Shaquille O'Neal,2009,NBA,2000-2025/26,SUNS,S2,inferred,22947,23116,"[2008-10-29, 2009-04-16)",0,0,"[2008-10-29, 2009-04-16)",,,
-onealsh01,Shaquille O'Neal,2010,NBA,2000-2025/26,CAVALIERS,S2,inferred,23310,23509,"[2009-10-27, 2010-05-14)",0,0,"[2009-10-27, 2010-05-14)",,,
+onealsh01,Shaquille O'Neal,2009,NBA,2000-2025/26,SUNS,S2,cross-checked,22947,23187,"[2008-10-29, 2009-06-26)",0,1,"[2008-10-29, 2009-04-16)",,,23187
+onealsh01,Shaquille O'Neal,2010,NBA,2000-2025/26,CAVALIERS,S2,cross-checked,23187,23509,"[2009-06-26, 2010-05-14)",1,0,"[2009-10-27, 2010-05-14)",,23187,
 onealsh01,Shaquille O'Neal,2011,NBA,2000-2025/26,CELTICS,S2,cross-checked,23591,23872,"[2010-08-04, 2011-05-12)",1,0,"[2010-10-26, 2011-05-12)",,23591,
 oneilmi01,Mike O'Neill,1953,NBA,1950-66,HAWKS,S2,inferred,2496,2634,"[1952-11-01, 1953-03-19)",0,0,"[1952-11-01, 1953-03-19)",,,
 onimi01,Miye Oni,2020,NBA,2000-2025/26,JAZZ,S2,cross-checked,26858,27273,"[2019-07-15, 2020-09-02)",1,0,"[2019-10-23, 2020-09-02)",,26858,
@@ -20646,7 +20646,7 @@ owensbi01,Billy Owens,1996,NBA,1981-99,HEAT,S2,cross-checked,18204,18314,"[1995-
 owensbi01,Billy Owens,1996,NBA,1981-99,KINGS,S2,cross-checked,18314,18374,"[1996-02-22, 1996-04-22)",1,0,"[1995-11-03, 1996-04-22)",,18314,
 owensbi01,Billy Owens,1997,NBA,1981-99,KINGS,S2,inferred,18567,18738,"[1996-11-01, 1997-04-21)",0,0,"[1996-11-01, 1997-04-21)",,,
 owensbi01,Billy Owens,1998,NBA,1981-99,KINGS,S2,inferred,18932,19102,"[1997-11-01, 1998-04-20)",0,0,"[1997-11-01, 1998-04-20)",,,
-owensbi01,Billy Owens,1999,NBA,1981-99,THUNDER,S2,cross-checked,19379,19483,"[1999-01-22, 1999-05-06)",1,0,"[1999-02-05, 1999-05-06)",,19379,
+owensbi01,Billy Owens,1999,NBA,1981-99,THUNDER,S2,directly-evidenced,19379,19538,"[1999-01-22, 1999-06-30)",1,1,"[1999-02-05, 1999-05-06)",,19379,19538
 owensbi01,Billy Owens,2000,NBA,2000-2025/26,WARRIORS,S2,directly-evidenced,19769,19901,"[2000-02-16, 2000-06-27)",1,1,"[1999-11-02, 2000-04-20)",,19769,19901
 owensbi01,Billy Owens,2000,NBA,2000-2025/26,76ERS,S2,directly-evidenced,19582,19769,"[1999-08-13, 2000-02-16)",1,1,"[1999-11-02, 2000-04-19)",,19582,19769
 owensbi01,Billy Owens,2001,NBA,2000-2025/26,PISTONS,S2,cross-checked,19957,20197,"[2000-08-22, 2001-04-19)",1,0,"[2000-10-31, 2001-04-19)",,19957,
@@ -20860,8 +20860,8 @@ parkme01,Med Park,1958,NBA,1950-66,HAWKS,S2,inferred,4312,4453,"[1957-10-22, 195
 parkme01,Med Park,1959,NBA,1950-66,KINGS,S2,unresolved,4761,4817,"[1959-01-14, 1959-03-11)",1,0,"[1958-10-22, 1959-03-11)","appearance-count-conflict(S2-player-games=33,S1-season-games=72,S2-team-games=72,interval-capacity=32,departure-day-allowance=0,missing-games-allowance=0,capacity-upper-bound=32)",4761,
 parkme01,Med Park,1959,NBA,1950-66,HAWKS,S2,cross-checked,4678,4761,"[1958-10-23, 1959-01-14)",0,1,"[1958-10-23, 1959-03-12)",,,4761
 parkme01,Med Park,1960,NBA,1950-66,KINGS,S2,inferred,5037,5182,"[1959-10-17, 1960-03-10)",0,0,"[1959-10-17, 1960-03-10)",,,
-parksch02,Cherokee Parks,1996,NBA,1981-99,MAVERICKS,S2,inferred,18203,18374,"[1995-11-03, 1996-04-22)",0,0,"[1995-11-03, 1996-04-22)",,,
-parksch02,Cherokee Parks,1997,NBA,1981-99,TIMBERWOLVES,S2,inferred,18567,18747,"[1996-11-01, 1997-04-30)",0,0,"[1996-11-01, 1997-04-30)",,,
+parksch02,Cherokee Parks,1996,NBA,1981-99,MAVERICKS,S2,cross-checked,18203,18442,"[1995-11-03, 1996-06-29)",0,1,"[1995-11-03, 1996-04-22)",,,18442
+parksch02,Cherokee Parks,1997,NBA,1981-99,TIMBERWOLVES,S2,cross-checked,18442,18747,"[1996-06-29, 1997-04-30)",1,0,"[1996-11-01, 1997-04-30)",,18442,
 parksch02,Cherokee Parks,1998,NBA,1981-99,TIMBERWOLVES,S2,inferred,18931,19115,"[1997-10-31, 1998-05-03)",0,0,"[1997-10-31, 1998-05-03)",,,
 parksch02,Cherokee Parks,1999,NBA,1981-99,GRIZZLIES,S2,cross-checked,19379,19483,"[1999-01-22, 1999-05-06)",1,0,"[1999-02-07, 1999-05-06)",,19379,
 parksch02,Cherokee Parks,2000,NBA,2000-2025/26,GRIZZLIES,S2,inferred,19663,19833,"[1999-11-02, 2000-04-20)",0,0,"[1999-11-02, 2000-04-20)",,,
@@ -20983,7 +20983,7 @@ pavloal01,Sasha Pavlović,2005,NBA,2000-2025/26,CAVALIERS,S2,inferred,21491,2166
 pavloal01,Sasha Pavlović,2006,NBA,2000-2025/26,CAVALIERS,S2,inferred,21855,22024,"[2005-11-02, 2006-04-20)",0,0,"[2005-11-02, 2006-04-20)",,,
 pavloal01,Sasha Pavlović,2007,NBA,2000-2025/26,CAVALIERS,S2,inferred,22219,22445,"[2006-11-01, 2007-06-15)",0,0,"[2006-11-01, 2007-06-15)",,,
 pavloal01,Sasha Pavlović,2008,NBA,2000-2025/26,CAVALIERS,S2,inferred,22583,22784,"[2007-10-31, 2008-05-19)",0,0,"[2007-10-31, 2008-05-19)",,,
-pavloal01,Sasha Pavlović,2009,NBA,2000-2025/26,CAVALIERS,S2,inferred,22946,23161,"[2008-10-28, 2009-05-31)",0,0,"[2008-10-28, 2009-05-31)",,,
+pavloal01,Sasha Pavlović,2009,NBA,2000-2025/26,CAVALIERS,S2,cross-checked,22946,23187,"[2008-10-28, 2009-06-26)",0,1,"[2008-10-28, 2009-05-31)",,,23187
 pavloal01,Sasha Pavlović,2010,NBA,2000-2025/26,TIMBERWOLVES,S2,cross-checked,23270,23480,"[2009-09-17, 2010-04-15)",1,0,"[2009-10-28, 2010-04-15)",,23270,
 pavloal01,Sasha Pavlović,2011,NBA,2000-2025/26,CELTICS,S2,cross-checked,23802,23872,"[2011-03-03, 2011-05-12)",1,0,"[2010-10-26, 2011-05-12)",,23802,
 pavloal01,Sasha Pavlović,2011,NBA,2000-2025/26,MAVERICKS,S2,cross-checked,23750,23904,"[2011-01-10, 2011-06-13)",1,0,"[2010-10-27, 2011-06-13)",,23750,
@@ -21111,7 +21111,7 @@ peelean01,Anthony Peeler,1999,NBA,1981-99,TIMBERWOLVES,S2,inferred,19393,19493,"
 peelean01,Anthony Peeler,2000,NBA,2000-2025/26,TIMBERWOLVES,S2,inferred,19666,19833,"[1999-11-05, 2000-04-20)",0,0,"[1999-11-05, 2000-04-20)",,,
 peelean01,Anthony Peeler,2001,NBA,2000-2025/26,TIMBERWOLVES,S2,inferred,20027,20209,"[2000-10-31, 2001-05-01)",0,0,"[2000-10-31, 2001-05-01)",,,
 peelean01,Anthony Peeler,2002,NBA,2000-2025/26,TIMBERWOLVES,S2,inferred,20391,20561,"[2001-10-30, 2002-04-18)",0,0,"[2001-10-30, 2002-04-18)",,,
-peelean01,Anthony Peeler,2003,NBA,2000-2025/26,TIMBERWOLVES,S2,inferred,20756,20940,"[2002-10-30, 2003-05-02)",0,0,"[2002-10-30, 2003-05-02)",,,
+peelean01,Anthony Peeler,2003,NBA,2000-2025/26,TIMBERWOLVES,S2,cross-checked,20756,20996,"[2002-10-30, 2003-06-27)",0,1,"[2002-10-30, 2003-05-02)",,,20996
 peelean01,Anthony Peeler,2004,NBA,2000-2025/26,KINGS,S2,cross-checked,21045,21324,"[2003-08-15, 2004-05-20)",1,0,"[2003-10-29, 2004-05-20)",,21045,
 peelean01,Anthony Peeler,2005,NBA,2000-2025/26,WIZARDS,S2,cross-checked,21394,21684,"[2004-07-29, 2005-05-15)",1,0,"[2004-11-03, 2005-05-15)",,21394,
 pekovni01,Nikola Peković,2011,NBA,2000-2025/26,TIMBERWOLVES,S2,inferred,23675,23844,"[2010-10-27, 2011-04-14)",0,0,"[2010-10-27, 2011-04-14)",,,
@@ -21919,7 +21919,7 @@ pricema01,Mark Price,1994,NBA,1981-99,CAVALIERS,S2,inferred,17475,17646,"[1993-1
 pricema01,Mark Price,1995,NBA,1981-99,CAVALIERS,S2,inferred,17840,18021,"[1994-11-05, 1995-05-05)",0,0,"[1994-11-05, 1995-05-05)",,,
 pricema01,Mark Price,1996,NBA,1981-99,WIZARDS,S2,cross-checked,18166,18374,"[1995-09-27, 1996-04-22)",1,0,"[1995-11-03, 1996-04-22)",,18166,
 pricema01,Mark Price,1997,NBA,1981-99,WARRIORS,S2,cross-checked,18464,18737,"[1996-07-21, 1997-04-20)",1,0,"[1996-11-01, 1997-04-20)",,18464,
-pricema01,Mark Price,1998,NBA,1981-99,MAGIC,S2,cross-checked,18928,19102,"[1997-10-28, 1998-04-20)",1,0,"[1997-10-31, 1998-04-20)",,18928,
+pricema01,Mark Price,1998,NBA,1981-99,MAGIC,S2,directly-evidenced,18928,19173,"[1997-10-28, 1998-06-30)",1,1,"[1997-10-31, 1998-04-20)",,18928,19173
 pricemi01,Mike Price,1971,NBA,1967-80,KNICKS,S2,inferred,9214,9240,"[1971-03-25, 1971-04-20)",0,0,"[1971-03-25, 1971-04-20)",,,
 pricemi01,Mike Price,1972,NBA,1967-80,KNICKS,S2,cross-checked,9415,9456,"[1971-10-12, 1971-11-22)",0,1,"[1971-10-12, 1972-05-08)",,,9456
 pricemi01,Mike Price,1973,NBA,1967-80,76ERS,S2,cross-checked,9779,9946,"[1972-10-10, 1973-03-26)",1,0,"[1972-10-10, 1973-03-26)",,9779,
@@ -22548,8 +22548,8 @@ ricegl01,Glen Rice,2004,NBA,2000-2025/26,CLIPPERS,S2,directly-evidenced,21101,21
 ricegl02,Glen Rice Jr.,2014,NBA,2000-2025/26,WIZARDS,S2,cross-checked,24660,24972,"[2013-07-08, 2014-05-16)",1,0,"[2013-10-30, 2014-05-16)",,24660,
 ricegl02,Glen Rice Jr.,2015,NBA,2000-2025/26,WIZARDS,S2,cross-checked,25138,25208,"[2014-10-29, 2015-01-07)",0,1,"[2014-10-29, 2015-05-16)",,,25208
 richach01,Chris Richard,2008,NBA,2000-2025/26,TIMBERWOLVES,S2,inferred,22585,22752,"[2007-11-02, 2008-04-17)",0,0,"[2007-11-02, 2008-04-17)",,,
-richach01,Chris Richard,2010,NBA,2000-2025/26,BULLS,S2,unresolved,23283,23305,"[2009-09-30, 2009-10-22)",0,0,"[2009-10-29, 2010-04-28)",stint-entirely-outside-team-season-window(stands-on-transactions-alone),"23283,23411",23305
-richach01,Chris Richard,2010,NBA,2000-2025/26,BULLS,S2,cross-checked,23411,23493,"[2010-02-05, 2010-04-28)",1,1,"[2009-10-29, 2010-04-28)",,"23283,23411",23305
+richach01,Chris Richard,2010,NBA,2000-2025/26,BULLS,S2,unresolved,23283,23305,"[2009-09-30, 2009-10-22)",0,0,"[2009-10-29, 2010-04-28)",stint-entirely-outside-team-season-window(stands-on-transactions-alone),"23283,23411","23305,23556"
+richach01,Chris Richard,2010,NBA,2000-2025/26,BULLS,S2,directly-evidenced,23411,23556,"[2010-02-05, 2010-06-30)",1,1,"[2009-10-29, 2010-04-28)",,"23283,23411","23305,23556"
 richacl01,Clint Richardson,1980,NBA,1967-80,76ERS,S2,inferred,12337,12555,"[1979-10-12, 1980-05-17)",0,0,"[1979-10-12, 1980-05-17)",,,
 richacl01,Clint Richardson,1981,NBA,1981-99,76ERS,S2,inferred,12701,12907,"[1980-10-10, 1981-05-04)",0,0,"[1980-10-10, 1981-05-04)",,,
 richacl01,Clint Richardson,1982,NBA,1981-99,76ERS,S2,inferred,13086,13308,"[1981-10-30, 1982-06-09)",0,0,"[1981-10-30, 1982-06-09)",,,
@@ -22619,8 +22619,8 @@ richapo01,Pooh Richardson,1990,NBA,1981-99,TIMBERWOLVES,S2,inferred,16012,16183,
 richapo01,Pooh Richardson,1991,NBA,1981-99,TIMBERWOLVES,S2,inferred,16376,16547,"[1990-11-02, 1991-04-22)",0,0,"[1990-11-02, 1991-04-22)",,,
 richapo01,Pooh Richardson,1992,NBA,1981-99,TIMBERWOLVES,S2,inferred,16740,16911,"[1991-11-01, 1992-04-20)",0,0,"[1991-11-01, 1992-04-20)",,,
 richapo01,Pooh Richardson,1993,NBA,1981-99,PACERS,S2,cross-checked,17052,17293,"[1992-09-08, 1993-05-07)",1,0,"[1992-11-07, 1993-05-07)",,17052,
-richapo01,Pooh Richardson,1994,NBA,1981-99,PACERS,S2,inferred,17475,17645,"[1993-11-05, 1994-04-24)",0,0,"[1993-11-05, 1994-04-24)",,,
-richapo01,Pooh Richardson,1995,NBA,1981-99,CLIPPERS,S2,inferred,17839,18010,"[1994-11-04, 1995-04-24)",0,0,"[1994-11-04, 1995-04-24)",,,
+richapo01,Pooh Richardson,1994,NBA,1981-99,PACERS,S2,cross-checked,17475,17712,"[1993-11-05, 1994-06-30)",0,1,"[1993-11-05, 1994-04-24)",,,17712
+richapo01,Pooh Richardson,1995,NBA,1981-99,CLIPPERS,S2,cross-checked,17712,18010,"[1994-06-30, 1995-04-24)",1,0,"[1994-11-04, 1995-04-24)",,17712,
 richapo01,Pooh Richardson,1996,NBA,1981-99,CLIPPERS,S2,inferred,18203,18374,"[1995-11-03, 1996-04-22)",0,0,"[1995-11-03, 1996-04-22)",,,
 richapo01,Pooh Richardson,1997,NBA,1981-99,CLIPPERS,S2,inferred,18567,18746,"[1996-11-01, 1997-04-29)",0,0,"[1996-11-01, 1997-04-29)",,,
 richapo01,Pooh Richardson,1998,NBA,1981-99,CLIPPERS,S2,inferred,18931,19101,"[1997-10-31, 1998-04-19)",0,0,"[1997-10-31, 1998-04-19)",,,
@@ -23257,7 +23257,7 @@ rondora01,Rajon Rondo,2014,NBA,2000-2025/26,CELTICS,S2,inferred,24774,24943,"[20
 rondora01,Rajon Rondo,2015,NBA,2000-2025/26,CELTICS,S2,cross-checked,25138,25188,"[2014-10-29, 2014-12-18)",0,1,"[2014-10-29, 2015-04-27)",,,25188
 rondora01,Rajon Rondo,2015,NBA,2000-2025/26,MAVERICKS,S2,cross-checked,25188,25320,"[2014-12-18, 2015-04-29)",1,0,"[2014-10-28, 2015-04-29)",,25188,
 rondora01,Rajon Rondo,2016,NBA,2000-2025/26,KINGS,S2,cross-checked,25395,25671,"[2015-07-13, 2016-04-14)",1,0,"[2015-10-28, 2016-04-14)",,25395,
-rondora01,Rajon Rondo,2017,NBA,2000-2025/26,BULLS,S2,cross-checked,25755,26051,"[2016-07-07, 2017-04-29)",1,0,"[2016-10-27, 2017-04-29)",,25755,
+rondora01,Rajon Rondo,2017,NBA,2000-2025/26,BULLS,S2,directly-evidenced,25755,26113,"[2016-07-07, 2017-06-30)",1,1,"[2016-10-27, 2017-04-29)",,25755,26113
 rondora01,Rajon Rondo,2018,NBA,2000-2025/26,HORNETS-PELICANS,S2,cross-checked,26132,26426,"[2017-07-19, 2018-05-09)",1,0,"[2017-10-18, 2018-05-09)",,26132,
 rondora01,Rajon Rondo,2019,NBA,2000-2025/26,LAKERS,S2,cross-checked,26484,26762,"[2018-07-06, 2019-04-10)",1,0,"[2018-10-18, 2019-04-10)",,26484,
 rondora01,Rajon Rondo,2020,NBA,2000-2025/26,LAKERS,S2,cross-checked,26851,27313,"[2019-07-08, 2020-10-12)",1,0,"[2019-10-22, 2020-10-12)",,26851,
@@ -23273,8 +23273,8 @@ rooksse01,Sean Rooks,1996,NBA,1981-99,TIMBERWOLVES,S2,cross-checked,18203,18314,
 rooksse01,Sean Rooks,1997,NBA,1981-99,LAKERS,S2,cross-checked,18459,18760,"[1996-07-16, 1997-05-13)",1,0,"[1996-11-01, 1997-05-13)",,18459,
 rooksse01,Sean Rooks,1998,NBA,1981-99,LAKERS,S2,inferred,18931,19137,"[1997-10-31, 1998-05-25)",0,0,"[1997-10-31, 1998-05-25)",,,
 rooksse01,Sean Rooks,1999,NBA,1981-99,LAKERS,S2,inferred,19393,19501,"[1999-02-05, 1999-05-24)",0,0,"[1999-02-05, 1999-05-24)",,,
-rooksse01,Sean Rooks,2000,NBA,2000-2025/26,MAVERICKS,S2,cross-checked,19601,19833,"[1999-09-01, 2000-04-20)",1,0,"[1999-11-02, 2000-04-20)",,19601,
-rooksse01,Sean Rooks,2001,NBA,2000-2025/26,CLIPPERS,S2,inferred,20027,20196,"[2000-10-31, 2001-04-18)",0,0,"[2000-10-31, 2001-04-18)",,,
+rooksse01,Sean Rooks,2000,NBA,2000-2025/26,MAVERICKS,S2,directly-evidenced,19601,19902,"[1999-09-01, 2000-06-28)",1,1,"[1999-11-02, 2000-04-20)",,19601,19902
+rooksse01,Sean Rooks,2001,NBA,2000-2025/26,CLIPPERS,S2,cross-checked,19902,20196,"[2000-06-28, 2001-04-18)",1,0,"[2000-10-31, 2001-04-18)",,19902,
 rooksse01,Sean Rooks,2002,NBA,2000-2025/26,CLIPPERS,S2,inferred,20391,20561,"[2001-10-30, 2002-04-18)",0,0,"[2001-10-30, 2002-04-18)",,,
 rooksse01,Sean Rooks,2003,NBA,2000-2025/26,CLIPPERS,S2,inferred,20756,20925,"[2002-10-30, 2003-04-17)",0,0,"[2002-10-30, 2003-04-17)",,,
 rooksse01,Sean Rooks,2004,NBA,2000-2025/26,HORNETS-PELICANS,S2,directly-evidenced,21020,21233,"[2003-07-21, 2004-02-19)",1,1,"[2003-10-29, 2004-05-05)",,21020,21233
@@ -23442,8 +23442,8 @@ rubiori01,Ricky Rubio,2013,NBA,2000-2025/26,TIMBERWOLVES,S2,unresolved,,,,0,0,,n
 rubiori01,Ricky Rubio,2014,NBA,2000-2025/26,TIMBERWOLVES,S2,inferred,24774,24943,"[2013-10-30, 2014-04-17)",0,0,"[2013-10-30, 2014-04-17)",,,
 rubiori01,Ricky Rubio,2015,NBA,2000-2025/26,TIMBERWOLVES,S2,inferred,25138,25307,"[2014-10-29, 2015-04-16)",0,0,"[2014-10-29, 2015-04-16)",,,
 rubiori01,Ricky Rubio,2016,NBA,2000-2025/26,TIMBERWOLVES,S2,inferred,25502,25671,"[2015-10-28, 2016-04-14)",0,0,"[2015-10-28, 2016-04-14)",,,
-rubiori01,Ricky Rubio,2017,NBA,2000-2025/26,TIMBERWOLVES,S2,inferred,25866,26035,"[2016-10-26, 2017-04-13)",0,0,"[2016-10-26, 2017-04-13)",,,
-rubiori01,Ricky Rubio,2018,NBA,2000-2025/26,JAZZ,S2,inferred,26223,26426,"[2017-10-18, 2018-05-09)",0,0,"[2017-10-18, 2018-05-09)",,,
+rubiori01,Ricky Rubio,2017,NBA,2000-2025/26,TIMBERWOLVES,S2,cross-checked,25866,26113,"[2016-10-26, 2017-06-30)",0,1,"[2016-10-26, 2017-04-13)",,,26113
+rubiori01,Ricky Rubio,2018,NBA,2000-2025/26,JAZZ,S2,cross-checked,26113,26426,"[2017-06-30, 2018-05-09)",1,0,"[2017-10-18, 2018-05-09)",,26113,
 rubiori01,Ricky Rubio,2019,NBA,2000-2025/26,JAZZ,S2,inferred,26587,26777,"[2018-10-17, 2019-04-25)",0,0,"[2018-10-17, 2019-04-25)",,,
 rubiori01,Ricky Rubio,2020,NBA,2000-2025/26,SUNS,S2,cross-checked,26851,27254,"[2019-07-08, 2020-08-14)",1,0,"[2019-10-23, 2020-08-14)",,26851,
 rubiori01,Ricky Rubio,2021,NBA,2000-2025/26,TIMBERWOLVES,S2,cross-checked,27352,27530,"[2020-11-20, 2021-05-17)",1,0,"[2020-12-23, 2021-05-17)",,27352,
@@ -24002,8 +24002,8 @@ schrode01,Dennis Schröder,2026,NBA,2000-2025/26,CAVALIERS,S2,unresolved,,,,0,0,
 schrode01,Dennis Schröder,2026,NBA,2000-2025/26,KINGS,S2,unresolved,,,,0,0,,same-day-arrival-to-multiple-franchises(ordering-unresolved),29042,29251
 schuldi01,Dick Schulz,1947,BAA,BAA 1946-49,REBELS,S2,cross-checked,306,349,"[1946-11-03, 1946-12-16)",0,1,"[1946-11-03, 1947-04-10)",,,349
 schuldi01,Dick Schulz,1947,BAA,BAA 1946-49,HUSKIES,S2,cross-checked,349,453,"[1946-12-16, 1947-03-30)",1,0,"[1946-11-01, 1947-03-30)",,349,
-schuldi01,Dick Schulz,1948,BAA,BAA 1946-49,BULLETS-DEFUNCT,S2,unresolved,,,,0,0,,flagged-transaction-legs(team-unresolved),,
-schuldi01,Dick Schulz,1949,BAA,BAA 1946-49,CAPITOLS,S2,inferred,1037,1199,"[1948-11-03, 1949-04-14)",0,0,"[1948-11-03, 1949-04-14)",,,
+schuldi01,Dick Schulz,1948,BAA,BAA 1946-49,BULLETS-DEFUNCT,S2,unresolved,680,869,"[1947-11-12, 1948-05-19)",0,0,"[1947-11-12, 1948-04-22)",flagged-transaction-legs(team-unresolved),,869
+schuldi01,Dick Schulz,1949,BAA,BAA 1946-49,CAPITOLS,S2,cross-checked,869,1199,"[1948-05-19, 1949-04-14)",1,0,"[1948-11-03, 1949-04-14)",,869,
 schuldi01,Dick Schulz,1950,NBA,1950-66,REDSKINS-SHEBOYGAN,S2,inferred,1400,1545,"[1949-11-01, 1950-03-26)",0,0,"[1949-11-01, 1950-03-26)",,,
 schuldi01,Dick Schulz,1950,NBA,1950-66,HAWKS,S2,inferred,1397,1544,"[1949-10-29, 1950-03-25)",0,0,"[1949-10-29, 1950-03-25)",,,
 schuldi01,Dick Schulz,1950,NBA,1950-66,CAPITOLS,S2,inferred,1401,1542,"[1949-11-02, 1950-03-23)",0,0,"[1949-11-02, 1950-03-23)",,,
@@ -24075,7 +24075,7 @@ scottde01,Dennis Scott,1995,NBA,1981-99,MAGIC,S2,inferred,17839,18062,"[1994-11-
 scottde01,Dennis Scott,1996,NBA,1981-99,MAGIC,S2,cross-checked,18174,18374,"[1995-10-05, 1996-04-22)",1,0,"[1995-11-03, 1996-04-22)",,18174,
 scottde01,Dennis Scott,1997,NBA,1981-99,MAGIC,S2,inferred,18567,18752,"[1996-11-01, 1997-05-05)",0,0,"[1996-11-01, 1997-05-05)",,,
 scottde01,Dennis Scott,1998,NBA,1981-99,MAVERICKS,S2,directly-evidenced,18894,19041,"[1997-09-24, 1998-02-18)",1,1,"[1997-10-31, 1998-04-18)",,18894,19041
-scottde01,Dennis Scott,1998,NBA,1981-99,SUNS,S2,cross-checked,19041,19112,"[1998-02-18, 1998-04-30)",1,0,"[1997-10-31, 1998-04-30)",,19041,
+scottde01,Dennis Scott,1998,NBA,1981-99,SUNS,S2,directly-evidenced,19041,19173,"[1998-02-18, 1998-06-30)",1,1,"[1997-10-31, 1998-04-30)",,19041,19173
 scottde01,Dennis Scott,1999,NBA,1981-99,TIMBERWOLVES,S2,unresolved,19433,19442,"[1999-03-17, 1999-03-26)",0,0,"[1999-02-05, 1999-05-16)",repeat-signing-prior-end-unknown,"19433,19442",
 scottde01,Dennis Scott,1999,NBA,1981-99,TIMBERWOLVES,S2,cross-checked,19442,19493,"[1999-03-26, 1999-05-16)",1,0,"[1999-02-05, 1999-05-16)",,"19433,19442",
 scottde01,Dennis Scott,1999,NBA,1981-99,KNICKS,S2,directly-evidenced,19381,19429,"[1999-01-24, 1999-03-13)",1,1,"[1999-02-05, 1999-06-26)",,19381,19429
@@ -24125,8 +24125,8 @@ sealsbr01,Bruce Seals,1977,NBA,1967-80,THUNDER,S2,unresolved,,,,0,0,,no-dated-ev
 sealsbr01,Bruce Seals,1978,NBA,1967-80,THUNDER,S2,inferred,11614,11846,"[1977-10-19, 1978-06-08)",0,0,"[1977-10-19, 1978-06-08)",,,
 sealssh01,Shea Seals,1998,NBA,1981-99,LAKERS,S2,cross-checked,18887,19137,"[1997-09-17, 1998-05-25)",1,0,"[1997-10-31, 1998-05-25)",,18887,
 sealyma01,Malik Sealy,1993,NBA,1981-99,PACERS,S2,inferred,17112,17293,"[1992-11-07, 1993-05-07)",0,0,"[1992-11-07, 1993-05-07)",,,
-sealyma01,Malik Sealy,1994,NBA,1981-99,PACERS,S2,inferred,17475,17645,"[1993-11-05, 1994-04-24)",0,0,"[1993-11-05, 1994-04-24)",,,
-sealyma01,Malik Sealy,1995,NBA,1981-99,CLIPPERS,S2,inferred,17839,18010,"[1994-11-04, 1995-04-24)",0,0,"[1994-11-04, 1995-04-24)",,,
+sealyma01,Malik Sealy,1994,NBA,1981-99,PACERS,S2,cross-checked,17475,17712,"[1993-11-05, 1994-06-30)",0,1,"[1993-11-05, 1994-04-24)",,,17712
+sealyma01,Malik Sealy,1995,NBA,1981-99,CLIPPERS,S2,cross-checked,17712,18010,"[1994-06-30, 1995-04-24)",1,0,"[1994-11-04, 1995-04-24)",,17712,
 sealyma01,Malik Sealy,1996,NBA,1981-99,CLIPPERS,S2,inferred,18203,18374,"[1995-11-03, 1996-04-22)",0,0,"[1995-11-03, 1996-04-22)",,,
 sealyma01,Malik Sealy,1997,NBA,1981-99,CLIPPERS,S2,inferred,18567,18746,"[1996-11-01, 1997-04-29)",0,0,"[1996-11-01, 1997-04-29)",,,
 sealyma01,Malik Sealy,1998,NBA,1981-99,PISTONS,S2,cross-checked,18925,19102,"[1997-10-25, 1998-04-20)",1,0,"[1997-10-31, 1998-04-20)",,18925,
@@ -24422,8 +24422,8 @@ shousde01,Dexter Shouse,1990,NBA,1981-99,76ERS,S2,directly-evidenced,16036,16046
 shriddi01,Dick Shrider,1949,BAA,BAA 1946-49,KNICKS,S2,inferred,1037,1188,"[1948-11-03, 1949-04-03)",0,0,"[1948-11-03, 1949-04-03)",,,
 shuege01,Gene Shue,1955,NBA,1950-66,KNICKS,S2,inferred,3224,3365,"[1954-10-30, 1955-03-20)",0,0,"[1954-10-30, 1955-03-20)",,,
 shuege01,Gene Shue,1955,NBA,1950-66,WARRIORS,S2,inferred,3238,3360,"[1954-11-13, 1955-03-15)",0,0,"[1954-11-13, 1955-03-15)",,,
-shuege01,Gene Shue,1956,NBA,1950-66,KNICKS,S2,inferred,3595,3727,"[1955-11-05, 1956-03-16)",0,0,"[1955-11-05, 1956-03-16)",,,
-shuege01,Gene Shue,1957,NBA,1950-66,PISTONS,S2,inferred,3952,4096,"[1956-10-27, 1957-03-20)",0,0,"[1956-10-27, 1957-03-20)",,,
+shuege01,Gene Shue,1956,NBA,1950-66,KNICKS,S2,cross-checked,3595,3772,"[1955-11-05, 1956-04-30)",0,1,"[1955-11-05, 1956-03-16)",,,3772
+shuege01,Gene Shue,1957,NBA,1950-66,PISTONS,S2,cross-checked,3772,4096,"[1956-04-30, 1957-03-20)",1,0,"[1956-10-27, 1957-03-20)",,3772,
 shuege01,Gene Shue,1958,NBA,1950-66,PISTONS,S2,inferred,4313,4451,"[1957-10-23, 1958-03-10)",0,0,"[1957-10-23, 1958-03-10)",,,
 shuege01,Gene Shue,1959,NBA,1950-66,PISTONS,S2,inferred,4674,4818,"[1958-10-19, 1959-03-12)",0,0,"[1958-10-19, 1959-03-12)",,,
 shuege01,Gene Shue,1960,NBA,1950-66,PISTONS,S2,inferred,5038,5186,"[1959-10-18, 1960-03-14)",0,0,"[1959-10-18, 1960-03-14)",,,
@@ -24904,8 +24904,8 @@ smithed01,Ed Smith,1954,NBA,1950-66,KNICKS,S2,inferred,2860,3002,"[1953-10-31, 1
 smithel01,Elmore Smith,1972,NBA,1967-80,CLIPPERS,S2,inferred,9415,9582,"[1971-10-12, 1972-03-27)",0,0,"[1971-10-12, 1972-03-27)",,,
 smithel01,Elmore Smith,1973,NBA,1967-80,CLIPPERS,S2,inferred,9779,9949,"[1972-10-10, 1973-03-29)",0,0,"[1972-10-10, 1973-03-29)",,,
 smithel01,Elmore Smith,1974,NBA,1967-80,LAKERS,S2,cross-checked,10116,10324,"[1973-09-12, 1974-04-08)",1,0,"[1973-10-09, 1974-04-08)",,10116,
-smithel01,Elmore Smith,1975,NBA,1967-80,LAKERS,S2,inferred,10517,10688,"[1974-10-18, 1975-04-07)",0,0,"[1974-10-18, 1975-04-07)",,,
-smithel01,Elmore Smith,1976,NBA,1967-80,BUCKS,S2,inferred,11060,11066,"[1976-04-13, 1976-04-19)",0,0,"[1976-04-13, 1976-04-19)",,,
+smithel01,Elmore Smith,1975,NBA,1967-80,LAKERS,S2,cross-checked,10517,10758,"[1974-10-18, 1975-06-16)",0,1,"[1974-10-18, 1975-04-07)",,,10758
+smithel01,Elmore Smith,1976,NBA,1967-80,BUCKS,S2,cross-checked,10758,11066,"[1975-06-16, 1976-04-19)",1,0,"[1976-04-13, 1976-04-19)",,10758,
 smithel01,Elmore Smith,1977,NBA,1967-80,CAVALIERS,S2,cross-checked,11335,11430,"[1977-01-13, 1977-04-18)",1,0,"[1977-04-13, 1977-04-18)",,11335,
 smithel01,Elmore Smith,1977,NBA,1967-80,BUCKS,S2,unresolved,,,,0,0,,"no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); departure-after-closed-stint(prior-spell-exit,or-source-noise)",,11335
 smithel01,Elmore Smith,1978,NBA,1967-80,CAVALIERS,S2,inferred,11613,11792,"[1977-10-18, 1978-04-15)",0,0,"[1977-10-18, 1978-04-15)",,,
@@ -24989,8 +24989,8 @@ smithjo02,Joe Smith,1999,NBA,1981-99,TIMBERWOLVES,S2,cross-checked,19379,19493,"
 smithjo02,Joe Smith,2000,NBA,2000-2025/26,TIMBERWOLVES,S2,inferred,19666,19833,"[1999-11-05, 2000-04-20)",0,0,"[1999-11-05, 2000-04-20)",,,
 smithjo02,Joe Smith,2001,NBA,2000-2025/26,PISTONS,S2,unresolved,20027,20047,"[2000-10-31, 2000-11-20)",0,0,"[2000-10-31, 2001-04-19)",same-day-arrival-and-departure(ordering-flagged),20047,20047
 smithjo02,Joe Smith,2002,NBA,2000-2025/26,TIMBERWOLVES,S2,cross-checked,20299,20561,"[2001-07-30, 2002-04-18)",1,0,"[2001-10-30, 2002-04-18)",,20299,
-smithjo02,Joe Smith,2003,NBA,2000-2025/26,TIMBERWOLVES,S2,inferred,20756,20940,"[2002-10-30, 2003-05-02)",0,0,"[2002-10-30, 2003-05-02)",,,
-smithjo02,Joe Smith,2004,NBA,2000-2025/26,BUCKS,S2,inferred,21120,21304,"[2003-10-29, 2004-04-30)",0,0,"[2003-10-29, 2004-04-30)",,,
+smithjo02,Joe Smith,2003,NBA,2000-2025/26,TIMBERWOLVES,S2,cross-checked,20756,20996,"[2002-10-30, 2003-06-27)",0,1,"[2002-10-30, 2003-05-02)",,,20996
+smithjo02,Joe Smith,2004,NBA,2000-2025/26,BUCKS,S2,cross-checked,20996,21304,"[2003-06-27, 2004-04-30)",1,0,"[2003-10-29, 2004-04-30)",,20996,
 smithjo02,Joe Smith,2005,NBA,2000-2025/26,BUCKS,S2,inferred,21491,21659,"[2004-11-03, 2005-04-20)",0,0,"[2004-11-03, 2005-04-20)",,,
 smithjo02,Joe Smith,2006,NBA,2000-2025/26,BUCKS,S2,inferred,21854,22023,"[2005-11-01, 2006-04-19)",0,0,"[2005-11-01, 2006-04-19)",,,
 smithjo02,Joe Smith,2007,NBA,2000-2025/26,NUGGETS,S2,directly-evidenced,22136,22267,"[2006-08-10, 2006-12-19)",1,1,"[2006-11-02, 2007-05-03)",,22136,22267
@@ -25744,8 +25744,8 @@ stricer01,Erick Strickland,1997,NBA,1981-99,MAVERICKS,S2,unresolved,18675,18683,
 stricer01,Erick Strickland,1997,NBA,1981-99,MAVERICKS,S2,cross-checked,18683,18737,"[1997-02-25, 1997-04-20)",1,1,"[1996-11-01, 1997-04-20)",,"18536,18675,18683",18634
 stricer01,Erick Strickland,1998,NBA,1981-99,MAVERICKS,S2,inferred,18931,19100,"[1997-10-31, 1998-04-18)",0,0,"[1997-10-31, 1998-04-18)",,,
 stricer01,Erick Strickland,1999,NBA,1981-99,MAVERICKS,S2,inferred,19393,19482,"[1999-02-05, 1999-05-05)",0,0,"[1999-02-05, 1999-05-05)",,,
-stricer01,Erick Strickland,2000,NBA,2000-2025/26,MAVERICKS,S2,inferred,19663,19833,"[1999-11-02, 2000-04-20)",0,0,"[1999-11-02, 2000-04-20)",,,
-stricer01,Erick Strickland,2001,NBA,2000-2025/26,KNICKS,S2,cross-checked,20027,20118,"[2000-10-31, 2001-01-30)",0,1,"[2000-10-31, 2001-05-05)",,,20118
+stricer01,Erick Strickland,2000,NBA,2000-2025/26,MAVERICKS,S2,cross-checked,19663,19902,"[1999-11-02, 2000-06-28)",0,1,"[1999-11-02, 2000-04-20)",,,19902
+stricer01,Erick Strickland,2001,NBA,2000-2025/26,KNICKS,S2,directly-evidenced,19902,20118,"[2000-06-28, 2001-01-30)",1,1,"[2000-10-31, 2001-05-05)",,19902,20118
 stricer01,Erick Strickland,2001,NBA,2000-2025/26,GRIZZLIES,S2,cross-checked,20118,20197,"[2001-01-30, 2001-04-19)",1,0,"[2000-10-31, 2001-04-19)",,20118,
 stricer01,Erick Strickland,2002,NBA,2000-2025/26,CELTICS,S2,cross-checked,20393,20561,"[2001-11-01, 2002-04-18)",1,0,"[2001-10-30, 2002-04-18)",,20393,
 stricer01,Erick Strickland,2003,NBA,2000-2025/26,PACERS,S2,cross-checked,20701,20940,"[2002-09-05, 2003-05-02)",1,0,"[2002-10-30, 2003-05-02)",,20701,
@@ -25797,8 +25797,8 @@ stronde01,Derek Strong,1996,NBA,1981-99,LAKERS,S2,cross-checked,18195,18374,"[19
 stronde01,Derek Strong,1997,NBA,1981-99,MAGIC,S2,cross-checked,18500,18752,"[1996-08-26, 1997-05-05)",1,0,"[1996-11-01, 1997-05-05)",,18500,
 stronde01,Derek Strong,1998,NBA,1981-99,MAGIC,S2,cross-checked,18825,19102,"[1997-07-17, 1998-04-20)",1,0,"[1997-10-31, 1998-04-20)",,18825,
 stronde01,Derek Strong,1999,NBA,1981-99,MAGIC,S2,cross-checked,19379,19493,"[1999-01-22, 1999-05-16)",1,0,"[1999-02-05, 1999-05-16)",,19379,
-stronde01,Derek Strong,2000,NBA,2000-2025/26,MAGIC,S2,inferred,19663,19833,"[1999-11-02, 2000-04-20)",0,0,"[1999-11-02, 2000-04-20)",,,
-stronde01,Derek Strong,2001,NBA,2000-2025/26,CLIPPERS,S2,inferred,20027,20196,"[2000-10-31, 2001-04-18)",0,0,"[2000-10-31, 2001-04-18)",,,
+stronde01,Derek Strong,2000,NBA,2000-2025/26,MAGIC,S2,cross-checked,19663,19902,"[1999-11-02, 2000-06-28)",0,1,"[1999-11-02, 2000-04-20)",,,19902
+stronde01,Derek Strong,2001,NBA,2000-2025/26,CLIPPERS,S2,cross-checked,19902,20196,"[2000-06-28, 2001-04-18)",1,0,"[2000-10-31, 2001-04-18)",,19902,
 strotla01,Lamont Strothers,1992,NBA,1981-99,TRAIL BLAZERS,S2,inferred,16740,16967,"[1991-11-01, 1992-06-15)",0,0,"[1991-11-01, 1992-06-15)",,,
 strotla01,Lamont Strothers,1993,NBA,1981-99,MAVERICKS,S2,directly-evidenced,17201,17222,"[1993-02-04, 1993-02-25)",1,1,"[1992-11-07, 1993-04-25)",,17201,17222
 stroujo01,John Stroud,1981,NBA,1981-99,ROCKETS,S2,inferred,12701,12918,"[1980-10-10, 1981-05-15)",0,0,"[1980-10-10, 1981-05-15)",,,
@@ -26470,9 +26470,9 @@ thompmy01,Mychal Thompson,1982,NBA,1981-99,TRAIL BLAZERS,S2,inferred,13086,13257
 thompmy01,Mychal Thompson,1983,NBA,1981-99,TRAIL BLAZERS,S2,inferred,13450,13637,"[1982-10-29, 1983-05-04)",0,0,"[1982-10-29, 1983-05-04)",,,
 thompmy01,Mychal Thompson,1984,NBA,1981-99,TRAIL BLAZERS,S2,inferred,13814,13996,"[1983-10-28, 1984-04-27)",0,0,"[1983-10-28, 1984-04-27)",,,
 thompmy01,Mychal Thompson,1985,NBA,1981-99,TRAIL BLAZERS,S2,inferred,14179,14372,"[1984-10-27, 1985-05-08)",0,0,"[1984-10-27, 1985-05-08)",,,
-thompmy01,Mychal Thompson,1986,NBA,1981-99,TRAIL BLAZERS,S2,inferred,14542,14724,"[1985-10-25, 1986-04-25)",0,0,"[1985-10-25, 1986-04-25)",,,
+thompmy01,Mychal Thompson,1986,NBA,1981-99,TRAIL BLAZERS,S2,cross-checked,14542,14779,"[1985-10-25, 1986-06-19)",0,1,"[1985-10-25, 1986-04-25)",,,14779
 thompmy01,Mychal Thompson,1987,NBA,1981-99,LAKERS,S2,cross-checked,15018,15140,"[1987-02-13, 1987-06-15)",1,0,"[1986-11-01, 1987-06-15)",,15018,
-thompmy01,Mychal Thompson,1987,NBA,1981-99,SPURS,S2,cross-checked,14913,15018,"[1986-10-31, 1987-02-13)",0,1,"[1986-10-31, 1987-04-20)",,,15018
+thompmy01,Mychal Thompson,1987,NBA,1981-99,SPURS,S2,directly-evidenced,14779,15018,"[1986-06-19, 1987-02-13)",1,1,"[1986-10-31, 1987-04-20)",,14779,15018
 thompmy01,Mychal Thompson,1988,NBA,1981-99,LAKERS,S2,inferred,15284,15513,"[1987-11-06, 1988-06-22)",0,0,"[1987-11-06, 1988-06-22)",,,
 thompmy01,Mychal Thompson,1989,NBA,1981-99,LAKERS,S2,inferred,15648,15870,"[1988-11-04, 1989-06-14)",0,0,"[1988-11-04, 1989-06-14)",,,
 thompmy01,Mychal Thompson,1990,NBA,1981-99,LAKERS,S2,inferred,16012,16206,"[1989-11-03, 1990-05-16)",0,0,"[1989-11-03, 1990-05-16)",,,
@@ -26755,9 +26755,9 @@ toppiob01,Obi Toppin,2024,NBA,2000-2025/26,PACERS,S2,unresolved,,,,0,0,,no-seaso
 toppiob01,Obi Toppin,2025,NBA,2000-2025/26,PACERS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,28676,
 toppiob01,Obi Toppin,2026,NBA,2000-2025/26,PACERS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
 torgoir01,Irv Torgoff,1947,BAA,BAA 1946-49,CAPITOLS,S2,inferred,305,468,"[1946-11-02, 1947-04-14)",0,0,"[1946-11-02, 1947-04-14)",,,
-torgoir01,Irv Torgoff,1948,BAA,BAA 1946-49,CAPITOLS,S2,inferred,680,813,"[1947-11-12, 1948-03-24)",0,0,"[1947-11-12, 1948-03-24)",,,
-torgoir01,Irv Torgoff,1949,BAA,BAA 1946-49,BULLETS-DEFUNCT,S2,inferred,1038,1181,"[1948-11-04, 1949-03-27)",0,0,"[1948-11-04, 1949-03-27)",,,
-torgoir01,Irv Torgoff,1949,BAA,BAA 1946-49,WARRIORS,S2,inferred,1037,1179,"[1948-11-03, 1949-03-25)",0,0,"[1948-11-03, 1949-03-25)",,,
+torgoir01,Irv Torgoff,1948,BAA,BAA 1946-49,CAPITOLS,S2,cross-checked,680,869,"[1947-11-12, 1948-05-19)",0,1,"[1947-11-12, 1948-03-24)",,,869
+torgoir01,Irv Torgoff,1949,BAA,BAA 1946-49,BULLETS-DEFUNCT,S2,cross-checked,869,1181,"[1948-05-19, 1949-03-27)",1,0,"[1948-11-04, 1949-03-27)",,869,
+torgoir01,Irv Torgoff,1949,BAA,BAA 1946-49,WARRIORS,S2,unresolved,1037,1179,"[1948-11-03, 1949-03-25)",0,0,"[1948-11-03, 1949-03-25)",multi-team-season(ordering-unresolved): player has dated moves to other franchises this season; bracket-only stint cannot be ordered against them,,
 tormobu01,Gene Tormohlen,1963,NBA,1950-66,HAWKS,S2,inferred,6136,6310,"[1962-10-20, 1963-04-12)",0,0,"[1962-10-20, 1963-04-12)",,,
 tormobu01,Gene Tormohlen,1964,NBA,1950-66,HAWKS,S2,inferred,6497,6681,"[1963-10-16, 1964-04-17)",0,0,"[1963-10-16, 1964-04-17)",,,
 tormobu01,Gene Tormohlen,1966,NBA,1950-66,HAWKS,S2,inferred,7227,7410,"[1965-10-15, 1966-04-16)",0,0,"[1965-10-15, 1966-04-16)",,,
@@ -26774,7 +26774,7 @@ toscaju01,Juan Toscano-Anderson,2023,NBA,2000-2025/26,LAKERS,S2,directly-evidenc
 toscaju01,Juan Toscano-Anderson,2023,NBA,2000-2025/26,JAZZ,S2,cross-checked,28163,28223,"[2023-02-09, 2023-04-10)",1,0,"[2022-10-19, 2023-04-10)",,28163,
 toscaju01,Juan Toscano-Anderson,2024,NBA,2000-2025/26,KINGS,S2,unresolved,28472,28495,"[2023-12-15, 2024-01-07)",0,0,,open-stint-without-window,"28472,28497",28495
 toshebi01,Bill Tosheff,1952,NBA,1950-66,OLYMPIANS,S2,inferred,2132,2276,"[1951-11-03, 1952-03-26)",0,0,"[1951-11-03, 1952-03-26)",,,
-toshebi01,Bill Tosheff,1953,NBA,1950-66,OLYMPIANS,S2,inferred,2495,2639,"[1952-10-31, 1953-03-24)",0,0,"[1952-10-31, 1953-03-24)",,,
+toshebi01,Bill Tosheff,1953,NBA,1950-66,OLYMPIANS,S2,unresolved,,,,0,0,,fuzzy-dated-rows-bear-on-this-tenure,,
 toshebi01,Bill Tosheff,1954,NBA,1950-66,HAWKS,S2,inferred,2859,2995,"[1953-10-30, 1954-03-15)",0,0,"[1953-10-30, 1954-03-15)",,,
 toughbo01,Bob Tough,1949,BAA,BAA 1946-49,PISTONS,S2,inferred,1037,1175,"[1948-11-03, 1949-03-21)",0,0,"[1948-11-03, 1949-03-21)",,,
 toughbo01,Bob Tough,1950,NBA,1950-66,BULLETS-DEFUNCT,S2,inferred,1401,1539,"[1949-11-02, 1950-03-20)",0,0,"[1949-11-02, 1950-03-20)",,,
@@ -27733,7 +27733,7 @@ walkesa01,Samaki Walker,1997,NBA,1981-99,MAVERICKS,S2,inferred,18567,18737,"[199
 walkesa01,Samaki Walker,1998,NBA,1981-99,MAVERICKS,S2,inferred,18931,19100,"[1997-10-31, 1998-04-18)",0,0,"[1997-10-31, 1998-04-18)",,,
 walkesa01,Samaki Walker,1999,NBA,1981-99,MAVERICKS,S2,inferred,19393,19482,"[1999-02-05, 1999-05-05)",0,0,"[1999-02-05, 1999-05-05)",,,
 walkesa01,Samaki Walker,2000,NBA,2000-2025/26,SPURS,S2,cross-checked,19595,19833,"[1999-08-26, 2000-04-20)",1,0,"[1999-11-02, 2000-04-20)",,19595,
-walkesa01,Samaki Walker,2001,NBA,2000-2025/26,SPURS,S2,inferred,20027,20236,"[2000-10-31, 2001-05-28)",0,0,"[2000-10-31, 2001-05-28)",,,
+walkesa01,Samaki Walker,2001,NBA,2000-2025/26,SPURS,S2,cross-checked,20027,20268,"[2000-10-31, 2001-06-29)",0,1,"[2000-10-31, 2001-05-28)",,,20268
 walkesa01,Samaki Walker,2002,NBA,2000-2025/26,LAKERS,S2,cross-checked,20289,20561,"[2001-07-20, 2002-04-18)",1,0,"[2001-10-30, 2002-04-18)",,20289,
 walkesa01,Samaki Walker,2003,NBA,2000-2025/26,LAKERS,S2,inferred,20755,20954,"[2002-10-29, 2003-05-16)",0,0,"[2002-10-29, 2003-05-16)",,,
 walkesa01,Samaki Walker,2004,NBA,2000-2025/26,HEAT,S2,cross-checked,21032,21323,"[2003-08-02, 2004-05-19)",1,0,"[2003-10-28, 2004-05-19)",,21032,
@@ -27770,7 +27770,7 @@ wallabe01,Ben Wallace,2006,NBA,2000-2025/26,PISTONS,S2,inferred,21855,22024,"[20
 wallabe01,Ben Wallace,2007,NBA,2000-2025/26,BULLS,S2,cross-checked,22108,22417,"[2006-07-13, 2007-05-18)",1,0,"[2006-10-31, 2007-05-18)",,22108,
 wallabe01,Ben Wallace,2008,NBA,2000-2025/26,BULLS,S2,cross-checked,22583,22696,"[2007-10-31, 2008-02-21)",0,1,"[2007-10-31, 2008-04-17)",,,22696
 wallabe01,Ben Wallace,2008,NBA,2000-2025/26,CAVALIERS,S2,cross-checked,22696,22784,"[2008-02-21, 2008-05-19)",1,0,"[2007-10-31, 2008-05-19)",,22696,
-wallabe01,Ben Wallace,2009,NBA,2000-2025/26,CAVALIERS,S2,inferred,22946,23161,"[2008-10-28, 2009-05-31)",0,0,"[2008-10-28, 2009-05-31)",,,
+wallabe01,Ben Wallace,2009,NBA,2000-2025/26,CAVALIERS,S2,cross-checked,22946,23187,"[2008-10-28, 2009-06-26)",0,1,"[2008-10-28, 2009-05-31)",,,23187
 wallabe01,Ben Wallace,2010,NBA,2000-2025/26,PISTONS,S2,cross-checked,23234,23480,"[2009-08-12, 2010-04-15)",1,0,"[2009-10-28, 2010-04-15)",,23234,
 wallabe01,Ben Wallace,2011,NBA,2000-2025/26,PISTONS,S2,inferred,23675,23844,"[2010-10-27, 2011-04-14)",0,0,"[2010-10-27, 2011-04-14)",,,
 wallabe01,Ben Wallace,2012,NBA,2000-2025/26,PISTONS,S2,inferred,24100,24223,"[2011-12-26, 2012-04-27)",0,0,"[2011-12-26, 2012-04-27)",,,
@@ -27796,7 +27796,7 @@ wallage01,Gerald Wallace,2015,NBA,2000-2025/26,CELTICS,S2,inferred,25138,25318,"
 wallajo01,John Wallace,1997,NBA,1981-99,KNICKS,S2,inferred,18567,18766,"[1996-11-01, 1997-05-19)",0,0,"[1996-11-01, 1997-05-19)",,,
 wallajo01,John Wallace,1998,NBA,1981-99,RAPTORS,S2,cross-checked,18910,19102,"[1997-10-10, 1998-04-20)",1,0,"[1997-10-31, 1998-04-20)",,18910,
 wallajo01,John Wallace,1999,NBA,1981-99,RAPTORS,S2,inferred,19393,19483,"[1999-02-05, 1999-05-06)",0,0,"[1999-02-05, 1999-05-06)",,,
-wallajo01,John Wallace,2000,NBA,2000-2025/26,KNICKS,S2,cross-checked,19575,19833,"[1999-08-06, 2000-04-20)",1,0,"[1999-11-02, 2000-04-20)",,19575,
+wallajo01,John Wallace,2000,NBA,2000-2025/26,KNICKS,S2,directly-evidenced,19575,19902,"[1999-08-06, 2000-06-28)",1,1,"[1999-11-02, 2000-04-20)",,19575,19902
 wallajo01,John Wallace,2001,NBA,2000-2025/26,PISTONS,S2,cross-checked,19964,20197,"[2000-08-29, 2001-04-19)",1,0,"[2000-10-31, 2001-04-19)",,19964,
 wallajo01,John Wallace,2002,NBA,2000-2025/26,SUNS,S2,cross-checked,20287,20561,"[2001-07-18, 2002-04-18)",1,0,"[2001-10-30, 2002-04-18)",,20287,
 wallajo01,John Wallace,2004,NBA,2000-2025/26,HEAT,S2,cross-checked,21038,21323,"[2003-08-08, 2004-05-19)",1,0,"[2003-10-28, 2004-05-19)",,21038,
@@ -27861,7 +27861,7 @@ walthpa01,Paul Walther,1950,NBA,1950-66,OLYMPIANS,S2,inferred,1400,1552,"[1949-1
 walthpa01,Paul Walther,1950,NBA,1950-66,LAKERS,S2,inferred,1401,1574,"[1949-11-02, 1950-04-24)",0,0,"[1949-11-02, 1950-04-24)",,,
 walthpa01,Paul Walther,1951,NBA,1950-66,OLYMPIANS,S2,inferred,1765,1910,"[1950-11-01, 1951-03-26)",0,0,"[1950-11-01, 1951-03-26)",,,
 walthpa01,Paul Walther,1952,NBA,1950-66,OLYMPIANS,S2,inferred,2132,2276,"[1951-11-03, 1952-03-26)",0,0,"[1951-11-03, 1952-03-26)",,,
-walthpa01,Paul Walther,1953,NBA,1950-66,OLYMPIANS,S2,inferred,2495,2639,"[1952-10-31, 1953-03-24)",0,0,"[1952-10-31, 1953-03-24)",,,
+walthpa01,Paul Walther,1953,NBA,1950-66,OLYMPIANS,S2,unresolved,,,,0,0,,fuzzy-dated-rows-bear-on-this-tenure,,
 walthpa01,Paul Walther,1954,NBA,1950-66,WARRIORS,S2,inferred,2860,2995,"[1953-10-31, 1954-03-15)",0,0,"[1953-10-31, 1954-03-15)",,,
 walthpa01,Paul Walther,1955,NBA,1950-66,PISTONS,S2,inferred,3224,3387,"[1954-10-30, 1955-04-11)",0,0,"[1954-10-30, 1955-04-11)",,,
 waltobi01,Bill Walton,1975,NBA,1967-80,TRAIL BLAZERS,S2,inferred,10517,10688,"[1974-10-18, 1975-04-07)",0,0,"[1974-10-18, 1975-04-07)",,,
@@ -28349,7 +28349,7 @@ weslewa01,Walt Wesley,1972,NBA,1967-80,CAVALIERS,S2,inferred,9418,9582,"[1971-10
 weslewa01,Walt Wesley,1973,NBA,1967-80,CAVALIERS,S2,cross-checked,9779,9822,"[1972-10-10, 1972-11-22)",0,1,"[1972-10-10, 1973-03-29)",,,9822
 weslewa01,Walt Wesley,1973,NBA,1967-80,SUNS,S2,cross-checked,9822,9949,"[1972-11-22, 1973-03-29)",1,0,"[1972-10-13, 1973-03-29)",,9822,
 weslewa01,Walt Wesley,1974,NBA,1967-80,WIZARDS,S2,cross-checked,10143,10329,"[1973-10-09, 1974-04-13)",1,0,"[1973-10-09, 1974-04-13)",,10143,
-weslewa01,Walt Wesley,1975,NBA,1967-80,BUCKS,S2,cross-checked,10557,10688,"[1974-11-27, 1975-04-07)",1,0,"[1974-10-18, 1975-04-07)",,10557,
+weslewa01,Walt Wesley,1975,NBA,1967-80,BUCKS,S2,directly-evidenced,10557,10758,"[1974-11-27, 1975-06-16)",1,1,"[1974-10-18, 1975-04-07)",,10557,10758
 weslewa01,Walt Wesley,1975,NBA,1967-80,76ERS,S2,directly-evidenced,10474,10548,"[1974-09-05, 1974-11-18)",1,1,"[1974-10-18, 1975-04-06)",,10474,10548
 weslewa01,Walt Wesley,1976,NBA,1967-80,LAKERS,S2,unresolved,,,,0,0,,"no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); departure-after-closed-stint(prior-spell-exit,or-source-noise)",,10895
 westbru01,Russell Westbrook,2009,NBA,2000-2025/26,THUNDER,S2,inferred,22947,23116,"[2008-10-29, 2009-04-16)",0,0,"[2008-10-29, 2009-04-16)",,,
@@ -28550,7 +28550,7 @@ whiteja01,Jahidi White,2004,NBA,2000-2025/26,WIZARDS,S2,cross-checked,21120,2112
 whiteja01,Jahidi White,2005,NBA,2000-2025/26,BOBCATS-HORNETS2,S2,inferred,21492,21660,"[2004-11-04, 2005-04-21)",0,0,"[2004-11-04, 2005-04-21)",,,
 whiteja02,James White,2007,NBA,2000-2025/26,SPURS,S2,cross-checked,22221,22445,"[2006-11-03, 2007-06-15)",1,0,"[2006-11-02, 2007-06-15)",,22221,
 whiteja02,James White,2009,NBA,2000-2025/26,ROCKETS,S2,cross-checked,23072,23148,"[2009-03-03, 2009-05-18)",1,0,"[2008-10-29, 2009-05-18)",,23072,
-whiteja02,James White,2013,NBA,2000-2025/26,KNICKS,S2,cross-checked,24298,24610,"[2012-07-11, 2013-05-19)",1,0,"[2013-04-20, 2013-05-19)",,24298,
+whiteja02,James White,2013,NBA,2000-2025/26,KNICKS,S2,directly-evidenced,24298,24652,"[2012-07-11, 2013-06-30)",1,1,"[2013-04-20, 2013-05-19)",,24298,24652
 whiteja03,Jack White,2023,NBA,2000-2025/26,NUGGETS,S2,cross-checked,27958,28287,"[2022-07-19, 2023-06-13)",1,0,"[2022-10-19, 2023-06-13)",,27958,
 whiteja03,Jack White,2024,NBA,2000-2025/26,GRIZZLIES,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,28588,
 whiteje01,Jerome Whitehead,1979,NBA,1967-80,CLIPPERS,S2,inferred,11973,12150,"[1978-10-13, 1979-04-08)",0,0,"[1978-10-13, 1979-04-08)",,,
@@ -28603,7 +28603,7 @@ whitero02,Rodney White,2002,NBA,2000-2025/26,PISTONS,S2,inferred,20391,20561,"[2
 whitero02,Rodney White,2003,NBA,2000-2025/26,NUGGETS,S2,cross-checked,20727,20925,"[2002-10-01, 2003-04-17)",1,0,"[2002-10-30, 2003-04-17)",,20727,
 whitero02,Rodney White,2004,NBA,2000-2025/26,NUGGETS,S2,inferred,21120,21305,"[2003-10-29, 2004-05-01)",0,0,"[2003-10-29, 2004-05-01)",,,
 whitero02,Rodney White,2005,NBA,2000-2025/26,NUGGETS,S2,cross-checked,21490,21604,"[2004-11-02, 2005-02-24)",0,1,"[2004-11-02, 2005-05-05)",,,21604
-whitero02,Rodney White,2005,NBA,2000-2025/26,WARRIORS,S2,cross-checked,21604,21660,"[2005-02-24, 2005-04-21)",1,0,"[2004-11-03, 2005-04-21)",,21604,
+whitero02,Rodney White,2005,NBA,2000-2025/26,WARRIORS,S2,directly-evidenced,21604,21730,"[2005-02-24, 2005-06-30)",1,1,"[2004-11-03, 2005-04-21)",,21604,21730
 whitero03,Royce White,2014,NBA,2000-2025/26,KINGS,S2,unresolved,24901,24913,"[2014-03-06, 2014-03-18)",0,0,"[2013-10-30, 2014-04-17)",repeat-signing-prior-end-unknown,"24901,24913",24923
 whitero03,Royce White,2014,NBA,2000-2025/26,KINGS,S2,directly-evidenced,24913,24923,"[2014-03-18, 2014-03-28)",1,1,"[2013-10-30, 2014-04-17)",,"24901,24913",24923
 whiteru01,Rudy White,1976,NBA,1967-80,ROCKETS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
@@ -28732,8 +28732,8 @@ wilkebo01,Bob Wilkerson,1977,NBA,1967-80,THUNDER,S2,unresolved,,,,0,0,,"no-seaso
 wilkebo01,Bob Wilkerson,1978,NBA,1967-80,NUGGETS,S2,cross-checked,11466,11825,"[1977-05-24, 1978-05-18)",1,0,"[1977-10-19, 1978-05-18)",,11466,
 wilkebo01,Bob Wilkerson,1979,NBA,1967-80,NUGGETS,S2,inferred,11973,12158,"[1978-10-13, 1979-04-16)",0,0,"[1978-10-13, 1979-04-16)",,,
 wilkebo01,Bob Wilkerson,1980,NBA,1967-80,NUGGETS,S2,inferred,12338,12505,"[1979-10-13, 1980-03-28)",0,0,"[1979-10-13, 1980-03-28)",,,
-wilkebo01,Bob Wilkerson,1981,NBA,1981-99,BULLS,S2,inferred,12702,12886,"[1980-10-11, 1981-04-13)",0,0,"[1980-10-11, 1981-04-13)",,,
-wilkebo01,Bob Wilkerson,1982,NBA,1981-99,CAVALIERS,S2,inferred,13086,13257,"[1981-10-30, 1982-04-19)",0,0,"[1981-10-30, 1982-04-19)",,,
+wilkebo01,Bob Wilkerson,1981,NBA,1981-99,BULLS,S2,unresolved,12702,12886,"[1980-10-11, 1981-04-13)",0,0,"[1980-10-11, 1981-04-13)",multi-team-season(ordering-unresolved): player has dated moves to other franchises this season; bracket-only stint cannot be ordered against them,,
+wilkebo01,Bob Wilkerson,1982,NBA,1981-99,CAVALIERS,S2,cross-checked,12954,13257,"[1981-06-20, 1982-04-19)",1,0,"[1981-10-30, 1982-04-19)",,12954,
 wilkebo01,Bob Wilkerson,1983,NBA,1981-99,CAVALIERS,S2,inferred,13450,13621,"[1982-10-29, 1983-04-18)",0,0,"[1982-10-29, 1983-04-18)",,,
 wilkeja01,Jamaal Wilkes,1975,NBA,1967-80,WARRIORS,S2,inferred,10517,10737,"[1974-10-18, 1975-05-26)",0,0,"[1974-10-18, 1975-05-26)",,,
 wilkeja01,Jamaal Wilkes,1976,NBA,1967-80,WARRIORS,S2,inferred,11067,11094,"[1976-04-20, 1976-05-17)",0,0,"[1976-04-20, 1976-05-17)",,,
@@ -29052,7 +29052,7 @@ williho01,Hot Rod Williams,1994,NBA,1981-99,CAVALIERS,S2,inferred,17475,17646,"[
 williho01,Hot Rod Williams,1995,NBA,1981-99,CAVALIERS,S2,inferred,17840,18021,"[1994-11-05, 1995-05-05)",0,0,"[1994-11-05, 1995-05-05)",,,
 williho01,Hot Rod Williams,1996,NBA,1981-99,SUNS,S2,cross-checked,18176,18374,"[1995-10-07, 1996-04-22)",1,0,"[1995-11-03, 1996-04-22)",,18176,
 williho01,Hot Rod Williams,1997,NBA,1981-99,SUNS,S2,inferred,18567,18751,"[1996-11-01, 1997-05-04)",0,0,"[1996-11-01, 1997-05-04)",,,
-williho01,Hot Rod Williams,1998,NBA,1981-99,SUNS,S2,inferred,18931,19112,"[1997-10-31, 1998-04-30)",0,0,"[1997-10-31, 1998-04-30)",,,
+williho01,Hot Rod Williams,1998,NBA,1981-99,SUNS,S2,cross-checked,18931,19173,"[1997-10-31, 1998-06-30)",0,1,"[1997-10-31, 1998-04-30)",,,19173
 williho01,Hot Rod Williams,1999,NBA,1981-99,MAVERICKS,S2,cross-checked,19379,19482,"[1999-01-22, 1999-05-05)",1,0,"[1999-02-05, 1999-05-05)",,19379,
 willija01,Jayson Williams,1991,NBA,1981-99,76ERS,S2,inferred,16376,16570,"[1990-11-02, 1991-05-15)",0,0,"[1990-11-02, 1991-05-15)",,,
 willija01,Jayson Williams,1992,NBA,1981-99,76ERS,S2,inferred,16740,16910,"[1991-11-01, 1992-04-19)",0,0,"[1991-11-01, 1992-04-19)",,,
@@ -29422,7 +29422,7 @@ willite01,Terrence Williams,2011,NBA,2000-2025/26,ROCKETS,S2,cross-checked,23724
 willite01,Terrence Williams,2011,NBA,2000-2025/26,NETS,S2,cross-checked,23675,23724,"[2010-10-27, 2010-12-15)",0,1,"[2010-10-27, 2011-04-14)",,,23724
 willite01,Terrence Williams,2012,NBA,2000-2025/26,ROCKETS,S2,cross-checked,24100,24181,"[2011-12-26, 2012-03-16)",0,1,"[2011-12-26, 2012-04-27)",,,24181
 willite01,Terrence Williams,2012,NBA,2000-2025/26,KINGS,S2,cross-checked,24186,24223,"[2012-03-21, 2012-04-27)",1,0,"[2011-12-26, 2012-04-27)",,24186,
-willite01,Terrence Williams,2013,NBA,2000-2025/26,CELTICS,S2,cross-checked,24522,24595,"[2013-02-20, 2013-05-04)",1,0,"[2013-04-20, 2013-05-04)",,24522,
+willite01,Terrence Williams,2013,NBA,2000-2025/26,CELTICS,S2,directly-evidenced,24522,24652,"[2013-02-20, 2013-06-30)",1,1,"[2013-04-20, 2013-05-04)",,24522,24652
 willitr01,Travis Williams,1998,NBA,1981-99,HORNETS-PELICANS,S2,cross-checked,18880,19126,"[1997-09-10, 1998-05-14)",1,0,"[1997-10-31, 1998-05-14)",,18880,
 willitr01,Travis Williams,1999,NBA,1981-99,HORNETS-PELICANS,S2,cross-checked,19393,19432,"[1999-02-05, 1999-03-16)",0,1,"[1999-02-05, 1999-05-06)",,,19432
 willitr02,Troy Williams,2017,NBA,2000-2025/26,ROCKETS,S2,unresolved,26001,26011,"[2017-03-10, 2017-03-20)",0,0,"[2016-10-26, 2017-05-12)",repeat-signing-prior-end-unknown,"26001,26011",
@@ -29524,8 +29524,9 @@ wilsotr01,Trevor Wilson,1994,NBA,1981-99,KINGS,S2,cross-checked,17515,17646,"[19
 wilsotr01,Trevor Wilson,1995,NBA,1981-99,KINGS,S2,directly-evidenced,17811,17905,"[1994-10-07, 1995-01-09)",1,1,"[1994-11-04, 1995-04-24)",,17811,17905
 wilsotr01,Trevor Wilson,1996,NBA,1981-99,76ERS,S2,directly-evidenced,18237,18253,"[1995-12-07, 1995-12-23)",1,1,"[1995-11-03, 1996-04-22)",,18237,18253
 wiltjky01,Kyle Wiltjer,2017,NBA,2000-2025/26,ROCKETS,S2,directly-evidenced,25833,26111,"[2016-09-23, 2017-06-28)",1,1,"[2016-10-26, 2017-05-12)",,25833,26111
-winchke01,Kennard Winchester,1991,NBA,1981-99,ROCKETS,S2,cross-checked,16324,16556,"[1990-09-11, 1991-05-01)",1,0,"[1990-11-02, 1991-05-01)",,16324,
-winchke01,Kennard Winchester,1992,NBA,1981-99,ROCKETS,S2,unresolved,16740,16750,"[1991-11-01, 1991-11-11)",0,0,"[1991-11-01, 1992-04-20)","departure-after-closed-stint(prior-spell-exit,or-source-noise)",16740,"16674,16750"
+winchke01,Kennard Winchester,1991,NBA,1981-99,ROCKETS,S2,unresolved,16324,16614,"[1990-09-11, 1991-06-28)",0,0,"[1990-11-02, 1991-05-01)",arrival-after-window-end(next-season-move); repeat-signing-prior-end-unknown,"16324,16614",
+winchke01,Kennard Winchester,1992,NBA,1981-99,ROCKETS,S2,unresolved,16614,16674,"[1991-06-28, 1991-08-27)",0,0,"[1991-11-01, 1992-04-20)",stint-entirely-outside-team-season-window(stands-on-transactions-alone),"16614,16740","16674,16750"
+winchke01,Kennard Winchester,1992,NBA,1981-99,ROCKETS,S2,directly-evidenced,16740,16750,"[1991-11-01, 1991-11-11)",1,1,"[1991-11-01, 1992-04-20)",,"16614,16740","16674,16750"
 winchke01,Kennard Winchester,1992,NBA,1981-99,KNICKS,S2,cross-checked,16753,16939,"[1991-11-14, 1992-05-18)",1,0,"[1991-11-01, 1992-05-18)",,16753,
 winchke01,Kennard Winchester,1993,NBA,1981-99,ROCKETS,S2,cross-checked,17082,17309,"[1992-10-08, 1993-05-23)",1,0,"[1992-11-06, 1993-05-23)",,17082,
 windito01,Tony Windis,1960,NBA,1950-66,PISTONS,S2,inferred,5038,5186,"[1959-10-18, 1960-03-14)",0,0,"[1959-10-18, 1960-03-14)",,,
@@ -29547,7 +29548,7 @@ wingada01,David Wingate,1987,NBA,1981-99,76ERS,S2,inferred,14913,15098,"[1986-10
 wingada01,David Wingate,1988,NBA,1981-99,76ERS,S2,inferred,15284,15455,"[1987-11-06, 1988-04-25)",0,0,"[1987-11-06, 1988-04-25)",,,
 wingada01,David Wingate,1989,NBA,1981-99,76ERS,S2,inferred,15648,15828,"[1988-11-04, 1989-05-03)",0,0,"[1988-11-04, 1989-05-03)",,,
 wingada01,David Wingate,1990,NBA,1981-99,SPURS,S2,cross-checked,15945,16210,"[1989-08-28, 1990-05-20)",1,0,"[1989-11-04, 1990-05-20)",,15945,
-wingada01,David Wingate,1991,NBA,1981-99,SPURS,S2,inferred,16377,16559,"[1990-11-03, 1991-05-04)",0,0,"[1990-11-03, 1991-05-04)",,,
+wingada01,David Wingate,1991,NBA,1981-99,SPURS,S2,cross-checked,16377,16614,"[1990-11-03, 1991-06-28)",0,1,"[1990-11-03, 1991-05-04)",,,16614
 wingada01,David Wingate,1992,NBA,1981-99,WIZARDS,S2,cross-checked,16708,16910,"[1991-09-30, 1992-04-19)",1,0,"[1991-11-01, 1992-04-19)",,16708,
 wingada01,David Wingate,1993,NBA,1981-99,HORNETS-PELICANS,S2,cross-checked,17123,17305,"[1992-11-18, 1993-05-19)",1,0,"[1992-11-06, 1993-05-19)",,17123,
 wingada01,David Wingate,1994,NBA,1981-99,HORNETS-PELICANS,S2,inferred,17475,17646,"[1993-11-05, 1994-04-25)",0,0,"[1993-11-05, 1994-04-25)",,,
@@ -29579,8 +29580,8 @@ winslju01,Justise Winslow,2023,NBA,2000-2025/26,TRAIL BLAZERS,S2,inferred,28050,
 winslri01,Rickie Winslow,1988,NBA,1981-99,BUCKS,S2,directly-evidenced,15291,15330,"[1987-11-13, 1987-12-22)",1,1,"[1987-11-06, 1988-05-09)",,15291,15330
 winstca01,Cassius Winston,2021,NBA,2000-2025/26,WIZARDS,S2,cross-checked,27359,27547,"[2020-11-27, 2021-06-03)",1,0,"[2020-12-23, 2021-06-03)",,27359,
 winstca01,Cassius Winston,2022,NBA,2000-2025/26,WIZARDS,S2,cross-checked,27624,27859,"[2021-08-19, 2022-04-11)",1,0,"[2021-10-20, 2022-04-11)",,27624,
-wintebr01,Brian Winters,1975,NBA,1967-80,LAKERS,S2,inferred,10517,10688,"[1974-10-18, 1975-04-07)",0,0,"[1974-10-18, 1975-04-07)",,,
-wintebr01,Brian Winters,1976,NBA,1967-80,BUCKS,S2,inferred,11060,11066,"[1976-04-13, 1976-04-19)",0,0,"[1976-04-13, 1976-04-19)",,,
+wintebr01,Brian Winters,1975,NBA,1967-80,LAKERS,S2,cross-checked,10517,10758,"[1974-10-18, 1975-06-16)",0,1,"[1974-10-18, 1975-04-07)",,,10758
+wintebr01,Brian Winters,1976,NBA,1967-80,BUCKS,S2,cross-checked,10758,11066,"[1975-06-16, 1976-04-19)",1,0,"[1976-04-13, 1976-04-19)",,10758,
 wintebr01,Brian Winters,1977,NBA,1967-80,BUCKS,S2,unresolved,,,,0,0,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23),,
 wintebr01,Brian Winters,1978,NBA,1967-80,BUCKS,S2,inferred,11613,11811,"[1977-10-18, 1978-05-04)",0,0,"[1977-10-18, 1978-05-04)",,,
 wintebr01,Brian Winters,1979,NBA,1967-80,BUCKS,S2,inferred,11974,12149,"[1978-10-14, 1979-04-07)",0,0,"[1978-10-14, 1979-04-07)",,,
@@ -29960,8 +29961,8 @@ youngth01,Thaddeus Young,2019,NBA,2000-2025/26,PACERS,S2,inferred,26587,26774,"[
 youngth01,Thaddeus Young,2020,NBA,2000-2025/26,BULLS,S2,cross-checked,26849,27098,"[2019-07-06, 2020-03-11)",1,0,"[2019-10-23, 2020-03-11)",,26849,
 youngth01,Thaddeus Young,2021,NBA,2000-2025/26,BULLS,S2,inferred,27385,27530,"[2020-12-23, 2021-05-17)",0,0,"[2020-12-23, 2021-05-17)",,,
 youngth01,Thaddeus Young,2022,NBA,2000-2025/26,SPURS,S2,directly-evidenced,27616,27799,"[2021-08-11, 2022-02-10)",1,1,"[2021-10-20, 2022-04-11)",,27616,27799
-youngth01,Thaddeus Young,2022,NBA,2000-2025/26,RAPTORS,S2,cross-checked,27799,27877,"[2022-02-10, 2022-04-29)",1,0,"[2021-10-20, 2022-04-29)",,27799,
-youngth01,Thaddeus Young,2023,NBA,2000-2025/26,RAPTORS,S2,inferred,28050,28223,"[2022-10-19, 2023-04-10)",0,0,"[2022-10-19, 2023-04-10)",,,
+youngth01,Thaddeus Young,2022,NBA,2000-2025/26,RAPTORS,S2,unresolved,27799,27939,"[2022-02-10, 2022-06-30)",0,0,"[2021-10-20, 2022-04-29)",arrival-after-window-end(next-season-move); repeat-signing-prior-end-unknown,"27799,27939",
+youngth01,Thaddeus Young,2023,NBA,2000-2025/26,RAPTORS,S2,cross-checked,27939,28223,"[2022-06-30, 2023-04-10)",1,0,"[2022-10-19, 2023-04-10)",,27939,
 youngth01,Thaddeus Young,2024,NBA,2000-2025/26,SUNS,S2,unresolved,,,,0,0,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window,28539,
 youngth01,Thaddeus Young,2024,NBA,2000-2025/26,RAPTORS,S2,unresolved,,,,0,0,,"no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); departure-after-closed-stint(prior-spell-exit,or-source-noise)",,28527
 youngti01,Tim Young,2000,NBA,2000-2025/26,WARRIORS,S2,inferred,19663,19833,"[1999-11-02, 2000-04-20)",0,0,"[1999-11-02, 2000-04-20)",,,

@@ -280,3 +280,83 @@ fn in_memory_and_file_import_share_strict_uncertainty_rules() {
         );
     }
 }
+
+#[tokio::test]
+async fn appearance_counts_prove_historical_chain_without_inventing_tenure_dates() {
+    let root = snapshot();
+    std::fs::write(root.join("t3/player-universe.csv"), "bbr_player_id,display_name,first_season,last_season,aba_only\nmaravpe01,Pete Maravich,1971,1980,N\ngoodrga01,Gail Goodrich,1966,1979,N\nabdulka01,Kareem Abdul-Jabbar,1970,1989,N\n").unwrap();
+    std::fs::write(root.join("t4/tenures.csv"), "bbr_player_id,season,lg,canonical_franchise,membership_source,evidence_class,start_day,end_day,start_anchored,end_anchored\nmaravpe01,1977,NBA,JAZZ,S2,inferred,1,200,0,0\ngoodrga01,1977,NBA,JAZZ,S2,inferred,1,200,0,0\ngoodrga01,1976,NBA,LAKERS,S2,unresolved,,,0,0\nabdulka01,1976,NBA,LAKERS,S2,unresolved,,,0,0\n").unwrap();
+    std::fs::write(root.join("t4/appearance-counts.csv"), "player,team,season,lg,games,team_games,player_record,team_record\nmaravpe01,JAZZ,1977,NBA,73,82,S2:player:1,S2:team:1\ngoodrga01,JAZZ,1977,NBA,27,82,S2:player:2,S2:team:1\ngoodrga01,LAKERS,1976,NBA,75,82,S2:player:3,S2:team:2\nabdulka01,LAKERS,1976,NBA,82,82,S2:player:4,S2:team:2\n").unwrap();
+    let app =
+        app_server::app_with_report_data(root, app_server::JevHandle::unconfigured()).unwrap();
+    let chain = get(app.clone(), "/api/connection?from=maravpe01&to=abdulka01").await;
+    assert_eq!(chain["result"], "connected");
+    assert_eq!(chain["degree"], 2);
+    assert_eq!(
+        chain["path"],
+        json!(["maravpe01", "goodrga01", "abdulka01"])
+    );
+    assert_eq!(chain["links"][0]["overlap_days"], Value::Null);
+    assert_eq!(chain["links"][0]["minimum_shared_games"], 18);
+    let edge = get(app, "/api/edges/maravpe01").await;
+    assert_eq!(
+        edge["edges"][0]["evidence"][0]["appearance_proof"]["team_games"],
+        82
+    );
+}
+
+#[tokio::test]
+async fn insufficient_appearance_counts_and_non_overlapping_stints_do_not_create_links() {
+    let root = snapshot();
+    std::fs::write(root.join("t4/appearance-counts.csv"), "player,team,season,lg,games,team_games,player_record,team_record\na,RED,2000,NBA,40,82,S2:1,S2:team\nd,RED,2000,NBA,42,82,S2:2,S2:team\n").unwrap();
+    let app =
+        app_server::app_with_report_data(root, app_server::JevHandle::unconfigured()).unwrap();
+    let chain = get(app, "/api/connection?from=a&to=d").await;
+    assert_eq!(
+        chain["result"], "disconnected",
+        "A+B=N does not prove a shared game"
+    );
+}
+
+#[test]
+fn conflicting_appearance_totals_are_rejected_instead_of_creating_edges() {
+    let root = snapshot();
+    std::fs::write(root.join("t4/appearance-counts.csv"), "player,team,season,lg,games,team_games,player_record,team_record\na,RED,2000,NBA,80,82,S2:1,S2:team\nd,RED,2000,NBA,80,81,S2:2,S2:team\n").unwrap();
+    assert!(app_server::app_with_report_data(root, app_server::JevHandle::unconfigured()).is_err());
+}
+
+#[test]
+fn conflicting_duplicate_player_appearance_counts_are_rejected() {
+    let root = snapshot();
+    std::fs::write(root.join("t4/appearance-counts.csv"), "player,team,season,lg,games,team_games,player_record,team_record\na,RED,2000,NBA,80,82,S2:1,S2:team\na,RED,2000,NBA,79,82,S2:2,S2:team\n").unwrap();
+    assert!(app_server::app_with_report_data(root, app_server::JevHandle::unconfigured()).is_err());
+}
+
+#[tokio::test]
+async fn a_dated_shared_game_recovers_a_low_appearance_teammate_without_inventing_days() {
+    let root = snapshot();
+    std::fs::write(root.join("t4/game-witnesses.csv"), "a,b,team,season,game_id,date,a_source,b_source\na,d,RED,2000,0029900001,1999-11-01,S1:game:1:event:10:player1,S1:game:1:event:11:player1\n").unwrap();
+    let app =
+        app_server::app_with_report_data(root, app_server::JevHandle::unconfigured()).unwrap();
+    let chain = get(app.clone(), "/api/connection?from=a&to=d").await;
+    assert_eq!(chain["result"], "connected");
+    assert_eq!(chain["degree"], 1);
+    assert_eq!(chain["links"][0]["overlap_days"], Value::Null);
+    assert_eq!(chain["links"][0]["minimum_shared_games"], 1);
+    let edges = get(app, "/api/edges/d").await;
+    assert_eq!(
+        edges["edges"][0]["evidence"][0]["game_witness"]["date"],
+        "1999-11-01"
+    );
+}
+
+#[test]
+fn game_witnesses_cannot_create_unknown_or_self_teammates() {
+    for pair in ["a,a", "a,ghost"] {
+        let root = snapshot();
+        std::fs::write(root.join("t4/game-witnesses.csv"), format!("a,b,team,season,game_id,date,a_source,b_source\n{pair},RED,2000,0029900001,1999-11-01,S1:event:1,S1:event:2\n")).unwrap();
+        assert!(
+            app_server::app_with_report_data(root, app_server::JevHandle::unconfigured()).is_err()
+        );
+    }
+}

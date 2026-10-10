@@ -1,9 +1,11 @@
-//! Deterministic teammate graph for fixture and canonical historical tenures.
+//! Deterministic teammate graph for canonical roster overlap evidence.
 //!
 //! Domain rules (spec, Implementation Decisions):
 //! - Nodes are player nodes, identified independently of display names.
-//! - A teammate edge requires a positive time overlap of roster tenures on the
-//!   same team. Same-franchise, non-overlapping tenures do not create an edge.
+//! - A teammate edge requires evidence of simultaneous membership: positive
+//!   dated tenure overlap, mathematically guaranteed shared appearances, or
+//!   identified participation in the same official team game. Season membership
+//!   alone and non-overlapping same-franchise tenures do not create an edge.
 //! - A player's tenures are independent intervals; a stint only links them to
 //!   players overlapping that stint.
 //! - Repeated overlaps between the same pair collapse to one undirected
@@ -76,7 +78,73 @@ pub struct RosterData {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct EdgeEvidence {
     pub team: String,
-    pub overlap_days: u32,
+    pub overlap_days: Option<u32>,
+    pub appearance_proof: Option<AppearanceProof>,
+    pub game_witness: Option<GameWitness>,
+}
+
+/// Regular-season appearance counts from one player/team/season source record.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct AppearanceCount {
+    pub player: String,
+    pub team: String,
+    pub season: u32,
+    pub games: u32,
+    pub team_games: u32,
+    pub player_record: String,
+    pub team_record: String,
+}
+
+/// A + B > N proves at least A + B - N shared team games. It does not
+/// establish which dates overlapped or uninterrupted roster service.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct AppearanceProof {
+    pub season: u32,
+    pub a_games: u32,
+    pub b_games: u32,
+    pub team_games: u32,
+    pub minimum_shared_games: u32,
+    pub player_records: [String; 2],
+    pub team_record: String,
+}
+
+/// Two identified players observed in the same official team game.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct GameWitness {
+    pub a: String,
+    pub b: String,
+    pub team: String,
+    pub season: u32,
+    pub game_id: String,
+    pub date: String,
+    pub sources: [String; 2],
+}
+
+impl EdgeEvidence {
+    pub fn minimum_shared_games(&self) -> Option<u32> {
+        self.appearance_proof
+            .as_ref()
+            .map(|p| p.minimum_shared_games)
+            .or_else(|| self.game_witness.as_ref().map(|_| 1))
+    }
+
+    pub fn description(&self) -> String {
+        if let Some(days) = self.overlap_days {
+            format!("{days} overlapping roster day(s)")
+        } else if let Some(proof) = &self.appearance_proof {
+            format!(
+                "at least {} shared team game(s) in the {} season; roster overlap dates unknown",
+                proof.minimum_shared_games, proof.season
+            )
+        } else if let Some(witness) = &self.game_witness {
+            format!(
+                "shared team game on {}; roster duration unknown",
+                witness.date
+            )
+        } else {
+            "Roster overlap duration unknown".into()
+        }
+    }
 }
 
 /// An undirected teammate edge with its accumulated evidence.
@@ -89,8 +157,8 @@ pub struct TeammateEdge {
 }
 
 impl TeammateEdge {
-    /// Positive overlap in days, summed across all evidenced stints.
-    pub fn overlap_days(&self) -> u32 {
+    /// Sum of certified dated overlaps; unknown if any certificate lacks full dates.
+    pub fn overlap_days(&self) -> Option<u32> {
         self.evidence.iter().map(|e| e.overlap_days).sum()
     }
 }
@@ -151,7 +219,9 @@ impl RosterData {
                     .into_iter()
                     .map(|(team, days)| EdgeEvidence {
                         team: team.to_string(),
-                        overlap_days: days,
+                        overlap_days: Some(days),
+                        appearance_proof: None,
+                        game_witness: None,
                     })
                     .collect(),
             })
@@ -163,6 +233,8 @@ impl RosterData {
 /// the roster data retained as edge provenance.
 pub struct TeammateGraph {
     pub roster: RosterData,
+    pub appearance_counts: Vec<AppearanceCount>,
+    pub game_witnesses: Vec<GameWitness>,
     graph: Graph<Player, Vec<EdgeEvidence>, Directed>,
     by_id: HashMap<String, NodeIndex>,
     neighbors: Vec<Vec<NodeIndex>>,
@@ -185,8 +257,9 @@ pub struct LinkEvidence {
     pub to: String,
     /// The team that establishes the teammate relationship.
     pub team: String,
-    /// The positive overlap in days evidenced for this link.
-    pub overlap_days: u32,
+    /// Certified dated overlap, or None when only the relationship is proved.
+    pub overlap_days: Option<u32>,
+    pub minimum_shared_games: Option<u32>,
 }
 
 /// A shortest chain plus its degree of separation.
@@ -210,13 +283,108 @@ pub enum Connection {
 impl TeammateGraph {
     /// Build a graph from roster data using the domain rules above.
     pub fn build(roster: RosterData) -> Self {
+        Self::build_with_appearances(roster, Vec::new())
+    }
+
+    pub fn build_with_appearances(
+        roster: RosterData,
+        appearance_counts: Vec<AppearanceCount>,
+    ) -> Self {
+        Self::build_with_evidence(roster, appearance_counts, Vec::new())
+    }
+
+    pub fn build_with_evidence(
+        roster: RosterData,
+        appearance_counts: Vec<AppearanceCount>,
+        game_witnesses: Vec<GameWitness>,
+    ) -> Self {
         let mut graph = Graph::new();
         let mut by_id = HashMap::new();
         for player in &roster.players {
             let node = graph.add_node(player.clone());
             by_id.insert(player.id.clone(), node);
         }
-        for edge in roster.teammate_edges() {
+        let mut edges: BTreeMap<(String, String), TeammateEdge> = roster
+            .teammate_edges()
+            .into_iter()
+            .map(|e| ((e.a.clone(), e.b.clone()), e))
+            .collect();
+        let mut counts: BTreeMap<(&str, u32), Vec<&AppearanceCount>> = BTreeMap::new();
+        for count in &appearance_counts {
+            if by_id.contains_key(&count.player)
+                && count.games > 0
+                && count.games <= count.team_games
+            {
+                counts
+                    .entry((&count.team, count.season))
+                    .or_default()
+                    .push(count);
+            }
+        }
+        for ((team, season), mut rows) in counts {
+            rows.sort_by_key(|r| &r.player);
+            rows.dedup();
+            if rows.iter().any(|r| r.team_games != rows[0].team_games) {
+                continue;
+            }
+            for (i, a) in rows.iter().enumerate() {
+                for b in rows.iter().skip(i + 1) {
+                    if a.player == b.player {
+                        continue;
+                    }
+                    let minimum = (u64::from(a.games) + u64::from(b.games))
+                        .saturating_sub(u64::from(a.team_games))
+                        as u32;
+                    if minimum == 0 {
+                        continue;
+                    }
+                    let edge = edges
+                        .entry((a.player.clone(), b.player.clone()))
+                        .or_insert_with(|| TeammateEdge {
+                            a: a.player.clone(),
+                            b: b.player.clone(),
+                            evidence: Vec::new(),
+                        });
+                    edge.evidence.push(EdgeEvidence {
+                        team: team.into(),
+                        overlap_days: None,
+                        game_witness: None,
+                        appearance_proof: Some(AppearanceProof {
+                            season,
+                            a_games: a.games,
+                            b_games: b.games,
+                            team_games: a.team_games,
+                            minimum_shared_games: minimum,
+                            player_records: [a.player_record.clone(), b.player_record.clone()],
+                            team_record: a.team_record.clone(),
+                        }),
+                    });
+                }
+            }
+        }
+        for witness in &game_witnesses {
+            if witness.a >= witness.b
+                || !by_id.contains_key(&witness.a)
+                || !by_id.contains_key(&witness.b)
+            {
+                continue;
+            }
+            edges
+                .entry((witness.a.clone(), witness.b.clone()))
+                .or_insert_with(|| TeammateEdge {
+                    a: witness.a.clone(),
+                    b: witness.b.clone(),
+                    evidence: Vec::new(),
+                })
+                .evidence
+                .push(EdgeEvidence {
+                    team: witness.team.clone(),
+                    overlap_days: None,
+                    appearance_proof: None,
+                    game_witness: Some(witness.clone()),
+                });
+        }
+        for edge in edges.into_values() {
             let a = by_id[&edge.a];
             let b = by_id[&edge.b];
             graph.add_edge(a, b, edge.evidence);
@@ -233,6 +401,8 @@ impl TeammateGraph {
             neighbors,
             statistics: std::sync::OnceLock::new(),
             roster,
+            appearance_counts,
+            game_witnesses,
             graph,
             by_id,
         }
@@ -414,6 +584,7 @@ impl TeammateGraph {
                 to: self.graph[b].id.clone(),
                 team: evidence.team.clone(),
                 overlap_days: evidence.overlap_days,
+                minimum_shared_games: evidence.minimum_shared_games(),
             });
         }
         links

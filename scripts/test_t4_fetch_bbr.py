@@ -15,6 +15,26 @@ sys.path.insert(0, HERE)
 from t4_fetch_bbr import FetchOutcome, http_ledger_record, parse_transactions_html  # noqa: E402
 
 
+class TestOptionalListItemEndTags(unittest.TestCase):
+    def test_final_transaction_without_li_end_tag_is_retained(self):
+        html = ('<span id="transactions_link"></span><ul><li>'
+                '<span>June 16, 1975</span><p>The '
+                '<a data-attr-from="MIL">Milwaukee Bucks</a> traded '
+                '<a href="/players/a/abdulka01.html">Kareem Abdul-Jabbar</a> to the '
+                '<a data-attr-to="LAL">Los Angeles Lakers</a>.</p></ul>')
+        rows, _, _ = parse_transactions_html(html, 'NBA', 1975)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]['date_iso'], '1975-06-16')
+        self.assertEqual(rows[0]['legs'][0]['arrive'], 'LAL')
+
+    def test_implicit_item_close_and_end_of_input_preserve_distinct_dates(self):
+        html = ('<span id="transactions_link"></span><ul>'
+                '<li><span>June 15, 1975</span><p>First transaction.</p>'
+                '<li><span>June 16, 1975</span><p>Second transaction.</p>')
+        rows, _, _ = parse_transactions_html(html, 'NBA', 1975)
+        self.assertEqual([r['date_iso'] for r in rows], ['1975-06-15', '1975-06-16'])
+
+
 class TestRequestLedgerPrecision(unittest.TestCase):
     def test_http_events_record_fractional_utc_and_measured_spacing(self):
         started = datetime(2026, 10, 9, 12, 34, 56, 123456, tzinfo=timezone.utc)

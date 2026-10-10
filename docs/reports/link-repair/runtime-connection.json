@@ -1,0 +1,39 @@
+{
+  "coverage": {
+    "appearance_proven_edges": 99710,
+    "certified_tenures": 2270,
+    "complete": false,
+    "excluded_tenures": {
+      "cross-checked": 10221,
+      "inferred": 13340,
+      "unresolved": 4227
+    },
+    "game_witnessed_edges": 437,
+    "players_without_certified_tenure": 3516,
+    "players_without_evidenced_edge": 41,
+    "warning": "Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players."
+  },
+  "degree": 2,
+  "links": [
+    {
+      "from": "maravpe01",
+      "minimum_shared_games": 1,
+      "overlap_days": null,
+      "team": "JAZZ",
+      "to": "blockjo01"
+    },
+    {
+      "from": "blockjo01",
+      "minimum_shared_games": 78,
+      "overlap_days": null,
+      "team": "BUCKS",
+      "to": "abdulka01"
+    }
+  ],
+  "path": [
+    "maravpe01",
+    "blockjo01",
+    "abdulka01"
+  ],
+  "result": "connected"
+}

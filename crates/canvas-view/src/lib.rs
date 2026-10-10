@@ -14,7 +14,9 @@ pub struct GraphLink {
     pub from: String,
     pub to: String,
     pub team: String,
-    pub overlap_days: u32,
+    pub overlap_days: Option<u32>,
+    #[serde(default)]
+    pub minimum_shared_games: Option<u32>,
     pub on_path: bool,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]

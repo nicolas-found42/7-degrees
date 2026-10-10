@@ -570,7 +570,7 @@ fn finish(
                 })
                 .collect();
             json!({"neighbors":ids.iter().filter_map(|id|catalog.player(id)).map(|p|if view.is_some(){scoped_player(p,graph,reports,&out.filters)}else{p.clone()}).collect::<Vec<_>>(),
-                "links":edges.iter().map(|e|json!({"a":e.a,"b":e.b,"evidence":e.evidence.iter().map(|v|json!({"team":v.team,"overlap_days":v.overlap_days})).collect::<Vec<_>>()})).collect::<Vec<_>>()})
+                "links":edges.iter().map(|e|json!({"a":e.a,"b":e.b,"evidence":e.evidence.iter().map(|v|json!({"team":v.team,"overlap_days":v.overlap_days,"minimum_shared_games":v.minimum_shared_games()})).collect::<Vec<_>>()})).collect::<Vec<_>>()})
         }
         Operation::Compare => {
             json!({"players":out.players,"shared_teams":out.players[0].teams.iter().filter(|team|out.players[1].teams.contains(team)).collect::<Vec<_>>(),
@@ -730,7 +730,7 @@ fn connection_data(graph: &TeammateGraph, from: &str, to: &str) -> Value {
         .expect("resolved canonical players")
     {
         Connection::Connected(chain) => {
-            json!({"result":"connected","degree":chain.links.len(),"path":chain.path,"links":chain.links.into_iter().map(|l|json!({"from":l.from,"to":l.to,"team":l.team,"overlap_days":l.overlap_days})).collect::<Vec<_>>() })
+            json!({"result":"connected","degree":chain.links.len(),"path":chain.path,"links":chain.links.into_iter().map(|l|json!({"from":l.from,"to":l.to,"team":l.team,"overlap_days":l.overlap_days,"minimum_shared_games":l.minimum_shared_games})).collect::<Vec<_>>() })
         }
         Connection::Disconnected => json!({"result":"disconnected"}),
     }
@@ -1028,7 +1028,31 @@ fn filtered_graph(
                     })
             })
     });
-    Some(TeammateGraph::build(roster))
+    let counts = graph
+        .appearance_counts
+        .iter()
+        .filter(|c| {
+            filters.team.as_ref().is_none_or(|t| t == &c.team)
+                && filters.first_season.is_none_or(|first| {
+                    c.season >= first && c.season <= filters.last_season.unwrap()
+                })
+        })
+        .cloned()
+        .collect();
+    let witnesses = graph
+        .game_witnesses
+        .iter()
+        .filter(|w| {
+            filters.team.as_ref().is_none_or(|t| t == &w.team)
+                && filters.first_season.is_none_or(|first| {
+                    w.season >= first && w.season <= filters.last_season.unwrap()
+                })
+        })
+        .cloned()
+        .collect();
+    Some(TeammateGraph::build_with_evidence(
+        roster, counts, witnesses,
+    ))
 }
 fn render_filters(filters: &Filters) -> String {
     if filters.team.is_none() && filters.first_season.is_none() {
@@ -1081,7 +1105,101 @@ fn scoped_player(
         })
         .map(|r| r.season)
         .collect();
+    let mut seasons = seasons;
+    for count in graph
+        .appearance_counts
+        .iter()
+        .filter(|c| c.player == player.id)
+    {
+        if !out.teams.contains(&count.team) {
+            out.teams.push(count.team.clone());
+        }
+        seasons.push(count.season);
+    }
+    for witness in graph
+        .game_witnesses
+        .iter()
+        .filter(|w| w.a == player.id || w.b == player.id)
+    {
+        if !out.teams.contains(&witness.team) {
+            out.teams.push(witness.team.clone());
+        }
+        seasons.push(witness.season);
+    }
+    out.teams.sort();
     out.first_season = seasons.iter().copied().min();
     out.last_season = seasons.iter().copied().max();
     out
+}
+
+#[cfg(test)]
+mod evidence_filter_tests {
+    use super::*;
+    use graph_core::{AppearanceCount, GameWitness, Player, RosterData, Team};
+    #[test]
+    fn team_and_season_filters_preserve_only_matching_count_and_game_proofs() {
+        let roster = RosterData {
+            players: ["a", "b", "c"]
+                .into_iter()
+                .map(|id| Player {
+                    id: id.into(),
+                    name: id.into(),
+                })
+                .collect(),
+            teams: ["RED", "BLUE"]
+                .into_iter()
+                .map(|id| Team {
+                    id: id.into(),
+                    name: id.into(),
+                })
+                .collect(),
+            tenures: Vec::new(),
+        };
+        let counts = [
+            ("a", "RED", 2000),
+            ("b", "RED", 2000),
+            ("b", "BLUE", 2001),
+            ("c", "BLUE", 2001),
+        ]
+        .into_iter()
+        .map(|(player, team, season)| AppearanceCount {
+            player: player.into(),
+            team: team.into(),
+            season,
+            games: 80,
+            team_games: 82,
+            player_record: player.into(),
+            team_record: team.into(),
+        })
+        .collect();
+        let witness = GameWitness {
+            a: "a".into(),
+            b: "c".into(),
+            team: "RED".into(),
+            season: 2002,
+            game_id: "0020100001".into(),
+            date: "2001-11-01".into(),
+            sources: ["event-a".into(), "event-c".into()],
+        };
+        let graph = TeammateGraph::build_with_evidence(roster, counts, vec![witness]);
+        for (team, season, expected) in [
+            ("RED", 2000, ("a", "b")),
+            ("BLUE", 2001, ("b", "c")),
+            ("RED", 2002, ("a", "c")),
+        ] {
+            let scoped = filtered_graph(
+                &graph,
+                None,
+                &Filters {
+                    team: Some(team.into()),
+                    first_season: Some(season),
+                    last_season: Some(season),
+                },
+            )
+            .unwrap();
+            let edges = scoped.edges();
+            assert_eq!(edges.len(), 1);
+            assert_eq!((edges[0].a.as_str(), edges[0].b.as_str()), expected);
+        }
+    }
 }

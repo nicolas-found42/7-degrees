@@ -40,7 +40,7 @@ aldrico01,Cole Aldrich,2013,ROCKETS,S2,unresolved,"[2012-10-27, 2013-02-20)",sti
 aldrico01,Cole Aldrich,2013,KINGS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
 aldrila01,LaMarcus Aldridge,2013,TRAIL BLAZERS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 alexaky01,Kyle Alexander,2020,HEAT,S2,unresolved,"[2019-07-15, 2019-10-19)",stint-entirely-outside-team-season-window(stands-on-transactions-alone)
-alexani01,Nickeil Alexander-Walker,2024,TIMBERWOLVES,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
+alexani01,Nickeil Alexander-Walker,2024,TIMBERWOLVES,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
 alexani01,Nickeil Alexander-Walker,2025,TIMBERWOLVES,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 alexani01,Nickeil Alexander-Walker,2026,HAWKS,S2,unresolved,,same-day-arrival-to-multiple-franchises(ordering-unresolved)
 alexatr01,Trey Alexander,2025,NUGGETS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
@@ -201,6 +201,7 @@ barnhbr01,Brooks Barnhizer,2026,THUNDER,S2,unresolved,,no-season-window(S1-game-
 barnhjo01,John Barnhill,1967,WIZARDS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 barnhjo01,John Barnhill,1969,WIZARDS,S2,unresolved,,flagged-transaction-legs(team-unresolved)
 barnhle01,Leo Barnhorst,1951,OLYMPIANS,S2,unresolved,,flagged-transaction-legs(team-unresolved)
+barnhle01,Leo Barnhorst,1953,OLYMPIANS,S2,unresolved,,fuzzy-dated-rows-bear-on-this-tenure
 barnhle01,Leo Barnhorst,1954,BULLETS-DEFUNCT,S2,unresolved,"[1953-10-31, 1954-02-12)","same-day-game-order-unresolved(S2-player-games=55,S1-season-games=71,S2-team-games=72,interval-capacity=53,departure-day-allowance=1,missing-games-allowance=1,capacity-upper-bound=55)"
 barnhno01,Norton Barnhill,1977,THUNDER,S2,unresolved,,"no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); departure-after-closed-stint(prior-spell-exit,or-source-noise)"
 barrean01,Andre Barrett,2007,BULLS,S2,unresolved,"[2006-10-31, 2007-05-18)",multi-team-season(ordering-unresolved): player has dated moves to other franchises this season; bracket-only stint cannot be ordered against them
@@ -373,6 +374,7 @@ bouyeja01,Jamaree Bouyea,2026,SUNS,S2,unresolved,,no-season-window(S1-game-table
 bowenbr01,Bruce Bowen,1997,HEAT,S2,unresolved,"[1997-03-15, 1997-03-25)",repeat-signing-prior-end-unknown
 bowiean01,Anthony Bowie,1989,SPURS,S2,unresolved,"[1989-03-20, 1989-04-04)",repeat-signing-prior-end-unknown
 bowiean01,Anthony Bowie,1990,ROCKETS,S2,unresolved,"[1989-11-03, 1990-05-04)",multi-team-season(ordering-unresolved): player has dated moves to other franchises this season; bracket-only stint cannot be ordered against them
+bowmana01,Nate Bowman,1970,KNICKS,S2,unresolved,,flagged-transaction-legs(team-unresolved)
 bowmana01,Nate Bowman,1971,CLIPPERS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 boydde01,Dennis Boyd,1979,PISTONS,S2,unresolved,"[1978-12-21, 1978-12-29)","same-day-game-order-unresolved(S2-player-games=5,S1-season-games=82,S2-team-games=82,interval-capacity=4,departure-day-allowance=1,missing-games-allowance=0,capacity-upper-bound=5)"
 boydfr01,Freddie Boyd,1976,JAZZ,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
@@ -1211,7 +1213,7 @@ freemen01,Enrique Freeman,2026,TIMBERWOLVES,S2,unresolved,,no-season-window(S1-g
 freemga01,Gary Freeman,1971,CAVALIERS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
 freemga01,Gary Freeman,1971,BUCKS,S2,unresolved,,"departure-after-closed-stint(prior-spell-exit,or-source-noise)"
 freemja01,Javon Freeman-Liberty,2024,RAPTORS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
-fryerbe01,Bernie Fryer,1974,TRAIL BLAZERS,S2,unresolved,"[1973-10-13, 1974-01-08)","appearance-count-conflict(S2-player-games=80,S1-season-games=82,S2-team-games=82,interval-capacity=41,departure-day-allowance=1,missing-games-allowance=0,capacity-upper-bound=42)"
+fryerbe01,Bernie Fryer,1974,TRAIL BLAZERS,S2,unresolved,"[1973-06-27, 1974-01-08)","appearance-count-conflict(S2-player-games=80,S1-season-games=82,S2-team-games=82,interval-capacity=41,departure-day-allowance=1,missing-games-allowance=0,capacity-upper-bound=42)"
 fudgeal01,Alex Fudge,2024,MAVERICKS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
 fultzma01,Markelle Fultz,2024,MAGIC,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 fultzma01,Markelle Fultz,2025,KINGS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
@@ -1353,6 +1355,7 @@ gordoer01,Eric Gordon,2025,76ERS,S2,unresolved,,no-season-window(S1-game-table-e
 gortama01,Marcin Gortat,2013,SUNS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 gortmja01,Jazian Gortman,2025,MAVERICKS,S2,unresolved,"[2024-07-10, 2024-10-18)",repeat-signing-prior-end-unknown
 goudean01,Andrew Goudelock,2013,LAKERS,S2,unresolved,"[2013-04-14, 2013-04-29)","departure-after-closed-stint(prior-spell-exit,or-source-noise)"
+grabojo01,Joe Graboski,1953,OLYMPIANS,S2,unresolved,,fuzzy-dated-rows-bear-on-this-tenure
 grabojo01,Joe Graboski,1961,WARRIORS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 grabojo01,Joe Graboski,1962,WIZARDS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
 grabojo01,Joe Graboski,1962,76ERS,S2,unresolved,"[1962-03-16, 1962-03-23)",multi-team-season(ordering-unresolved): player has dated moves to other franchises this season; bracket-only stint cannot be ordered against them
@@ -1424,6 +1427,7 @@ greensi01,Si Green,1962,WIZARDS,S2,unresolved,,no-season-window(S1-game-table-en
 greensi01,Si Green,1962,HAWKS,S2,unresolved,,"no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); departure-after-closed-stint(prior-spell-exit,or-source-noise)"
 greensi01,Si Green,1966,CELTICS,S2,unresolved,,flagged-transaction-legs(team-unresolved)
 greenst01,Steve Green,1977,PACERS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
+greenwi01,Willie Green,2014,CLIPPERS,S2,unresolved,"[2013-10-29, 2014-06-29)","departure-after-closed-stint(prior-spell-exit,or-source-noise)"
 greerha01,Hal Greer,1961,76ERS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 gregocl01,Claude Gregory,1988,CLIPPERS,S2,unresolved,"[1988-03-07, 1988-03-28)",repeat-signing-prior-end-unknown
 gregoga01,Gary Gregor,1970,HAWKS,S2,unresolved,"[1969-05-08, 1970-04-20)",flagged-transaction-legs(team-unresolved)
@@ -1536,7 +1540,6 @@ harrimi01,Mike Harris,2008,ROCKETS,S2,unresolved,"[2007-07-13, 2007-10-22)",stin
 harrimi01,Mike Harris,2011,ROCKETS,S2,unresolved,"[2011-03-23, 2011-04-14)","departure-after-closed-stint(prior-spell-exit,or-source-noise)"
 harrish01,Shaquille Harrison,2018,SUNS,S2,unresolved,"[2018-02-21, 2018-03-03)",repeat-signing-prior-end-unknown
 harrish01,Shaquille Harrison,2018,SUNS,S2,unresolved,"[2018-03-03, 2018-03-13)",repeat-signing-prior-end-unknown
-harrish01,Shaquille Harrison,2019,BULLS,S2,unresolved,"[2018-10-18, 2019-04-11)",multi-team-season(ordering-unresolved): player has dated moves to other franchises this season; bracket-only stint cannot be ordered against them
 harrish01,Shaquille Harrison,2020,BULLS,S2,unresolved,"[2019-07-18, 2020-03-11)","departure-after-closed-stint(prior-spell-exit,or-source-noise)"
 harrish01,Shaquille Harrison,2022,NETS,S2,unresolved,"[2021-12-18, 2021-12-29)",repeat-signing-prior-end-unknown
 harrish01,Shaquille Harrison,2023,LAKERS,S1-only-supplement,unresolved,"[2022-10-08, 2022-10-15)",stint-entirely-outside-team-season-window(stands-on-transactions-alone)
@@ -1582,6 +1585,7 @@ hawkito01,Tom Hawkins,1961,LAKERS,S2,unresolved,,no-dated-evidence(membership-se
 hayesch01,Chuck Hayes,2006,ROCKETS,S2,unresolved,"[2005-10-05, 2005-10-25)",stint-entirely-outside-team-season-window(stands-on-transactions-alone)
 hayesch01,Chuck Hayes,2013,KINGS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 hayesel01,Elvin Hayes,1971,ROCKETS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
+hayesel01,Elvin Hayes,1972,ROCKETS,S2,unresolved,,flagged-transaction-legs(team-unresolved)
 hayesja02,Jaxson Hayes,2024,LAKERS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
 hayesja02,Jaxson Hayes,2025,LAKERS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 hayesja02,Jaxson Hayes,2026,LAKERS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
@@ -2208,6 +2212,7 @@ lavinza01,Zach LaVine,2024,BULLS,S2,unresolved,,no-dated-evidence(membership-sea
 lavinza01,Zach LaVine,2025,BULLS,S2,unresolved,,"no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); departure-after-closed-stint(prior-spell-exit,or-source-noise)"
 lavinza01,Zach LaVine,2025,KINGS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
 lavinza01,Zach LaVine,2026,KINGS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
+lavoybo01,Bob Lavoy,1953,OLYMPIANS,S2,unresolved,,fuzzy-dated-rows-bear-on-this-tenure
 lawsoaj01,A.J. Lawson,2023,TIMBERWOLVES,S2,unresolved,"[2022-07-26, 2022-10-14)",stint-entirely-outside-team-season-window(stands-on-transactions-alone)
 lawsoaj01,A.J. Lawson,2024,MAVERICKS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 lawsoaj01,A.J. Lawson,2025,RAPTORS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
@@ -2381,6 +2386,7 @@ maravpe01,Pete Maravich,1974,HAWKS,S2,unresolved,,flagged-transaction-legs(team-
 maravpe01,Pete Maravich,1976,JAZZ,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 maravpe01,Pete Maravich,1977,JAZZ,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 marinja01,Jack Marin,1967,WIZARDS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
+marinja01,Jack Marin,1972,WIZARDS,S2,unresolved,,flagged-transaction-legs(team-unresolved)
 marinja01,Jack Marin,1976,CLIPPERS,S2,unresolved,,"departure-after-closed-stint(prior-spell-exit,or-source-noise)"
 marinja01,Jack Marin,1976,BULLS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
 mariosh01,Shawn Marion,2013,MAVERICKS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
@@ -3364,7 +3370,7 @@ schrode01,Dennis Schröder,2025,NETS,S2,unresolved,,"no-season-window(S1-game-ta
 schrode01,Dennis Schröder,2025,PISTONS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
 schrode01,Dennis Schröder,2026,CAVALIERS,S2,unresolved,,same-day-arrival-to-multiple-franchises(ordering-unresolved)
 schrode01,Dennis Schröder,2026,KINGS,S2,unresolved,,same-day-arrival-to-multiple-franchises(ordering-unresolved)
-schuldi01,Dick Schulz,1948,BULLETS-DEFUNCT,S2,unresolved,,flagged-transaction-legs(team-unresolved)
+schuldi01,Dick Schulz,1948,BULLETS-DEFUNCT,S2,unresolved,"[1947-11-12, 1948-05-19)",flagged-transaction-legs(team-unresolved)
 scolafr01,Fred Scolari,1951,CAPITOLS,S2,unresolved,"[1950-10-31, 1951-01-09)","same-day-game-order-unresolved(S2-player-games=35,S1-season-games=35,S2-team-games=35,interval-capacity=34,departure-day-allowance=1,missing-games-allowance=0,capacity-upper-bound=35)"
 scolalu01,Luis Scola,2013,SUNS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
 scottde01,Dennis Scott,1999,TIMBERWOLVES,S2,unresolved,"[1999-03-17, 1999-03-26)",repeat-signing-prior-end-unknown
@@ -3750,9 +3756,11 @@ toppija01,Jacob Toppin,2025,HAWKS,S2,unresolved,,no-season-window(S1-game-table-
 toppiob01,Obi Toppin,2024,PACERS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
 toppiob01,Obi Toppin,2025,PACERS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
 toppiob01,Obi Toppin,2026,PACERS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
+torgoir01,Irv Torgoff,1949,WARRIORS,S2,unresolved,"[1948-11-03, 1949-03-25)",multi-team-season(ordering-unresolved): player has dated moves to other franchises this season; bracket-only stint cannot be ordered against them
 toscaju01,Juan Toscano-Anderson,2020,WARRIORS,S2,unresolved,"[2019-09-10, 2019-10-19)",stint-entirely-outside-team-season-window(stands-on-transactions-alone)
 toscaju01,Juan Toscano-Anderson,2021,WARRIORS,S2,unresolved,"[2020-12-21, 2021-05-17)","departure-after-closed-stint(prior-spell-exit,or-source-noise)"
 toscaju01,Juan Toscano-Anderson,2024,KINGS,S2,unresolved,"[2023-12-15, 2024-01-07)",open-stint-without-window
+toshebi01,Bill Tosheff,1953,OLYMPIANS,S2,unresolved,,fuzzy-dated-rows-bear-on-this-tenure
 toupaax01,Axel Toupane,2016,NUGGETS,S2,unresolved,"[2016-03-03, 2016-03-14)",repeat-signing-prior-end-unknown
 toupaax01,Axel Toupane,2016,NUGGETS,S2,unresolved,"[2016-03-14, 2016-03-24)",repeat-signing-prior-end-unknown
 townska01,Karl-Anthony Towns,2024,TIMBERWOLVES,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
@@ -3905,6 +3913,7 @@ walshjo01,Jordan Walsh,2026,CELTICS,S2,unresolved,,no-dated-evidence(membership-
 walteja01,Ja'Kobe Walter,2025,RAPTORS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
 walteja01,Ja'Kobe Walter,2026,RAPTORS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 waltere01,Rex Walters,1998,76ERS,S2,unresolved,"[1997-10-31, 1998-04-20)",multi-team-season(ordering-unresolved): player has dated moves to other franchises this season; bracket-only stint cannot be ordered against them
+walthpa01,Paul Walther,1953,OLYMPIANS,S2,unresolved,,fuzzy-dated-rows-bear-on-this-tenure
 waltobi01,Bill Walton,1976,TRAIL BLAZERS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 waltode01,Derrick Walton,2020,CLIPPERS,S2,unresolved,"[2019-07-26, 2019-10-21)",repeat-signing-prior-end-unknown; stint-entirely-outside-team-season-window(stands-on-transactions-alone)
 waltode01,Derrick Walton,2022,PISTONS,S2,unresolved,"[2021-09-27, 2021-10-16)",stint-entirely-outside-team-season-window(stands-on-transactions-alone)
@@ -4037,6 +4046,7 @@ wileymo01,Morlon Wiley,1993,MAVERICKS,S2,unresolved,"[1993-02-16, 1993-03-08)",r
 wileymo01,Morlon Wiley,1994,MAVERICKS,S2,unresolved,"[1994-03-31, 1994-04-25)","departure-after-closed-stint(prior-spell-exit,or-source-noise)"
 wilfowi01,Win Wilfong,1961,KINGS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 wilkebo01,Bob Wilkerson,1977,THUNDER,S2,unresolved,,"no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); departure-after-closed-stint(prior-spell-exit,or-source-noise)"
+wilkebo01,Bob Wilkerson,1981,BULLS,S2,unresolved,"[1980-10-11, 1981-04-13)",multi-team-season(ordering-unresolved): player has dated moves to other franchises this season; bracket-only stint cannot be ordered against them
 wilkele01,Lenny Wilkens,1961,HAWKS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 wilkele01,Lenny Wilkens,1962,HAWKS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 wilkele01,Lenny Wilkens,1971,THUNDER,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
@@ -4147,7 +4157,8 @@ wilsoja03,Jalen Wilson,2025,NETS,S2,unresolved,,no-dated-evidence(membership-sea
 wilsoja03,Jalen Wilson,2026,NETS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 wilsomi01,Michael Wilson,1987,NETS,S2,unresolved,"[1986-10-31, 1987-04-19)",multi-team-season(ordering-unresolved): player has dated moves to other franchises this season; bracket-only stint cannot be ordered against them
 wilsori02,Ricky Wilson,1988,SPURS,S2,unresolved,"[1988-03-22, 1988-04-11)",repeat-signing-prior-end-unknown
-winchke01,Kennard Winchester,1992,ROCKETS,S2,unresolved,"[1991-11-01, 1991-11-11)","departure-after-closed-stint(prior-spell-exit,or-source-noise)"
+winchke01,Kennard Winchester,1991,ROCKETS,S2,unresolved,"[1990-09-11, 1991-06-28)",arrival-after-window-end(next-season-move); repeat-signing-prior-end-unknown
+winchke01,Kennard Winchester,1992,ROCKETS,S2,unresolved,"[1991-06-28, 1991-08-27)",stint-entirely-outside-team-season-window(stands-on-transactions-alone)
 windldy01,Dylan Windler,2024,HAWKS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
 winfile01,Lee Winfield,1971,THUNDER,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
 winfile01,Lee Winfield,1976,KINGS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
@@ -4199,6 +4210,7 @@ youngni01,Nick Young,2013,76ERS,S2,unresolved,,no-season-window(S1-game-table-en
 youngpe01,Perry Young,1987,TRAIL BLAZERS,S2,unresolved,"[1986-08-27, 1986-10-28)",stint-entirely-outside-team-season-window(stands-on-transactions-alone)
 youngsa01,Sam Young,2013,PACERS,S2,unresolved,"[2012-09-06, 2013-01-06)",stint-entirely-outside-team-season-window(stands-on-transactions-alone)
 youngth01,Thaddeus Young,2013,76ERS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)
+youngth01,Thaddeus Young,2022,RAPTORS,S2,unresolved,"[2022-02-10, 2022-06-30)",arrival-after-window-end(next-season-move); repeat-signing-prior-end-unknown
 youngth01,Thaddeus Young,2024,SUNS,S2,unresolved,,no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-window
 youngth01,Thaddeus Young,2024,RAPTORS,S2,unresolved,,"no-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); departure-after-closed-stint(prior-spell-exit,or-source-noise)"
 youngtr01,Trae Young,2024,HAWKS,S2,unresolved,,no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)

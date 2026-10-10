@@ -46,6 +46,9 @@ pub struct CoverageGap {
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct Coverage {
     pub certified_tenures: usize,
+    pub appearance_proven_edges: usize,
+    pub game_witnessed_edges: usize,
+    pub players_without_evidenced_edge: usize,
     pub excluded_tenures: BTreeMap<String, usize>,
     pub players_without_certified_tenure: usize,
     pub complete: bool,
@@ -92,7 +95,44 @@ pub fn load(root: &Path) -> Result<(TeammateGraph, ReportMetadata), String> {
     let players =
         std::fs::File::open(root.join("t3/player-universe.csv")).map_err(|e| e.to_string())?;
     let tenures = std::fs::File::open(root.join("t4/tenures.csv")).map_err(|e| e.to_string())?;
-    load_from_readers(players, tenures)
+    let (graph, mut metadata) = load_from_readers(players, tenures)?;
+    let path = root.join("t4/appearance-counts.csv");
+    let counts = if path.exists() {
+        load_appearances(
+            std::fs::File::open(path).map_err(|e| e.to_string())?,
+            &mut metadata,
+        )?
+    } else {
+        Vec::new()
+    };
+    let witness_path = root.join("t4/game-witnesses.csv");
+    let witnesses = if witness_path.exists() {
+        load_witnesses(
+            std::fs::File::open(witness_path).map_err(|e| e.to_string())?,
+            &metadata,
+        )?
+    } else {
+        Vec::new()
+    };
+    let graph = TeammateGraph::build_with_evidence(graph.roster, counts, witnesses);
+    let edges = graph.edges();
+    let connected: BTreeSet<_> = edges.iter().flat_map(|e| [&e.a, &e.b]).collect();
+    metadata.coverage.appearance_proven_edges = edges
+        .iter()
+        .filter(|e| e.evidence.iter().any(|v| v.appearance_proof.is_some()))
+        .count();
+    metadata.coverage.game_witnessed_edges = edges
+        .iter()
+        .filter(|e| e.evidence.iter().any(|v| v.game_witness.is_some()))
+        .count();
+    metadata.coverage.players_without_evidenced_edge = graph
+        .roster
+        .players
+        .iter()
+        .filter(|p| !connected.contains(&p.id))
+        .count();
+    metadata.coverage.warning = "Incomplete dated roster coverage, including 1946–1950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.".into();
+    Ok((graph, metadata))
 }
 
 /// Import canonical records with the same strict evidence rules for every
@@ -241,4 +281,136 @@ pub fn load_from_readers(
         })
         .collect();
     Ok((TeammateGraph::build(roster), metadata))
+}
+
+#[derive(Deserialize)]
+struct AppearanceRow {
+    player: String,
+    team: String,
+    season: u32,
+    lg: String,
+    games: u32,
+    team_games: u32,
+    player_record: String,
+    team_record: String,
+}
+
+fn load_appearances(
+    reader: impl std::io::Read,
+    metadata: &mut ReportMetadata,
+) -> Result<Vec<graph_core::AppearanceCount>, String> {
+    let mut counts = BTreeMap::new();
+    let mut totals = BTreeMap::new();
+    for row in csv::Reader::from_reader(reader).deserialize::<AppearanceRow>() {
+        let row = row.map_err(|e| e.to_string())?;
+        if !matches!(row.lg.as_str(), "NBA" | "BAA") {
+            continue;
+        }
+        let player = metadata
+            .players
+            .get_mut(&row.player)
+            .ok_or_else(|| format!("appearance row references unknown player {}", row.player))?;
+        if row.team.is_empty()
+            || !player.teams.contains(&row.team)
+            || row.season < player.first_season
+            || row.season > player.last_season
+            || row.games == 0
+            || row.games > row.team_games
+            || row.team_games > 1000
+            || row.player_record.is_empty()
+            || row.team_record.is_empty()
+        {
+            return Err(format!(
+                "invalid appearance count for {} {} {}",
+                row.player, row.team, row.season
+            ));
+        }
+        if let Some(total) = totals.insert((row.team.clone(), row.season), row.team_games)
+            && total != row.team_games
+        {
+            return Err("conflicting team appearance totals".into());
+        }
+        if !player.teams.contains(&row.team) {
+            player.teams.push(row.team.clone());
+            player.teams.sort();
+        }
+        let key = (row.player.clone(), row.team.clone(), row.season);
+        let count = graph_core::AppearanceCount {
+            player: row.player,
+            team: row.team,
+            season: row.season,
+            games: row.games,
+            team_games: row.team_games,
+            player_record: row.player_record,
+            team_record: row.team_record,
+        };
+        if let Some(previous) = counts.insert(key, count.clone())
+            && previous != count
+        {
+            return Err("conflicting player appearance records".into());
+        }
+    }
+    Ok(counts.into_values().collect())
+}
+
+#[derive(Deserialize)]
+struct WitnessRow {
+    a: String,
+    b: String,
+    team: String,
+    season: u32,
+    game_id: String,
+    date: String,
+    a_source: String,
+    b_source: String,
+}
+fn load_witnesses(
+    reader: impl std::io::Read,
+    metadata: &ReportMetadata,
+) -> Result<Vec<graph_core::GameWitness>, String> {
+    use chrono::Datelike;
+    let mut witnesses = BTreeMap::new();
+    for row in csv::Reader::from_reader(reader).deserialize::<WitnessRow>() {
+        let row = row.map_err(|e| e.to_string())?;
+        let date =
+            chrono::NaiveDate::parse_from_str(&row.date, "%Y-%m-%d").map_err(|e| e.to_string())?;
+        if row.a >= row.b
+            || row.team.is_empty()
+            || row.game_id.len() != 10
+            || !row.game_id.bytes().all(|b| b.is_ascii_digit())
+            || !(date.year() == row.season as i32 || date.year() == row.season as i32 - 1)
+            || row.a_source.is_empty()
+            || row.b_source.is_empty()
+        {
+            return Err("invalid dated game witness".into());
+        }
+        for id in [&row.a, &row.b] {
+            let player = metadata
+                .players
+                .get(id)
+                .ok_or("unknown game witness identity")?;
+            if !player.teams.contains(&row.team)
+                || row.season < player.first_season
+                || row.season > player.last_season
+            {
+                return Err("game witness conflicts with canonical membership".into());
+            }
+        }
+        let key = (row.a.clone(), row.b.clone(), row.team.clone(), row.season);
+        let witness = graph_core::GameWitness {
+            a: row.a,
+            b: row.b,
+            team: row.team,
+            season: row.season,
+            game_id: row.game_id,
+            date: row.date,
+            sources: [row.a_source, row.b_source],
+        };
+        if let Some(previous) = witnesses.insert(key, witness.clone())
+            && previous != witness
+        {
+            return Err("conflicting duplicate game witnesses".into());
+        }
+    }
+    Ok(witnesses.into_values().collect())
 }

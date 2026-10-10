@@ -169,8 +169,18 @@ pub(crate) fn edge_json(state: &AppState, edge: graph_core::TeammateEdge) -> ser
             }
         }
         else { overlaps = provenance::fixture_overlaps(state, &edge, &e.team); }
-        // Each evidence item identifies a precise overlapping record pair.
+        if e.appearance_proof.is_some() || e.game_witness.is_some() { overlaps.clear(); }
+        // Preserve the proof type; appearance counts are never converted to dates.
         serde_json::json!({"team":e.team, "overlap_days":e.overlap_days,
+            "game_witness":e.game_witness.as_ref().map(|w| serde_json::json!({
+                "game_id":w.game_id,"date":w.date,"season":w.season,"sources":w.sources,
+                "source_manifest":"docs/data/source-manifest.md (S1 v238)",
+                "method":"Identified participants of the same official NBA team game; full roster duration unknown"})),
+            "appearance_proof":e.appearance_proof.as_ref().map(|p| serde_json::json!({
+                "season":p.season,"a_games":p.a_games,"b_games":p.b_games,"team_games":p.team_games,
+                "minimum_shared_games":p.minimum_shared_games,"player_records":p.player_records,"team_record":p.team_record,
+                "method":"A + B - N: minimum shared regular-season team games",
+                "source_manifest":"docs/data/source-manifest.md (S2 v56)"})),
             "records": overlaps.first().and_then(|v| v.get("records")).cloned().unwrap_or_else(|| serde_json::json!([])),
             "overlaps":overlaps})
     }).collect();
@@ -282,7 +292,7 @@ fn connection_response(state: &AppState, from: Option<&str>, to: Option<&str>) -
             let degree = chain.links.len();
             Json(serde_json::json!({"result":"connected", "path":chain.path,
                 "degree":degree, "links": chain.links.into_iter().map(|l| api_types::LinkDto {
-                    from:l.from,to:l.to,team:l.team,overlap_days:l.overlap_days,
+                    from:l.from,to:l.to,team:l.team,overlap_days:l.overlap_days,minimum_shared_games:l.minimum_shared_games,
                 }).collect::<Vec<_>>(), "coverage": state.reports.as_ref().map(|r| &r.coverage)})).into_response()
         }
         graph_core::Connection::Disconnected => {
@@ -351,6 +361,7 @@ fn connection_response_all(
                     to: l.to,
                     team: l.team,
                     overlap_days: l.overlap_days,
+                    minimum_shared_games: l.minimum_shared_games,
                 })
                 .collect(),
             degree: chain.degree,

@@ -307,9 +307,11 @@ class TxnListParser(HTMLParser):
             self.list_depth += 1
         elif tag == "li" and self.list_depth >= 1:
             if self.cur is not None:
-                # nested li inside a transaction li — treat as continuing text
-                self.buf.append(" | ")
-                return
+                if self.list_depth > 1:
+                    # A nested item belongs to the current transaction.
+                    self.buf.append(" | ")
+                    return
+                self._close_item()
             self.in_li = True
             self.date_seen = False
             self.cur = {"date": "", "segments": [], "raw": ""}
@@ -330,14 +332,14 @@ class TxnListParser(HTMLParser):
             return
         if tag == "ul":
             if self.list_depth > 0:
+                if self.list_depth == 1:
+                    self._close_item()
                 self.list_depth -= 1
                 if self.list_depth == 0:
                     self.in_txn_area = False
         elif tag == "li":
             if self.in_li and self.list_depth == 1:
-                self._finish_row()
-                self.in_li = False
-                self.cur = None
+                self._close_item()
         elif tag == "p":
             if self.p_depth > 0:
                 self._finish_segment()
@@ -348,6 +350,22 @@ class TxnListParser(HTMLParser):
             self._finish_anchor()
 
     in_date = False
+
+    def _close_item(self):
+        if self.cur is not None:
+            if self.p_depth:
+                self._finish_segment()
+            self._finish_row()
+        self.in_li = False
+        self.in_date = False
+        self.p_depth = 0
+        self.cur = None
+        self._last_open_seg = None
+
+    def close(self):
+        super().close()
+        # HTML permits omission of the final list-item end tag.
+        self._close_item()
 
     def _finish_anchor(self):
         if self.anchor is None:

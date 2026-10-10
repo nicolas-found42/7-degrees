@@ -135,7 +135,10 @@ pub fn fixture_edge_list() -> Vec<EdgeRow> {
         .map(|TeammateEdge { a, b, evidence }| EdgeRow {
             a: a.clone(),
             b: b.clone(),
-            overlap_days: evidence.iter().map(|e| e.overlap_days).sum(),
+            overlap_days: evidence
+                .iter()
+                .map(|e| e.overlap_days.expect("fixture has dated tenures"))
+                .sum(),
         })
         .collect()
 }
@@ -184,7 +187,7 @@ pub fn fixture_connection(
                         from: l.from,
                         to: l.to,
                         team: l.team,
-                        overlap_days: l.overlap_days,
+                        overlap_days: l.overlap_days.expect("fixture has dated tenures"),
                     })
                     .collect(),
                 degree,

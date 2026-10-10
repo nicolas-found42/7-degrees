@@ -102,11 +102,13 @@ impl CanvasView {
                 .unwrap_or("")
         };
         element.set_text_content(Some(&format!(
-            "Selected relationship: {} ↔ {} — {}, {} overlap day(s). {}",
+            "Selected relationship: {} ↔ {} — {}, {}. {}",
             name(&e.from),
             name(&e.to),
             e.team,
-            e.overlap_days,
+            e.overlap_days
+                .map(|d| format!("{d} overlap day(s)"))
+                .unwrap_or_else(|| api_types::overlap_description(None, e.minimum_shared_games)),
             self.graph.coverage
         )));
         let _ = element.set_attribute("data-from", &e.from);

@@ -146,6 +146,7 @@ fn neighborhood(
             to: edge.b,
             team: evidence.team.clone(),
             overlap_days: evidence.overlap_days,
+            minimum_shared_games: evidence.minimum_shared_games(),
             on_path,
         });
     }
@@ -350,7 +351,7 @@ pub async fn page(State(state): State<AppState>, Query(query): Query<GraphQuery>
         })
         .collect();
     let players:String=payload.nodes.iter().enumerate().map(|(index,n)|format!("<li><button id=\"select-node-{index}\" type=\"button\" data-select-player=\"{}\">{}</button> — {}; teams: {}</li>",ui::escape(&n.id),ui::escape(&n.name),ui::escape(&n.era),ui::escape(&n.teams.join(", ")))).collect();
-    let edges:String=payload.links.iter().enumerate().map(|(index,e)|format!("<li><button id=\"select-edge-{index}\" type=\"button\" data-select-edge-from=\"{}\" data-select-edge-to=\"{}\">{} ↔ {}</button> — {}, {} overlap day(s){} <a href=\"/edge?from={}&amp;to={}\" target=\"_blank\" rel=\"noopener\">Open overlap evidence</a></li>",ui::escape(&e.from),ui::escape(&e.to),ui::escape(ui::display_name(&state.graph.roster.players,&e.from)),ui::escape(ui::display_name(&state.graph.roster.players,&e.to)),ui::escape(&e.team),e.overlap_days,if e.on_path{"; selected chain link"}else{""},ui::url_encode(&e.from),ui::url_encode(&e.to))).collect();
+    let edges:String=payload.links.iter().enumerate().map(|(index,e)|format!("<li><button id=\"select-edge-{index}\" type=\"button\" data-select-edge-from=\"{}\" data-select-edge-to=\"{}\">{} ↔ {}</button> — {}, {}{} <a href=\"/edge?from={}&amp;to={}\" target=\"_blank\" rel=\"noopener\">Open overlap evidence</a></li>",ui::escape(&e.from),ui::escape(&e.to),ui::escape(ui::display_name(&state.graph.roster.players,&e.from)),ui::escape(ui::display_name(&state.graph.roster.players,&e.to)),ui::escape(&e.team),api_types::overlap_description(e.overlap_days,e.minimum_shared_games),if e.on_path{"; selected chain link"}else{""},ui::url_encode(&e.from),ui::url_encode(&e.to))).collect();
     let buttons: String = [
         ("zoom-in", "Zoom in"),
         ("zoom-out", "Zoom out"),

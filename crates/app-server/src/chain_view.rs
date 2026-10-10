@@ -41,6 +41,7 @@ impl SelectedChain {
                     to: link.to.clone(),
                     team: link.team.clone(),
                     overlap_days: link.overlap_days,
+                    minimum_shared_games: link.minimum_shared_games,
                 })
                 .collect(),
             degree: chain.degree,
@@ -74,11 +75,11 @@ pub fn render_selected_chain(chain: &SelectedChain) -> String {
         .iter()
         .map(|link| {
             format!(
-                "<li>{} → {} — teammates on {}, overlapping roster tenure: {} day(s) <a href=\"/edge?from={}&amp;to={}\" target=\"_blank\" rel=\"noopener\">Open overlap evidence</a></li>",
+                "<li>{} → {} — teammates on {}, {} <a href=\"/edge?from={}&amp;to={}\" target=\"_blank\" rel=\"noopener\">Open overlap evidence</a></li>",
                 ui::escape(name(&link.from)),
                 ui::escape(name(&link.to)),
                 ui::escape(&link.team),
-                link.overlap_days,
+                link.overlap_days.map(|days| format!("overlapping roster tenure: {days} day(s)")).unwrap_or_else(|| api_types::overlap_description(None, link.minimum_shared_games)),
                 ui::url_encode(&link.from),
                 ui::url_encode(&link.to),
             )

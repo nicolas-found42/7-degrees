@@ -167,7 +167,15 @@ pub fn home(
             let evidence: String = edge
                 .evidence
                 .iter()
-                .map(|e| format!("{} ({} day(s))", escape(&e.team), e.overlap_days))
+                .map(|e| {
+                    format!(
+                        "{} ({})",
+                        escape(&e.team),
+                        e.overlap_days
+                            .map(|d| format!("{d} day(s)"))
+                            .unwrap_or_else(|| e.description())
+                    )
+                })
                 .collect::<Vec<_>>()
                 .join(", ");
             format!(

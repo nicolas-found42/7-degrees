@@ -1,0 +1,11 @@
+{
+  "source_version": "S2 v56",
+  "method": "A+B>N guarantees shared regular-season games; no exact dates or roster duration inferred",
+  "exported_rows": 28812,
+  "excluded_rows": 2889,
+  "source_sha256": {
+    "Player Totals.csv": "1c081cd7f9c694755ea2210c3426e709540afedc31c1bf781456f3df4b7582b2",
+    "Team Totals.csv": "0e408f0ae6d0feee45b40b74032610ca8aff76b69d5253ed0bb45e39e945f0bf"
+  },
+  "export_sha256": "4177233c011f958efc448a47c94a05dbbe0dfb836b5b6af8e42f492aaf0c3e70"
+}
