@@ -1,0 +1,32 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.18s
+     Running tests/query_routing.rs (target/debug/deps/query_routing-e46f45da5ab848c6)
+
+running 11 tests
+test evaluation_config_changes_actual_provider_criteria_and_keeps_per_call_receipts ... ok
+test frozen_routing_policy_clarifies_a_point_nine_four_operation ... ok
+test a_profile_filter_limits_sourced_team_and_era_context_without_changing_identity ... ok
+test a_copied_misspelling_uses_shared_guarded_resolution_before_connection ... ok
+test ordinary_language_connection_executes_the_deterministic_graph_and_shows_its_chain ... ok
+test ambiguous_names_show_context_and_explicit_choice_continues_original_request ... ok
+test stated_team_and_era_filters_change_the_view_and_leave_underlying_edges_unchanged ... ok
+test filtered_connection_is_scoped_and_links_explicitly_open_the_unfiltered_network ... ok
+test malformed_packets_degrade_and_uncertain_valid_packets_clarify_without_execution ... ok
+test profile_neighbors_and_comparison_have_distinct_grounded_visible_outcomes ... ok
+test unsupported_missing_arguments_and_provider_failure_never_guess_a_graph_action ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/real_data_integration.rs (target/debug/deps/real_data_integration-a1d6f733a58af4a2)
+
+running 9 tests
+test in_memory_and_file_import_share_strict_uncertainty_rules ... ok
+test coverage_gaps_remain_inspectable_for_the_affected_player ... ok
+test legacy_repeat_signing_continuity_note_blocks_a_runtime_edge ... ok
+test repeated_source_rows_never_create_a_self_teammate_or_double_overlap ... ok
+test season_brackets_are_uncertainty_and_never_teammate_facts ... ok
+test alternative_shortest_chains_are_deterministic_and_paginated ... ok
+test canonical_import_returns_real_paths_and_record_provenance ... ok
+test the_final_shortest_chain_survives_the_u64_boundary ... ok
+test continuation_cursors_reach_shortest_chains_beyond_fixed_integer_limits ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s

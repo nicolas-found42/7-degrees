@@ -1,0 +1,17 @@
+{
+  "base": "f8e743ca30939476433c680e7a29169d70c3fa41",
+  "head": "5683a2f99c5d292554815d64ea42f285c7ad57c1",
+  "files": [
+    "README.md",
+    "docs/data/source-manifest.md",
+    "scripts/export-historical-audit.py",
+    "scripts/check-historical-audit.py",
+    "crates/app-server/tests/log_capture.rs"
+  ],
+  "diff_characters": 39905,
+  "evidence_characters": 16249,
+  "operational_previous_attempt": "400 max_tokens_exceeded, no verdict; original larger payload retained outside repository",
+  "result": "escalate; valid result preserved without retry",
+  "excluded": "All other paths in the complete146-file origin/main diff, including large derived CSV/JSON tables, full graph-core/import/UI source, source-preparation scripts/tests, browser/canvas source outside included log_capture. Stronger independent full-diff review remains required.",
+  "after_gate_scope": "The subsequent evidence-only commit adds gate input/result/scope/recount/report disclosure. Application/data/helper code is unchanged from reviewed HEAD5683a2f99c5d292554815d64ea42f285c7ad57c1. Those new receipt files were not part of the judged diff."
+}

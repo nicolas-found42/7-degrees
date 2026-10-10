@@ -1,0 +1,295 @@
+{
+  "appearance_proven_pairs": 99710,
+  "appearance_source_rows_verified": 28812,
+  "checks": [
+    {
+      "expected": "direct_teammates",
+      "from": "mikange01",
+      "passed": true,
+      "to": "pollaji01"
+    },
+    {
+      "expected": "direct_teammates",
+      "from": "russebi01",
+      "passed": true,
+      "to": "cousybo01"
+    },
+    {
+      "expected": "direct_teammates",
+      "from": "pettibo01",
+      "passed": true,
+      "to": "hagancl01"
+    },
+    {
+      "expected": "direct_teammates",
+      "from": "maravpe01",
+      "passed": true,
+      "to": "goodrga01"
+    },
+    {
+      "expected": "direct_teammates",
+      "from": "goodrga01",
+      "passed": true,
+      "to": "abdulka01"
+    },
+    {
+      "expected": "direct_teammates",
+      "from": "maravpe01",
+      "passed": true,
+      "to": "birdla01"
+    },
+    {
+      "expected": "direct_teammates",
+      "from": "johnsma02",
+      "passed": true,
+      "to": "abdulka01"
+    },
+    {
+      "expected": "direct_teammates",
+      "from": "jordami01",
+      "passed": true,
+      "to": "pippesc01"
+    },
+    {
+      "expected": "direct_teammates",
+      "from": "bryanko01",
+      "passed": true,
+      "to": "onealsh01"
+    },
+    {
+      "expected": "direct_teammates",
+      "from": "jamesle01",
+      "passed": true,
+      "to": "wadedw01"
+    },
+    {
+      "expected": "direct_teammates",
+      "from": "curryst01",
+      "passed": true,
+      "to": "thompkl01"
+    },
+    {
+      "expected": "direct_teammates",
+      "from": "jokicni01",
+      "passed": true,
+      "to": "murraja01"
+    },
+    {
+      "expected": "no_direct_edge",
+      "from": "billuch01",
+      "passed": true,
+      "to": "iversal01"
+    },
+    {
+      "expected": "no_direct_edge",
+      "from": "bellawa01",
+      "passed": true,
+      "to": "debusda01"
+    }
+  ],
+  "coverage": {
+    "appearance_proven_edges": 99710,
+    "certified_tenures": 2270,
+    "complete": false,
+    "excluded_tenures": {
+      "cross-checked": 10221,
+      "inferred": 13340,
+      "unresolved": 4227
+    },
+    "game_witnessed_edges": 437,
+    "players_without_certified_tenure": 3516,
+    "players_without_evidenced_edge": 41,
+    "warning": "Incomplete dated roster coverage, including 1946–1950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players."
+  },
+  "dated_witness_pairs": 437,
+  "dated_witness_records": 437,
+  "interval_proven_pairs": 1544,
+  "isolates": [
+    {
+      "id": "allenti01",
+      "name": "Timmy Allen"
+    },
+    {
+      "id": "balad01",
+      "name": "Adama-Alpha Bal"
+    },
+    {
+      "id": "cartege01",
+      "name": "George Carter"
+    },
+    {
+      "id": "cartodj01",
+      "name": "D.J. Carton"
+    },
+    {
+      "id": "chomcul01",
+      "name": "Ulrich Chomche"
+    },
+    {
+      "id": "dennibl01",
+      "name": "Blaine Denning"
+    },
+    {
+      "id": "edwarja02",
+      "name": "Jay Edwards"
+    },
+    {
+      "id": "eichhdi01",
+      "name": "Rich Eichhorst"
+    },
+    {
+      "id": "enarutr01",
+      "name": "Tristan Enaruna"
+    },
+    {
+      "id": "essenno01",
+      "name": "Noa Essengue"
+    },
+    {
+      "id": "garcian01",
+      "name": "Andersson Garcia"
+    },
+    {
+      "id": "grayha01",
+      "name": "Hayden Gray"
+    },
+    {
+      "id": "grayra01",
+      "name": "RaiQuan Gray"
+    },
+    {
+      "id": "hurtma01",
+      "name": "Matthew Hurt"
+    },
+    {
+      "id": "kingda01",
+      "name": "Dan King"
+    },
+    {
+      "id": "kulboar01",
+      "name": "Arnoldas Kulboka"
+    },
+    {
+      "id": "lalicpe01",
+      "name": "Pete Lalich"
+    },
+    {
+      "id": "lamplji01",
+      "name": "Jim Lampley"
+    },
+    {
+      "id": "lewissc01",
+      "name": "Scottie Lewis"
+    },
+    {
+      "id": "loverla01",
+      "name": "Lawson Lovering"
+    },
+    {
+      "id": "maddoja01",
+      "name": "Jack Maddox"
+    },
+    {
+      "id": "mccalta01",
+      "name": "Tahjere McCall"
+    },
+    {
+      "id": "mooreta02",
+      "name": "Taze Moore"
+    },
+    {
+      "id": "napolpa01",
+      "name": "Paul Napolitano"
+    },
+    {
+      "id": "nelsogr02",
+      "name": "Grant Nelson"
+    },
+    {
+      "id": "okanito01",
+      "name": "Toby Okani"
+    },
+    {
+      "id": "pereima01",
+      "name": "Mãozinha Pereira"
+    },
+    {
+      "id": "poleedw01",
+      "name": "Dwayne Polee"
+    },
+    {
+      "id": "rosero01",
+      "name": "Rob Rose"
+    },
+    {
+      "id": "sandfpa01",
+      "name": "Payton Sandfort"
+    },
+    {
+      "id": "scholda01",
+      "name": "Dave Scholz"
+    },
+    {
+      "id": "simsja01",
+      "name": "Jaylen Sims"
+    },
+    {
+      "id": "sprinji01",
+      "name": "Jim Springer"
+    },
+    {
+      "id": "spruiji01",
+      "name": "Jim Spruill"
+    },
+    {
+      "id": "steveba01",
+      "name": "Barry Stevens"
+    },
+    {
+      "id": "steveis01",
+      "name": "Isaiah Stevens"
+    },
+    {
+      "id": "sumptba01",
+      "name": "Barry Sumpter"
+    },
+    {
+      "id": "viannjo01",
+      "name": "João Vianna"
+    },
+    {
+      "id": "wheelph02",
+      "name": "Phillip Wheeler"
+    },
+    {
+      "id": "willilu01",
+      "name": "Lucas Williamson"
+    },
+    {
+      "id": "willima11",
+      "name": "Malik Williams"
+    }
+  ],
+  "missing_proved_edges": 0,
+  "statistics": {
+    "components": 42,
+    "diameter": 11,
+    "histogram": {
+      "1": 101395,
+      "10": 4431,
+      "11": 21,
+      "2": 1994930,
+      "3": 4059326,
+      "4": 2610477,
+      "5": 1669401,
+      "6": 1092704,
+      "7": 747097,
+      "8": 457965,
+      "9": 86833
+    },
+    "players": 5106,
+    "unreachable_pairs": 208485
+  },
+  "total_edges": 101395,
+  "unsupported_edges": 0
+}

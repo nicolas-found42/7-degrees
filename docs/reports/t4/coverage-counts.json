@@ -1,0 +1,99 @@
+{
+  "R": {
+    "appearance-count-conflicts": 46,
+    "complete-independent-schedule-team-seasons": 1503,
+    "era_classes": {
+      "1950-66": {
+        "cross-checked": 324,
+        "directly-evidenced": 21,
+        "inferred": 1571,
+        "unresolved": 271
+      },
+      "1967-80": {
+        "cross-checked": 799,
+        "directly-evidenced": 128,
+        "inferred": 1936,
+        "unresolved": 574
+      },
+      "1981-99": {
+        "cross-checked": 2821,
+        "directly-evidenced": 653,
+        "inferred": 4196,
+        "unresolved": 389
+      },
+      "2000-2025/26": {
+        "cross-checked": 6196,
+        "directly-evidenced": 1464,
+        "inferred": 5249,
+        "unresolved": 2954
+      },
+      "BAA 1946-49": {
+        "cross-checked": 81,
+        "directly-evidenced": 4,
+        "inferred": 388,
+        "unresolved": 39
+      }
+    },
+    "intervals-absent": 2663,
+    "intervals-present": 27395,
+    "membership-window-missing": 3132,
+    "membership-window-present": 26926,
+    "membership_rows": 28837,
+    "membership_rows_no_stint": 2659,
+    "membership_window_missing": 3132,
+    "membership_window_present": 26926,
+    "row-aba-excluded": 1638,
+    "row-summary-excluded": 2875,
+    "rows_S1_only_supplement": 11,
+    "rows_S2": 28826,
+    "s1_window_san_fixed_rows": 20,
+    "s1_window_team_seasons": 1579,
+    "s1_window_unresolved_abbr_keys": 20,
+    "same-day-game-order-unresolved": 30,
+    "tenures": 30058,
+    "tenures-cross-checked": 10221,
+    "tenures-directly-evidenced": 2270,
+    "tenures-inferred": 13340,
+    "tenures-unresolved": 4227
+  },
+  "era_counts": {
+    "1950-66": {
+      "cross-checked": 324,
+      "directly-evidenced": 21,
+      "inferred": 1571,
+      "unresolved": 271
+    },
+    "1967-80": {
+      "cross-checked": 799,
+      "directly-evidenced": 128,
+      "inferred": 1936,
+      "unresolved": 574
+    },
+    "1981-99": {
+      "cross-checked": 2821,
+      "directly-evidenced": 653,
+      "inferred": 4196,
+      "unresolved": 389
+    },
+    "2000-2025/26": {
+      "cross-checked": 6196,
+      "directly-evidenced": 1464,
+      "inferred": 5249,
+      "unresolved": 2954
+    },
+    "BAA 1946-49": {
+      "cross-checked": 81,
+      "directly-evidenced": 4,
+      "inferred": 388,
+      "unresolved": 39
+    }
+  },
+  "pair_analysis": {
+    "distinct_player_pairs_with_positive_overlap": 139784,
+    "pair_breakdown": {
+      "both-evidenced": 39399,
+      "involves-inferred": 88040,
+      "involves-unresolved": 12345
+    }
+  }
+}

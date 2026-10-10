@@ -1,0 +1,8 @@
+[package]
+name = "graph-core"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+num-bigint = "0.5.1"
+petgraph.workspace = true

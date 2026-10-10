@@ -11,3 +11,7 @@ Use the default labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-
 ### Domain docs
 
 Use the single-context layout. See `docs/agents/domain.md`.
+
+### Data and verification
+
+For source or coverage changes, see `docs/agents/source-coverage.md`. For checks, evidence publication or PR description updates, see `docs/agents/verification.md`.

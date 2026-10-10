@@ -1,0 +1,258 @@
+{
+  "schema_version": 1,
+  "profile": "full",
+  "source_commit": "7f510961a8c07c49a1a00cbf0335917f6c7abb7d",
+  "working_tree_status": " M AGENTS.md\n M README.md\n M crates/app-server/tests/browser_e2e.rs\n M docs/data/snapshot-pins.json\n M docs/data/source-manifest.md\n M scripts/browser_driver.cjs\n M scripts/publish-final-evidence.py\n M scripts/verify-source-snapshot.py\n?? .github/\n?? docs/agents/source-coverage.md\n?? docs/agents/verification.md\n?? scripts/check.py\n?? scripts/pr-body.py\n?? scripts/test_verification.py\n?? scripts/verification.py\n",
+  "working_tree_diff_sha256": "be1601bab90e9452ab5f26c1fc8eb7e0ea8fffa85db30777c71974ba5b5d5da5",
+  "untracked_sha256": {
+    ".github/workflows/check.yml": "ecb27d8c527802d7d05641d52362c0e7c893880348b6202ab2f0a5c91413ea61",
+    "docs/agents/source-coverage.md": "9847c9244cbbe601b04074110367304adca9a288858a7760eadfce76e3777b49",
+    "docs/agents/verification.md": "1540a59a4785a537b3e2d0fec5c932fb58de4e17cd9e008315048ca88721df88",
+    "scripts/check.py": "27aac0c173345a862b360674218e98d6e5bd99c93c49bb9fda7cdfa0557390b2",
+    "scripts/pr-body.py": "a116665cf6ab143bdc08068d577b306b150ff21228aa25fa204ae535ce74d42b",
+    "scripts/test_verification.py": "d18953cd3d2af4d0f270f831f016ce27c284f54a646b34294e2c96d16ab940b6",
+    "scripts/verification.py": "ace712de23bfdefbd295ba4f43da3495550a6919c637dc97f9170b30a7cef93f"
+  },
+  "started_at": "2026-10-10T20:24:35.138595+00:00",
+  "completed": true,
+  "expected_checks": [
+    "rust-workspace",
+    "python-tests",
+    "format",
+    "clippy-host",
+    "derived-snapshot",
+    "historical-audit",
+    "semantic-audit",
+    "wasm-build",
+    "clippy-wasm",
+    "browser-matrix"
+  ],
+  "finished_at": "2026-10-10T20:24:56.902782+00:00",
+  "checks": [
+    {
+      "name": "rust-workspace",
+      "argv": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-10T20:24:35.138898+00:00",
+      "finished_at": "2026-10-10T20:24:43.318492+00:00",
+      "log": "rust-workspace.log",
+      "summary": {
+        "rust_result_groups": 30,
+        "rust_totals": {
+          "passed": 112,
+          "failed": 0,
+          "ignored": 10
+        },
+        "python_result": null
+      },
+      "raw_sha256": "b4236c884c57084aef9e5ce2c7fb260b14c493ee8ca8bced08dc1c47bc9124b3",
+      "published_sha256": "54d60d8e6fa29536c5bc6be65cd6f9b4a16b82cc2ccbdbcd982e98e5db753a68"
+    },
+    {
+      "name": "python-tests",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_*.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-10T20:24:43.319797+00:00",
+      "finished_at": "2026-10-10T20:24:44.178685+00:00",
+      "log": "python-tests.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": {
+          "tests": 102,
+          "result": "OK"
+        }
+      },
+      "raw_sha256": "721099520005ed1e973a5c9b1f6c6d9404bf073785d8764a09f48c9124494b2c",
+      "published_sha256": "721099520005ed1e973a5c9b1f6c6d9404bf073785d8764a09f48c9124494b2c"
+    },
+    {
+      "name": "format",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-10T20:24:44.179029+00:00",
+      "finished_at": "2026-10-10T20:24:44.401421+00:00",
+      "log": "format.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clippy-host",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-10T20:24:44.401886+00:00",
+      "finished_at": "2026-10-10T20:24:44.720805+00:00",
+      "log": "clippy-host.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "5604fc8f0c276397a55db4bd7008236712075c0ad37d3b3a0f1fe362b1b85a36",
+      "published_sha256": "5604fc8f0c276397a55db4bd7008236712075c0ad37d3b3a0f1fe362b1b85a36"
+    },
+    {
+      "name": "derived-snapshot",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "scripts/verify-source-snapshot.py",
+        "--derived-only"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-10T20:24:44.721074+00:00",
+      "finished_at": "2026-10-10T20:24:44.788040+00:00",
+      "log": "derived-snapshot.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84",
+      "published_sha256": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84"
+    },
+    {
+      "name": "historical-audit",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "scripts/check-historical-audit.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-10T20:24:44.788399+00:00",
+      "finished_at": "2026-10-10T20:24:45.523626+00:00",
+      "log": "historical-audit.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232",
+      "published_sha256": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232"
+    },
+    {
+      "name": "semantic-audit",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "scripts/check-semantic-evaluation.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-10T20:24:45.524016+00:00",
+      "finished_at": "2026-10-10T20:24:45.634400+00:00",
+      "log": "semantic-audit.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0",
+      "published_sha256": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0"
+    },
+    {
+      "name": "wasm-build",
+      "argv": [
+        "./scripts/build-canvas.sh"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-10T20:24:45.634657+00:00",
+      "finished_at": "2026-10-10T20:24:45.795545+00:00",
+      "log": "wasm-build.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "0b5fe2277fd2b29cc111b76604c482f8ec516047dbc0954657203c5614f4e4db",
+      "published_sha256": "0b5fe2277fd2b29cc111b76604c482f8ec516047dbc0954657203c5614f4e4db"
+    },
+    {
+      "name": "clippy-wasm",
+      "argv": [
+        "cargo",
+        "clippy",
+        "-p",
+        "canvas-view",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-10T20:24:45.795753+00:00",
+      "finished_at": "2026-10-10T20:24:45.939650+00:00",
+      "log": "clippy-wasm.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "a5f4c585ee974ca44916ac30a98bbc189e067a7e0a6bc6d2e8d6bc525be724af",
+      "published_sha256": "a5f4c585ee974ca44916ac30a98bbc189e067a7e0a6bc6d2e8d6bc525be724af"
+    },
+    {
+      "name": "browser-matrix",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "app-server",
+        "--test",
+        "browser_e2e",
+        "--test",
+        "canvas_browser",
+        "--locked",
+        "--",
+        "--ignored",
+        "--nocapture"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-10T20:24:45.939905+00:00",
+      "finished_at": "2026-10-10T20:24:56.902206+00:00",
+      "log": "browser-matrix.log",
+      "summary": {
+        "rust_result_groups": 2,
+        "rust_totals": {
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0
+        },
+        "python_result": null
+      },
+      "raw_sha256": "53b759d2ea0521a7d1f8ddf2baaeb1175b01302ff3f2004e02276cc75aa4194d",
+      "published_sha256": "9debca118956e695f6d4c3713699fa4fc5989460fb66d9ad1be6e4298eea61f7"
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "tool": "jev_verify",
+  "model": "typesafe/jev-1.13-20260917",
+  "provider": "openrouter",
+  "auto_accept": 0.8,
+  "subject_at": 0.5,
+  "summary": {
+    "verified": 7,
+    "contradicted": 0,
+    "unsupported": 0,
+    "needs_review": 1
+  },
+  "results": [
+    {
+      "id": "claim0",
+      "claim": "The corrected snapshot contains 5,106 players, 2,227 certified tenures, 1,501 edges and 4,176 components. Its finite diameter is 20, with 55,842 reachable and 12,977,223 unreachable unordered pairs. Coverage remains incomplete and 3,537 players lack a certified tenure.",
+      "verdict": "verified",
+      "probabilities": {
+        "supports": 0.99,
+        "contradicts": 0.01,
+        "says_nothing": 0
+      },
+      "confidence": 0.98,
+      "action": "auto",
+      "supporting_evidence": "docs_reports_final-verification_README.md",
+      "same_subject": 0.9
+    },
+    {
+      "id": "claim1",
+      "claim": "The recorded final local checks show 104 passing Rust tests, zero failures and seven intentional ignores; 92 Python tests; three browser journeys and one canvas check; one explicit credential-log canary.",
+      "verdict": "verified",
+      "probabilities": {
+        "supports": 0.66,
+        "contradicts": 0.34,
+        "says_nothing": 0
+      },
+      "confidence": 0.49,
+      "action": "review",
+      "supporting_evidence": "docs_reports_final-verification_README.md",
+      "same_subject": 0.86
+    },
+    {
+      "id": "claim2",
+      "claim": "The actual Acy\u2013Bogut relationship has degree 1 and a 121-day Dallas overlap with both tenure/source records displayed.",
+      "verdict": "verified",
+      "probabilities": {
+        "supports": 0.96,
+        "contradicts": 0.02,
+        "says_nothing": 0.02
+      },
+      "confidence": 0.94,
+      "action": "auto",
+      "supporting_evidence": "docs_reports_final-verification_README.md",
+      "same_subject": 0.89
+    },
+    {
+      "id": "claim3",
+      "claim": "Repeated-signing continuity was corrected. The actual full-snapshot Williams\u2013Shakur query now returns disconnected with unresolved coverage, while the later anchored Williams spell remains admitted.",
+      "verdict": "verified",
+      "probabilities": {
+        "supports": 1,
+        "contradicts": 0,
+        "says_nothing": 0
+      },
+      "confidence": 1,
+      "action": "auto",
+      "supporting_evidence": "docs_reports_final-verification_final-review-corrections.md",
+      "same_subject": 0.91
+    },
+    {
+      "id": "claim4",
+      "claim": "Actual browser evidence shows two Dee Brown identities with era/team context and explicit choices. HTTP regression verifies preservation of the operation, other endpoint and filters, and rejection of an ID outside the candidate list.",
+      "verdict": "verified",
+      "probabilities": {
+        "supports": 0.98,
+        "contradicts": 0.01,
+        "says_nothing": 0.01
+      },
+      "confidence": 0.97,
+      "action": "auto",
+      "supporting_evidence": "docs_reports_final-verification_final-review-corrections.md",
+      "same_subject": 0.87
+    },
+    {
+      "id": "claim5",
+      "claim": "The historical semantic experiment has 44 labels and 132 frozen outcomes. Held-out baseline resolution matched 11/11, routing 4/8 and ranking 0/4, with explicit failures and uncertainty rather than a broad accuracy claim.",
+      "verdict": "verified",
+      "probabilities": {
+        "supports": 0.98,
+        "contradicts": 0.01,
+        "says_nothing": 0.01
+      },
+      "confidence": 0.97,
+      "action": "auto",
+      "supporting_evidence": "docs_evaluation_README.md",
+      "same_subject": 0.92
+    },
+    {
+      "id": "claim6",
+      "claim": "Three raw archives and 80 cached transaction pages were SHA-verified with zero new downloads. Original historical audit artifacts and measured semantic outcomes remain preserved.",
+      "verdict": "verified",
+      "probabilities": {
+        "supports": 1,
+        "contradicts": 0,
+        "says_nothing": 0
+      },
+      "confidence": 1,
+      "action": "auto",
+      "supporting_evidence": "14-source-snapshot.log",
+      "same_subject": 0.96
+    }
+  ],
+  "usage": {
+    "input_tokens": 15232,
+    "output_tokens": 1744
+  }
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "file": "strong-final-recount.json",
+    "original_sha256": "cbbb3707233263479af0ccc98e49d780a25a80672cc46a1c5ebf55846902b548",
+    "published_sha256": "cbbb3707233263479af0ccc98e49d780a25a80672cc46a1c5ebf55846902b548",
+    "normalization": "workspace path prefix only"
+  },
+  {
+    "file": "strong-final-targeted.log",
+    "original_sha256": "ffa9d9ecf13f5d21cc27750825d7c89b593dc66f0064e3def5aba4901c5ce2c1",
+    "published_sha256": "952993140fe052d6226265626f56c53d8e88640f4a26147cb338ed615e2c5ca5",
+    "normalization": "workspace path prefix and redundant trailing empty lines only"
+  },
+  {
+    "file": "strong-memory-replay.log",
+    "original_sha256": "bafe5a761fca2f2ff452cec1cfbfe1ef0ee264de15371ec7d08bbfd47b72e61e",
+    "published_sha256": "bafe5a761fca2f2ff452cec1cfbfe1ef0ee264de15371ec7d08bbfd47b72e61e",
+    "normalization": "workspace path prefix and redundant trailing empty lines only"
+  },
+  {
+    "file": "strong-memory-isolation.json",
+    "original_sha256": "5a28e5b3c9ce2f993c54c32674d74c6718b95d221b4032d233f2672696a236d4",
+    "published_sha256": "5a28e5b3c9ce2f993c54c32674d74c6718b95d221b4032d233f2672696a236d4",
+    "normalization": "workspace path prefix only"
+  }
+]

@@ -1,0 +1,7 @@
+[package]
+name = "fixture"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+graph-core = { workspace = true }

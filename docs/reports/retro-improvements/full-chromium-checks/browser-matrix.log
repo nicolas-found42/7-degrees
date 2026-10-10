@@ -1,0 +1,27 @@
+   Compiling app-server v0.1.0 (<checkout>/crates/app-server)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.92s
+     Running tests/browser_e2e.rs (target/debug/deps/browser_e2e-ac78b2c5539a4913)
+
+running 6 tests
+Pinned real slice: 7 players, 79 exact committed tenure rows; mapping retains original record references and snapshot SHA-256.
+Chromium "153.0.8010.12"
+Whole network: 5106 players / 101395 connections ready in 12990 ms
+Synthetic diamond: equal alternatives/cursor/selection, team+era filters/removal, uncertainty/unsupported/provider-down fallback passed.
+test home_lookup_and_connections_are_accessible_in_the_running_fixture_app ... ok
+Real slice: typo/alias, same-name context and clarification/choice, sourced Acy/Bogut chain/panel/native page, excluded postseason-only Vildoza and unresolved coverage passed.
+test alternatives_filters_uncertainty_and_provider_failure_are_visible_user_outcomes ... ok
+test maravich_mcgrady_visualizer_links_profiles_and_evidence_on_desktop_and_mobile ... ok
+test whole_network_renders_all_connections_and_keeps_them_when_searching_and_zooming ... ok
+test real_lookup_disambiguation_and_selected_edge_provenance_remain_honest ... ok
+test historical_chain_and_appearance_evidence_render_without_fabricated_dates ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 36.37s
+
+     Running tests/canvas_browser.rs (target/debug/deps/canvas_browser-58f55221a2d74e26)
+
+running 1 test
+Chromium "153.0.8010.12"
+WASM initialized; canvas pixels changed; pointer selection/drag/wheel, button and keyboard transforms, direct/nearby expansion, preserved cursor/degree and edge hook passed. Fixture and real Acy/Bogut selected-edge panels loaded dates, both record references, source anchors and coverage.
+test rust_wasm_canvas_supports_pointer_keyboard_expansion_and_retains_chain_facts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.20s

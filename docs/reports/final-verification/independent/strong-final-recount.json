@@ -1,0 +1,27 @@
+{
+  "02-rust-workspace.log": {
+    "totals": [
+      104,
+      0,
+      7
+    ],
+    "sha256": "20a83cc2a0871a9b225d53c92460f8549772080c866ca4d8ce74305d1764b840"
+  },
+  "07-browser.log": {
+    "totals": [
+      4,
+      0,
+      0
+    ],
+    "sha256": "54a6b534997f6c1889f10ec0e9eeab9f16badfcf7f3984a8a5ab1eb372fc2c07"
+  },
+  "08-credential-logs.log": {
+    "totals": [
+      1,
+      0,
+      0
+    ],
+    "sha256": "39031f8bd6c545c666a8920fdf743ed5e54be92d0c8711e4828528de92e65151"
+  },
+  "python_tests": 92
+}

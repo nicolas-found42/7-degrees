@@ -1,0 +1,5 @@
+   Compiling canvas-view v0.1.0 (<checkout>/crates/canvas-view)
+   Compiling app-server v0.1.0 (<checkout>/crates/app-server)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.70s
+     Running `target/debug/semantic-eval --validate`
+Validated 44 labeled cases with explicit disjoint case IDs and splits

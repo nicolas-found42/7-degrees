@@ -91,23 +91,52 @@ Legacy tables inventoried (SQLite `nba.sqlite` row counts, verified against the 
   `deocheng/nba-data-1946-2026` candidate is not pinned or imported (license not stated
   on its dataset page).
 - Credentials: Kaggle API token at `~/.kaggle/access_token` (mode 600). Not committed.
-  `data/` is gitignored; no source data or credentials are committed.
+  `data/` archives, HTML cache, SQLite and pipeline checkpoints are gitignored; credentials are not committed. Derived identities, tenure CSVs, parsed transaction records, source-page hashes, request ledgers and audit metadata are committed under `docs/reports/`. These derived records include source factual text; they are not the raw ignored artifacts.
 
-## Refresh process
+## Pinned verification and local rebuild
 
-1. `kaggle datasets download -d <slug> -p data` for each source.
-2. Unzip, verify file inventory, sizes, and sha256 against this manifest.
-3. Update the version numbers and record the delta; re-run universe reconciliation (T3)
-   and tenure reconstruction (T4) against the new snapshot.
+The [machine-readable pins](snapshot-pins.json) record the three exact archives and the final identity/tenure hashes. Verify an existing local snapshot without downloading:
+
+```sh
+python3 scripts/verify-source-snapshot.py --data-dir data
+```
+
+The verifier streams archive hashes, checks size/file count, and verifies all 80 cached transaction pages against `docs/reports/t4/transaction-source-pages.csv`. It also checks committed T3/T4 hashes. The final verification used the existing raw snapshot and made zero network requests. A mismatch is a changed snapshot, not permission to silently relabel it.
+
+S1 extracts its populated `nba.sqlite` directly under `data/`; S2 CSVs live under `data/sumitrodatta/` and S3 under `data/romainmorleghem/`. Rebuild with the scripts' actual supported arguments:
+
+```sh
+python3 scripts/t3_reconcile.py data
+python3 scripts/t3_report.py
+python3 scripts/t4_fetch_bbr.py data --no-fetch
+python3 scripts/t4_reconcile.py data
+python3 scripts/t4_report.py data
+```
+
+`--no-fetch` parses the existing cache without HTTP. T3 report takes **no data-directory CLI argument**; it reads this checkout's `data/t3/.state.pkl`, falling back to sibling `../7-degrees/data` when this checkout has no data directory. The other commands take the optional positional data directory. All scripts write reports relative to their own checkout; isolated worktrees can point preparation at an existing snapshot while preserving the raw archives/cache. Reconciliation checkpoints remain ignored. The current corrected tenure hash is `2bd2106ba3c0819b1a065246950f527a4267feb5f8a2054a11318205c04a1ab1`. Hash/diff the derived outputs after a rebuild and inspect disagreements before updating pins.
+
+## Deliberate future refresh
+
+`kaggle datasets download -d <slug> -p <new-snapshot-directory>` obtains the provider's current release, **not a guaranteed version 238/56/1**. Preserve the pinned archives and extracted data. Stage each of the three named slugs above in a new dated directory, record its actual version/update metadata, archive SHA-256, bytes, file inventory and request count, and extract into the expected source subdirectories. Existing machine credentials can authenticate Kaggle; do not copy them into artifacts. Compare schemas before rerunning T3/T4, retain identity/membership/date disagreements, and update this manifest and snapshot pins only after review.
+
+The transaction fetcher's page list is explicitly BAA 1947–49 and NBA 1950–2026. `python3 scripts/t4_fetch_bbr.py <data_dir>` fetches **missing** cache pages only. Existing cached pages are never refreshed by that command; there is no `--force`/`--refresh` option. A new-season update requires reviewing the bounded year list, preserving old HTML/ledgers in the old snapshot, and using a new snapshot cache for changed pages. Request starts are spaced at least 5.2 seconds; transient 429/503/Cloudflare 1015/network failures get at most one retry after 45 seconds. Fetch failures remain gaps. See the [fetch/request accounting](../reports/t4-tenure-coverage.md#4-supplemental-web-retrieval--bref-transaction-pages-request-accounting) and committed `t4/bbr-request-ledger.csv`.
+
+## Supplemental sources and attribution
+
+Basketball-Reference league transaction pages are acquired, not merely planned: **80 cached pages**, 30,327 parsed paragraphs/records, **79 scripted HTTP requests plus one prior manual probe**. Later parsing/correction passes use those same bytes with zero additional source requests. Page URL/SHA-256/raw list-item and paragraph locators connect the derived records to the retained cache. Missing/fuzzy dates and non-NBA associations remain explicitly classified; the cache's availability does not establish complete roster tenure coverage.
+
+Attribute S1 to [Wyatt Walsh/nbadb](https://github.com/wyattowalsh/nbadb) and its NBA statistics lineage, S2 to [Sumitro Datta](https://www.kaggle.com/datasets/sumitrodatta/nba-aba-baa-stats) and Basketball-Reference, and S3 to [Romain Morleghem](https://www.kaggle.com/datasets/romainmorleghem/nba-players-info-and-headlinestats-up-to-2025) and NBA API common-player information. S1's stated [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) requires attribution, notice of modifications and share-alike for adapted material. Derived reconciliation changes and exclusions are documented in T3/T4 reports; do not remove the source notices when distributing covered adaptations. S2's published CC0 and S3's published MIT labels are recorded source declarations; upstream content can retain separate rights.
+
+Basketball-Reference is published by [Sports Reference](https://www.sports-reference.com/) and its [terms](https://www.sports-reference.com/termsofuse.html) govern use of that source. No unrestricted redistribution right for its cached HTML or source paragraphs is asserted here. Raw copyrighted pages/full audit paragraphs remain outside the repository; the portable audit publishes locators, hashes, outcomes and model signals. Review applicable upstream rights before a new public data distribution; this manifest does not relicense source material. Candidate `deocheng/nba-data-1946-2026` remains unlicensed/unimported.
 
 ## Source coverage gaps (carried forward to T3/T4; GLOSSARY.md "Source coverage gap")
 
-- No transaction dates in the pinned bulk sources. Planned supplemental dated sources:
+- No transaction dates in the pinned bulk sources. Acquired supplemental dated source:
   Basketball-Reference league transaction pages — verified live 2026-10-09 from the first
   BAA season (`BAA_1947_transactions.html` HTTP 200, "Transactions listed are from
   July 1, 1946 to June 30, 1947"; `BAA_1948` and `NBA_1950` verified likewise — an earlier
-  "1951 onward / HTTP 429" report was wrong, the 429 was transient) — to be fetched cached
-  and throttled; and S4 candidate `deocheng/nba-data-1946-2026` `public.transactions.csv`
+  "1951 onward / HTTP 429" report was wrong, the 429 was transient) — acquired cached
+  and throttled as recorded above. S4 candidate `deocheng/nba-data-1946-2026` `public.transactions.csv`
   (28,667 rows, 1946-12-12 → 2026-06-24, mostly season-resolution) per the 2026-10-09
   research pass — license not stated on the dataset page, not pinned, do not import before
   the license is cleared.
@@ -115,8 +144,8 @@ Legacy tables inventoried (SQLite `nba.sqlite` row counts, verified against the 
   only; `play_by_play` covers 1996-97 onward events only).
 - 1946-1950 BAA tenure evidence: dated transaction pages are reachable for every season
   from 1946-47 (verified above, with player and franchise slugs hyperlinked), so the
-  remaining risk is bounded day-precision parsing (fuzzy-dated rows such as
-  "November ?, 1947"), not a source absence. Wikipedia season-transaction lists mirror
+  remaining gap includes incomplete movement coverage and bounded day-precision parsing (fuzzy-dated rows such as
+  "November ?, 1947"). Reachable pages alone do not certify uninterrupted service or both roster boundaries. Wikipedia season-transaction lists mirror
   the same movement as a structured cross-check.
 - S1 `team_history` franchise eras end at 2019 (stale); the franchise-identity crosswalk
   comes from S2 `Team Abbrev.csv` (aliases across eras), with NBA Hoops Online "Team

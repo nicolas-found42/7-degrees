@@ -1,0 +1,54 @@
+name: Verification
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  portable:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: rustup component add rustfmt clippy
+      - run: python3 scripts/check.py --profile portable --output target/ci-portable
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: portable-receipts
+          path: target/ci-portable/
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          rustup target add wasm32-unknown-unknown
+          rustup component add clippy
+          version=$(python3 -c 'import tomllib; print(next(p["version"] for p in tomllib.load(open("Cargo.lock", "rb"))["package"] if p["name"] == "wasm-bindgen"))')
+          cargo install wasm-bindgen-cli --version "$version" --locked
+          npm install --prefix "$RUNNER_TEMP/browser-tools" playwright@1.61.1
+          "$RUNNER_TEMP/browser-tools/node_modules/.bin/playwright" install --with-deps chromium
+      - run: |
+          export BROWSER_NODE="$(command -v node)"
+          export PLAYWRIGHT_PACKAGE_PATH="$RUNNER_TEMP/browser-tools/node_modules/playwright"
+          export BROWSER_EXECUTABLE="$(node -e 'console.log(require(process.env.PLAYWRIGHT_PACKAGE_PATH).chromium.executablePath())')"
+          python3 scripts/check.py --profile browser --output target/ci-browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-receipts
+          path: |
+            target/ci-browser/
+            target/browser-e2e/

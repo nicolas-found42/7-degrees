@@ -1,0 +1,5 @@
+    Finished `release` profile [optimized] target(s) in 1.56s
+   Compiling app-server v0.1.0 (<checkout>/crates/app-server)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 6.29s
+     Running `target/debug/app-server`
+7-degrees listening on http://127.0.0.1:49333

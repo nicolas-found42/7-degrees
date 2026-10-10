@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "profile": "raw",
+  "source_commit": "7f510961a8c07c49a1a00cbf0335917f6c7abb7d",
+  "working_tree_status": " M AGENTS.md\n M README.md\n M crates/app-server/tests/browser_e2e.rs\n M docs/data/snapshot-pins.json\n M docs/data/source-manifest.md\n M scripts/browser_driver.cjs\n M scripts/publish-final-evidence.py\n M scripts/verify-source-snapshot.py\n?? .github/\n?? docs/agents/source-coverage.md\n?? docs/agents/verification.md\n?? scripts/check.py\n?? scripts/pr-body.py\n?? scripts/test_verification.py\n?? scripts/verification.py\n",
+  "working_tree_diff_sha256": "be1601bab90e9452ab5f26c1fc8eb7e0ea8fffa85db30777c71974ba5b5d5da5",
+  "untracked_sha256": {
+    ".github/workflows/check.yml": "ecb27d8c527802d7d05641d52362c0e7c893880348b6202ab2f0a5c91413ea61",
+    "docs/agents/source-coverage.md": "9847c9244cbbe601b04074110367304adca9a288858a7760eadfce76e3777b49",
+    "docs/agents/verification.md": "1540a59a4785a537b3e2d0fec5c932fb58de4e17cd9e008315048ca88721df88",
+    "scripts/check.py": "27aac0c173345a862b360674218e98d6e5bd99c93c49bb9fda7cdfa0557390b2",
+    "scripts/pr-body.py": "a116665cf6ab143bdc08068d577b306b150ff21228aa25fa204ae535ce74d42b",
+    "scripts/test_verification.py": "d18953cd3d2af4d0f270f831f016ce27c284f54a646b34294e2c96d16ab940b6",
+    "scripts/verification.py": "ace712de23bfdefbd295ba4f43da3495550a6919c637dc97f9170b30a7cef93f"
+  },
+  "started_at": "2026-10-10T20:24:42.250606+00:00",
+  "completed": true,
+  "expected_checks": [
+    "raw-snapshot"
+  ],
+  "finished_at": "2026-10-10T20:24:42.807848+00:00",
+  "checks": [
+    {
+      "name": "raw-snapshot",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "scripts/verify-source-snapshot.py",
+        "--data-dir",
+        "/Users/Nicolas/Documents/github/7-degrees/data"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-10T20:24:42.250833+00:00",
+      "finished_at": "2026-10-10T20:24:42.807385+00:00",
+      "log": "raw-snapshot.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "1e68189e82e9ed77907dac9407f6a1f5e22e8f44772fa814b4187b7e9e75d00a",
+      "published_sha256": "1e68189e82e9ed77907dac9407f6a1f5e22e8f44772fa814b4187b7e9e75d00a"
+    }
+  ]
+}

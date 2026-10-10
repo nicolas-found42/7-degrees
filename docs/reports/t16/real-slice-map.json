@@ -1,0 +1,717 @@
+{
+  "coverage_complete": false,
+  "records": [
+    {
+      "evidence_class": "unresolved",
+      "original_record": "t4/tenures.csv:115",
+      "player": "acyqu01",
+      "season": "2013",
+      "slice_record": "t4/tenures.csv:2",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "RAPTORS"
+    },
+    {
+      "evidence_class": "cross-checked",
+      "original_record": "t4/tenures.csv:116",
+      "player": "acyqu01",
+      "season": "2014",
+      "slice_record": "t4/tenures.csv:3",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "KINGS"
+    },
+    {
+      "evidence_class": "cross-checked",
+      "original_record": "t4/tenures.csv:117",
+      "player": "acyqu01",
+      "season": "2014",
+      "slice_record": "t4/tenures.csv:4",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "RAPTORS"
+    },
+    {
+      "evidence_class": "cross-checked",
+      "original_record": "t4/tenures.csv:118",
+      "player": "acyqu01",
+      "season": "2015",
+      "slice_record": "t4/tenures.csv:5",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "KNICKS"
+    },
+    {
+      "evidence_class": "cross-checked",
+      "original_record": "t4/tenures.csv:119",
+      "player": "acyqu01",
+      "season": "2016",
+      "slice_record": "t4/tenures.csv:6",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "KINGS"
+    },
+    {
+      "evidence_class": "unresolved",
+      "original_record": "t4/tenures.csv:120",
+      "player": "acyqu01",
+      "season": "2017",
+      "slice_record": "t4/tenures.csv:7",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "NETS"
+    },
+    {
+      "evidence_class": "unresolved",
+      "original_record": "t4/tenures.csv:121",
+      "player": "acyqu01",
+      "season": "2017",
+      "slice_record": "t4/tenures.csv:8",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "NETS"
+    },
+    {
+      "evidence_class": "cross-checked",
+      "original_record": "t4/tenures.csv:122",
+      "player": "acyqu01",
+      "season": "2017",
+      "slice_record": "t4/tenures.csv:9",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "NETS"
+    },
+    {
+      "evidence_class": "directly-evidenced",
+      "original_record": "t4/tenures.csv:123",
+      "player": "acyqu01",
+      "season": "2017",
+      "slice_record": "t4/tenures.csv:10",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "MAVERICKS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:124",
+      "player": "acyqu01",
+      "season": "2018",
+      "slice_record": "t4/tenures.csv:11",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "NETS"
+    },
+    {
+      "evidence_class": "unresolved",
+      "original_record": "t4/tenures.csv:125",
+      "player": "acyqu01",
+      "season": "2019",
+      "slice_record": "t4/tenures.csv:12",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "SUNS"
+    },
+    {
+      "evidence_class": "cross-checked",
+      "original_record": "t4/tenures.csv:126",
+      "player": "acyqu01",
+      "season": "2019",
+      "slice_record": "t4/tenures.csv:13",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "SUNS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:2590",
+      "player": "bogutan01",
+      "season": "2006",
+      "slice_record": "t4/tenures.csv:14",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BUCKS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:2591",
+      "player": "bogutan01",
+      "season": "2007",
+      "slice_record": "t4/tenures.csv:15",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BUCKS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:2592",
+      "player": "bogutan01",
+      "season": "2008",
+      "slice_record": "t4/tenures.csv:16",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BUCKS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:2593",
+      "player": "bogutan01",
+      "season": "2009",
+      "slice_record": "t4/tenures.csv:17",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BUCKS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:2594",
+      "player": "bogutan01",
+      "season": "2010",
+      "slice_record": "t4/tenures.csv:18",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BUCKS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:2595",
+      "player": "bogutan01",
+      "season": "2011",
+      "slice_record": "t4/tenures.csv:19",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BUCKS"
+    },
+    {
+      "evidence_class": "cross-checked",
+      "original_record": "t4/tenures.csv:2596",
+      "player": "bogutan01",
+      "season": "2012",
+      "slice_record": "t4/tenures.csv:20",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BUCKS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:2597",
+      "player": "bogutan01",
+      "season": "2013",
+      "slice_record": "t4/tenures.csv:21",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "WARRIORS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:2598",
+      "player": "bogutan01",
+      "season": "2014",
+      "slice_record": "t4/tenures.csv:22",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "WARRIORS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:2599",
+      "player": "bogutan01",
+      "season": "2015",
+      "slice_record": "t4/tenures.csv:23",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "WARRIORS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:2600",
+      "player": "bogutan01",
+      "season": "2016",
+      "slice_record": "t4/tenures.csv:24",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "WARRIORS"
+    },
+    {
+      "evidence_class": "directly-evidenced",
+      "original_record": "t4/tenures.csv:2601",
+      "player": "bogutan01",
+      "season": "2017",
+      "slice_record": "t4/tenures.csv:25",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "CAVALIERS"
+    },
+    {
+      "evidence_class": "directly-evidenced",
+      "original_record": "t4/tenures.csv:2602",
+      "player": "bogutan01",
+      "season": "2017",
+      "slice_record": "t4/tenures.csv:26",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "MAVERICKS"
+    },
+    {
+      "evidence_class": "directly-evidenced",
+      "original_record": "t4/tenures.csv:2603",
+      "player": "bogutan01",
+      "season": "2018",
+      "slice_record": "t4/tenures.csv:27",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "LAKERS"
+    },
+    {
+      "evidence_class": "cross-checked",
+      "original_record": "t4/tenures.csv:2604",
+      "player": "bogutan01",
+      "season": "2019",
+      "slice_record": "t4/tenures.csv:28",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "WARRIORS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:3425",
+      "player": "brownde01",
+      "season": "1991",
+      "slice_record": "t4/tenures.csv:29",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "CELTICS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:3426",
+      "player": "brownde01",
+      "season": "1992",
+      "slice_record": "t4/tenures.csv:30",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "CELTICS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:3427",
+      "player": "brownde01",
+      "season": "1993",
+      "slice_record": "t4/tenures.csv:31",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "CELTICS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:3428",
+      "player": "brownde01",
+      "season": "1994",
+      "slice_record": "t4/tenures.csv:32",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "CELTICS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:3429",
+      "player": "brownde01",
+      "season": "1995",
+      "slice_record": "t4/tenures.csv:33",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "CELTICS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:3430",
+      "player": "brownde01",
+      "season": "1996",
+      "slice_record": "t4/tenures.csv:34",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "CELTICS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:3431",
+      "player": "brownde01",
+      "season": "1997",
+      "slice_record": "t4/tenures.csv:35",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "CELTICS"
+    },
+    {
+      "evidence_class": "cross-checked",
+      "original_record": "t4/tenures.csv:3432",
+      "player": "brownde01",
+      "season": "1998",
+      "slice_record": "t4/tenures.csv:36",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "CELTICS"
+    },
+    {
+      "evidence_class": "cross-checked",
+      "original_record": "t4/tenures.csv:3433",
+      "player": "brownde01",
+      "season": "1998",
+      "slice_record": "t4/tenures.csv:37",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "RAPTORS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:3434",
+      "player": "brownde01",
+      "season": "1999",
+      "slice_record": "t4/tenures.csv:38",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "RAPTORS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:3435",
+      "player": "brownde01",
+      "season": "2000",
+      "slice_record": "t4/tenures.csv:39",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "RAPTORS"
+    },
+    {
+      "evidence_class": "cross-checked",
+      "original_record": "t4/tenures.csv:3436",
+      "player": "brownde01",
+      "season": "2001",
+      "slice_record": "t4/tenures.csv:40",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "MAGIC"
+    },
+    {
+      "evidence_class": "cross-checked",
+      "original_record": "t4/tenures.csv:3437",
+      "player": "brownde01",
+      "season": "2002",
+      "slice_record": "t4/tenures.csv:41",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "MAGIC"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:3449",
+      "player": "brownde03",
+      "season": "2007",
+      "slice_record": "t4/tenures.csv:42",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "JAZZ"
+    },
+    {
+      "evidence_class": "directly-evidenced",
+      "original_record": "t4/tenures.csv:3450",
+      "player": "brownde03",
+      "season": "2009",
+      "slice_record": "t4/tenures.csv:43",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "SUNS"
+    },
+    {
+      "evidence_class": "directly-evidenced",
+      "original_record": "t4/tenures.csv:3451",
+      "player": "brownde03",
+      "season": "2009",
+      "slice_record": "t4/tenures.csv:44",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "WIZARDS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:14433",
+      "player": "jordami01",
+      "season": "1985",
+      "slice_record": "t4/tenures.csv:45",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BULLS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:14434",
+      "player": "jordami01",
+      "season": "1986",
+      "slice_record": "t4/tenures.csv:46",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BULLS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:14435",
+      "player": "jordami01",
+      "season": "1987",
+      "slice_record": "t4/tenures.csv:47",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BULLS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:14436",
+      "player": "jordami01",
+      "season": "1988",
+      "slice_record": "t4/tenures.csv:48",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BULLS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:14437",
+      "player": "jordami01",
+      "season": "1989",
+      "slice_record": "t4/tenures.csv:49",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BULLS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:14438",
+      "player": "jordami01",
+      "season": "1990",
+      "slice_record": "t4/tenures.csv:50",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BULLS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:14439",
+      "player": "jordami01",
+      "season": "1991",
+      "slice_record": "t4/tenures.csv:51",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BULLS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:14440",
+      "player": "jordami01",
+      "season": "1992",
+      "slice_record": "t4/tenures.csv:52",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BULLS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:14441",
+      "player": "jordami01",
+      "season": "1993",
+      "slice_record": "t4/tenures.csv:53",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BULLS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:14442",
+      "player": "jordami01",
+      "season": "1995",
+      "slice_record": "t4/tenures.csv:54",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BULLS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:14443",
+      "player": "jordami01",
+      "season": "1996",
+      "slice_record": "t4/tenures.csv:55",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BULLS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:14444",
+      "player": "jordami01",
+      "season": "1997",
+      "slice_record": "t4/tenures.csv:56",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BULLS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:14445",
+      "player": "jordami01",
+      "season": "1998",
+      "slice_record": "t4/tenures.csv:57",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BULLS"
+    },
+    {
+      "evidence_class": "cross-checked",
+      "original_record": "t4/tenures.csv:14446",
+      "player": "jordami01",
+      "season": "2002",
+      "slice_record": "t4/tenures.csv:58",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "WIZARDS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:14447",
+      "player": "jordami01",
+      "season": "2003",
+      "slice_record": "t4/tenures.csv:59",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "WIZARDS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:19618",
+      "player": "nba:1630492",
+      "season": "2022",
+      "slice_record": "t4/tenures.csv:60",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "BUCKS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:20476",
+      "player": "onealsh01",
+      "season": "1993",
+      "slice_record": "t4/tenures.csv:61",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "MAGIC"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:20477",
+      "player": "onealsh01",
+      "season": "1994",
+      "slice_record": "t4/tenures.csv:62",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "MAGIC"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:20478",
+      "player": "onealsh01",
+      "season": "1995",
+      "slice_record": "t4/tenures.csv:63",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "MAGIC"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:20479",
+      "player": "onealsh01",
+      "season": "1996",
+      "slice_record": "t4/tenures.csv:64",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "MAGIC"
+    },
+    {
+      "evidence_class": "cross-checked",
+      "original_record": "t4/tenures.csv:20480",
+      "player": "onealsh01",
+      "season": "1997",
+      "slice_record": "t4/tenures.csv:65",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "LAKERS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:20481",
+      "player": "onealsh01",
+      "season": "1998",
+      "slice_record": "t4/tenures.csv:66",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "LAKERS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:20482",
+      "player": "onealsh01",
+      "season": "1999",
+      "slice_record": "t4/tenures.csv:67",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "LAKERS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:20483",
+      "player": "onealsh01",
+      "season": "2000",
+      "slice_record": "t4/tenures.csv:68",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "LAKERS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:20484",
+      "player": "onealsh01",
+      "season": "2001",
+      "slice_record": "t4/tenures.csv:69",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "LAKERS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:20485",
+      "player": "onealsh01",
+      "season": "2002",
+      "slice_record": "t4/tenures.csv:70",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "LAKERS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:20486",
+      "player": "onealsh01",
+      "season": "2003",
+      "slice_record": "t4/tenures.csv:71",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "LAKERS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:20487",
+      "player": "onealsh01",
+      "season": "2004",
+      "slice_record": "t4/tenures.csv:72",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "LAKERS"
+    },
+    {
+      "evidence_class": "cross-checked",
+      "original_record": "t4/tenures.csv:20488",
+      "player": "onealsh01",
+      "season": "2005",
+      "slice_record": "t4/tenures.csv:73",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "HEAT"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:20489",
+      "player": "onealsh01",
+      "season": "2006",
+      "slice_record": "t4/tenures.csv:74",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "HEAT"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:20490",
+      "player": "onealsh01",
+      "season": "2007",
+      "slice_record": "t4/tenures.csv:75",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "HEAT"
+    },
+    {
+      "evidence_class": "cross-checked",
+      "original_record": "t4/tenures.csv:20491",
+      "player": "onealsh01",
+      "season": "2008",
+      "slice_record": "t4/tenures.csv:76",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "HEAT"
+    },
+    {
+      "evidence_class": "cross-checked",
+      "original_record": "t4/tenures.csv:20492",
+      "player": "onealsh01",
+      "season": "2008",
+      "slice_record": "t4/tenures.csv:77",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "SUNS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:20493",
+      "player": "onealsh01",
+      "season": "2009",
+      "slice_record": "t4/tenures.csv:78",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "SUNS"
+    },
+    {
+      "evidence_class": "inferred",
+      "original_record": "t4/tenures.csv:20494",
+      "player": "onealsh01",
+      "season": "2010",
+      "slice_record": "t4/tenures.csv:79",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "CAVALIERS"
+    },
+    {
+      "evidence_class": "cross-checked",
+      "original_record": "t4/tenures.csv:20495",
+      "player": "onealsh01",
+      "season": "2011",
+      "slice_record": "t4/tenures.csv:80",
+      "snapshot_sha256": "bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04",
+      "team": "CELTICS"
+    }
+  ],
+  "scope": "Seven selected canonical player nodes; not the full universe"
+}

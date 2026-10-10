@@ -1,0 +1,1 @@
+{"nodes": 5106, "edges": 1501, "components": 4176, "diameter": 20, "reachable_pairs": 55842, "unreachable_pairs": 12977223, "cold_stats_seconds": 1.2102782079964527, "cached_stats_seconds": 0.0013170409947633743, "semantic_status": {"available": false, "reason": "unconfigured"}, "wasm_bytes": 239637}

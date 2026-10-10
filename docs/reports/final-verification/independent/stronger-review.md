@@ -1,0 +1,30 @@
+# Independent stronger acceptance review
+
+**Decision: no remaining actionable finding in the reviewed final corrections.** The original source/query findings, replay export isolation defect, and stale current-count summaries are resolved. This is independent evidence-based acceptance, not an automatic Jev pass or a claim of complete historical coverage.
+
+**Reviewed HEAD:** `a13a2e2745f07b2067f8def23d7e8b9e7e47908f`. Incremental scope: complete actual changes `776d48e..3783bb1` and `3783bb1..a13a2e2`, including code, tests, browser changes, generated data and receipts excluded from bounded gates; assessed in the previously reviewed full-spec state from `f8e743ca30939476433c680e7a29169d70c3fa41`. No repository edits, live semantic calls, gate retries, or GitHub actions were performed.
+
+## Decisive acceptance evidence
+
+- Spec §5: “When multiple candidates remain plausible, the application shows disambiguating context and lets the user choose; it does not silently pick one.” Actual browser assertions and inspected screenshot show both Dee Brown identities with era/team context. Fresh query HTTP regression preserves Connect, Acy endpoint, original request and RED/2000s filters after choice; rejects Acy as a Dee candidate. All required mentions must resolve before graph execution. HTML escapes displayed names, query and serialized continuation.
+- Spec §12: “A player who changes teams mid-season is linked only to players whose same-team roster tenure overlaps the relevant stint; season-level co-membership alone does not create the edge.” The generic repeated-arrival rule splits the earlier uncertain spell; no guessed departure becomes a fact. Duplicate same-day arrivals remain deduplicated. Williams’s March 28–April 7 anchored stint survives, while March 6–28 stays unresolved. Fresh full-snapshot HTTP and independent BFS confirm the Williams–Shakur edge is absent, with unresolved-coverage response rather than a historical negative claim.
+- Spec §31: “Uncovered or ambiguous intervals are surfaced in a coverage report and are not silently treated as proven non-teammate relationships.” Current T4 SHA-256 is `bfe9f5f2b60615af1160a157f7c482ee7ea3b9c86390e28f87a46c863ae39c04`. Independent served-graph BFS matched every histogram bucket: 5,106 nodes, 1,501 edges, 4,176 components, finite diameter 20, 55,842 reachable and 12,977,223 unreachable unordered pairs. Coverage has 2,227 certified tenures and 3,537 players without one.
+- Spec §30: “Every imported artifact and derived edge can be traced to its source version and supporting records; required source attribution/license terms are visible in project documentation.” Fresh source checker verified three archives, 80 cached pages and derived pins without downloads. All seven immutable historical audit tables match pre-fix Git bytes. Original `474481b` tenure hash independently equals `f4fe081d35518782969f502c68c7ba622b987a4d7bf042a729bf2333ff18a030`. Fresh historical checker passed 6,246 cases, 1,548 groups, 21,984 locators and 123,278 associations; regenerated current comparison files matched committed bytes. Associations and current comparisons are not new source readings.
+- Issue #18: “Both approved test seams pass (Rust API integration and browser E2E) with recorded output.” Independent raw-line sums give **104 Rust passed/0 failed/7 ignored, 92 Python passed, browser 3+canvas 1 passed, credential-log 1 passed**. Formatting and host/WASM Clippy receipts succeeded. Fresh reviewer runs passed 92 Python tests before the Rust-only isolation change and all 20 final query/import tests. Existing actual browser driver assertions and screenshots were inspected; this final follow-up did not rerun Chromium.
+- Historical replay now uses only private in-memory buffers recovered from fixed Git bytes and verified hashes. Production file and memory imports share the same strict reader with no historical acceptance switch. Fresh 132-outcome replay left all 20 target CSV paths/hashes unchanged, generated no legacy report directory, and preserved source-state hash. Labels, measurements, policy and original outcomes remain unchanged. Replay explicitly describes its superseded historical continuity policy and does not certify current edges.
+
+## Gate adjudication and limits
+
+The retained correction gate at `59780ce` escalated (composite .7576, minimum safety .30): two verified, three unsupported, one weak count contradiction (.13 confidence; .29 verified/.42 contradicted/.29 unsupported). Code/tests, shared mapping/fixture implementation, independent source/output verification and exact 103/92 pre-isolation recount resolve those evidence gaps; the separate replay-export defect was real and was corrected subsequently.
+
+The retained isolation gate at `dbc4c78` escalated (composite .8384167, minimum safety .55); all four claims verified, aggregate-check confidence .67, with low-confidence test-gap signals. Fresh strict-reader tests and replay/no-export checks resolve that uncertainty. Final claims-only verification retained seven verified claims; its count review (.49 confidence, .66 support/.34 contradiction) is resolved by independent final raw-line recount. None of these signals is relabeled as automatic acceptance.
+
+Current source coverage remains incomplete, including BAA 1946–1950 and five nameless identities. Historical semantic results remain small-sample and weak for routing/ranking; replay proves reproducibility, not accuracy or present-data equivalence. Integrity checks do not reperform 6,246 historical prose readings. The reviewer-owned no-key server was stopped. The worktree was clean at sign-off.
+
+## Independent receipts
+
+External sibling files: `strong-final-recount.json`, `strong-final-targeted.log`, `strong-memory-replay.log`, `strong-memory-isolation.json`, `strong-fresh-runtime.json`, and `strong-audit-delta/`. Published logs and hash manifests were checked, including preservation of the prior 103-test receipts. Separate merger receipt: `isolation-merge/merge-receipt.json`.
+
+Signed: **Codex independent stronger reviewer `/root/t3_strong_review`**
+
+Signed at UTC: 2026-10-09T23:16:33.625948+00:00

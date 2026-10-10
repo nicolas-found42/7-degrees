@@ -17,3 +17,10 @@
 
 # Editor/OS
 .DS_Store
+
+# Python verification artifacts
+__pycache__/
+*.py[cod]
+
+# Local experiment checkpoints (runner archives before a fresh/resumed live run)
+/docs/evaluation/archive/
