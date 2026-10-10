@@ -22,3 +22,9 @@ These are local execution receipts. Remote workflow outcomes should be read from
 ## Fresh-runner browser correction
 
 The first GitHub browser job exposed resource 404 errors on every page in full Chromium. Local headless-shell runs had not requested the implicit favicon. The document shell now declares an inline empty icon, and the driver reports HTTP error URLs independently of optional response-body capture. The fixture journey passed locally with full Chromium after this correction. [Fresh full-profile receipts](browser-fix-checks/manifest.json) again record 112 Rust, 102 Python and seven explicit browser tests passing, plus all format, Clippy and data/audit checks. The original failed GitHub run remains visible in Actions; subsequent run results should be read there.
+
+## Native tab activation and transport cleanup
+
+The corrected Linux run passed all six browser journeys but the canvas journey timed out awaiting its standalone evidence tab. Full Chromium reproduced this locally. Diagnostics showed the mouse command returned success without delivering a DOM click; changing only the event scope did not fix it. Evidence-tab assertions now activate the native anchor with keyboard Enter and observe new pages through the browser context. Canvas pointer gestures remain exercised separately. Failure diagnostics retain the link, page URLs, activation status and a screenshot. Both Rust browser transports request graceful browser closure before their bounded termination fallback, including after failed assertions.
+
+[Final full-Chromium profile receipts](full-chromium-checks/manifest.json) record 112 Rust tests, 102 Python tests and all seven browser journeys passing with the updated helpers, plus formatting, Clippy and both audit checks. Original failed Actions runs remain preserved; the final remote result is linked from the PR checks.

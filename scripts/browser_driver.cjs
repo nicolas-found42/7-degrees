@@ -33,7 +33,22 @@ async function command(c) {
     case 'ready': await target().waitFor({state:'visible'}); return true;
     case 'click': await target().click(); return true;
     case 'fill': await target().fill(c.value); return true;
-    case 'open-link-text': { const [popup] = await Promise.all([page.waitForEvent('popup'), target().click()]); observe(popup); await popup.waitForLoadState(); const text = await popup.locator('main').textContent(); if(c.path) await popup.screenshot({path:c.path,fullPage:true}); await popup.close(); return text; }
+    case 'open-link-text': {
+      let clicked = false;
+      // Native keyboard activation keeps link navigation independent of prior canvas pointer gestures.
+      await target().focus();
+      try {
+        const [popup] = await Promise.all([page.context().waitForEvent('page'), target().press('Enter').then(()=>{clicked=true;})]);
+        observe(popup); await popup.waitForLoadState();
+        const text = await popup.locator('main').textContent();
+        if(c.path) await popup.screenshot({path:c.path,fullPage:true});
+        await popup.close(); return text;
+      } catch(error) {
+        const link = await target().evaluate(e=>({href:e.href,target:e.target,html:e.outerHTML}));
+        await page.screenshot({path:path.join(__dirname,'../target/browser-e2e/tab-failure.png'),fullPage:true});
+        throw new Error(`${error}; clicked=${clicked}; link=${JSON.stringify(link)}; pages=${JSON.stringify(page.context().pages().map(p=>p.url()))}`);
+      }
+    }
     case 'select': await target().selectOption(c.value); return true;
     case 'attribute': return target().getAttribute(c.name);
     case 'text': return target().textContent();

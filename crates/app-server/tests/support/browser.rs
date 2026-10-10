@@ -63,6 +63,15 @@ impl Browser {
 }
 impl Drop for Browser {
     fn drop(&mut self) {
+        // Close Chromium before terminating its transport, including after a failed assertion.
+        let _ = writeln!(self.input, "{}", json!({"op":"close"}));
+        let _ = self.input.flush();
+        for _ in 0..100 {
+            if matches!(self.child.try_wait(), Ok(Some(_))) {
+                return;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(50));
+        }
         let _ = self.child.kill();
         let _ = self.child.wait();
     }
