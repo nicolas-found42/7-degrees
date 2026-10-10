@@ -180,6 +180,33 @@ async fn an_oversized_reply_fails_soft_without_being_parsed() {
 }
 
 #[tokio::test]
+async fn a_reply_cut_off_before_its_declared_length_is_not_trusted() {
+    use tokio::io::{AsyncReadExt, AsyncWriteExt};
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let port = listener.local_addr().unwrap().port();
+    tokio::spawn(async move {
+        loop {
+            let (mut socket, _) = listener.accept().await.unwrap();
+            let mut scratch = [0u8; 4096];
+            let _ = socket.read(&mut scratch).await;
+            // A complete, valid envelope that is shorter than the declared length.
+            let body = r#"{"answers":{"pick":{"type":"noul","noul":0.5}}}"#;
+            let head = format!(
+                "HTTP/1.1 200 OK\r\ncontent-type: application/json\r\ncontent-length: {}\r\n\r\n",
+                body.len() + 500
+            );
+            let _ = socket.write_all(head.as_bytes()).await;
+            let _ = socket.write_all(body.as_bytes()).await;
+            let _ = socket.shutdown().await;
+        }
+    });
+    let outcome = tokio::task::spawn_blocking(move || judge(config_at(port)))
+        .await
+        .expect("join");
+    assert_eq!(outcome, JevOutcome::Unavailable);
+}
+
+#[tokio::test]
 async fn a_provider_timeout_fails_soft() {
     let routes = Router::new().route(
         "/v1/systemone",

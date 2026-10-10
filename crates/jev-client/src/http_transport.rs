@@ -202,12 +202,22 @@ async fn read_capped_body(mut response: reqwest::Response) -> Option<String> {
         return None;
     }
     let mut body = Vec::new();
-    while let Ok(Some(chunk)) = response.chunk().await {
-        if body.len() + chunk.len() > MAX_RESPONSE_BYTES {
-            warn!("Jev provider reply exceeds the size limit");
-            return None;
+    loop {
+        match response.chunk().await {
+            Ok(Some(chunk)) => {
+                if body.len() + chunk.len() > MAX_RESPONSE_BYTES {
+                    warn!("Jev provider reply exceeds the size limit");
+                    return None;
+                }
+                body.extend_from_slice(&chunk);
+            }
+            Ok(None) => break,
+            // A stream that fails midway is an incomplete reply, never a clean end.
+            Err(_) => {
+                warn!("Jev provider reply ended before it was complete");
+                return None;
+            }
         }
-        body.extend_from_slice(&chunk);
     }
     String::from_utf8(body).ok()
 }
