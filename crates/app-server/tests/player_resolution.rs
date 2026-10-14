@@ -121,17 +121,16 @@ async fn ambiguity_low_confidence_no_match_and_unavailable_are_selectable_withou
     assert_eq!(unavailable["status"], "unavailable");
     assert_eq!(unavailable["candidates"][0]["player"]["id"], "onealsh01");
     assert!(unavailable.get("path").is_none());
-    let (status, html) = request(
-        app(judgment("candidate_00", 0.6, 0.4, 0.99)),
-        "/resolve?q=Shaq",
-    )
-    .await;
-    assert_eq!(status, StatusCode::OK);
-    assert!(html.contains("Please clarify"));
-    assert!(html.contains("/players/onealsh01"));
-    assert!(html.contains("1993–2011"));
-    assert!(!html.contains("Shortest chain"));
-    assert!(!html.contains("test-private-key"));
+    // The resolution page is removed; its API stays deterministic.
+    assert_eq!(
+        request(
+            app(judgment("candidate_00", 0.6, 0.4, 0.99)),
+            "/resolve?q=Shaq",
+        )
+        .await
+        .0,
+        StatusCode::NOT_FOUND
+    );
 }
 #[tokio::test]
 async fn malformed_answers_cannot_select_unlisted_ids_and_status_falls_back() {
@@ -214,14 +213,14 @@ async fn stated_context_can_disambiguate_namesakes_but_uncertain_existence_canno
         request(app(JevOutcome::Unavailable), &too_long).await.0,
         StatusCode::BAD_REQUEST
     );
-    let (status, html) = request(
+    // The resolution page is removed; the API keeps escaped, script-free output.
+    let (status, body) = request(
         app(JevOutcome::Unavailable),
-        "/resolve?q=%3Cscript%3Eevil%3C%2Fscript%3E",
+        "/api/resolve?q=%3Cscript%3Eevil%3C%2Fscript%3E",
     )
     .await;
     assert_eq!(status, StatusCode::OK);
-    assert!(html.contains("&lt;script&gt;"));
-    assert!(!html.contains("<script>"));
+    assert!(!body.contains("<script>"));
 }
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn runtime_service_uses_real_wire_choice_and_noul_order_variants_and_per_call_metrics() {

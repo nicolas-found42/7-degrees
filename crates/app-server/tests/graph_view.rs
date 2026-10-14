@@ -92,28 +92,40 @@ async fn direct_and_nearby_neighborhoods_expose_only_evidenced_fixture_connectio
 }
 
 #[tokio::test]
-async fn graph_exploration_retains_the_selected_chain_and_exact_alternative_cursor() {
-    let (status, body) =
+async fn graph_page_renders_the_whole_network_and_ignores_player_specific_parameters() {
+    let (status, body) = get("/graph").await;
+    assert_eq!(status, 200);
+    assert!(body.contains("id=\"graph-canvas\""));
+    assert!(body.contains("All players · all teammate connections"));
+    assert!(body.contains("data-full-network=\"true\""));
+    assert!(body.contains("id=\"graph-payload\""));
+    assert!(body.contains("Canvas loading") || body.contains("Canvas unavailable"));
+    assert!(!body.contains("Player from"), "no connect form");
+    assert!(!body.contains("name=\"player\""));
+    assert!(!body.contains("Expand direct connections"));
+    // Every fixture player is listed for canvas-free selection.
+    for name in [
+        "Player A",
+        "Player B",
+        "Player C",
+        "Player C2",
+        "Player D",
+        "Player E",
+    ] {
+        assert!(body.contains(name), "missing {name}");
+    }
+    assert_eq!(body.matches("data-select-player=").count(), 6);
+    // Player-specific parameters are inert: the page is always the whole graph.
+    let (status, focused) =
         get("/graph?from=A&to=C&cursor=v1:00&limit=1&selected=0&player=B&depth=2").await;
     assert_eq!(status, 200);
-    assert!(body.contains("Degree of separation: <strong>2</strong>"));
-    assert!(body.contains("Teammate links in this chain: <strong>2</strong>"));
-    assert!(body.contains("id=\"graph-canvas\""));
-    assert!(body.contains("name=\"cursor\" value=\"v1:00\""));
-    assert!(body.contains("name=\"selected\" value=\"0\""));
-    assert!(body.contains("Expand direct connections"));
-    assert!(body.contains("Expand nearby connections"));
-    assert!(body.contains("Synthetic fixture days 2–13"));
-    assert!(body.contains("Player B"));
-    assert!(body.contains("id=\"graph-payload\" data-payload=\""));
-    assert!(body.contains("Canvas loading") || body.contains("Canvas unavailable"));
-    assert!(!body.contains("<script type=\"application/json\""));
-    let (_, chain) = get("/chain?from=A&to=C&cursor=v1:00&limit=1&selected=0").await;
-    assert!(chain.contains("/graph?from=A&amp;to=C&amp;cursor=v1%3A00&amp;limit=1&amp;selected=0"));
+    assert!(focused.contains("All players · all teammate connections"));
+    assert_eq!(focused.matches("data-select-player=").count(), 6);
+    assert!(!focused.contains("Shortest teammate chain"));
 }
 
 #[tokio::test]
-async fn bounded_exploration_reports_truncation_and_rejects_invalid_graph_arguments() {
+async fn bounded_exploration_reports_truncation_and_rejects_invalid_neighborhood_arguments() {
     let (status, body) = get("/api/neighborhood?player=A&depth=2&limit=1").await;
     assert_eq!(status, 200);
     let v: Value = serde_json::from_str(&body).unwrap();
@@ -122,18 +134,11 @@ async fn bounded_exploration_reports_truncation_and_rejects_invalid_graph_argume
     for uri in [
         "/api/neighborhood?player=A&depth=3",
         "/api/neighborhood?player=A&limit=0",
-        "/graph?from=A&to=C&selected=99",
-        "/graph?from=A&to=C&depth=3",
-        "/graph?from=A&to=C&cursor=v1:1",
-        "/graph?from=A",
-        "/graph?player=A&cursor=v1:0",
+        "/api/neighborhood?player=A&limit=201",
     ] {
         assert_eq!(get(uri).await.0, 400, "{uri}");
     }
-    let (status, body) = get("/graph?from=A&to=D").await;
-    assert_eq!(status, 200);
-    assert!(body.contains("verified_disconnected"));
-    assert!(!body.contains("graph-canvas"));
+    assert_eq!(get("/api/neighborhood?player=unknown").await.0, 404);
     assert_eq!(get("/graph?player=A&depth=1").await.0, 200);
     let (status, body) = get("/assets/canvas-loader.js").await;
     assert_eq!(status, 200);
@@ -191,16 +196,16 @@ async fn present_and_missing_canvas_assets_are_isolated_and_preserve_binary_byte
         ),
         (
             missing.clone(),
-            "Canvas unavailable; use the accessible player and relationship lists.",
+            "Canvas unavailable; use the accessible player list below.",
         ),
     ] {
-        let (status, _, bytes) = response(app.clone(), "/graph?from=A&to=C").await;
+        let (status, _, bytes) = response(app.clone(), "/graph").await;
         assert_eq!(status, 200);
         let body = String::from_utf8(bytes).unwrap();
         for name in ["Player A", "Player B", "Player C"] {
             assert!(body.contains(name));
         }
-        assert!(body.contains("Degree of separation: <strong>2</strong>"));
+        assert!(body.contains("All players · all teammate connections"));
         assert!(body.contains(expected));
         assert_eq!(response(app, "/assets/not-an-asset").await.0, 404);
     }
@@ -251,23 +256,19 @@ async fn real_report_neighborhood_retains_source_context_and_coverage_without_ex
 }
 
 #[tokio::test]
-async fn full_network_page_keeps_a_text_fallback_without_a_selected_chain() {
-    let (status, html) = get("/graph?all=true").await;
+async fn page_lists_every_player_and_relationship_as_an_accessible_fallback() {
+    let (status, html) = get("/graph").await;
     assert_eq!(status, 200);
-    assert!(html.contains("id=\"network-text-fallback\""), "{html}");
-    assert!(html.contains("id=\"list-connections\""), "{html}");
     let players = html
         .split("<ul id=\"graph-players\">")
         .nth(1)
         .and_then(|rest| rest.split("</ul>").next())
         .unwrap();
     assert!(players.contains("data-select-player"), "{players}");
-    let links = html
-        .split("<ul id=\"graph-links\">")
-        .nth(1)
-        .and_then(|rest| rest.split("</ul>").next())
-        .unwrap();
-    assert!(links.contains("data-select-edge-from"), "{links}");
+    // Relationships are not server-rendered: selection on the canvas fills the
+    // per-player connections list.
+    assert!(html.contains("id=\"network-player-links\""));
+    assert!(!html.contains("data-select-edge-from="));
 }
 
 #[tokio::test]
@@ -275,7 +276,7 @@ async fn canvas_loader_is_only_referenced_when_assets_exist() {
     use app_server::{JevHandle, app_with_jev_and_canvas_assets, graph_view::CanvasAssets};
     let missing =
         app_with_jev_and_canvas_assets(JevHandle::unconfigured(), CanvasAssets::Unavailable);
-    let (status, _, bytes) = response(missing, "/graph?all=true").await;
+    let (status, _, bytes) = response(missing, "/graph").await;
     assert_eq!(status, 200);
     let html = String::from_utf8(bytes).unwrap();
     assert!(

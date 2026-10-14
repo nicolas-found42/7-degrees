@@ -42,9 +42,12 @@ async fn opening_a_fixture_teammate_link_shows_both_stints_and_explicit_syntheti
         !body.contains("1946-01-03"),
         "fixture days must not masquerade as historical dates"
     );
-    let (_, chain) = get(app, "/chain?from=A&to=C&cursor=v1:00&selected=0&limit=1").await;
-    assert!(chain.contains("href=\"/edge?from=A&amp;to=B\""));
-    assert!(chain.contains("Degree of separation: <strong>2</strong>"));
+    // The graph page ships the whole network for canvas selection; the
+    // chain-specific rendering and the server-rendered relationship list are gone.
+    let (_, graph) = get(app, "/").await;
+    assert!(graph.contains("id=\"graph-payload\""));
+    assert!(graph.contains("id=\"network-player-links\""));
+    assert!(!graph.contains("data-select-edge-from="));
 }
 
 #[tokio::test]
@@ -151,19 +154,11 @@ async fn canvas_has_an_accessible_selected_edge_panel_and_allowlisted_source_rou
         app_server::JevHandle::unconfigured(),
         app_server::graph_view::CanvasAssets::Unavailable,
     );
-    let (_, graph) = get(
-        app.clone(),
-        "/graph?from=A&to=C&cursor=v1:00&limit=1&selected=0",
-    )
-    .await;
-    assert!(
-        graph.contains("Canvas unavailable; use the accessible player and relationship lists.")
-    );
+    let (_, graph) = get(app.clone(), "/graph").await;
+    assert!(graph.contains("Canvas unavailable; use the accessible player list below."));
     assert!(graph.contains("id=\"edge-provenance-frame\""));
     assert!(graph.contains("title=\"Selected teammate overlap evidence\""));
     assert!(graph.contains("id=\"open-selected-edge\""));
-    assert!(graph.contains("href=\"/edge?from=A&amp;to=B\""));
-    assert!(graph.contains("name=\"cursor\" value=\"v1:00\""));
     for uri in [
         "/sources/tenure?record=../../.env",
         "/sources/tenure?record=javascript:alert(1)",

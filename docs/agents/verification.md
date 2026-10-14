@@ -29,11 +29,11 @@ The full browser profile exercises this graph state matrix through existing test
 
 | State or transition | Check |
 |---|---|
-| Empty snapshot | `stats_view`: empty network API and HTTP 200 full-field empty state (portable Rust suite) |
-| Complete network and highlighted path | `browser_e2e`: full-network journey compares payload counts and highlighted path |
-| Player search / zoom / fit | Same journey verifies the complete payload is retained |
-| Relationship selection then isolated-player selection | Same journey verifies evidence URL is cleared and link hidden |
-| Evidence navigation / desktop and phone chain layouts | Selected-chain browser journey |
+| Empty snapshot | `api_integration`: HTTP 200 zero-player empty state (portable Rust suite) |
+| Whole network with every player and highlighted-free payload | `browser_e2e`: compares payload counts and asserts no selected path |
+| Player selection and centering | Same journeys select by pointer, keyboard and list |
+| Relationship selection and evidence panel | Same journeys load the fixture and real Acy/Bogut evidence frames |
+| Whole network over the real 5,106-player graph | `browser_e2e` and `canvas_browser` |
 | Bounded graph pointer and keyboard controls | Existing canvas browser journey |
 
 Browser assertions read counts and state from DOM attributes or the embedded payload. Response bodies are collected only when a test launches with `captureResponses: true`; this is required for credential-canary assertions. Incomplete capture fails those assertions closed. Application console/page errors are recorded separately.

@@ -3,8 +3,8 @@ use crate::GraphPayload;
 use std::{cell::RefCell, collections::HashMap, rc::Rc};
 use wasm_bindgen::{JsCast, prelude::*};
 use web_sys::{
-    CanvasRenderingContext2d, Document, Event, HtmlCanvasElement, HtmlInputElement,
-    HtmlSelectElement, KeyboardEvent, PointerEvent, WheelEvent,
+    CanvasRenderingContext2d, Document, Event, HtmlCanvasElement, KeyboardEvent, PointerEvent,
+    WheelEvent,
 };
 
 struct CanvasView {
@@ -134,12 +134,6 @@ impl CanvasView {
             )));
             let _ = element.set_attribute("data-player", id);
             self.player_connections();
-            self.document
-                .get_element_by_id("graph-player")
-                .unwrap()
-                .dyn_into::<HtmlSelectElement>()
-                .unwrap()
-                .set_value(id);
         }
     }
     fn player_connections(&self) {
@@ -147,17 +141,6 @@ impl CanvasView {
             return;
         };
         list.set_text_content(None);
-        if let Some(profile) = self.document.get_element_by_id("focus-player-profile") {
-            let _ = profile.set_attribute(
-                "href",
-                &format!(
-                    "/players/{}",
-                    js_sys::encode_uri_component(&self.selected)
-                        .as_string()
-                        .unwrap()
-                ),
-            );
-        }
         for (i, e) in self
             .graph
             .links
@@ -566,7 +549,6 @@ pub fn start() -> Result<(), JsValue> {
         ("pan-down", 0.0, -60.0, 1.0),
         ("zoom-in", 0.0, 0.0, 1.25),
         ("zoom-out", 0.0, 0.0, 0.8),
-        ("refocus", 0.0, 0.0, 1.0),
     ] {
         let state = view.clone();
         listen(
@@ -577,13 +559,9 @@ pub fn start() -> Result<(), JsValue> {
             "click",
             move |_| {
                 let mut v = state.borrow_mut();
-                if id == "refocus" {
-                    v.fit();
-                } else {
-                    v.x += dx;
-                    v.y += dy;
-                    v.zoom(factor, (500.0, 300.0));
-                }
+                v.x += dx;
+                v.y += dy;
+                v.zoom(factor, (500.0, 300.0));
                 v.draw();
             },
         )?;
@@ -606,78 +584,11 @@ pub fn start() -> Result<(), JsValue> {
             v.draw();
         })?;
     }
-    let edge_indices: Vec<_> = view
-        .borrow()
-        .graph
-        .links
-        .iter()
-        .enumerate()
-        .filter(|(_, e)| !view.borrow().graph.full_network || e.on_path)
-        .map(|(i, _)| i)
-        .collect();
-    for index in edge_indices {
-        let state = view.clone();
-        let Some(element) = document.get_element_by_id(&format!("select-edge-{index}")) else {
-            continue;
-        };
-        listen(element.as_ref(), "click", move |_| {
-            let mut v = state.borrow_mut();
-            v.select_edge(index);
-            v.draw();
-        })?;
-    }
-    let state = view.clone();
-    listen(
-        document.get_element_by_id("graph-player").unwrap().as_ref(),
-        "change",
-        move |e| {
-            if let Some(select) = e
-                .target()
-                .and_then(|t| t.dyn_into::<HtmlSelectElement>().ok())
-            {
-                let mut v = state.borrow_mut();
-                v.select(&select.value());
-                v.draw();
-            }
-        },
-    )?;
-    if let Some(form) = document.get_element_by_id("network-search-form") {
-        let state = view.clone();
-        listen(form.as_ref(), "submit", move |event| {
-            event.prevent_default();
-            let mut v = state.borrow_mut();
-            let input = v
-                .document
-                .get_element_by_id("network-search")
-                .unwrap()
-                .dyn_into::<HtmlInputElement>()
-                .unwrap()
-                .value();
-            let matches: Vec<_> = v
-                .graph
-                .nodes
-                .iter()
-                .filter(|n| {
-                    n.name.eq_ignore_ascii_case(input.trim())
-                        || format!("{} · {}", n.name, n.id) == input.trim()
-                        || n.id == input.trim()
-                })
-                .map(|n| n.id.clone())
-                .collect();
-            let message = if matches.len() == 1 {
-                v.select(&matches[0]);
-                v.focus_player();
-                v.draw();
-                "Player found. Their connections are highlighted; the whole network remains loaded."
-            } else {
-                "Choose a player from the suggestions, including their ID when names are shared."
-            };
-            v.document
-                .get_element_by_id("network-search-status")
-                .unwrap()
-                .set_text_content(Some(message));
-        })?;
-    }
+    // Relationship selection is canvas-pointer and per-player-list driven;
+    // the page renders no server-side `select-edge-*` buttons, so no
+    // listener is wired here.
+    // The page renders no `#graph-player` select; player selection is via
+    // the accessible `#graph-players` buttons, which are wired above.
     for id in ["fit-network", "focus-player"] {
         if let Some(element) = document.get_element_by_id(id) {
             let state = view.clone();

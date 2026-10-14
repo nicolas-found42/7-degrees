@@ -45,6 +45,16 @@ pub enum ConnectionResponse {
     Disconnected,
 }
 
+/// One selected shortest chain with its ordered players and evidenced links.
+/// Built by the server for ranking results; the graph page no longer renders a
+/// chain-specific view.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct SelectedChain {
+    pub path: Vec<PlayerDto>,
+    pub links: Vec<LinkDto>,
+    pub degree: usize,
+}
+
 /// One alternative shortest chain.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct PathDto {

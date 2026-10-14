@@ -57,7 +57,7 @@ async fn the_credential_canary_never_appears_in_any_log_record() {
         "/api/connection?from=A&to=B",
         "/api/semantic-status",
         "/",
-        "/chain?from=A&to=C",
+        "/?from=A&to=C",
     ] {
         let response = app
             .clone()

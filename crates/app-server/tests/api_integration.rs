@@ -319,102 +319,89 @@ async fn missing_query_parameters_are_a_bad_request() {
 // --- The minimal UI: server-rendered HTML via the same in-process seam. ---
 
 #[tokio::test]
-async fn home_page_shows_connect_form_and_fixture_edges() {
+async fn graph_page_is_the_only_page_and_shows_every_player() {
     let (status, html) = get_html("/").await;
     assert_eq!(status, StatusCode::OK);
-    assert!(html.contains("7 Degrees"), "app title renders");
+    assert!(html.contains("Graph exploration"), "graph page renders");
+    assert!(html.contains(r#"data-full-network="true""#));
     assert!(
-        html.contains(r#"<form method="get" action="/chain""#),
-        "connect form targets the chain page"
+        html.contains("All players · all teammate connections"),
+        "the whole network is the page: {html}"
     );
-    assert!(html.contains("Player A"), "player display names render");
-    for pair in [
-        "Player A — Player B",
-        "Player B — Player C",
-        "Player B — Player C2",
-        "Player C — Player C2",
+    // Every fixture player is present, selectable in the canvas and listed.
+    for player in [
+        "Player A",
+        "Player B",
+        "Player C",
+        "Player C2",
+        "Player D",
+        "Player E",
     ] {
-        assert!(html.contains(pair), "edge list shows {pair}: {html}");
+        assert!(html.contains(player), "missing player {player}");
     }
-    // A–E: two overlapping stints, exactly one deduplicated edge.
-    let a_e_rows: Vec<&str> = html
-        .lines()
-        .flat_map(|line| line.split("<li>"))
-        .filter(|part| part.contains("Player A — Player E"))
-        .collect();
-    assert_eq!(a_e_rows.len(), 1, "exactly one A–E edge row: {html}");
+    assert_eq!(html.matches("data-select-player=").count(), 6);
+    // Relationships are selected on the canvas: the page ships the payload and
+    // a selection-driven connections list, not 101k server-rendered rows.
+    assert!(html.contains("id=\"graph-payload\""));
+    assert!(html.contains("id=\"network-player-links\""));
     assert!(
-        html.contains("teammate edge on Green (4 day(s))"),
-        "A–E overlap days sum across stints: {html}"
+        html.contains("Connections of selected player"),
+        "selection-driven connections list is present"
     );
-    assert!(html.contains("Red (2 day(s))"), "edge provenance renders");
-    assert!(!html.contains("<script"), "no JavaScript ships in the UI");
+    assert!(!html.contains("data-select-edge-from="));
+    // No player-specific controls remain.
+    assert!(!html.contains("Player from"), "no connect form");
+    assert!(!html.contains("action=\"/\" class=\"controls\""));
+    assert!(!html.contains("name=\"player\""));
+    assert!(!html.contains("Equally short alternatives"));
+    // /graph is the same page.
+    let (status, again) = get_html("/graph").await;
+    assert_eq!(status, StatusCode::OK);
+    assert!(again.contains("Graph exploration"));
+    // Query parameters are ignored: the page is always the whole network.
+    let (status, focused) = get_html("/?from=A&to=C&player=B").await;
+    assert_eq!(status, StatusCode::OK);
+    assert!(focused.contains("All players · all teammate connections"));
+    assert_eq!(focused.matches("data-select-player=").count(), 6);
+    // Every former page is gone.
+    for removed in [
+        "/chain?from=A&to=C",
+        "/stats",
+        "/search?q=Player%20A",
+        "/players/A",
+        "/query?q=teammates%20Player%20A",
+        "/resolve?q=Player%20A",
+        "/rank?from=A&to=C&interest=era",
+    ] {
+        assert_eq!(
+            get_html(removed).await.0,
+            StatusCode::NOT_FOUND,
+            "{removed} is no longer a page"
+        );
+    }
 }
 
 #[tokio::test]
-async fn chain_page_orders_players_and_links_with_degree() {
-    // The fixture's headline question: A connects to C through B at degree 2.
-    let (status, html) = get_html("/chain?from=A&to=C").await;
-    assert_eq!(status, StatusCode::OK);
-    assert!(html.contains("Shortest teammate chain"));
-    assert!(
-        html.contains("Degree of separation: <strong>2</strong>"),
-        "{html}"
-    );
-    assert!(html.contains("Player B"), "midlink player renders by name");
-    // Ordered players: A before B before C in the rendered path list.
-    let a_pos = html.find("Player A").expect("A in path");
-    let b_pos = html.find("Player B").expect("B in path");
-    let c_pos = html.find("Player C").expect("C in path");
-    assert!(
-        a_pos < b_pos && b_pos < c_pos,
-        "path players render in order"
-    );
-    // Ordered links with evidence: A–B on Red before B–C on Blue.
-    assert!(
-        html.find("Player A → Player B")
-            .expect("A–B link is present")
-            < html
-                .find("Player B → Player C")
-                .expect("B–C link is present"),
-        "links render in chain order"
-    );
-    assert!(html.contains("teammates on Red, overlapping roster tenure: 2 day(s)"));
-    assert!(html.contains("teammates on Blue, overlapping roster tenure: 1 day(s)"));
-}
-
-#[tokio::test]
-async fn chain_page_shows_direct_and_disconnected_results() {
-    // Direct teammates report degree 1.
-    let (status, html) = get_html("/chain?from=A&to=B").await;
-    assert_eq!(status, StatusCode::OK);
-    assert!(html.contains("Degree of separation: <strong>1</strong>"));
-
-    // Same-franchise non-overlap stays unconnected in the UI, too.
-    let (status, html) = get_html("/chain?from=A&to=D").await;
-    assert_eq!(status, StatusCode::OK);
-    assert!(
-        html.contains("No teammate chain connects Player A and Player D."),
-        "disconnected pair explains itself: {html}"
-    );
-}
-
-#[tokio::test]
-async fn chain_page_reports_unknown_players() {
-    let (status, html) = get_html("/chain?from=A&to=Zed").await;
-    assert_eq!(status, StatusCode::NOT_FOUND);
-    assert!(html.contains("No player node for id \"Zed\""), "{html}");
-}
-
-#[tokio::test]
-async fn chain_page_defaults_to_the_fixture_demo_pair() {
-    let (status, html) = get_html("/chain").await;
-    assert_eq!(status, StatusCode::OK);
-    assert!(
-        html.contains(r#"value="A" selected"#),
-        "from defaults to A: {html}"
-    );
-    assert!(html.contains(r#"value="C" selected"#), "to defaults to C");
+async fn empty_graph_page_reports_no_players() {
+    let root = std::env::temp_dir().join(format!("seven-empty-{}", std::process::id()));
+    std::fs::create_dir_all(root.join("t3")).unwrap();
+    std::fs::create_dir_all(root.join("t4")).unwrap();
+    std::fs::write(
+        root.join("t3/player-universe.csv"),
+        "bbr_player_id,display_name,first_season,last_season,aba_only\n",
+    )
+    .unwrap();
+    std::fs::write(root.join("t4/tenures.csv"), "bbr_player_id,season,lg,canonical_franchise,membership_source,evidence_class,start_day,end_day,start_anchored,end_anchored\n").unwrap();
+    let app =
+        app_server::app_with_report_data(root, app_server::JevHandle::unconfigured()).unwrap();
+    let response = app
+        .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    let html = String::from_utf8(body.to_vec()).unwrap();
+    assert!(html.contains("0 players · 0 connections"), "{html}");
 }
 
 #[tokio::test]
@@ -594,18 +581,18 @@ async fn ui_reports_semantic_features_unavailable_by_default() {
     assert_eq!(status, StatusCode::OK);
     assert!(
         html.contains("Semantic features (Jev): unavailable"),
-        "home page surfaces the unavailable status: {html}"
+        "graph page surfaces the unavailable status: {html}"
     );
     assert!(
         html.contains(r#"data-semantic-status="unconfigured""#),
         "status is machine-readable in the HTML: {html}"
     );
 
-    let (status, html) = get_html("/chain?from=A&to=C").await;
+    let (status, html) = get_html("/?from=A&to=C").await;
     assert_eq!(status, StatusCode::OK);
     assert!(
         html.contains("Semantic features (Jev): unavailable"),
-        "chain page surfaces the unavailable status: {html}"
+        "focused graph page surfaces the unavailable status: {html}"
     );
 }
 
@@ -616,7 +603,7 @@ async fn ui_reports_semantic_features_available_with_a_provider() {
     assert_eq!(status, StatusCode::OK);
     assert!(
         html.contains(r#"data-semantic-status="available""#),
-        "home page surfaces the available status: {html}"
+        "graph page surfaces the available status: {html}"
     );
     assert!(html.contains("Semantic features (Jev): available"));
 }
@@ -687,16 +674,16 @@ async fn unreachable_provider_fails_soft_and_features_keep_working() {
     let outcome = handle.judge(&request);
     assert_eq!(outcome, JevOutcome::Unavailable, "call fails soft");
 
-    // The chain UI keeps working and reports unavailable semantics.
-    let (status, html) = get_html_with_jev("/chain?from=A&to=C", handle.clone()).await;
+    // The graph page keeps working and reports unavailable semantics.
+    let (status, html) = get_html_with_jev("/", handle.clone()).await;
     assert_eq!(status, StatusCode::OK);
     assert!(
         html.contains("Semantic features (Jev): unavailable"),
         "degraded state is surfaced: {html}"
     );
     assert!(
-        html.contains("Degree of separation: <strong>2</strong>"),
-        "deterministic chain result unchanged: {html}"
+        html.contains("All players · all teammate connections"),
+        "the whole network still renders: {html}"
     );
 
     // The graph API keeps answering with identical deterministic bodies.
@@ -736,8 +723,9 @@ async fn served_responses_and_assets_never_contain_credentials() {
 
     for path in [
         "/",
-        "/chain?from=A&to=C",
+        "/graph?from=A&to=C",
         "/style.css",
+        "/edge?from=A&to=B",
         "/api/fixture",
         "/api/edges",
         "/api/connection?from=A&to=C",

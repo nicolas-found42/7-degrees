@@ -1,5 +1,6 @@
 //! Preference ordering within a bounded page of code-computed shortest chains.
-use crate::{AppState, JevHandle, chain_view::SelectedChain, search::PlayerCatalog};
+use crate::{AppState, JevHandle, search::PlayerCatalog};
+use api_types::SelectedChain;
 use axum::{
     Json,
     extract::{Query, State},
@@ -269,7 +270,7 @@ pub fn rank(
             .enumerate()
             .map(|(i, c)| RankedChain {
                 original_index: i,
-                chain: SelectedChain::from_chain(graph, c),
+                chain: selected_chain(graph, c),
                 era_span: None,
                 interest_fit: None,
                 weighted_score: None,
@@ -379,7 +380,6 @@ pub(crate) struct RankingQuery {
     interest: Option<String>,
     cursor: Option<String>,
     limit: Option<usize>,
-    selected: Option<usize>,
 }
 fn input(q: &RankingQuery) -> RankingInput {
     RankingInput {
@@ -406,111 +406,31 @@ pub(crate) async fn api(State(state): State<AppState>, Query(q): Query<RankingQu
         Err(e) => (StatusCode::from_u16(e.status).unwrap(), Json(e)).into_response(),
     }
 }
-pub(crate) async fn page(State(state): State<AppState>, Query(q): Query<RankingQuery>) -> Response {
-    let input = input(&q);
-    let catalog = PlayerCatalog::from_graph(&state.graph, state.reports.as_deref());
-    let base = format!(
-        "<h1>Rank equally short chains</h1><nav><a href=\"/\">Back to explorer</a></nav>{}{}",
-        crate::ui::semantic_status_line(state.jev.status()),
-        crate::ui::coverage_line(state.reports.as_ref().map(|r| r.coverage.warning.as_str()))
-    );
-    let call = match rank(
-        &state.graph,
-        &catalog,
-        &state.jev,
-        &input,
-        &RankingConfig::default(),
-    ) {
-        Ok(c) => c,
-        Err(e) => {
-            return crate::ui::document(
-                StatusCode::from_u16(e.status).unwrap(),
-                "Chain ranking — 7 Degrees",
-                &format!("{base}<p>{}</p>", crate::ui::escape(&e.error)),
-            );
-        }
-    };
-    let r = call.result;
-    let status = match r.status.as_str() {
-        "ranked" => {
-            "Semantic suggestions for this page. This order expresses a preference, not a graph fact."
-        }
-        "unavailable" => {
-            "Semantic ranking unavailable; deterministic alternatives remain available."
-        }
-        "uncertain" => "Semantic scores are uncertain; deterministic order is retained.",
-        "no_path" => {
-            "No evidenced shortest chain connects these players; inspect source coverage before drawing historical conclusions."
-        }
-        _ => "Only one alternative is present on this page; no semantic ordering was needed.",
-    };
-    let page_link = |cursor: &str| {
-        format!(
-            "/rank?from={}&amp;to={}&amp;interest={}&amp;cursor={}&amp;limit={}",
-            crate::ui::url_encode(&input.from),
-            crate::ui::url_encode(&input.to),
-            crate::ui::url_encode(&input.interest),
-            crate::ui::url_encode(cursor),
-            input.limit
-        )
-    };
-    let link =
-        |cursor: &str, selected: usize| format!("{}&amp;selected={selected}", page_link(cursor));
-    let mut body = format!(
-        "<p role=\"status\">{status}</p><p>Ranking scope: current page only. {} shortest alternatives exist; {} are shown. This is not a global ranking of all alternatives.</p><form method=\"get\" action=\"/rank\"><input type=\"hidden\" name=\"from\" value=\"{}\"><input type=\"hidden\" name=\"to\" value=\"{}\"><input type=\"hidden\" name=\"cursor\" value=\"{}\"><input type=\"hidden\" name=\"limit\" value=\"{}\"><label for=\"interest\">What would make a chain interesting?</label><input id=\"interest\" name=\"interest\" maxlength=\"160\" value=\"{}\"><button>Rank this page</button></form>",
-        crate::ui::escape(&r.total_exact),
-        r.chains.len(),
-        crate::ui::escape(&input.from),
-        crate::ui::escape(&input.to),
-        crate::ui::escape(&r.cursor),
-        input.limit,
-        crate::ui::escape(&input.interest)
-    );
-    if !r.chains.is_empty() {
-        let selected = q.selected.unwrap_or(r.chains[0].original_index);
-        let Some(chain) = r.chains.iter().find(|c| c.original_index == selected) else {
-            return crate::ui::document(
-                StatusCode::BAD_REQUEST,
-                "Invalid selection — 7 Degrees",
-                "<p>The selected alternative is outside this page.</p>",
-            );
-        };
-        body.push_str("<h2>Graph/source facts</h2><p>Every displayed chain has the exact minimum degree and evidenced teammate links. Semantic scores cannot change these facts.</p>");
-        body.push_str(&crate::chain_view::render_selected_chain(&chain.chain));
-        body.push_str(&format!("<p><a href=\"/chain?from={}&amp;to={}&amp;cursor={}&amp;limit={}&amp;selected={}\">Inspect this chain and its graph view</a></p><h2>Page alternatives</h2><ol>",crate::ui::url_encode(&input.from),crate::ui::url_encode(&input.to),crate::ui::url_encode(&input.cursor),input.limit,selected));
-        for c in &r.chains {
-            let names = c
-                .chain
-                .path
-                .iter()
-                .map(|p| p.name.as_str())
-                .collect::<Vec<_>>()
-                .join(" → ");
-            let score=c.weighted_score.map(|s|format!("Semantic preference score {s:.3}; era {:.3}, interest {:.3} (not a fact or probability).",c.era_span.as_ref().unwrap().score,c.interest_fit.as_ref().unwrap().score)).unwrap_or_else(||"Deterministic alternative.".into());
-            body.push_str(&format!(
-                "<li><a href=\"{}\">Select alternative {}</a>: {}<p>{}</p></li>",
-                link(&r.cursor, c.original_index),
-                c.original_index + 1,
-                crate::ui::escape(&names),
-                crate::ui::escape(&score)
-            ));
-        }
-        body.push_str("</ol>");
+
+/// Build the serialized selected chain for a ranking result from code-computed
+/// chain facts. The graph page no longer renders chains; this DTO is used by
+/// the ranking API only.
+fn selected_chain(graph: &TeammateGraph, chain: &graph_core::ChainWithDegree) -> SelectedChain {
+    SelectedChain {
+        path: chain
+            .path
+            .iter()
+            .map(|id| api_types::PlayerDto {
+                id: id.clone(),
+                name: crate::ui::display_name(&graph.roster.players, id).into(),
+            })
+            .collect(),
+        links: chain
+            .links
+            .iter()
+            .map(|link| api_types::LinkDto {
+                from: link.from.clone(),
+                to: link.to.clone(),
+                team: link.team.clone(),
+                overlap_days: link.overlap_days,
+                minimum_shared_games: link.minimum_shared_games,
+            })
+            .collect(),
+        degree: chain.degree,
     }
-    if let Some(next) = r.next_cursor {
-        body.push_str(&format!("<p><a id=\"next-ranked-page\" rel=\"next\" href=\"{}\">Next shortest page, ranked separately</a></p>",link(&next,0)));
-    }
-    body.push_str(&format!(
-        "<p><a href=\"{}\">First shortest page</a></p>",
-        page_link("v1:0")
-    ));
-    crate::ui::document(
-        StatusCode::OK,
-        "Chain ranking — 7 Degrees",
-        &format!(
-            "<h1>Rank equally short chains</h1><nav><a href=\"/\">Back to explorer</a></nav>{}{}{body}",
-            crate::ui::semantic_status_line(state.jev.status()),
-            crate::ui::coverage_line(state.reports.as_ref().map(|r| r.coverage.warning.as_str()))
-        ),
-    )
 }
