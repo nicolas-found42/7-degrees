@@ -1,0 +1,418 @@
+{
+  "captured_at": "2026-10-14T19:52:51.606069+00:00",
+  "source_commit": "118a446fa436f0814a30aac5a9791fa6df3276f8",
+  "commands": [
+    {
+      "command": {
+        "op": "launch"
+      },
+      "response": {
+        "ok": true,
+        "result": "156.0.8078.4"
+      }
+    },
+    {
+      "command": {
+        "op": "motion",
+        "value": "reduce"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "goto",
+        "url": "http://127.0.0.1:43121/"
+      },
+      "response": {
+        "ok": true,
+        "result": "http://127.0.0.1:43121/"
+      }
+    },
+    {
+      "command": {
+        "op": "ready",
+        "selector": "#canvas-status[data-ready=true]"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "attribute",
+        "selector": "#canvas-status",
+        "name": "data-players"
+      },
+      "response": {
+        "ok": true,
+        "result": "5106"
+      }
+    },
+    {
+      "command": {
+        "op": "attribute",
+        "selector": "#canvas-status",
+        "name": "data-relationships"
+      },
+      "response": {
+        "ok": true,
+        "result": "101395"
+      }
+    },
+    {
+      "command": {
+        "op": "screenshot",
+        "path": "<checkout>/target/screenshots-refresh/01-full-page-era-lanes.png"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "select",
+        "selector": "#graph-player",
+        "value": "maravpe01"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "screenshot",
+        "path": "<checkout>/target/screenshots-refresh/06-player-selected-focus.png"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "screenshot",
+        "path": "<checkout>/target/screenshots-refresh/08-minimap-and-controls.png",
+        "selector": ".canvas-container"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "click",
+        "role": "button",
+        "name": "Concentric rings layout"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "screenshot",
+        "path": "<checkout>/target/screenshots-refresh/12-concentric-full-page.png"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "select",
+        "selector": "#graph-target",
+        "value": "goodrga01"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "ready",
+        "selector": "#graph-chain[data-state=connected]"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "click",
+        "selector": "#graph-chain a[data-evidence]"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "ready",
+        "selector": "#drawer-content .proof-card >> nth=0"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "screenshot",
+        "path": "<checkout>/target/screenshots-refresh/16-count-proof-drawer.png",
+        "selector": "#edge-evidence-drawer"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "goto",
+        "url": "http://127.0.0.1:43121/edge?from=maravpe01&to=goodrga01"
+      },
+      "response": {
+        "ok": true,
+        "result": "http://127.0.0.1:43121/edge?from=maravpe01&to=goodrga01"
+      }
+    },
+    {
+      "command": {
+        "op": "screenshot",
+        "path": "<checkout>/target/screenshots-refresh/11-edge-evidence.png"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "viewport",
+        "width": 390,
+        "height": 844
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "goto",
+        "url": "http://127.0.0.1:43121/graph?from=acyqu01&to=bogutan01"
+      },
+      "response": {
+        "ok": true,
+        "result": "http://127.0.0.1:43121/graph?from=acyqu01&to=bogutan01"
+      }
+    },
+    {
+      "command": {
+        "op": "ready",
+        "selector": "#canvas-status[data-ready=true]"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "page-size"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "width": 390,
+          "scroll": 390
+        }
+      }
+    },
+    {
+      "command": {
+        "op": "click",
+        "selector": "#graph-chain a[data-evidence]"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "ready",
+        "selector": "#drawer-content .proof-card >> nth=0"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "screenshot",
+        "path": "<checkout>/target/screenshots-refresh/19-mobile-evidence-drawer.png",
+        "selector": "#edge-evidence-drawer"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "viewport",
+        "width": 1200,
+        "height": 1000
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "goto",
+        "url": "http://127.0.0.1:43122/graph?from=A&to=B"
+      },
+      "response": {
+        "ok": true,
+        "result": "http://127.0.0.1:43122/graph?from=A&to=B"
+      }
+    },
+    {
+      "command": {
+        "op": "ready",
+        "selector": "#canvas-status[data-ready=true]"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "click",
+        "selector": "#graph-chain a[data-evidence]"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "ready",
+        "selector": "#drawer-content .proof-card >> nth=0"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "screenshot",
+        "path": "<checkout>/target/screenshots-refresh/22-synthetic-dated-proof.png",
+        "selector": "#edge-evidence-drawer"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "goto",
+        "url": "http://127.0.0.1:43121/graph?from=achiupr01&to=johnsda08"
+      },
+      "response": {
+        "ok": true,
+        "result": "http://127.0.0.1:43121/graph?from=achiupr01&to=johnsda08"
+      }
+    },
+    {
+      "command": {
+        "op": "ready",
+        "selector": "#canvas-status[data-ready=true]"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "click",
+        "selector": "#graph-chain a[data-evidence]"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "ready",
+        "selector": "#drawer-content .proof-card:has-text(\"0022100058\")"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "text",
+        "selector": "#drawer-content"
+      },
+      "response": {
+        "ok": true,
+        "result": "Teammate overlap evidencePrecious Achiuwa \u2194 David JohnsonTeammate relationship admitted by the deterministic graph. The evidence below states which dates or shared games are proved.Canonical franchise: RAPTORSPrecious Achiuwa \u2194 David JohnsonBoth players are identified participants of the same team game on 2021-10-27 (NBA game 0022100058). This establishes a teammate relationship; full roster overlap dates and duration remain unknown.Official event source records: S1 play_by_play:game:0022100058:event:19:player3 and S1 play_by_play:game:0022100058:event:692:player2.Pinned NBA-derived game records, S1 v238Source evidence is incompleteMissing evidence does not prove a historical non-relationship.Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.Coverage gaps for these players \u00b7 8 excluded record(s)Excluded from teammate evidence; these records are not admitted proofs.Player / source recordFranchiseSeasonIntervalEvidence classReasonPrecious Achiuwa \u00b7 t4/tenures.csv:95HEATSeason 2020\u201321 (ending 2021)[2020-11-25, 2021-05-30)cross-checkedNo certified pair of dated transaction boundariesPrecious Achiuwa \u00b7 t4/tenures.csv:96RAPTORSSeason 2021\u201322 (ending 2022)[2021-08-06, 2022-04-29)cross-checkedNo certified pair of dated transaction boundariesPrecious Achiuwa \u00b7 t4/tenures.csv:97RAPTORSSeason 2022\u201323 (ending 2023)[2022-10-19, 2023-04-10)inferredNo certified pair of dated transaction boundariesPrecious Achiuwa \u00b7 t4/tenures.csv:98KNICKSSeason 2023\u201324 (ending 2024)dated interval unavailableunresolvedno-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-windowPrecious Achiuwa \u00b7 t4/tenures.csv:99RAPTORSSeason 2023\u201324 (ending 2024)dated interval unavailableunresolvedno-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); departure-after-closed-stint(prior-spell-exit,or-source-noise)Precious Achiuwa \u00b7 t4/tenures.csv:100KNICKSSeason 2024\u201325 (ending 2025)dated interval unavailableunresolvedno-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-windowPrecious Achiuwa \u00b7 t4/tenures.csv:101KINGSSeason 2025\u201326 (ending 2026)dated interval unavailableunresolvedno-season-window(S1-game-table-ends-2022-23-or-season-absent-from-S1); open-stint-without-windowDavid Johnson \u00b7 t4/tenures.csv:13617RAPTORSSeason 2021\u201322 (ending 2022)[2021-08-08, 2022-04-29)cross-checkedNo certified pair of dated transaction boundaries"
+      }
+    },
+    {
+      "command": {
+        "op": "screenshot",
+        "path": "<checkout>/target/screenshots-refresh/25-game-witness-proof.png",
+        "selector": "#drawer-content .proof-card:has-text(\"0022100058\")"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "errors"
+      },
+      "response": {
+        "ok": true,
+        "result": []
+      }
+    },
+    {
+      "command": {
+        "op": "close"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    }
+  ],
+  "page_errors": []
+}

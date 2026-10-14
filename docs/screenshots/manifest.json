@@ -1,0 +1,212 @@
+{
+  "source_commit": "118a446fa436f0814a30aac5a9791fa6df3276f8",
+  "date": "2026-10-14",
+  "captures": [
+    {
+      "file": "01-full-page-era-lanes.png",
+      "title": "Full page - Era lanes",
+      "caption": "Default explorer with both pickers, layout controls, era toggles and the complete network.",
+      "sha256": "c7e7c4f28ffdc47b96e659361f366fbfea08e0f0f38dce83f36f9ca534ed25c3",
+      "origin": "fresh actual-browser capture",
+      "source": "target/screenshots-refresh/01-full-page-era-lanes.png"
+    },
+    {
+      "file": "02-canvas-whole-network.png",
+      "title": "Whole network",
+      "caption": "All 5,106 player nodes and 101,395 admitted teammate edges; no active chain.",
+      "sha256": "7aee9de8651d08fe14b70d1a31f88567dfba934d33926959f3e950486fbef34e",
+      "origin": "verified explorer-upgrade report",
+      "source": "docs/reports/explorer-upgrade-2026-10-14/screenshots/all-player-network.png"
+    },
+    {
+      "file": "03-layout-concentric.png",
+      "title": "Concentric overview",
+      "caption": "Pete Maravich at the center; direct and two-hop teammates spread across radial bands.",
+      "sha256": "52ff2740eb694027f953f9c56c441fc20ca958a565bb88eb128998256416c080",
+      "origin": "verified explorer-upgrade report",
+      "source": "docs/reports/explorer-upgrade-2026-10-14/screenshots/maravich-concentric-overview.png"
+    },
+    {
+      "file": "04-layout-force.png",
+      "title": "Force overview",
+      "caption": "Deterministic force layout seeded from Era lanes, with Pete Maravich selected.",
+      "sha256": "cab111a9a1f08bff54467b10a4d58ea66644b1e4131636af8176a42168ff48ba",
+      "origin": "verified explorer-upgrade report",
+      "source": "docs/reports/explorer-upgrade-2026-10-14/screenshots/maravich-force-overview.png"
+    },
+    {
+      "file": "05-zoomed-labels.png",
+      "title": "Era labels",
+      "caption": "Readable selected-player badge and ordinary labels with halos and decluttering.",
+      "sha256": "e9ee32a51186bbdee16c117e661848ad118a51dd11db373c3ab7c3784a156975",
+      "origin": "verified explorer-upgrade report",
+      "source": "docs/reports/explorer-upgrade-2026-10-14/screenshots/maravich-era-labels.png"
+    },
+    {
+      "file": "06-player-selected-focus.png",
+      "title": "Selected player - full page",
+      "caption": "Pete Maravich selection summary, franchises, filters and focused era canvas.",
+      "sha256": "21934d6d3c709323e32b0a9f1c8d360c7e5675a6c222d0663de9e7649a96bf62",
+      "origin": "fresh actual-browser capture",
+      "source": "target/screenshots-refresh/06-player-selected-focus.png"
+    },
+    {
+      "file": "07-focus-highlight-canvas.png",
+      "title": "Concentric labels",
+      "caption": "Thin focused curves, selected badge and readable direct teammate context.",
+      "sha256": "7f11ddb244fd02d0a107fe8963fb31a24ece5731fe028d0b58b2573a97eddebc",
+      "origin": "verified explorer-upgrade report",
+      "source": "docs/reports/explorer-upgrade-2026-10-14/screenshots/maravich-concentric-labels.png"
+    },
+    {
+      "file": "08-minimap-and-controls.png",
+      "title": "Docked navigation",
+      "caption": "Minimap and its viewport frame at bottom left; camera controls at bottom right.",
+      "sha256": "b199f86393d26502d74e49da5e87f40c1c1d4edd096bea6225ee526a09f7d3ab",
+      "origin": "fresh actual-browser capture",
+      "source": "target/screenshots-refresh/08-minimap-and-controls.png"
+    },
+    {
+      "file": "09-labels-while-zoomed.png",
+      "title": "Force labels",
+      "caption": "Pete Maravich selected in Force layout at useful label zoom.",
+      "sha256": "398fdcdd36dbd8a96808f6712a726f2f3ab434db1849bc1288242f98e5ed82fc",
+      "origin": "verified explorer-upgrade report",
+      "source": "docs/reports/explorer-upgrade-2026-10-14/screenshots/maravich-force-labels.png"
+    },
+    {
+      "file": "10-mobile-view.png",
+      "title": "Phone - whole network",
+      "caption": "390-pixel layout with stacked pickers and the minimap collapsed initially.",
+      "sha256": "9301ce48506f8f82f84316ee3f330cbb7d534a9cae9f3a79dfc6f9537da47563",
+      "origin": "verified explorer-upgrade report",
+      "source": "docs/reports/explorer-upgrade-2026-10-14/screenshots/all-player-network-phone.png"
+    },
+    {
+      "file": "11-edge-evidence.png",
+      "title": "Standalone evidence",
+      "caption": "Direct /edge page for Pete Maravich and Gail Goodrich; count proofs and coverage caveats.",
+      "sha256": "6f6fe674a6ba664f3528e464d95c563e3e4d1112d042dbed83904d494d8de1d7",
+      "origin": "fresh actual-browser capture",
+      "source": "target/screenshots-refresh/11-edge-evidence.png"
+    },
+    {
+      "file": "12-concentric-full-page.png",
+      "title": "Concentric - full page",
+      "caption": "Toolbar, selected-player context and centered concentric canvas.",
+      "sha256": "36fe8eed1c46d3ccda642170863a447e48599dcd34f4d3da591bf0b137477029",
+      "origin": "fresh actual-browser capture",
+      "source": "target/screenshots-refresh/12-concentric-full-page.png"
+    },
+    {
+      "file": "13-shortest-chain.png",
+      "title": "Shortest teammate chain",
+      "caption": "Pete Maravich to Gail Goodrich, degree one; blue chain and ordered evidence breadcrumb.",
+      "sha256": "f14876393ac9328579faad8e23930de5fc57f2b846240fe2c8e8be28732847e7",
+      "origin": "verified explorer-upgrade report",
+      "source": "docs/reports/explorer-upgrade-2026-10-14/screenshots/maravich-chain.png"
+    },
+    {
+      "file": "14-era-franchise-filter.png",
+      "title": "Era and franchise emphasis",
+      "caption": "1970s debut emphasis combined with Maravich's admitted JAZZ teammate relationships.",
+      "sha256": "324efb561b5324838bd272c1156218cf94574be70c82816e58418925de97fa8a",
+      "origin": "verified explorer-upgrade report",
+      "source": "docs/reports/explorer-upgrade-2026-10-14/screenshots/maravich-franchise-era-filter.png"
+    },
+    {
+      "file": "15-ego-network.png",
+      "title": "Ego network",
+      "caption": "Complete one- and two-hop neighborhood; distant context hidden without unloading graph data.",
+      "sha256": "42bf49f1b3a425a4e251fb42a057fddb88d81785de9e24b28022c6f7fb3dd9c5",
+      "origin": "verified explorer-upgrade report",
+      "source": "docs/reports/explorer-upgrade-2026-10-14/screenshots/maravich-ego.png"
+    },
+    {
+      "file": "16-count-proof-drawer.png",
+      "title": "Count-proof drawer",
+      "caption": "Actual appearance denominators and arithmetic; exact overlap dates remain unknown.",
+      "sha256": "d62939a4bf19fc6be07884aaf6e0612f10c5a0791abe76ee3baed21a619d149f",
+      "origin": "fresh actual-browser capture",
+      "source": "target/screenshots-refresh/16-count-proof-drawer.png"
+    },
+    {
+      "file": "17-dated-proof-drawer.png",
+      "title": "Dated-proof drawer",
+      "caption": "Quincy Acy and Andrew Bogut: MAVERICKS overlap [2016-07-20, 2016-11-18), 121 days.",
+      "sha256": "32da5f7052c039dfc0638988fd4687df45ba2975fb6e72c2ac93d58186cb84ee",
+      "origin": "verified explorer-upgrade report",
+      "source": "docs/reports/explorer-upgrade-2026-10-14/screenshots/acy-bogut-dated-drawer.png"
+    },
+    {
+      "file": "18-mobile-toolbar.png",
+      "title": "Phone - pair controls",
+      "caption": "Synthetic A/B chain; stacked controls, readable badges and compact docked navigation.",
+      "sha256": "9c3cdfc6799b36177d1d7368ac579180c4ae11b1ee56389fa0f883c4a38b801c",
+      "origin": "verified explorer-upgrade report",
+      "source": "docs/reports/explorer-upgrade-2026-10-14/screenshots/fixture-mobile-toolbar.png"
+    },
+    {
+      "file": "19-mobile-evidence-drawer.png",
+      "title": "Phone - evidence drawer",
+      "caption": "Real Acy/Bogut dated proof in the viewport-width modal drawer.",
+      "sha256": "cf67fadf24c5d8036550fef202832f3157b73d9fdcaaf8eac26baae282b7a188",
+      "origin": "fresh actual-browser capture",
+      "source": "target/screenshots-refresh/19-mobile-evidence-drawer.png"
+    },
+    {
+      "file": "20-reduced-motion.png",
+      "title": "Reduced-motion final state",
+      "caption": "Settled concentric layout with Pete Maravich selected and reduced motion enabled.",
+      "sha256": "bd1289e06b376d24f11aca2a80e42bd5c772d61ae8c87b3d9bf65d580386c7d2",
+      "origin": "verified explorer-upgrade report",
+      "source": "docs/reports/explorer-upgrade-2026-10-14/screenshots/reduced-motion-final.png"
+    },
+    {
+      "file": "21-filtered-chain-fixture.png",
+      "title": "Synthetic filtered chain",
+      "caption": "Known A-B-C chain remains visible while eras are disabled and franchise/ego filters apply.",
+      "sha256": "0a260e25ebcb7f3536562646c1163fc345c977cc8975f13c09d5cc5b78f285ad",
+      "origin": "verified explorer-upgrade report",
+      "source": "docs/reports/explorer-upgrade-2026-10-14/screenshots/fixture-chain-filtered.png"
+    },
+    {
+      "file": "22-synthetic-dated-proof.png",
+      "title": "Synthetic dated proof",
+      "caption": "A/B worked-example overlap [day 2, day 4); fixture days are not historical dates.",
+      "sha256": "ae65b467ad6d04f9f3f8b829856cdb6daa44306ed0a8af12c23ca9f410eaefe4",
+      "origin": "fresh actual-browser capture",
+      "source": "target/screenshots-refresh/22-synthetic-dated-proof.png"
+    },
+    {
+      "file": "23-shortened-season-proof.png",
+      "title": "Synthetic shortened season",
+      "caption": "A 66-game team total guarantees at least 44 shared games from 60 and 50 appearances.",
+      "sha256": "0ff3ad6ec87c3461a674d70581cdfcd3211e3fb2010ef01b713793f314490962",
+      "origin": "verified explorer-upgrade report",
+      "source": "docs/reports/explorer-upgrade-2026-10-14/screenshots/shortened-season-and-game-witness.png"
+    },
+    {
+      "file": "24-mobile-count-proof.png",
+      "title": "Phone - count proof",
+      "caption": "Maravich/Goodrich proof cards with appearance meters, actual 82-game totals and source records.",
+      "sha256": "4edf5671d55bb7e2573462b2e8ae5a31a09d2c53c99869546e8982a459709832",
+      "origin": "verified explorer-upgrade report",
+      "source": "docs/reports/explorer-upgrade-2026-10-14/screenshots/mobile-count-drawer.png"
+    },
+    {
+      "file": "25-game-witness-proof.png",
+      "title": "Official dated game witness",
+      "caption": "Precious Achiuwa and David Johnson: RAPTORS game 0022100058 on October 27, 2021; original event records.",
+      "sha256": "154c5cf71536779524d1463cb5f81c8dfd51bbe04abdac0b6069e2857472eed2",
+      "origin": "fresh actual-browser capture",
+      "source": "target/screenshots-refresh/25-game-witness-proof.png"
+    }
+  ],
+  "pdf": {
+    "file": "7-degrees-screenshots.pdf",
+    "sha256": "53d7a48ca10600d0b9eed71a3a2505896620b002212db23c1f961370fd5abcfb",
+    "pages": 25,
+    "layout": "One capture per page; adaptive page height; no raster alterations."
+  }
+}
