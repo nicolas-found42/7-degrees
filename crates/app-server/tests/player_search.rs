@@ -121,23 +121,24 @@ async fn ambiguous_candidates_carry_era_team_and_coverage_context() {
 }
 
 #[tokio::test]
-async fn graph_page_lists_every_player_by_id_including_same_name_people() {
-    // The graph page is the whole network: both Joe Smiths are listed nodes with
-    // their own ids, so the canvas and the text list keep them distinct.
+async fn graph_page_picker_holds_every_player_by_id_including_same_name_people() {
+    // The graph page is the whole network: both Joe Smiths are picker options
+    // with their own ids, so the canvas and the picker keep them distinct.
     let (status, html) = request(app(), "/").await;
     assert_eq!(status, StatusCode::OK);
     for id in ["smithjo01", "smithjo02", "jordami01"] {
         assert!(
-            html.contains(&format!("data-select-player=\"{id}\"")),
-            "{id} is a listed player"
+            html.contains(&format!("value=\"{id}\"")),
+            "{id} is a picker option"
         );
     }
+    assert!(!html.contains("data-select-player="));
 }
 
 #[tokio::test]
 async fn search_api_displays_canonical_ids_as_text() {
     // The search and profile pages are removed; canonical ids remain visible in
-    // the search API and in the graph page's player list.
+    // the search API and in the graph page's picker options.
     let results = json_get("/api/search?q=Joe%20Smith").await;
     for id in ["smithjo01", "smithjo02"] {
         assert!(
@@ -192,4 +193,18 @@ async fn empty_no_match_and_query_text_round_trips() {
     }
     // The graph page is the only page.
     assert!(request(app(), "/").await.1.contains("Graph exploration"));
+}
+
+#[tokio::test]
+async fn context_filters_precede_limits_and_preserve_duplicate_identity() {
+    let result = json_get("/api/search?q=Smith&era=1940&limit=1").await;
+    assert_eq!(result["candidates"][0]["player"]["id"], "smithjo02");
+    assert_eq!(result["matches_total"], 1);
+    assert_eq!(result["has_more"], false);
+    let result = json_get("/api/search?franchise=SIXERS&limit=1").await;
+    assert_eq!(result["matches_total"], 2);
+    assert_eq!(result["has_more"], true);
+    for path in ["/api/search?era=1941", "/api/search?franchise=invalid"] {
+        assert_eq!(request(app(), path).await.0, StatusCode::BAD_REQUEST);
+    }
 }

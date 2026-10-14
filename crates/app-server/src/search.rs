@@ -149,6 +149,45 @@ impl PlayerCatalog {
         query: &str,
         limit: usize,
     ) -> Result<SearchResult, SearchError> {
+        self.filtered_shortlist(query, limit, None, None)
+    }
+    pub fn filtered_shortlist(
+        &self,
+        query: &str,
+        limit: usize,
+        era: Option<u32>,
+        franchise: Option<&str>,
+    ) -> Result<SearchResult, SearchError> {
+        if era.is_some_and(|d| !(1940..=2010).contains(&d) || d % 10 != 0) {
+            return Err(SearchError {
+                error: "era must be a supported debut decade (1940 through 2010)",
+            });
+        }
+        if franchise.is_some_and(|team| {
+            !self
+                .players
+                .iter()
+                .any(|p| p.teams.iter().any(|t| t == team))
+        }) {
+            return Err(SearchError {
+                error: "unknown canonical franchise",
+            });
+        }
+        let players: Vec<_> = self
+            .players
+            .iter()
+            .filter(|p| {
+                era.is_none_or(|d| {
+                    p.first_season.is_some_and(|year| {
+                        if d == 2010 {
+                            year >= 2010
+                        } else {
+                            (d..d + 10).contains(&year)
+                        }
+                    })
+                }) && franchise.is_none_or(|team| p.teams.iter().any(|t| t == team))
+            })
+            .collect();
         if !(1..=50).contains(&limit) {
             return Err(SearchError {
                 error: "limit must be between 1 and 50",
@@ -160,13 +199,12 @@ impl PlayerCatalog {
             });
         }
         let q = normalize(query);
-        let mut candidates: Vec<_> = self
-            .players
+        let mut candidates: Vec<_> = players
             .iter()
             .filter_map(|p| {
                 if !q.is_empty() && normalize(&p.name) == q {
                     Some(SearchCandidate {
-                        player: p.clone(),
+                        player: (*p).clone(),
                         match_kind: "exact_name".into(),
                         matched_name: p.name.clone(),
                         score: 1000,
@@ -178,7 +216,7 @@ impl PlayerCatalog {
                             !q.is_empty() && normalize(a).replace(' ', "") == q.replace(' ', "")
                         })
                         .map(|a| SearchCandidate {
-                            player: p.clone(),
+                            player: (*p).clone(),
                             match_kind: "alias".into(),
                             matched_name: a.clone(),
                             score: 950,
@@ -188,8 +226,7 @@ impl PlayerCatalog {
             .collect();
         if candidates.is_empty() && q.chars().count() >= 2 {
             let max = if q.chars().count() >= 8 { 2 } else { 1 };
-            candidates = self
-                .players
+            candidates = players
                 .iter()
                 .filter_map(|p| {
                     std::iter::once(&p.name)
@@ -223,13 +260,24 @@ impl PlayerCatalog {
                                 None
                             };
                             ranked.map(|(score, kind)| SearchCandidate {
-                                player: p.clone(),
+                                player: (*p).clone(),
                                 match_kind: kind.into(),
                                 matched_name: name.clone(),
                                 score,
                             })
                         })
                         .max_by_key(|c| c.score)
+                })
+                .collect();
+        }
+        if q.is_empty() && (era.is_some() || franchise.is_some()) {
+            candidates = players
+                .iter()
+                .map(|p| SearchCandidate {
+                    player: (**p).clone(),
+                    match_kind: "context".into(),
+                    matched_name: p.name.clone(),
+                    score: 0,
                 })
                 .collect();
         }
@@ -266,13 +314,20 @@ impl PlayerCatalog {
 pub(crate) struct SearchQuery {
     q: Option<String>,
     limit: Option<usize>,
+    era: Option<u32>,
+    franchise: Option<String>,
 }
 pub(crate) async fn api(
     State(state): State<AppState>,
     Query(query): Query<SearchQuery>,
 ) -> Response {
     let catalog = PlayerCatalog::from_graph(&state.graph, state.reports.as_deref());
-    match catalog.lexical_shortlist(query.q.as_deref().unwrap_or(""), query.limit.unwrap_or(20)) {
+    match catalog.filtered_shortlist(
+        query.q.as_deref().unwrap_or(""),
+        query.limit.unwrap_or(20),
+        query.era,
+        query.franchise.as_deref(),
+    ) {
         Ok(result) => (StatusCode::OK, Json(result)).into_response(),
         Err(error) => (StatusCode::BAD_REQUEST, Json(error)).into_response(),
     }

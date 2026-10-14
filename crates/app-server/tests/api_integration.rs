@@ -328,7 +328,7 @@ async fn graph_page_is_the_only_page_and_shows_every_player() {
         html.contains("All players · all teammate connections"),
         "the whole network is the page: {html}"
     );
-    // Every fixture player is present, selectable in the canvas and listed.
+    // Every fixture player is present on the canvas and in the picker.
     for player in [
         "Player A",
         "Player B",
@@ -339,15 +339,34 @@ async fn graph_page_is_the_only_page_and_shows_every_player() {
     ] {
         assert!(html.contains(player), "missing player {player}");
     }
-    assert_eq!(html.matches("data-select-player=").count(), 6);
-    // Relationships are selected on the canvas: the page ships the payload and
-    // a selection-driven connections list, not 101k server-rendered rows.
-    assert!(html.contains("id=\"graph-payload\""));
-    assert!(html.contains("id=\"network-player-links\""));
-    assert!(
-        html.contains("Connections of selected player"),
-        "selection-driven connections list is present"
-    );
+    assert!(html.contains("id=\"graph-player\""));
+    assert_eq!(html.matches("<option value=").count(), 14);
+    // Relationships open standalone evidence: the page ships the payload and
+    // the picker, not 101k server-rendered rows or an in-page panel.
+    for present in [
+        "id=\"layout-era\"",
+        "id=\"layout-concentric\"",
+        "id=\"layout-force\"",
+        "id=\"graph-minimap\"",
+        "id=\"graph-tooltip\"",
+    ] {
+        assert!(html.contains(present), "missing {present}");
+    }
+    for removed in [
+        "id=\"graph-players\"",
+        "data-select-player=",
+        "id=\"network-player-links\"",
+        "Connections of selected player",
+        "id=\"edge-provenance-panel\"",
+        "id=\"edge-provenance-frame\"",
+        "id=\"open-selected-edge\"",
+        "Selected relationship evidence",
+    ] {
+        assert!(
+            !html.contains(removed),
+            "removed section still present: {removed}"
+        );
+    }
     assert!(!html.contains("data-select-edge-from="));
     // No player-specific controls remain.
     assert!(!html.contains("Player from"), "no connect form");
@@ -362,7 +381,7 @@ async fn graph_page_is_the_only_page_and_shows_every_player() {
     let (status, focused) = get_html("/?from=A&to=C&player=B").await;
     assert_eq!(status, StatusCode::OK);
     assert!(focused.contains("All players · all teammate connections"));
-    assert_eq!(focused.matches("data-select-player=").count(), 6);
+    assert_eq!(focused.matches("<option value=").count(), 14);
     // Every former page is gone.
     for removed in [
         "/chain?from=A&to=C",

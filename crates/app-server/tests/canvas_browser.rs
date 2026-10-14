@@ -124,13 +124,35 @@ async fn rust_wasm_canvas_renders_the_whole_network_and_supports_pointer_and_key
     browser.click("Fit whole network");
     assert_eq!(browser.attr("data-pan-x"), initial_x);
     assert_eq!(browser.attr("data-zoom"), initial_zoom);
-    // Keyboard and list selection both report a player, never leaving the page.
-    browser.call(json!({"op":"focus","selector":"#select-node-0"}));
-    browser.call(json!({"op":"key","key":"Enter"}));
+    browser.click("Concentric rings layout");
+    assert_eq!(browser.attr("data-layout"), "era");
+    assert!(browser.text("#graph-selection").contains("Select a player"));
+    browser.call(json!({"op":"select","selector":"#graph-player","value":"A"}));
+    // The layout switcher rearranges the network through the shared Rust
+    // layout engine and reports the active mode for assistive technology.
+    for (button, mode) in [
+        ("Concentric rings layout", "concentric"),
+        ("Force-directed layout", "force"),
+        ("Era lanes layout", "era"),
+    ] {
+        browser.click(button);
+        browser.call(json!({"op":"settled"}));
+        assert_eq!(
+            browser
+                .call(json!({"op":"attribute","selector":"#canvas-status","name":"data-layout"}))
+                .as_str()
+                .unwrap(),
+            mode
+        );
+        assert_eq!(browser.attr("data-players"), "6");
+        assert_eq!(browser.attr("data-relationships"), "5");
+    }
+    // Picker selection reports a player, never leaving the page.
+    browser.call(json!({"op":"select","selector":"#graph-player","value":"A"}));
     assert!(browser.text("#graph-selection").contains("Selected player"));
     assert!(browser.text("#graph-selection").contains("Player A"));
     // Pointer drag pans; wheel zooms; the network is retained throughout.
-    // Focus the canvas first: the accessible list below it has scrolled the
+    // Focus the canvas first: the picker below it has scrolled the
     // page, and Playwright addresses the viewport.
     browser.call(json!({"op":"focus","selector":"#graph-canvas"}));
     let b = browser.call(json!({"op":"box","selector":"#graph-canvas"}));
@@ -141,7 +163,7 @@ async fn rust_wasm_canvas_renders_the_whole_network_and_supports_pointer_and_key
         b["height"].as_f64().unwrap(),
     );
     assert!(
-        y >= 0.0 && y + h <= 900.0,
+        y >= 0.0 && y + h <= 1001.0,
         "canvas must be in the viewport: {b:?}"
     );
     browser.call(json!({"op":"mouse","action":"move","x":x+w*0.5,"y":y+h*0.8}));
@@ -187,7 +209,7 @@ async fn rust_wasm_canvas_renders_the_whole_network_and_supports_pointer_and_key
             .into()
     });
     browser.call(json!({"op":"screenshot","path":artifact}));
-    // The real committed network renders with the same page and evidence frame.
+    // The real committed network renders with the same page and picker.
     let real_listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
     let real_address = real_listener.local_addr().unwrap();
     let reports = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../docs/reports");
@@ -239,6 +261,6 @@ async fn rust_wasm_canvas_renders_the_whole_network_and_supports_pointer_and_key
     browser.call(json!({"op":"close"}));
     server.abort();
     println!(
-        "WASM initialized; the whole network renders with canvas pixels changing under pointer drag, wheel and button/keyboard transforms; list selection reports players and the fixture frame plus standalone real Acy/Bogut evidence assert the provenance seam."
+        "WASM initialized; the whole network renders with canvas pixels changing under pointer drag, wheel and button/keyboard transforms; picker selection reports players and the standalone fixture plus real Acy/Bogut evidence assert the provenance seam."
     );
 }

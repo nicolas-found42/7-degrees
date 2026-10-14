@@ -87,3 +87,16 @@ pub fn overlap_description(days: Option<u32>, minimum_shared_games: Option<u32>)
         _ => "Roster overlap duration unknown".into(),
     }
 }
+
+/// Full connection response used by deterministic exploration, including coverage.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ExplorerConnection {
+    pub result: String,
+    #[serde(default)]
+    pub path: Vec<String>,
+    #[serde(default)]
+    pub links: Vec<LinkDto>,
+    pub degree: Option<usize>,
+    pub coverage: Option<serde_json::Value>,
+    pub certainty: Option<String>,
+}

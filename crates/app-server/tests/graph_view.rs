@@ -92,18 +92,27 @@ async fn direct_and_nearby_neighborhoods_expose_only_evidenced_fixture_connectio
 }
 
 #[tokio::test]
-async fn graph_page_renders_the_whole_network_and_ignores_player_specific_parameters() {
+async fn graph_page_renders_the_whole_network_with_pair_parameters() {
     let (status, body) = get("/graph").await;
     assert_eq!(status, 200);
     assert!(body.contains("id=\"graph-canvas\""));
     assert!(body.contains("All players · all teammate connections"));
     assert!(body.contains("data-full-network=\"true\""));
     assert!(body.contains("id=\"graph-payload\""));
-    assert!(body.contains("Canvas loading") || body.contains("Canvas unavailable"));
+    // G6-style ease-of-use overlays: layout switcher, overview minimap, tooltip.
+    for present in [
+        "id=\"layout-era\"",
+        "id=\"layout-concentric\"",
+        "id=\"layout-force\"",
+        "id=\"graph-minimap\"",
+        "id=\"graph-tooltip\"",
+    ] {
+        assert!(body.contains(present), "missing {present}");
+    }
     assert!(!body.contains("Player from"), "no connect form");
     assert!(!body.contains("name=\"player\""));
     assert!(!body.contains("Expand direct connections"));
-    // Every fixture player is listed for canvas-free selection.
+    // Every fixture player is a picker option for keyboard selection.
     for name in [
         "Player A",
         "Player B",
@@ -114,14 +123,31 @@ async fn graph_page_renders_the_whole_network_and_ignores_player_specific_parame
     ] {
         assert!(body.contains(name), "missing {name}");
     }
-    assert_eq!(body.matches("data-select-player=").count(), 6);
+    assert_eq!(body.matches("<option value=").count(), 14);
+    assert!(body.contains("id=\"graph-player\""));
+    // The player list and in-page evidence panel are gone; evidence is standalone.
+    for removed in [
+        "id=\"graph-players\"",
+        "data-select-player=",
+        "id=\"network-player-links\"",
+        "Connections of selected player",
+        "id=\"edge-provenance-panel\"",
+        "id=\"edge-provenance-frame\"",
+        "id=\"open-selected-edge\"",
+        "Selected relationship evidence",
+    ] {
+        assert!(
+            !body.contains(removed),
+            "removed section still present: {removed}"
+        );
+    }
     // Player-specific parameters are inert: the page is always the whole graph.
     let (status, focused) =
         get("/graph?from=A&to=C&cursor=v1:00&limit=1&selected=0&player=B&depth=2").await;
     assert_eq!(status, 200);
     assert!(focused.contains("All players · all teammate connections"));
-    assert_eq!(focused.matches("data-select-player=").count(), 6);
-    assert!(!focused.contains("Shortest teammate chain"));
+    assert_eq!(focused.matches("<option value=").count(), 14);
+    assert!(focused.contains("Shortest teammate chain · degree 2"));
 }
 
 #[tokio::test]
@@ -192,11 +218,11 @@ async fn present_and_missing_canvas_assets_are_isolated_and_preserve_binary_byte
     for (app, expected) in [
         (
             present.clone(),
-            "Canvas loading; the text lists remain available.",
+            "Canvas loading; the player picker remains available.",
         ),
         (
             missing.clone(),
-            "Canvas unavailable; use the accessible player list below.",
+            "Canvas unavailable; use the player picker below.",
         ),
     ] {
         let (status, _, bytes) = response(app.clone(), "/graph").await;
@@ -256,19 +282,32 @@ async fn real_report_neighborhood_retains_source_context_and_coverage_without_ex
 }
 
 #[tokio::test]
-async fn page_lists_every_player_and_relationship_as_an_accessible_fallback() {
+async fn page_lists_every_player_in_the_picker_without_an_in_page_evidence_panel() {
     let (status, html) = get("/graph").await;
     assert_eq!(status, 200);
-    let players = html
-        .split("<ul id=\"graph-players\">")
+    let picker = html
+        .split("id=\"graph-player\"")
         .nth(1)
-        .and_then(|rest| rest.split("</ul>").next())
+        .and_then(|rest| rest.split("</select>").next())
         .unwrap();
-    assert!(players.contains("data-select-player"), "{players}");
-    // Relationships are not server-rendered: selection on the canvas fills the
-    // per-player connections list.
-    assert!(html.contains("id=\"network-player-links\""));
+    assert!(picker.contains("value=\"A\""), "{picker}");
+    // Relationships are selected on the canvas and open standalone evidence.
     assert!(!html.contains("data-select-edge-from="));
+    for removed in [
+        "id=\"graph-players\"",
+        "data-select-player=",
+        "id=\"network-player-links\"",
+        "Connections of selected player",
+        "id=\"edge-provenance-panel\"",
+        "id=\"edge-provenance-frame\"",
+        "id=\"open-selected-edge\"",
+        "Selected relationship evidence",
+    ] {
+        assert!(
+            !html.contains(removed),
+            "removed section still present: {removed}"
+        );
+    }
 }
 
 #[tokio::test]
@@ -298,4 +337,31 @@ async fn neighborhood_and_chain_links_name_the_same_team_for_a_pair() {
             assert_eq!(link["team"], chain["links"][0]["team"], "{from}-{to}");
         }
     }
+}
+
+#[tokio::test]
+async fn pair_get_form_returns_exact_chain_without_replacing_the_network() {
+    let (_, html) = get("/graph?from=A&to=C&player=B").await;
+    assert!(html.contains("Shortest teammate chain · degree 2"));
+    assert!(html.contains("/edge?from=A&amp;to=B"));
+    assert!(html.contains("name=\"from\""));
+    assert!(html.contains("name=\"to\""));
+    let raw = html
+        .split("id=\"graph-payload\">")
+        .nth(1)
+        .unwrap()
+        .split("</script>")
+        .next()
+        .unwrap();
+    let payload: Value = serde_json::from_str(raw).unwrap();
+    assert_eq!(payload["focus"], "A");
+    assert_eq!(payload["path"], serde_json::json!(["A", "B", "C"]));
+    assert_eq!(payload["nodes"].as_array().unwrap().len(), 6);
+    let (_, html) = get("/graph?from=A&to=A").await;
+    assert!(html.contains("Shortest teammate chain · degree 0"));
+    let (_, html) = get("/graph?from=A&to=D").await;
+    assert!(html.contains("No teammate chain"));
+    let (_, html) = get("/graph?from=missing&to=A").await;
+    assert!(html.contains("Unknown player"));
+    assert!(html.contains("id=\"graph-payload\""));
 }

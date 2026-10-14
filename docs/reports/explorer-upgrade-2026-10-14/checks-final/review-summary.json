@@ -1,0 +1,285 @@
+{
+  "schema_version": 1,
+  "profile": "full",
+  "source_commit": "dd4c8d35f988a41843eed95cd166164e76dc8039",
+  "working_tree_status": " M Cargo.lock\n M README.md\n M crates/api-types/Cargo.toml\n M crates/api-types/src/lib.rs\n M crates/app-server/src/graph_view.rs\n M crates/app-server/src/provenance.rs\n M crates/app-server/src/search.rs\n M crates/app-server/src/style.css\n M crates/app-server/tests/api_integration.rs\n M crates/app-server/tests/browser_e2e.rs\n M crates/app-server/tests/canvas_browser.rs\n M crates/app-server/tests/graph_view.rs\n M crates/app-server/tests/player_search.rs\n M crates/app-server/tests/provenance.rs\n M crates/canvas-view/Cargo.toml\n M crates/canvas-view/src/browser.rs\n M crates/canvas-view/src/lib.rs\n M scripts/browser_driver.cjs\n?? Spec.md\n?? crates/canvas-view/src/browser/\n?? crates/canvas-view/src/layout.rs\n?? docs/reports/explorer-upgrade-2026-10-14/\n?? docs/research/graph-visualization-research.md\n?? docs/research/rust-graph-visualization-and-dx.md\n?? docs/screenshots/\n?? docs/specs/nba-graph-explorer-upgrade.md\n?? rustfmt.toml\n",
+  "working_tree_diff_sha256": "cd256eb121ca3c8e6e30eeeab7b2ae4b7825952427c799afaa62dc68473a216d",
+  "untracked_sha256": {
+    "Spec.md": "b9b26bcb410de74d7f3804df2c84e8072f95ad410a988efa60eb6ffa654d6dd8",
+    "crates/canvas-view/src/browser/explorer.rs": "1ac3b73486b753562e300d3a81e5559026844875252257874fc331b4c94eb074",
+    "crates/canvas-view/src/layout.rs": "1870169b450f3a88a5a9a5a142d34d13c335e7dad288bcc8987c0fc8f0c8e5a6",
+    "docs/reports/explorer-upgrade-2026-10-14/checks/browser-matrix.log": "c4d9cac19e6ab01a6d2f84f4b195339f1253304d565cfc45c684728c65a9b2f6",
+    "docs/reports/explorer-upgrade-2026-10-14/checks/clippy-host.log": "a278acdb667c744bf6dd90e54cee0d7d31ce64cf5b7dab022f8e1afaaf3f4757",
+    "docs/reports/explorer-upgrade-2026-10-14/checks/clippy-wasm.log": "99f71393b9903dca098310bb446022a4bdee195ea9996f351a787195555210a6",
+    "docs/reports/explorer-upgrade-2026-10-14/checks/derived-snapshot.log": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84",
+    "docs/reports/explorer-upgrade-2026-10-14/checks/format.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/reports/explorer-upgrade-2026-10-14/checks/historical-audit.log": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232",
+    "docs/reports/explorer-upgrade-2026-10-14/checks/manifest.json": "703bbe1bbf69211137f00beec839a901e9b76897aec6689b39ee6491e8862b7f",
+    "docs/reports/explorer-upgrade-2026-10-14/checks/python-tests.log": "5e821d567033fa42f3ad85acaf354df33d4ede45aa34ea2a0e7099e0f4602688",
+    "docs/reports/explorer-upgrade-2026-10-14/checks/review-summary.json": "f21962edece9c5f1918b9debe170901ab73e93e80bc5a66ec28ca8843ffd9611",
+    "docs/reports/explorer-upgrade-2026-10-14/checks/rust-workspace.log": "4c8c7262a3344cb97543dae2319ac742f4f7b41b89da6127080c331e0c54395f",
+    "docs/reports/explorer-upgrade-2026-10-14/checks/semantic-audit.log": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0",
+    "docs/reports/explorer-upgrade-2026-10-14/checks/wasm-build.log": "7a7bb64a28cdda9b91e6e27f41be455104d929b5d7ad6dd5beca75fc5a47f1f4",
+    "docs/research/graph-visualization-research.md": "c77bfb2432759b0451c5b91c4b90f20b6f32862aa1a7ec8a8694088718bf0a63",
+    "docs/research/rust-graph-visualization-and-dx.md": "1693df03613a6057ebe40b0cb7b7dfee9cea6b5d1c09a70dba0b5ba859ee2db5",
+    "docs/screenshots/01-full-page-era-lanes.png": "2c936ad2f91b411d2f99bf42b1bcf732d254fe9f85309ae4ff623156ba50ed36",
+    "docs/screenshots/02-canvas-whole-network.png": "2e2b6b7e6e4270a5b4e1485ea8c312ac06b8c197606a31a3d7d7f897f86489f3",
+    "docs/screenshots/03-layout-concentric.png": "2b91af2a320d7b156795eb83a994116da30913842e86274b2671405b67671fd3",
+    "docs/screenshots/04-layout-force.png": "1caa3c22a6ccad601763ee9dd8f36f11f94ec409a635daf73a9d93b3d2d5dd0b",
+    "docs/screenshots/05-zoomed-labels.png": "d935695183645ad641da619a536afedb7bd7ef4fbd6e661c6b5a094a406c9870",
+    "docs/screenshots/06-player-selected-focus.png": "5c9745fd78a366876be7c53ba35db78201be99dcfd3ecaab9f3162b72da9f04c",
+    "docs/screenshots/07-focus-highlight-canvas.png": "a3a3024157814b4c3281c04e3a7882793483556bf47690b073a506ae915d1de4",
+    "docs/screenshots/08-minimap-and-controls.png": "5f781318729291d4338bba2437478ac734c38daf186fd883810be0d7ec73c84c",
+    "docs/screenshots/09-labels-while-zoomed.png": "039459237719df058c8f774eb80b1961068d515f832e83092c41cdfffee6fc6a",
+    "docs/screenshots/10-mobile-view.png": "c98db1d8a94e02f560f17e5983194430e4f3c423a2b244fe02a79a6fc440efed",
+    "docs/screenshots/11-edge-evidence.png": "a912dbc6aac1c1ebcca914ce8fba4d262476f1a8f4475fedf40f8dc8c5396e8f",
+    "docs/screenshots/12-concentric-full-page.png": "a96d856ccecbc59739138d1c69f5075dc79befb30d24fb52292e9d1a81c7effb",
+    "docs/screenshots/7-degrees-screenshots.pdf": "c82efb8833bafa8fbc8a9729b9df12380badda8a6396d99fd2044f70db69e26e",
+    "docs/screenshots/README.md": "4a13fe25f360f01255b90c9da2064c74b56565148ff188360fd57307dacdc66f",
+    "docs/specs/nba-graph-explorer-upgrade.md": "fa827263fa07b3e65bb624dc4cd087f67d8eb9b166d1682a1dbf19cf862cbcae",
+    "rustfmt.toml": "d7ba9ffc9c806610c30e3b90eea35880702cdc6d06c8e3e5ab407cbaaffae18f"
+  },
+  "started_at": "2026-10-14T19:23:46.795711+00:00",
+  "completed": true,
+  "expected_checks": [
+    "rust-workspace",
+    "python-tests",
+    "format",
+    "clippy-host",
+    "derived-snapshot",
+    "historical-audit",
+    "semantic-audit",
+    "wasm-build",
+    "clippy-wasm",
+    "browser-matrix"
+  ],
+  "finished_at": "2026-10-14T19:25:40.711998+00:00",
+  "checks": [
+    {
+      "name": "rust-workspace",
+      "argv": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T19:23:46.796070+00:00",
+      "finished_at": "2026-10-14T19:23:52.974855+00:00",
+      "log": "rust-workspace.log",
+      "summary": {
+        "rust_result_groups": 28,
+        "rust_totals": {
+          "passed": 121,
+          "failed": 0,
+          "ignored": 16
+        },
+        "python_result": null
+      },
+      "raw_sha256": "4a4172f8656e4e3d45ea30ac41d3a3d6c356a6b252c8c3e5f34112a38a67e3ff",
+      "published_sha256": "18f5ff4aa4f1a74752a463b1b9f8bfa89f5e8a56495c53754c1538e40ba8bda8"
+    },
+    {
+      "name": "python-tests",
+      "argv": [
+        "/opt/homebrew/opt/python@3.13/bin/python3.13",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_*.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T19:23:52.975360+00:00",
+      "finished_at": "2026-10-14T19:23:53.528303+00:00",
+      "log": "python-tests.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": {
+          "tests": 108,
+          "result": "OK"
+        }
+      },
+      "raw_sha256": "d1e387cad29ad8fd97a476d02957d53a2badaead1b8b50ac1d46ce54e1b89e96",
+      "published_sha256": "dc52ccd0de833529f41b08ac26cc6b304b04d431d29e890d71a91484fb8bc618"
+    },
+    {
+      "name": "format",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T19:23:53.528557+00:00",
+      "finished_at": "2026-10-14T19:23:53.666645+00:00",
+      "log": "format.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clippy-host",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T19:23:53.666827+00:00",
+      "finished_at": "2026-10-14T19:23:54.032798+00:00",
+      "log": "clippy-host.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "12044917d973c777b39c8545d48bafa804ac4aeb8ee917a6300438db74c91a60",
+      "published_sha256": "d57051195f31b7e70630b4a96d398bc1756d4d55bc5a5634008341979ab36304"
+    },
+    {
+      "name": "derived-snapshot",
+      "argv": [
+        "/opt/homebrew/opt/python@3.13/bin/python3.13",
+        "scripts/verify-source-snapshot.py",
+        "--derived-only"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T19:23:54.032982+00:00",
+      "finished_at": "2026-10-14T19:23:54.074896+00:00",
+      "log": "derived-snapshot.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84",
+      "published_sha256": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84"
+    },
+    {
+      "name": "historical-audit",
+      "argv": [
+        "/opt/homebrew/opt/python@3.13/bin/python3.13",
+        "scripts/check-historical-audit.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T19:23:54.075096+00:00",
+      "finished_at": "2026-10-14T19:23:54.412226+00:00",
+      "log": "historical-audit.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232",
+      "published_sha256": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232"
+    },
+    {
+      "name": "semantic-audit",
+      "argv": [
+        "/opt/homebrew/opt/python@3.13/bin/python3.13",
+        "scripts/check-semantic-evaluation.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T19:23:54.412493+00:00",
+      "finished_at": "2026-10-14T19:23:54.463853+00:00",
+      "log": "semantic-audit.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0",
+      "published_sha256": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0"
+    },
+    {
+      "name": "wasm-build",
+      "argv": [
+        "./scripts/build-canvas.sh"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T19:23:54.464043+00:00",
+      "finished_at": "2026-10-14T19:23:54.589754+00:00",
+      "log": "wasm-build.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "7a7bb64a28cdda9b91e6e27f41be455104d929b5d7ad6dd5beca75fc5a47f1f4",
+      "published_sha256": "7a7bb64a28cdda9b91e6e27f41be455104d929b5d7ad6dd5beca75fc5a47f1f4"
+    },
+    {
+      "name": "clippy-wasm",
+      "argv": [
+        "cargo",
+        "clippy",
+        "-p",
+        "canvas-view",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T19:23:54.589969+00:00",
+      "finished_at": "2026-10-14T19:23:54.893398+00:00",
+      "log": "clippy-wasm.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "0c67833d8e06a22a6fb81c874b6e0109c4cb1a56886da7f5c6e2f35e9f319612",
+      "published_sha256": "83751df9834adaa0d8b894868fb249904a5d8fb89c9c505e9af16547a8adb724"
+    },
+    {
+      "name": "browser-matrix",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "app-server",
+        "--test",
+        "browser_e2e",
+        "--test",
+        "canvas_browser",
+        "--locked",
+        "--",
+        "--ignored",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T19:23:54.893577+00:00",
+      "finished_at": "2026-10-14T19:25:40.711142+00:00",
+      "log": "browser-matrix.log",
+      "summary": {
+        "rust_result_groups": 2,
+        "rust_totals": {
+          "passed": 13,
+          "failed": 0,
+          "ignored": 0
+        },
+        "python_result": null
+      },
+      "raw_sha256": "5370fa961dfd56c698f245dfdeecb8a3a2fd0f3d0cace4bcddccf00145f7f18a",
+      "published_sha256": "6e3aaa82264ee65d277d3fa7126bfd6e2c34d9c542cebf2fb467200f782152d1"
+    }
+  ]
+}
