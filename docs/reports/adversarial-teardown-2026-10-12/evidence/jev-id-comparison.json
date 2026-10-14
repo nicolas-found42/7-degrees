@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"tool\": \"jev_compare\",\n  \"model\": \"typesafe/jev-1.13-20260917\",\n  \"provider\": \"openrouter\",\n  \"overall\": {\n    \"relation\": \"same_fact\",\n    \"probabilities\": {\n      \"same_fact\": 0.57,\n      \"contradicts\": 0.09,\n      \"different_facts\": 0.34\n    },\n    \"confidence\": 0.35,\n    \"margin\": 0.22999999999999993,\n    \"decision\": \"review\"\n  },\n  \"aspects\": [\n    {\n      \"aspect\": \"visible stable IDs\",\n      \"relation\": \"contradicts\",\n      \"probabilities\": {\n        \"same_fact\": 0.1,\n        \"contradicts\": 0.8,\n        \"different_facts\": 0.1\n      },\n      \"confidence\": 0.7,\n      \"margin\": 0.7000000000000001,\n      \"decision\": \"review\"\n    },\n    {\n      \"aspect\": \"era context\",\n      \"relation\": \"different_facts\",\n      \"probabilities\": {\n        \"same_fact\": 0.27,\n        \"contradicts\": 0.01,\n        \"different_facts\": 0.72\n      },\n      \"confidence\": 0.58,\n      \"margin\": 0.44999999999999996,\n      \"decision\": \"review\"\n    },\n    {\n      \"aspect\": \"distinct same-name identity records\",\n      \"relation\": \"different_facts\",\n      \"probabilities\": {\n        \"same_fact\": 0.06,\n        \"contradicts\": 0,\n        \"different_facts\": 0.94\n      },\n      \"confidence\": 0.91,\n      \"margin\": 0.8799999999999999,\n      \"decision\": \"auto\"\n    }\n  ],\n  \"thresholds\": {\n    \"auto_accept\": 0.85,\n    \"minimum_margin\": 0.5\n  },\n  \"usage\": {\n    \"input_tokens\": 889,\n    \"output_tokens\": 176\n  }\n}"
+    }
+  ]
+}

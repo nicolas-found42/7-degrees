@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"tool\": \"jev_noul\",\n  \"model\": \"typesafe/jev-1.13-20260917\",\n  \"provider\": \"openrouter\",\n  \"status\": \"ok\",\n  \"results\": [\n    {\n      \"id\": \"proposition0\",\n      \"proposition\": \"A skeptical basketball researcher trying to retrieve Quincy Acy, connect him to Andrew Bogut, and inspect dated teammate evidence fits the documented audience.\",\n      \"probability\": 0.4,\n      \"label\": \"uncertain\",\n      \"auto\": false\n    },\n    {\n      \"id\": \"proposition1\",\n      \"proposition\": \"The desired outcome can be checked by identity IDs, degree, and source-backed overlap rather than persona satisfaction.\",\n      \"probability\": 0.82,\n      \"label\": \"uncertain\",\n      \"auto\": false\n    },\n    {\n      \"id\": \"proposition2\",\n      \"proposition\": \"Keyboard and phone viewport constraints can change the observable task outcome.\",\n      \"probability\": 0.86,\n      \"label\": \"likely\",\n      \"auto\": true\n    },\n    {\n      \"id\": \"proposition3\",\n      \"proposition\": \"Excluding exhaustive historical source reconstruction and live paid semantic quality still permits a bounded local correctness and UX teardown, provided these gaps are explicit.\",\n      \"probability\": 0.86,\n      \"label\": \"likely\",\n      \"auto\": true\n    }\n  ],\n  \"thresholds\": {\n    \"auto_accept\": 0.85\n  },\n  \"usage\": {\n    \"input_tokens\": 824,\n    \"output_tokens\": 88\n  }\n}"
+    }
+  ]
+}

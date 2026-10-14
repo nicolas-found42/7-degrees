@@ -1,0 +1,24 @@
+    Blocking waiting for file lock on build directory
+   Compiling api-types v0.1.0 (/Users/Nicolas/Documents/github/7-degrees/crates/api-types)
+   Compiling graph-core v0.1.0 (/Users/Nicolas/Documents/github/7-degrees/crates/graph-core)
+   Compiling jev-client v0.1.0 (/Users/Nicolas/Documents/github/7-degrees/crates/jev-client)
+   Compiling fixture v0.1.0 (/Users/Nicolas/Documents/github/7-degrees/crates/fixture)
+   Compiling canvas-view v0.1.0 (/Users/Nicolas/Documents/github/7-degrees/crates/canvas-view)
+   Compiling app-server v0.1.0 (/Users/Nicolas/Documents/github/7-degrees/crates/app-server)
+warning: static `CAPTURE_LOGGER` is never used
+   --> crates/app-server/src/jev.rs:222:8
+    |
+222 | static CAPTURE_LOGGER: CaptureLogger = CaptureLogger;
+    |        ^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `app-server` (lib) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.48s
+     Running tests/log_capture.rs (target/debug/deps/log_capture-48e5b94c009b3a96)
+
+running 1 test
+test the_credential_canary_never_appears_in_any_log_record ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+

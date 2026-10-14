@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"tool\": \"jev_audit\",\n  \"model\": \"typesafe/jev-1.13-20260917\",\n  \"provider\": \"openrouter\",\n  \"action\": \"pass\",\n  \"wrong_at\": 0.7,\n  \"truncated\": false,\n  \"summary\": {\n    \"records\": 3,\n    \"flagged\": 0,\n    \"invalid\": 0\n  },\n  \"records\": [\n    {\n      \"id\": \"later_player\",\n      \"value\": \"brownde03\",\n      \"checks\": {\n        \"hallucinated\": 0.03,\n        \"off_target\": 0.06,\n        \"incomplete\": 0.03,\n        \"format\": 0.05\n      },\n      \"p_wrong\": 0.06,\n      \"action\": \"ok\"\n    },\n    {\n      \"id\": \"first_label\",\n      \"value\": \"Dee Brown\",\n      \"checks\": {\n        \"hallucinated\": 0.02,\n        \"off_target\": 0.04,\n        \"incomplete\": 0.04,\n        \"format\": 0.05\n      },\n      \"p_wrong\": 0.05,\n      \"action\": \"ok\"\n    },\n    {\n      \"id\": \"screenreader\",\n      \"value\": \"\",\n      \"checks\": {\n        \"absence\": 0.16\n      },\n      \"p_wrong\": 0.16,\n      \"action\": \"ok\"\n    }\n  ],\n  \"usage\": {\n    \"input_tokens\": 1451,\n    \"output_tokens\": 186\n  }\n}"
+    }
+  ]
+}

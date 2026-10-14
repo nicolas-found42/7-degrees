@@ -1,0 +1,397 @@
+{
+  "path_pagination_equal": true,
+  "alternatives": 12,
+  "duplicate_option_labels": {
+    "Dee Brown": [
+      "brownde01",
+      "brownde03"
+    ],
+    "Johnny Davis": [
+      "davisjo01",
+      "davisjo06"
+    ],
+    "Mark Davis": [
+      "davisma01",
+      "davisma02"
+    ],
+    "Mike Davis": [
+      "davismi01",
+      "davismi03"
+    ],
+    "Bob Duffy": [
+      "duffybo01",
+      "duffybo02"
+    ],
+    "Mike Dunleavy": [
+      "dunlemi01",
+      "dunlemi02"
+    ],
+    "Patrick Ewing": [
+      "ewingpa01",
+      "ewingpa02"
+    ],
+    "Matt Guokas": [
+      "guokama01",
+      "guokama02"
+    ],
+    "Cedric Henderson": [
+      "hendece01",
+      "hendece02"
+    ],
+    "Gerald Henderson": [
+      "hendege01",
+      "hendege02"
+    ],
+    "Luke Jackson": [
+      "jackslu01",
+      "jackslu02"
+    ],
+    "Mike James": [
+      "jamesmi01",
+      "jamesmi02"
+    ],
+    "Chris Johnson": [
+      "johnsch03",
+      "johnsch04"
+    ],
+    "Eddie Johnson": [
+      "johnsed02",
+      "johnsed03"
+    ],
+    "George Johnson": [
+      "johnsge01",
+      "johnsge02",
+      "johnsge03"
+    ],
+    "Ken Johnson": [
+      "johnske01",
+      "johnske03"
+    ],
+    "Larry Johnson": [
+      "johnsla01",
+      "johnsla02"
+    ],
+    "Bobby Jones": [
+      "jonesbo01",
+      "jonesbo02"
+    ],
+    "Charles Jones": [
+      "jonesch01",
+      "jonesch02",
+      "jonesch03"
+    ],
+    "Mark Jones": [
+      "jonesma02",
+      "jonesma03"
+    ],
+    "George King": [
+      "kingge01",
+      "kingge03"
+    ],
+    "Freddie Lewis": [
+      "lewisfr01",
+      "lewisfr02"
+    ],
+    "Tony Mitchell": [
+      "mitchto02",
+      "mitchto03"
+    ],
+    "Jim Paxson": [
+      "paxsoji01",
+      "paxsoji02"
+    ],
+    "Walker Russell": [
+      "russewa01",
+      "russewa02"
+    ],
+    "Bill Smith": [
+      "smithbi01",
+      "smithwi01"
+    ],
+    "Charles Smith": [
+      "smithch01",
+      "smithch02",
+      "smithch04"
+    ],
+    "Chris Smith": [
+      "smithch03",
+      "smithch05"
+    ],
+    "Don Smith": [
+      "smithdo01",
+      "smithdo02"
+    ],
+    "Greg Smith": [
+      "smithgr01",
+      "smithgr02"
+    ],
+    "Michael Smith": [
+      "smithmi01",
+      "smithmi02"
+    ],
+    "Jeff Taylor": [
+      "tayloje01",
+      "tayloje03"
+    ],
+    "Jack Turner": [
+      "turneja01",
+      "turneja02"
+    ],
+    "Brandon Williams": [
+      "willibr01",
+      "willibr03"
+    ],
+    "Nate Williams": [
+      "willije02",
+      "willina01"
+    ],
+    "Marcus Williams": [
+      "willima03",
+      "willima04"
+    ],
+    "Reggie Williams": [
+      "willire01",
+      "willire02"
+    ],
+    "Sam Williams": [
+      "willisa01",
+      "willisa02"
+    ],
+    "Chris Wright": [
+      "wrighch01",
+      "wrighch02"
+    ]
+  },
+  "duplicate_names": 39,
+  "duplicate_identities": 81,
+  "http_rows": [
+    {
+      "path": "/api/search?q=Quincy+Acy",
+      "status": 200,
+      "ms": 76.03,
+      "body": "{\"query\":\"Quincy Acy\",\"status\":\"exact_match\",\"candidates\":[{\"player\":{\"id\":\"acyqu01\",\"name\":\"Quincy Acy\",\"aliases\":[],\"first_season\":2013,\"last_season\":2019,\"teams\":[\"KINGS\",\"KNICKS\",\"MAVERICKS\",\"NETS\",\"RAPTORS\",\"SUNS\"]},\"match_kind\":\"exact_name\",\"matched_name\":\"Quincy Acy\",\"score\":1000}],\"matches_total\":1,\"has_more\":false}"
+    },
+    {
+      "path": "/api/search?q=Qunicy+Acy",
+      "status": 200,
+      "ms": 144.31,
+      "body": "{\"query\":\"Qunicy Acy\",\"status\":\"candidates\",\"candidates\":[{\"player\":{\"id\":\"acyqu01\",\"name\":\"Quincy Acy\",\"aliases\":[],\"first_season\":2013,\"last_season\":2019,\"teams\":[\"KINGS\",\"KNICKS\",\"MAVERICKS\",\"NETS\",\"RAPTORS\",\"SUNS\"]},\"match_kind\":\"typo\",\"matched_name\":\"Quincy Acy\",\"score\":580}],\"matches_total\":1,\"has_more\":false}"
+    },
+    {
+      "path": "/api/search?q=Dee+Brown",
+      "status": 200,
+      "ms": 46.5,
+      "body": "{\"query\":\"Dee Brown\",\"status\":\"ambiguous\",\"candidates\":[{\"player\":{\"id\":\"brownde01\",\"name\":\"Dee Brown\",\"aliases\":[],\"first_season\":1991,\"last_season\":2002,\"teams\":[\"CELTICS\",\"MAGIC\",\"RAPTORS\"]},\"match_kind\":\"exact_name\",\"matched_name\":\"Dee Brown\",\"score\":1000},{\"player\":{\"id\":\"brownde03\",\"name\":\"Dee Brown\",\"aliases\":[],\"first_season\":2007,\"last_season\":2009,\"teams\":[\"JAZZ\",\"SUNS\",\"WIZARDS\"]},\"match_kind\":\"exact_name\",\"matched_name\":\"Dee Brown\",\"score\":1000}],\"matches_total\":2,\"has_more\":false}"
+    },
+    {
+      "path": "/api/search?q=Jos%C3%A9+Calder%C3%B3n",
+      "status": 200,
+      "ms": 46.72,
+      "body": "{\"query\":\"Jos\u00e9 Calder\u00f3n\",\"status\":\"exact_match\",\"candidates\":[{\"player\":{\"id\":\"caldejo01\",\"name\":\"Jos\u00e9 Calder\u00f3n\",\"aliases\":[\"Jose Calderon\"],\"first_season\":2006,\"last_season\":2019,\"teams\":[\"CAVALIERS\",\"HAWKS\",\"KNICKS\",\"LAKERS\",\"MAVERICKS\",\"PISTONS\",\"RAPTORS\"]},\"match_kind\":\"exact_name\",\"matched_name\":\"Jos\u00e9 Calder\u00f3n\",\"score\":1000}],\"matches_total\":1,\"has_more\":false}"
+    },
+    {
+      "path": "/api/search?q=Jose+Calderon",
+      "status": 200,
+      "ms": 46.69,
+      "body": "{\"query\":\"Jose Calderon\",\"status\":\"exact_match\",\"candidates\":[{\"player\":{\"id\":\"caldejo01\",\"name\":\"Jos\u00e9 Calder\u00f3n\",\"aliases\":[\"Jose Calderon\"],\"first_season\":2006,\"last_season\":2019,\"teams\":[\"CAVALIERS\",\"HAWKS\",\"KNICKS\",\"LAKERS\",\"MAVERICKS\",\"PISTONS\",\"RAPTORS\"]},\"match_kind\":\"exact_name\",\"matched_name\":\"Jos\u00e9 Calder\u00f3n\",\"score\":1000}],\"matches_total\":1,\"has_more\":false}"
+    },
+    {
+      "path": "/api/search?q=Shaq",
+      "status": 200,
+      "ms": 46.31,
+      "body": "{\"query\":\"Shaq\",\"status\":\"candidates\",\"candidates\":[{\"player\":{\"id\":\"onealsh01\",\"name\":\"Shaquille O'Neal\",\"aliases\":[\"Shaq\"],\"first_season\":1993,\"last_season\":2011,\"teams\":[\"CAVALIERS\",\"CELTICS\",\"HEAT\",\"LAKERS\",\"MAGIC\",\"SUNS\"]},\"match_kind\":\"alias\",\"matched_name\":\"Shaq\",\"score\":950}],\"matches_total\":1,\"has_more\":false}"
+    },
+    {
+      "path": "/api/search?q=intergalactic+banana",
+      "status": 200,
+      "ms": 119.32,
+      "body": "{\"query\":\"intergalactic banana\",\"status\":\"no_match\",\"candidates\":[],\"matches_total\":0,\"has_more\":false}"
+    },
+    {
+      "path": "/api/search?q=...",
+      "status": 200,
+      "ms": 10.94,
+      "body": "{\"query\":\"...\",\"status\":\"empty_query\",\"candidates\":[],\"matches_total\":0,\"has_more\":false}"
+    },
+    {
+      "path": "/api/search?q=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "status": 400,
+      "ms": 9.15,
+      "body": "{\"error\":\"query must contain at most 160 characters\"}"
+    },
+    {
+      "path": "/api/semantic-status",
+      "status": 200,
+      "ms": 2.72,
+      "body": "{\"available\":false,\"reason\":\"unconfigured\"}"
+    },
+    {
+      "path": "/api/resolve?q=Shaq",
+      "status": 200,
+      "ms": 47.89,
+      "body": "{\"status\":\"unavailable\",\"player\":null,\"interpretation\":\"lexical_fallback\",\"reason\":\"semantic_unavailable\",\"candidates\":[{\"player\":{\"id\":\"onealsh01\",\"name\":\"Shaquille O'Neal\",\"aliases\":[\"Shaq\"],\"first_season\":1993,\"last_season\":2011,\"teams\":[\"CAVALIERS\",\"CELTICS\",\"HEAT\",\"LAKERS\",\"MAGIC\",\"SUNS\"]},\"match_kind\":\"alias\",\"matched_name\":\"Shaq\",\"score\":950}],\"matches_total\":1,\"has_more\":false,\"semantic\":null}"
+    },
+    {
+      "path": "/api/connection?from=acyqu01&to=bogutan01",
+      "status": 200,
+      "ms": 2.51,
+      "body": "{\"coverage\":{\"appearance_proven_edges\":99710,\"certified_tenures\":2270,\"complete\":false,\"excluded_tenures\":{\"cross-checked\":10221,\"inferred\":13340,\"unresolved\":4227},\"game_witnessed_edges\":437,\"players_without_certified_tenure\":3516,\"players_without_evidenced_edge\":41,\"warning\":\"Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.\"},\"degree\":1,\"links\":[{\"from\":\"acyqu01\",\"minimum_shared_games\":null,\"overlap_days\":121,\"team\":\"MAVERICKS\",\"to\":\"bogutan01\"}],\"path\":[\"acyqu01\",\"bogutan01\"],\"result\":\"connected\"}"
+    },
+    {
+      "path": "/edge?from=acyqu01&to=bogutan01",
+      "status": 200,
+      "ms": 245.14,
+      "body": "<!DOCTYPE html>\n<html lang=\"en\">\n<head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Overlap evidence</title><link rel=\"stylesheet\" href=\"/style.css\"><link rel=\"icon\" href=\"data:,\"></head>\n<body><main class=\"seven-degrees\"><nav aria-label=\"Main navigation\"><a href=\"/\">Explorer</a> \u00b7 <a href=\"/stats\">Network statistics</a> \u00b7 <a href=\"/graph?all=true\">All player connections</a></nav><h1>Teammate overlap evidence</h1><p>Quincy Acy \u2194 Andrew Bogut</p><p>Teammate relationship admitted by the deterministic graph. The evidence below states which dates or shared games are proved.</p><section><h2>Canonical franchise: MAVERICKS</h2><p>Overlap: [2016-07-20, 2016-11-18) \u2014 121 day(s); end exclusive.</p><ul><li>Source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A123\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:123</a>: Quincy Acy \u2014 canonical franchise MAVERICKS; Season 2016\u201317 (ending 2017); roster tenure [2016-07-20, 2016-11-18) (end exclusive).<dl><dt>Evidence class</dt><dd>directly-evidenced</dd><dt>Membership source</dt><dd>S2</dd><dt>Arrival boundary: transaction anchored</dt><dd>Arrival events: 2016-07-20</dd><dt>Departure boundary: transaction anchored</dt><dd>Departure events: 2016-11-18</dd><dt>Source notes</dt><dd>None reported</dd><dt>Source/version manifest</dt><dd>docs/data/source-manifest.md (S1 v238; S2 v56; BBR request ledger) \u2014 <a href=\"/sources/manifest\" target=\"_blank\" rel=\"noopener\">Open source/version manifest</a>; <a href=\"/sources/transactions\" target=\"_blank\" rel=\"noopener\">Pinned transaction page inventory</a></dd></dl></li><li>Source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A2602\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:2602</a>: Andrew Bogut \u2014 canonical franchise MAVERICKS; Season 2016\u201317 (ending 2017); roster tenure [2016-07-07, 2017-02-23) (end exclusive).<dl><dt>Evidence class</dt><dd>directly-evidenced</dd><dt>Membership source</dt><dd>S2</dd><dt>Arrival boundary: transaction anchored</dt><dd>Arrival events: 2016-07-07</dd><dt>Departure boundary: transaction anchored</dt><dd>Departure events: 2017-02-23</dd><dt>Source notes</dt><dd>None reported</dd><dt>Source/version manifest</dt><dd>docs/data/source-manifest.md (S1 v238; S2 v56; BBR request ledger) \u2014 <a href=\"/sources/manifest\" target=\"_blank\" rel=\"noopener\">Open source/version manifest</a>; <a href=\"/sources/transactions\" target=\"_blank\" rel=\"noopener\">Pinned transaction page inventory</a></dd></dl></li></ul></section><section class=\"coverage\"><h2>Source evidence is incomplete</h2><p>Missing evidence does not prove a historical non-relationship.</p><p>Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.</p><h3>Coverage gaps for these players</h3><ul><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A115\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:115</a>: Quincy Acy; canonical franchise RAPTORS; Season 2012\u201313 (ending 2013); dated interval unavailable; evidence class: unresolved; reason: no-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A116\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:116</a>: Quincy Acy; canonical franchise KINGS; Season 2013\u201314 (ending 2014); [2013-12-09, 2014-04-17); evidence class: cross-checked; reason: No certified pair of dated transaction boundaries</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A117\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:117</a>: Quincy Acy; canonical franchise RAPTORS; Season 2013\u201314 (ending 2014); [2013-10-30, 2013-12-09); evidence class: cross-checked; reason: No certified pair of dated transaction boundaries</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A118\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:118</a>: Quincy Acy; canonical franchise KNICKS; Season 2014\u201315 (ending 2015); [2014-08-06, 2015-04-16); evidence class: cross-checked; reason: No certified pair of dated transaction boundaries</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A119\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:119</a>: Quincy Acy; canonical franchise KINGS; Season 2015\u201316 (ending 2016); [2015-07-22, 2016-04-14); evidence class: cross-checked; reason: No certified pair of dated transaction boundaries</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A120\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:120</a>: Quincy Acy; canonical franchise NETS; Season 2016\u201317 (ending 2017); [2017-01-10, 2017-01-20); evidence class: unresolved; reason: repeat-signing-prior-end-unknown</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A121\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:121</a>: Quincy Acy; canonical franchise NETS; Season 2016\u201317 (ending 2017); [2017-01-20, 2017-01-30); evidence class: unresolved; reason: repeat-signing-prior-end-unknown</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A122\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:122</a>: Quincy Acy; canonical franchise NETS; Season 2016\u201317 (ending 2017); [2017-01-30, 2017-04-13); evidence class: cross-checked; reason: No certified pair of dated transaction boundaries</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A124\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:124</a>: Quincy Acy; canonical franchise NETS; Season 2017\u201318 (ending 2018); [2017-10-18, 2018-04-12); evidence class: inferred; reason: No certified pair of dated transaction boundaries</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A125\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:125</a>: Quincy Acy; canonical franchise SUNS; Season 2018\u201319 (ending 2019); [2019-01-07, 2019-01-17); evidence class: unresolved; reason: repeat-signing-prior-end-unknown</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A126\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:126</a>: Quincy Acy; canonical franchise SUNS; Season 2018\u201319 (ending 2019); [2019-01-17, 2019-04-10); evidence class: cross-checked; reason: No certified pair of dated transaction boundaries</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A2590\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:2590</a>: Andrew Bogut; canonical franchise BUCKS; Season 2005\u201306 (ending 2006); [2005-11-01, 2006-04-19); evidence class: inferred; reason: No certified pair of dated transaction boundaries</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A2591\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:2591</a>: Andrew Bogut; canonical franchise BUCKS; Season 2006\u201307 (ending 2007); [2006-11-01, 2007-04-19); evidence class: inferred; reason: No certified pair of dated transaction boundaries</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A2592\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:2592</a>: Andrew Bogut; canonical franchise BUCKS; Season 2007\u201308 (ending 2008); [2007-10-31, 2008-04-17); evidence class: inferred; reason: No certified pair of dated transaction boundaries</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A2593\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:2593</a>: Andrew Bogut; canonical franchise BUCKS; Season 2008\u201309 (ending 2009); [2008-10-28, 2009-04-16); evidence class: inferred; reason: No certified pair of dated transaction boundaries</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A2594\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:2594</a>: Andrew Bogut; canonical franchise BUCKS; Season 2009\u201310 (ending 2010); [2009-10-30, 2010-05-03); evidence class: inferred; reason: No certified pair of dated transaction boundaries</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A2595\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:2595</a>: Andrew Bogut; canonical franchise BUCKS; Season 2010\u201311 (ending 2011); [2010-10-27, 2011-04-14); evidence class: inferred; reason: No certified pair of dated transaction boundaries</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A2596\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:2596</a>: Andrew Bogut; canonical franchise BUCKS; Season 2011\u201312 (ending 2012); [2011-12-26, 2012-03-13); evidence class: cross-checked; reason: No certified pair of dated transaction boundaries</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A2597\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:2597</a>: Andrew Bogut; canonical franchise WARRIORS; Season 2012\u201313 (ending 2013); [2013-04-20, 2013-05-17); evidence class: inferred; reason: No certified pair of dated transaction boundaries</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A2598\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:2598</a>: Andrew Bogut; canonical franchise WARRIORS; Season 2013\u201314 (ending 2014); [2013-10-30, 2014-05-04); evidence class: inferred; reason: No certified pair of dated transaction boundaries</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A2599\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:2599</a>: Andrew Bogut; canonical franchise WARRIORS; Season 2014\u201315 (ending 2015); [2014-10-29, 2015-06-17); evidence class: inferred; reason: No certified pair of dated transaction boundaries</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A2600\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:2600</a>: Andrew Bogut; canonical franchise WARRIORS; Season 2015\u201316 (ending 2016); [2015-10-27, 2016-06-20); evidence class: inferred; reason: No certified pair of dated transaction boundaries</li><li>Excluded from teammate evidence \u2014 source record <a href=\"/sources/tenure?record=t4%2Ftenures.csv%3A2604\" target=\"_blank\" rel=\"noopener\">t4/tenures.csv:2604</a>: Andrew Bogut; canonical franchise WARRIORS; Season 2018\u201319 (ending 2019); [2019-03-06, 2019-06-14); evidence class: cross-checked; reason: No certified pair of dated transaction boundaries</li></ul></section></main></body>\n</html>\n"
+    },
+    {
+      "path": "/api/connection?from=maravpe01&to=abdulka01",
+      "status": 200,
+      "ms": 1.23,
+      "body": "{\"coverage\":{\"appearance_proven_edges\":99710,\"certified_tenures\":2270,\"complete\":false,\"excluded_tenures\":{\"cross-checked\":10221,\"inferred\":13340,\"unresolved\":4227},\"game_witnessed_edges\":437,\"players_without_certified_tenure\":3516,\"players_without_evidenced_edge\":41,\"warning\":\"Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.\"},\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":1,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"blockjo01\"},{\"from\":\"blockjo01\",\"minimum_shared_games\":78,\"overlap_days\":null,\"team\":\"BUCKS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"blockjo01\",\"abdulka01\"],\"result\":\"connected\"}"
+    },
+    {
+      "path": "/api/connection?from=acyqu01&to=acyqu01",
+      "status": 200,
+      "ms": 0.47,
+      "body": "{\"coverage\":{\"appearance_proven_edges\":99710,\"certified_tenures\":2270,\"complete\":false,\"excluded_tenures\":{\"cross-checked\":10221,\"inferred\":13340,\"unresolved\":4227},\"game_witnessed_edges\":437,\"players_without_certified_tenure\":3516,\"players_without_evidenced_edge\":41,\"warning\":\"Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.\"},\"degree\":0,\"links\":[],\"path\":[\"acyqu01\"],\"result\":\"connected\"}"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=500",
+      "status": 200,
+      "ms": 22.19,
+      "body": "{\"coverage\":{\"appearance_proven_edges\":99710,\"certified_tenures\":2270,\"complete\":false,\"excluded_tenures\":{\"cross-checked\":10221,\"inferred\":13340,\"unresolved\":4227},\"game_witnessed_edges\":437,\"players_without_certified_tenure\":3516,\"players_without_evidenced_edge\":41,\"warning\":\"Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.\"},\"next_cursor\":null,\"next_offset\":null,\"paths\":[{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":1,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"blockjo01\"},{\"from\":\"blockjo01\",\"minimum_shared_games\":78,\"overlap_days\":null,\"team\":\"BUCKS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"blockjo01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":10,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"boonero01\"},{\"from\":\"boonero01\",\"minimum_shared_games\":6,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"boonero01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":3,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"byrnema01\"},{\"from\":\"byrnema01\",\"minimum_shared_games\":32,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"byrnema01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":4,\"overlap_days\":null,\"team\":\"CELTICS\",\"to\":\"chanedo01\"},{\"from\":\"chanedo01\",\"minimum_shared_games\":81,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"chanedo01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":41,\"overlap_days\":null,\"team\":\"HAWKS\",\"to\":\"chapple01\"},{\"from\":\"chapple01\",\"minimum_shared_games\":75,\"overlap_days\":null,\"team\":\"BUCKS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"chapple01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":3,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"dantlad01\"},{\"from\":\"dantlad01\",\"minimum_shared_games\":58,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"dantlad01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":41,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"goodrga01\"},{\"from\":\"goodrga01\",\"minimum_shared_games\":75,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"goodrga01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":1,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"haywosp01\"},{\"from\":\"haywosp01\",\"minimum_shared_games\":76,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"haywosp01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":59,\"overlap_days\":null,\"team\":\"HAWKS\",\"to\":\"hudsolo01\"},{\"from\":\"hudsolo01\",\"minimum_shared_games\":76,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"hudsolo01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":68,\"overlap_days\":null,\"team\":\"HAWKS\",\"to\":\"jonesdw01\"},{\"from\":\"jonesdw01\",\"minimum_shared_games\":29,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"jonesdw01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":16,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"lantzst01\"},{\"from\":\"lantzst01\",\"minimum_shared_games\":53,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"lantzst01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":12,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"leeru01\"},{\"from\":\"leeru01\",\"minimum_shared_games\":35,\"overlap_days\":null,\"team\":\"BUCKS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"leeru01\",\"abdulka01\"]}],\"total\":12,\"total_exact\":\"12\",\"total_saturated\":false}"
+    },
+    {
+      "path": "/api/paths?from=acyqu01&to=bogutan01&cursor=bad",
+      "status": 400,
+      "ms": 0.69,
+      "body": "{\"error\":\"invalid-cursor\",\"message\":\"unsupported shortest-chain cursor\"}"
+    },
+    {
+      "path": "/api/paths?from=acyqu01&to=bogutan01&limit=0",
+      "status": 400,
+      "ms": 0.46,
+      "body": "{\"error\":\"invalid-limit\",\"message\":\"limit must be between 1 and 500\"}"
+    },
+    {
+      "path": "/api/paths?from=acyqu01&to=bogutan01&cursor=v1:0&offset=0",
+      "status": 400,
+      "ms": 0.39,
+      "body": "{\"error\":\"invalid-cursor\",\"message\":\"use either cursor or offset\"}"
+    },
+    {
+      "path": "/api/neighborhood?player=acyqu01&depth=3",
+      "status": 400,
+      "ms": 0.5,
+      "body": "{\"error\":\"invalid-neighborhood\",\"message\":\"depth must be 1 or 2; limit must be between 1 and 200\"}"
+    },
+    {
+      "path": "/api/connection?from=unknown&to=bogutan01",
+      "status": 404,
+      "ms": 0.53,
+      "body": "{\"error\":\"player-not-found\",\"message\":\"no player node for id \\\"unknown\\\"\"}"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=500",
+      "status": 200,
+      "ms": 21.74,
+      "body": "{\"coverage\":{\"appearance_proven_edges\":99710,\"certified_tenures\":2270,\"complete\":false,\"excluded_tenures\":{\"cross-checked\":10221,\"inferred\":13340,\"unresolved\":4227},\"game_witnessed_edges\":437,\"players_without_certified_tenure\":3516,\"players_without_evidenced_edge\":41,\"warning\":\"Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.\"},\"next_cursor\":null,\"next_offset\":null,\"paths\":[{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":1,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"blockjo01\"},{\"from\":\"blockjo01\",\"minimum_shared_games\":78,\"overlap_days\":null,\"team\":\"BUCKS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"blockjo01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":10,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"boonero01\"},{\"from\":\"boonero01\",\"minimum_shared_games\":6,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"boonero01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":3,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"byrnema01\"},{\"from\":\"byrnema01\",\"minimum_shared_games\":32,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"byrnema01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":4,\"overlap_days\":null,\"team\":\"CELTICS\",\"to\":\"chanedo01\"},{\"from\":\"chanedo01\",\"minimum_shared_games\":81,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"chanedo01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":41,\"overlap_days\":null,\"team\":\"HAWKS\",\"to\":\"chapple01\"},{\"from\":\"chapple01\",\"minimum_shared_games\":75,\"overlap_days\":null,\"team\":\"BUCKS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"chapple01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":3,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"dantlad01\"},{\"from\":\"dantlad01\",\"minimum_shared_games\":58,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"dantlad01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":41,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"goodrga01\"},{\"from\":\"goodrga01\",\"minimum_shared_games\":75,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"goodrga01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":1,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"haywosp01\"},{\"from\":\"haywosp01\",\"minimum_shared_games\":76,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"haywosp01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":59,\"overlap_days\":null,\"team\":\"HAWKS\",\"to\":\"hudsolo01\"},{\"from\":\"hudsolo01\",\"minimum_shared_games\":76,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"hudsolo01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":68,\"overlap_days\":null,\"team\":\"HAWKS\",\"to\":\"jonesdw01\"},{\"from\":\"jonesdw01\",\"minimum_shared_games\":29,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"jonesdw01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":16,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"lantzst01\"},{\"from\":\"lantzst01\",\"minimum_shared_games\":53,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"lantzst01\",\"abdulka01\"]},{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":12,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"leeru01\"},{\"from\":\"leeru01\",\"minimum_shared_games\":35,\"overlap_days\":null,\"team\":\"BUCKS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"leeru01\",\"abdulka01\"]}],\"total\":12,\"total_exact\":\"12\",\"total_saturated\":false}"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A0",
+      "status": 200,
+      "ms": 23.21,
+      "body": "{\"coverage\":{\"appearance_proven_edges\":99710,\"certified_tenures\":2270,\"complete\":false,\"excluded_tenures\":{\"cross-checked\":10221,\"inferred\":13340,\"unresolved\":4227},\"game_witnessed_edges\":437,\"players_without_certified_tenure\":3516,\"players_without_evidenced_edge\":41,\"warning\":\"Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.\"},\"next_cursor\":\"v1:1\",\"next_offset\":1,\"paths\":[{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":1,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"blockjo01\"},{\"from\":\"blockjo01\",\"minimum_shared_games\":78,\"overlap_days\":null,\"team\":\"BUCKS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"blockjo01\",\"abdulka01\"]}],\"total\":12,\"total_exact\":\"12\",\"total_saturated\":false}"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A1",
+      "status": 200,
+      "ms": 24.46,
+      "body": "{\"coverage\":{\"appearance_proven_edges\":99710,\"certified_tenures\":2270,\"complete\":false,\"excluded_tenures\":{\"cross-checked\":10221,\"inferred\":13340,\"unresolved\":4227},\"game_witnessed_edges\":437,\"players_without_certified_tenure\":3516,\"players_without_evidenced_edge\":41,\"warning\":\"Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.\"},\"next_cursor\":\"v1:2\",\"next_offset\":2,\"paths\":[{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":10,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"boonero01\"},{\"from\":\"boonero01\",\"minimum_shared_games\":6,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"boonero01\",\"abdulka01\"]}],\"total\":12,\"total_exact\":\"12\",\"total_saturated\":false}"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A2",
+      "status": 200,
+      "ms": 23.73,
+      "body": "{\"coverage\":{\"appearance_proven_edges\":99710,\"certified_tenures\":2270,\"complete\":false,\"excluded_tenures\":{\"cross-checked\":10221,\"inferred\":13340,\"unresolved\":4227},\"game_witnessed_edges\":437,\"players_without_certified_tenure\":3516,\"players_without_evidenced_edge\":41,\"warning\":\"Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.\"},\"next_cursor\":\"v1:3\",\"next_offset\":3,\"paths\":[{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":3,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"byrnema01\"},{\"from\":\"byrnema01\",\"minimum_shared_games\":32,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"byrnema01\",\"abdulka01\"]}],\"total\":12,\"total_exact\":\"12\",\"total_saturated\":false}"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A3",
+      "status": 200,
+      "ms": 24.53,
+      "body": "{\"coverage\":{\"appearance_proven_edges\":99710,\"certified_tenures\":2270,\"complete\":false,\"excluded_tenures\":{\"cross-checked\":10221,\"inferred\":13340,\"unresolved\":4227},\"game_witnessed_edges\":437,\"players_without_certified_tenure\":3516,\"players_without_evidenced_edge\":41,\"warning\":\"Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.\"},\"next_cursor\":\"v1:4\",\"next_offset\":4,\"paths\":[{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":4,\"overlap_days\":null,\"team\":\"CELTICS\",\"to\":\"chanedo01\"},{\"from\":\"chanedo01\",\"minimum_shared_games\":81,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"chanedo01\",\"abdulka01\"]}],\"total\":12,\"total_exact\":\"12\",\"total_saturated\":false}"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A4",
+      "status": 200,
+      "ms": 23.49,
+      "body": "{\"coverage\":{\"appearance_proven_edges\":99710,\"certified_tenures\":2270,\"complete\":false,\"excluded_tenures\":{\"cross-checked\":10221,\"inferred\":13340,\"unresolved\":4227},\"game_witnessed_edges\":437,\"players_without_certified_tenure\":3516,\"players_without_evidenced_edge\":41,\"warning\":\"Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.\"},\"next_cursor\":\"v1:5\",\"next_offset\":5,\"paths\":[{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":41,\"overlap_days\":null,\"team\":\"HAWKS\",\"to\":\"chapple01\"},{\"from\":\"chapple01\",\"minimum_shared_games\":75,\"overlap_days\":null,\"team\":\"BUCKS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"chapple01\",\"abdulka01\"]}],\"total\":12,\"total_exact\":\"12\",\"total_saturated\":false}"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A5",
+      "status": 200,
+      "ms": 22.4,
+      "body": "{\"coverage\":{\"appearance_proven_edges\":99710,\"certified_tenures\":2270,\"complete\":false,\"excluded_tenures\":{\"cross-checked\":10221,\"inferred\":13340,\"unresolved\":4227},\"game_witnessed_edges\":437,\"players_without_certified_tenure\":3516,\"players_without_evidenced_edge\":41,\"warning\":\"Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.\"},\"next_cursor\":\"v1:6\",\"next_offset\":6,\"paths\":[{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":3,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"dantlad01\"},{\"from\":\"dantlad01\",\"minimum_shared_games\":58,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"dantlad01\",\"abdulka01\"]}],\"total\":12,\"total_exact\":\"12\",\"total_saturated\":false}"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A6",
+      "status": 200,
+      "ms": 23.75,
+      "body": "{\"coverage\":{\"appearance_proven_edges\":99710,\"certified_tenures\":2270,\"complete\":false,\"excluded_tenures\":{\"cross-checked\":10221,\"inferred\":13340,\"unresolved\":4227},\"game_witnessed_edges\":437,\"players_without_certified_tenure\":3516,\"players_without_evidenced_edge\":41,\"warning\":\"Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.\"},\"next_cursor\":\"v1:7\",\"next_offset\":7,\"paths\":[{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":41,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"goodrga01\"},{\"from\":\"goodrga01\",\"minimum_shared_games\":75,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"goodrga01\",\"abdulka01\"]}],\"total\":12,\"total_exact\":\"12\",\"total_saturated\":false}"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A7",
+      "status": 200,
+      "ms": 20.58,
+      "body": "{\"coverage\":{\"appearance_proven_edges\":99710,\"certified_tenures\":2270,\"complete\":false,\"excluded_tenures\":{\"cross-checked\":10221,\"inferred\":13340,\"unresolved\":4227},\"game_witnessed_edges\":437,\"players_without_certified_tenure\":3516,\"players_without_evidenced_edge\":41,\"warning\":\"Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.\"},\"next_cursor\":\"v1:8\",\"next_offset\":8,\"paths\":[{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":1,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"haywosp01\"},{\"from\":\"haywosp01\",\"minimum_shared_games\":76,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"haywosp01\",\"abdulka01\"]}],\"total\":12,\"total_exact\":\"12\",\"total_saturated\":false}"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A8",
+      "status": 200,
+      "ms": 21.97,
+      "body": "{\"coverage\":{\"appearance_proven_edges\":99710,\"certified_tenures\":2270,\"complete\":false,\"excluded_tenures\":{\"cross-checked\":10221,\"inferred\":13340,\"unresolved\":4227},\"game_witnessed_edges\":437,\"players_without_certified_tenure\":3516,\"players_without_evidenced_edge\":41,\"warning\":\"Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.\"},\"next_cursor\":\"v1:9\",\"next_offset\":9,\"paths\":[{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":59,\"overlap_days\":null,\"team\":\"HAWKS\",\"to\":\"hudsolo01\"},{\"from\":\"hudsolo01\",\"minimum_shared_games\":76,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"hudsolo01\",\"abdulka01\"]}],\"total\":12,\"total_exact\":\"12\",\"total_saturated\":false}"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A9",
+      "status": 200,
+      "ms": 21.06,
+      "body": "{\"coverage\":{\"appearance_proven_edges\":99710,\"certified_tenures\":2270,\"complete\":false,\"excluded_tenures\":{\"cross-checked\":10221,\"inferred\":13340,\"unresolved\":4227},\"game_witnessed_edges\":437,\"players_without_certified_tenure\":3516,\"players_without_evidenced_edge\":41,\"warning\":\"Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.\"},\"next_cursor\":\"v1:10\",\"next_offset\":10,\"paths\":[{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":68,\"overlap_days\":null,\"team\":\"HAWKS\",\"to\":\"jonesdw01\"},{\"from\":\"jonesdw01\",\"minimum_shared_games\":29,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"jonesdw01\",\"abdulka01\"]}],\"total\":12,\"total_exact\":\"12\",\"total_saturated\":false}"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A10",
+      "status": 200,
+      "ms": 22.15,
+      "body": "{\"coverage\":{\"appearance_proven_edges\":99710,\"certified_tenures\":2270,\"complete\":false,\"excluded_tenures\":{\"cross-checked\":10221,\"inferred\":13340,\"unresolved\":4227},\"game_witnessed_edges\":437,\"players_without_certified_tenure\":3516,\"players_without_evidenced_edge\":41,\"warning\":\"Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.\"},\"next_cursor\":\"v1:11\",\"next_offset\":11,\"paths\":[{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":16,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"lantzst01\"},{\"from\":\"lantzst01\",\"minimum_shared_games\":53,\"overlap_days\":null,\"team\":\"LAKERS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"lantzst01\",\"abdulka01\"]}],\"total\":12,\"total_exact\":\"12\",\"total_saturated\":false}"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A11",
+      "status": 200,
+      "ms": 21.89,
+      "body": "{\"coverage\":{\"appearance_proven_edges\":99710,\"certified_tenures\":2270,\"complete\":false,\"excluded_tenures\":{\"cross-checked\":10221,\"inferred\":13340,\"unresolved\":4227},\"game_witnessed_edges\":437,\"players_without_certified_tenure\":3516,\"players_without_evidenced_edge\":41,\"warning\":\"Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.\"},\"next_cursor\":null,\"next_offset\":null,\"paths\":[{\"degree\":2,\"links\":[{\"from\":\"maravpe01\",\"minimum_shared_games\":12,\"overlap_days\":null,\"team\":\"JAZZ\",\"to\":\"leeru01\"},{\"from\":\"leeru01\",\"minimum_shared_games\":35,\"overlap_days\":null,\"team\":\"BUCKS\",\"to\":\"abdulka01\"}],\"path\":[\"maravpe01\",\"leeru01\",\"abdulka01\"]}],\"total\":12,\"total_exact\":\"12\",\"total_saturated\":false}"
+    },
+    {
+      "path": "/chain?from=brownde01",
+      "status": 200,
+      "ms": 14.46,
+      "body": "[large body omitted]"
+    },
+    {
+      "path": "/api/search?q=Quincy%20Acy",
+      "status": 200,
+      "ms": 45.71,
+      "body": "{\"query\":\"Quincy Acy\",\"status\":\"exact_match\",\"candidates\":[{\"player\":{\"id\":\"acyqu01\",\"name\":\"Quincy Acy\",\"aliases\":[],\"first_season\":2013,\"last_season\":2019,\"teams\":[\"KINGS\",\"KNICKS\",\"MAVERICKS\",\"NETS\",\"RAPTORS\",\"SUNS\"]},\"match_kind\":\"exact_name\",\"matched_name\":\"Quincy Acy\",\"score\":1000}],\"matches_total\":1,\"has_more\":false}"
+    },
+    {
+      "path": "/api/stats",
+      "status": 200,
+      "ms": 22636.55,
+      "body": "{\"components\":42,\"diameter\":11,\"histogram\":{\"1\":101395,\"10\":4431,\"11\":21,\"2\":1994930,\"3\":4059326,\"4\":2610477,\"5\":1669401,\"6\":1092704,\"7\":747097,\"8\":457965,\"9\":86833},\"players\":5106,\"unreachable_pairs\":208485}"
+    },
+    {
+      "path": "/api/stats",
+      "status": 200,
+      "ms": 7.25,
+      "body": "{\"components\":42,\"diameter\":11,\"histogram\":{\"1\":101395,\"10\":4431,\"11\":21,\"2\":1994930,\"3\":4059326,\"4\":2610477,\"5\":1669401,\"6\":1092704,\"7\":747097,\"8\":457965,\"9\":86833},\"players\":5106,\"unreachable_pairs\":208485}"
+    }
+  ]
+}

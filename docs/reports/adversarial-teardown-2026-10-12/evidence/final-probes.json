@@ -1,0 +1,1057 @@
+{
+  "base": "http://127.0.0.1:3313",
+  "expect_fixes": true,
+  "precision": [
+    7,
+    7
+  ],
+  "completeness": [
+    7,
+    7
+  ],
+  "negative_queries": 2,
+  "path_alternatives": 12,
+  "nodes": 5106,
+  "edges": 101395,
+  "isolates": 41,
+  "distances_checked": [
+    {
+      "from": "acyqu01",
+      "to": "bogutan01",
+      "degree": 1
+    },
+    {
+      "from": "maravpe01",
+      "to": "abdulka01",
+      "degree": 2
+    },
+    {
+      "from": "brownde01",
+      "to": "brownde03",
+      "degree": 3
+    },
+    {
+      "from": "acyqu01",
+      "to": "allenti01",
+      "degree": null
+    },
+    {
+      "from": "nnajize01",
+      "to": "allenla01",
+      "degree": 2
+    },
+    {
+      "from": "bolomjo01",
+      "to": "achiupr01",
+      "degree": 3
+    },
+    {
+      "from": "bingda01",
+      "to": "tysonja01",
+      "degree": 5
+    },
+    {
+      "from": "stolkar01",
+      "to": "brownha01",
+      "degree": 1
+    },
+    {
+      "from": "hardati01",
+      "to": "murphca01",
+      "degree": 2
+    },
+    {
+      "from": "bolma01",
+      "to": "fishma01",
+      "degree": 2
+    },
+    {
+      "from": "hassetr01",
+      "to": "trappjo01",
+      "degree": 4
+    },
+    {
+      "from": "turneel01",
+      "to": "haywala01",
+      "degree": 4
+    },
+    {
+      "from": "budkowa01",
+      "to": "williwa01",
+      "degree": 2
+    },
+    {
+      "from": "thomate01",
+      "to": "lamban01",
+      "degree": 6
+    },
+    {
+      "from": "phelpmi01",
+      "to": "crawfjo02",
+      "degree": 3
+    },
+    {
+      "from": "tayloje01",
+      "to": "davismo01",
+      "degree": 3
+    },
+    {
+      "from": "camarto01",
+      "to": "malonmo01",
+      "degree": 4
+    },
+    {
+      "from": "johnsde02",
+      "to": "wileyge01",
+      "degree": 5
+    },
+    {
+      "from": "wallare01",
+      "to": "queende01",
+      "degree": 8
+    },
+    {
+      "from": "youngmi01",
+      "to": "bridgju01",
+      "degree": 2
+    },
+    {
+      "from": "jordade01",
+      "to": "cheekma01",
+      "degree": 3
+    },
+    {
+      "from": "cartede02",
+      "to": "motiedo01",
+      "degree": 3
+    },
+    {
+      "from": "reathdu01",
+      "to": "thompla01",
+      "degree": 4
+    },
+    {
+      "from": "lumpkph01",
+      "to": "brownto01",
+      "degree": 3
+    },
+    {
+      "from": "josepco01",
+      "to": "wohlda01",
+      "degree": 4
+    },
+    {
+      "from": "baumjo01",
+      "to": "aleksch01",
+      "degree": 3
+    },
+    {
+      "from": "josepco01",
+      "to": "davisji01",
+      "degree": 5
+    },
+    {
+      "from": "nichode01",
+      "to": "lawsoty01",
+      "degree": 2
+    }
+  ],
+  "edge_pages": [
+    {
+      "offset": 0,
+      "count": 5000,
+      "next_offset": 5000
+    },
+    {
+      "offset": 5000,
+      "count": 5000,
+      "next_offset": 10000
+    },
+    {
+      "offset": 10000,
+      "count": 5000,
+      "next_offset": 15000
+    },
+    {
+      "offset": 15000,
+      "count": 5000,
+      "next_offset": 20000
+    },
+    {
+      "offset": 20000,
+      "count": 5000,
+      "next_offset": 25000
+    },
+    {
+      "offset": 25000,
+      "count": 5000,
+      "next_offset": 30000
+    },
+    {
+      "offset": 30000,
+      "count": 5000,
+      "next_offset": 35000
+    },
+    {
+      "offset": 35000,
+      "count": 5000,
+      "next_offset": 40000
+    },
+    {
+      "offset": 40000,
+      "count": 5000,
+      "next_offset": 45000
+    },
+    {
+      "offset": 45000,
+      "count": 5000,
+      "next_offset": 50000
+    },
+    {
+      "offset": 50000,
+      "count": 5000,
+      "next_offset": 55000
+    },
+    {
+      "offset": 55000,
+      "count": 5000,
+      "next_offset": 60000
+    },
+    {
+      "offset": 60000,
+      "count": 5000,
+      "next_offset": 65000
+    },
+    {
+      "offset": 65000,
+      "count": 5000,
+      "next_offset": 70000
+    },
+    {
+      "offset": 70000,
+      "count": 5000,
+      "next_offset": 75000
+    },
+    {
+      "offset": 75000,
+      "count": 5000,
+      "next_offset": 80000
+    },
+    {
+      "offset": 80000,
+      "count": 5000,
+      "next_offset": 85000
+    },
+    {
+      "offset": 85000,
+      "count": 5000,
+      "next_offset": 90000
+    },
+    {
+      "offset": 90000,
+      "count": 5000,
+      "next_offset": 95000
+    },
+    {
+      "offset": 95000,
+      "count": 5000,
+      "next_offset": 100000
+    },
+    {
+      "offset": 100000,
+      "count": 1395,
+      "next_offset": null
+    }
+  ],
+  "proof_counts": {
+    "appearance": 148802,
+    "dated": 1546,
+    "game_witness": 437
+  },
+  "proof_samples": {
+    "appearance": {
+      "pair": [
+        "abdelal01",
+        "aingeda01"
+      ],
+      "proof": {
+        "appearance_proof": {
+          "a_games": 43,
+          "b_games": 80,
+          "method": "A + B - N: minimum shared regular-season team games",
+          "minimum_shared_games": 41,
+          "player_records": [
+            "S2 Player Totals.csv:20641",
+            "S2 Player Totals.csv:20646"
+          ],
+          "season": 1991,
+          "source_manifest": "docs/data/source-manifest.md (S2 v56)",
+          "team_games": 82,
+          "team_record": "S2 Team Totals.csv:1087"
+        },
+        "game_witness": null,
+        "overlap_days": null,
+        "overlaps": [],
+        "records": [],
+        "team": "TRAIL BLAZERS"
+      }
+    },
+    "dated": {
+      "pair": [
+        "abdelal01",
+        "fordal01"
+      ],
+      "proof": {
+        "appearance_proof": null,
+        "game_witness": null,
+        "overlap_days": 16,
+        "overlaps": [
+          {
+            "end_day": 17998,
+            "records": [
+              {
+                "arrival_days": "17979",
+                "departure_days": "17998",
+                "end_anchored": 1,
+                "end_day": 17998,
+                "evidence_class": "directly-evidenced",
+                "membership_source": "S2",
+                "notes": "",
+                "player": "abdelal01",
+                "record": "t4/tenures.csv:7",
+                "season": 1995,
+                "source_manifest": "docs/data/source-manifest.md (S1 v238; S2 v56; BBR request ledger)",
+                "start_anchored": 1,
+                "start_day": 17979,
+                "team": "76ERS"
+              },
+              {
+                "arrival_days": "17982",
+                "departure_days": "18000",
+                "end_anchored": 1,
+                "end_day": 18000,
+                "evidence_class": "directly-evidenced",
+                "membership_source": "S2",
+                "notes": "",
+                "player": "fordal01",
+                "record": "t4/tenures.csv:8614",
+                "season": 1995,
+                "source_manifest": "docs/data/source-manifest.md (S1 v238; S2 v56; BBR request ledger)",
+                "start_anchored": 1,
+                "start_day": 17982,
+                "team": "76ERS"
+              }
+            ],
+            "start_day": 17982
+          }
+        ],
+        "records": [
+          {
+            "arrival_days": "17979",
+            "departure_days": "17998",
+            "end_anchored": 1,
+            "end_day": 17998,
+            "evidence_class": "directly-evidenced",
+            "membership_source": "S2",
+            "notes": "",
+            "player": "abdelal01",
+            "record": "t4/tenures.csv:7",
+            "season": 1995,
+            "source_manifest": "docs/data/source-manifest.md (S1 v238; S2 v56; BBR request ledger)",
+            "start_anchored": 1,
+            "start_day": 17979,
+            "team": "76ERS"
+          },
+          {
+            "arrival_days": "17982",
+            "departure_days": "18000",
+            "end_anchored": 1,
+            "end_day": 18000,
+            "evidence_class": "directly-evidenced",
+            "membership_source": "S2",
+            "notes": "",
+            "player": "fordal01",
+            "record": "t4/tenures.csv:8614",
+            "season": 1995,
+            "source_manifest": "docs/data/source-manifest.md (S1 v238; S2 v56; BBR request ledger)",
+            "start_anchored": 1,
+            "start_day": 17982,
+            "team": "76ERS"
+          }
+        ],
+        "team": "76ERS"
+      }
+    },
+    "game_witness": {
+      "pair": [
+        "achiupr01",
+        "johnsda08"
+      ],
+      "proof": {
+        "appearance_proof": null,
+        "game_witness": {
+          "date": "2021-10-27",
+          "game_id": "0022100058",
+          "method": "Identified participants of the same official NBA team game; full roster duration unknown",
+          "season": 2022,
+          "source_manifest": "docs/data/source-manifest.md (S1 v238)",
+          "sources": [
+            "S1 play_by_play:game:0022100058:event:19:player3",
+            "S1 play_by_play:game:0022100058:event:692:player2"
+          ]
+        },
+        "overlap_days": null,
+        "overlaps": [],
+        "records": [],
+        "team": "RAPTORS"
+      }
+    }
+  },
+  "duplicate_labels": {},
+  "stats": {
+    "components": 42,
+    "diameter": 11,
+    "histogram": {
+      "1": 101395,
+      "10": 4431,
+      "11": 21,
+      "2": 1994930,
+      "3": 4059326,
+      "4": 2610477,
+      "5": 1669401,
+      "6": 1092704,
+      "7": 747097,
+      "8": 457965,
+      "9": 86833
+    },
+    "players": 5106,
+    "unreachable_pairs": 208485
+  },
+  "http_receipts": [
+    {
+      "path": "/api/search?q=Quincy+Acy",
+      "status": 200,
+      "ms": 65.16,
+      "bytes": 325,
+      "sha256": "50565a92b2833a61905a99f2f1df2d0defd3dafcfa60498bdf4b1df3df889513"
+    },
+    {
+      "path": "/api/search?q=Qunicy+Acy",
+      "status": 200,
+      "ms": 96.22,
+      "bytes": 317,
+      "sha256": "1c82f5045cd8819ef9414b535350c8c07f4cc14dc235197e3c2fe0491c9c9915"
+    },
+    {
+      "path": "/api/search?q=Dee+Brown",
+      "status": 200,
+      "ms": 31.98,
+      "bytes": 498,
+      "sha256": "3c943518299d73cb2d655074463739373a26dcdba6174d9038d5ef812267a402"
+    },
+    {
+      "path": "/api/search?q=Jos%C3%A9+Calder%C3%B3n",
+      "status": 200,
+      "ms": 32.41,
+      "bytes": 374,
+      "sha256": "38d5090a442486745eb2921ac292559344a5b13ea3f5d04077267e1c450297a3"
+    },
+    {
+      "path": "/api/search?q=Jose+Calderon",
+      "status": 200,
+      "ms": 32.04,
+      "bytes": 372,
+      "sha256": "19bcb12725eb09c1a18ae4152e0f1c03124015f7598dcb278d931bc462717062"
+    },
+    {
+      "path": "/api/search?q=Shaq",
+      "status": 200,
+      "ms": 32.34,
+      "bytes": 320,
+      "sha256": "eff5dc53507d0586d3e9cc51ed3e68b19e2600a0739d71cb7b532349c152e3e1"
+    },
+    {
+      "path": "/api/search?q=intergalactic+banana",
+      "status": 200,
+      "ms": 81.3,
+      "bytes": 103,
+      "sha256": "584db3e05503daead43a36a5c985a2db445ef22a812ec9031110e472f097a90f"
+    },
+    {
+      "path": "/api/search?q=...",
+      "status": 200,
+      "ms": 6.65,
+      "bytes": 89,
+      "sha256": "b8a7b0849634c065845057c689bc56b93525c7afeca074eee831490047ac3d09"
+    },
+    {
+      "path": "/api/search?q=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "status": 400,
+      "ms": 6.11,
+      "bytes": 53,
+      "sha256": "640d9d0acc2f3d4ffbe04b45989e7e0a9dfc9b20587b351b6452c2776d9c4c5e"
+    },
+    {
+      "path": "/api/semantic-status",
+      "status": 200,
+      "ms": 3.05,
+      "bytes": 43,
+      "sha256": "fd090aba38f5b0385656ca40121b1a4bfd6e08494d9379b0ba69fe50fb5f6b65"
+    },
+    {
+      "path": "/api/query?q=Connect+Quincy+Acy+to+Andrew+Bogut",
+      "status": 200,
+      "ms": 12.97,
+      "bytes": 350,
+      "sha256": "7a08cfea6af0f9a34396219238a092ea42a04bd6046ee6db8522a69d8484efb6"
+    },
+    {
+      "path": "/api/connection?from=acyqu01&to=bogutan01",
+      "status": 200,
+      "ms": 1.75,
+      "bytes": 980,
+      "sha256": "711450ea21426c90db8a9eb0f5148792bcc4f0eb846de567ac4834e5aa659cac"
+    },
+    {
+      "path": "/api/connection?from=acyqu01&to=acyqu01",
+      "status": 200,
+      "ms": 0.46,
+      "bytes": 867,
+      "sha256": "b9e1f64fe5fa495e9c5f6075e7b9f1c0fd1f064010917bf1001b4537e2f2c46b"
+    },
+    {
+      "path": "/edge?from=acyqu01&to=bogutan01",
+      "status": 200,
+      "ms": 211.96,
+      "bytes": 11426,
+      "sha256": "f2b432dd237295641ed1616f3a050ee1989dce2385dad9859f90af710563d47d"
+    },
+    {
+      "path": "/search?q=%3Cscript%3Ealert%281%29%3C%2Fscript%3E",
+      "status": 200,
+      "ms": 84.85,
+      "bytes": 1659,
+      "sha256": "b8387287a841f10bc607acfe069343e87a9e8cebca3c79077b15a08ffcad8eb1"
+    },
+    {
+      "path": "/api/paths?from=acyqu01&to=bogutan01&cursor=bad",
+      "status": 400,
+      "ms": 0.88,
+      "bytes": 72,
+      "sha256": "5334261b8d8953accadfd7af67f5e99df1aa05b8db81ff3559c04b5fa6d94db4"
+    },
+    {
+      "path": "/api/paths?from=acyqu01&to=bogutan01&limit=0",
+      "status": 400,
+      "ms": 0.42,
+      "bytes": 69,
+      "sha256": "ad6b36284eaa1f087a50aad271b9b5dd45fbebcf3d2ded0b851fbaa4d638fe78"
+    },
+    {
+      "path": "/api/paths?from=acyqu01&to=bogutan01&cursor=v1:0&offset=0",
+      "status": 400,
+      "ms": 0.37,
+      "bytes": 66,
+      "sha256": "db4971970f05f6889102d17a6ee28b56c3501fb6b1ff9d043508c0109e9fa06f"
+    },
+    {
+      "path": "/api/neighborhood?player=acyqu01&depth=3",
+      "status": 400,
+      "ms": 0.4,
+      "bytes": 98,
+      "sha256": "1d2fe16fb7f045d51df9a78bce725932e3abc2da5f14a02fd6c03e85806ec3ff"
+    },
+    {
+      "path": "/api/connection?from=unknown&to=bogutan01",
+      "status": 404,
+      "ms": 0.3,
+      "bytes": 74,
+      "sha256": "2516e7faaedeb7c938526e209701e81711d7b44cb34b8efce12eae2134e1527e"
+    },
+    {
+      "path": "/api/edges?limit=5001",
+      "status": 400,
+      "ms": 0.5,
+      "bytes": 70,
+      "sha256": "d5f4437c21039e0265d412422765df510de5c28a1df3678f5abbacedfcfb3e28"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=500",
+      "status": 200,
+      "ms": 18.14,
+      "bytes": 4090,
+      "sha256": "ba462746c2c619ae470029c8b80faeeee73a992ba27bf82970aa39eef769ac0b"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A0",
+      "status": 200,
+      "ms": 15.7,
+      "bytes": 1170,
+      "sha256": "07b70c8589522cf3c2a62e757434f0df757ee79d4a1a8065cc4f3174d007ebc2"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A1",
+      "status": 200,
+      "ms": 15.82,
+      "bytes": 1171,
+      "sha256": "851acbed1eff8c668fab280f50e7c7623d26a94adfaa77f615c76a7d600cc6e2"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A2",
+      "status": 200,
+      "ms": 15.52,
+      "bytes": 1171,
+      "sha256": "cbbecb81f27dd705dc4f8c77ffcae2f86fd905ef738d327faff8f62f1cd7ff11"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A3",
+      "status": 200,
+      "ms": 15.6,
+      "bytes": 1174,
+      "sha256": "a51806d98a795f8604e4350ad130835a1f6b79c4f6b73493624f72eb4dd8cef4"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A4",
+      "status": 200,
+      "ms": 15.37,
+      "bytes": 1172,
+      "sha256": "dfdeccf5367415a4497732a13ddc33c937dab79c8f088de7cf312b5ace0a14ad"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A5",
+      "status": 200,
+      "ms": 16.67,
+      "bytes": 1171,
+      "sha256": "5514360b337128956c94d3ed2ec9ae25338c2c9050ce75b1f4118693cf520519"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A6",
+      "status": 200,
+      "ms": 15.69,
+      "bytes": 1172,
+      "sha256": "ae95253260d509534388ff17f69e50c18c8c486d4c0df47dc4ededb8f1032df0"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A7",
+      "status": 200,
+      "ms": 15.55,
+      "bytes": 1171,
+      "sha256": "9bcd088d824bf13f2482a9872b70377e058740e8c0651731147b484f87008eaa"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A8",
+      "status": 200,
+      "ms": 15.88,
+      "bytes": 1173,
+      "sha256": "6eb792370ff189d1d093c2bb67524f4605c1e0c13ccff015b6eb9497c104cc80"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A9",
+      "status": 200,
+      "ms": 16.11,
+      "bytes": 1175,
+      "sha256": "f96eb11d2d4f3640d5d91961d2f481497495ddfdd3e9bea0341032437cbfe93f"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A10",
+      "status": 200,
+      "ms": 15.29,
+      "bytes": 1174,
+      "sha256": "2de85a044b25763a5df5d4b88311052d9758b0c1eacc67a2003e34c74495daa2"
+    },
+    {
+      "path": "/api/paths?from=maravpe01&to=abdulka01&limit=1&cursor=v1%3A11",
+      "status": 200,
+      "ms": 15.4,
+      "bytes": 1166,
+      "sha256": "6b72e56baef77c14b971a4eeec357a7bb23b29b07f00f00d749609eb49197446"
+    },
+    {
+      "path": "/api/network",
+      "status": 200,
+      "ms": 964.72,
+      "bytes": 12449327,
+      "sha256": "288293f5a097f6e5838ba261a6367e61e7e0216e3a871acc31c887ca130d0aae"
+    },
+    {
+      "path": "/api/connection?from=acyqu01&to=bogutan01",
+      "status": 200,
+      "ms": 1.19,
+      "bytes": 980,
+      "sha256": "711450ea21426c90db8a9eb0f5148792bcc4f0eb846de567ac4834e5aa659cac"
+    },
+    {
+      "path": "/api/connection?from=maravpe01&to=abdulka01",
+      "status": 200,
+      "ms": 1.16,
+      "bytes": 1088,
+      "sha256": "deb6eef2f54e4ec83d273dce40325da2563b5f39cadd0bb277fad65de3f74a7a"
+    },
+    {
+      "path": "/api/connection?from=brownde01&to=brownde03",
+      "status": 200,
+      "ms": 2.2,
+      "bytes": 1198,
+      "sha256": "729d72bdeb97a6092809dbf062e1084127da2b34d9dc81eea46e0615a3fc0a49"
+    },
+    {
+      "path": "/api/connection?from=acyqu01&to=allenti01",
+      "status": 200,
+      "ms": 8.94,
+      "bytes": 863,
+      "sha256": "348957ce52e1d105b2faf50cdc83447a5f37da78514432cc5dde0571306c9dd9"
+    },
+    {
+      "path": "/api/connection?from=nnajize01&to=allenla01",
+      "status": 200,
+      "ms": 1.33,
+      "bytes": 1091,
+      "sha256": "d4df4d58fc2466ea2c3ba7e1e1b095d63ec0c5d0bcc368e95c1f4651902191ed"
+    },
+    {
+      "path": "/api/connection?from=bolomjo01&to=achiupr01",
+      "status": 200,
+      "ms": 2.94,
+      "bytes": 1208,
+      "sha256": "fbebf5d872e392e6b0c014621bd0d6c5ccabcaf86ad6866c3358e47de739563a"
+    },
+    {
+      "path": "/api/connection?from=bingda01&to=tysonja01",
+      "status": 200,
+      "ms": 7.46,
+      "bytes": 1433,
+      "sha256": "0cfed64a5292a806abc5a9076453bbdcb15b843082abbb75f4170098332a3130"
+    },
+    {
+      "path": "/api/connection?from=stolkar01&to=brownha01",
+      "status": 200,
+      "ms": 0.74,
+      "bytes": 981,
+      "sha256": "d93b4297a86693f3e550763980c3d8f2a14efb39c6d8a77636a76de3eabe7bb9"
+    },
+    {
+      "path": "/api/connection?from=hardati01&to=murphca01",
+      "status": 200,
+      "ms": 1.83,
+      "bytes": 1094,
+      "sha256": "b0c7bb0a5f52e5ddf619624c45f65b312464bab29675da9d1515ef16e0d64d2f"
+    },
+    {
+      "path": "/api/connection?from=bolma01&to=fishma01",
+      "status": 200,
+      "ms": 2.0,
+      "bytes": 1087,
+      "sha256": "b0ade15b95fb5923252c65b61acbd25a76d03774b697916537d4ac2192505bad"
+    },
+    {
+      "path": "/api/connection?from=hassetr01&to=trappjo01",
+      "status": 200,
+      "ms": 8.31,
+      "bytes": 1314,
+      "sha256": "799dcc4584bebc38d1cce951e077440ec5ffe77cb9a77258bd57e742524bad6c"
+    },
+    {
+      "path": "/api/connection?from=turneel01&to=haywala01",
+      "status": 200,
+      "ms": 6.64,
+      "bytes": 1327,
+      "sha256": "c1b4fed94f58263f7e05b4323acb004b4c7a1236a86c9431d92a1ac590df3a99"
+    },
+    {
+      "path": "/api/connection?from=budkowa01&to=williwa01",
+      "status": 200,
+      "ms": 1.22,
+      "bytes": 1101,
+      "sha256": "9d31322bc06179523fbb866b6987f2c48aaca061e9510d9689894fbbc5600bab"
+    },
+    {
+      "path": "/api/connection?from=thomate01&to=lamban01",
+      "status": 200,
+      "ms": 8.01,
+      "bytes": 1546,
+      "sha256": "f025cd003eff43cea9d8f9437905d7a24656730ec668b69a3366878ba712629c"
+    },
+    {
+      "path": "/api/connection?from=phelpmi01&to=crawfjo02",
+      "status": 200,
+      "ms": 4.35,
+      "bytes": 1207,
+      "sha256": "519ecdb8e6a0f315755046a99fa2a2c78bc241bfbf7ac7944b15a694421991e2"
+    },
+    {
+      "path": "/api/connection?from=tayloje01&to=davismo01",
+      "status": 200,
+      "ms": 2.43,
+      "bytes": 1208,
+      "sha256": "b8bffed292fdf0e8e89a88087321195486973e6061a235a9f936a8ff141859df"
+    },
+    {
+      "path": "/api/connection?from=camarto01&to=malonmo01",
+      "status": 200,
+      "ms": 10.93,
+      "bytes": 1324,
+      "sha256": "083e3547ea50259c5f32a3bb08164cd64de5c8d570a9d36fbe1341d047b2e6be"
+    },
+    {
+      "path": "/api/connection?from=johnsde02&to=wileyge01",
+      "status": 200,
+      "ms": 20.93,
+      "bytes": 1430,
+      "sha256": "90f6a85adcc904a2aabf30097cfbddb57ec8f907805debe7deca4b0fe8e100f1"
+    },
+    {
+      "path": "/api/connection?from=wallare01&to=queende01",
+      "status": 200,
+      "ms": 10.12,
+      "bytes": 1781,
+      "sha256": "6d8a3c58d06adf3ee46b6712017f948857f6f38f502daa1c382e0caf6c0d25e8"
+    },
+    {
+      "path": "/api/connection?from=youngmi01&to=bridgju01",
+      "status": 200,
+      "ms": 0.97,
+      "bytes": 1096,
+      "sha256": "75b63def9d706f4ef9d8e27e6d320db59e59559236aeb8cda5d6a89dddbe7bc3"
+    },
+    {
+      "path": "/api/connection?from=jordade01&to=cheekma01",
+      "status": 200,
+      "ms": 5.49,
+      "bytes": 1204,
+      "sha256": "ddb40dcfe6302e3d7b3bc0db9c0fa413625c9fb1d84c6d291ccfc1f5ee85ca48"
+    },
+    {
+      "path": "/api/connection?from=cartede02&to=motiedo01",
+      "status": 200,
+      "ms": 1.46,
+      "bytes": 1202,
+      "sha256": "2076847aabae15da34dcfda2690f1e2aec6f03b5d83be1b478b3138c0c0f816f"
+    },
+    {
+      "path": "/api/connection?from=reathdu01&to=thompla01",
+      "status": 200,
+      "ms": 5.73,
+      "bytes": 1319,
+      "sha256": "740b1b7a8dfda6ecf5ff7085ee6ed9fa6c8b419d2e494026632a77f4dc6b1b37"
+    },
+    {
+      "path": "/api/connection?from=lumpkph01&to=brownto01",
+      "status": 200,
+      "ms": 2.07,
+      "bytes": 1198,
+      "sha256": "35a2e7529ca8b853ac2078d5f6948259ec50758249fc97ec8829b0802b18f81e"
+    },
+    {
+      "path": "/api/connection?from=josepco01&to=wohlda01",
+      "status": 200,
+      "ms": 9.78,
+      "bytes": 1300,
+      "sha256": "25d94110b68308a1ac949e834ab45a9644c23e1857c9192571633cd35b19c0c4"
+    },
+    {
+      "path": "/api/connection?from=baumjo01&to=aleksch01",
+      "status": 200,
+      "ms": 2.32,
+      "bytes": 1202,
+      "sha256": "13b54fe7b05001e3d758e4a97c1b19fcf74b3633662e7092096374b88de4f6ac"
+    },
+    {
+      "path": "/api/connection?from=josepco01&to=davisji01",
+      "status": 200,
+      "ms": 9.89,
+      "bytes": 1424,
+      "sha256": "42830e57faf2bf33cde14d47d3aa0d8f63422f84644e15f4f4afca2175d81a4d"
+    },
+    {
+      "path": "/api/connection?from=nichode01&to=lawsoty01",
+      "status": 200,
+      "ms": 1.55,
+      "bytes": 1092,
+      "sha256": "c9ec11b1bbcd59c4cddc6039869502510111d2da490a73cafa895823165ae508"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=0",
+      "status": 200,
+      "ms": 621.69,
+      "bytes": 3579412,
+      "sha256": "b27994aaeaed44f94354675a0cc7bcc0b4d2a3199028559d1f8993f48ae5eb93"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=5000",
+      "status": 200,
+      "ms": 485.16,
+      "bytes": 3621695,
+      "sha256": "f2de1e8641b7db0a5ecc3bd63c94de700ca228652ad8271557a1170b6e0e6e9b"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=10000",
+      "status": 200,
+      "ms": 413.08,
+      "bytes": 3594265,
+      "sha256": "62995699e94a4bc2fa204453f89daea9148e1c224b2f179a9fc9e6ca6925e8d6"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=15000",
+      "status": 200,
+      "ms": 428.79,
+      "bytes": 3577435,
+      "sha256": "259d0481a39aeba93920ba838c8447595dfa5a58453ffdd4c1e2a0370cb9ab74"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=20000",
+      "status": 200,
+      "ms": 395.61,
+      "bytes": 3531244,
+      "sha256": "0fd84786556d316ba1c7f4bcba7b4221aad87c0899b10848250e559051c80974"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=25000",
+      "status": 200,
+      "ms": 367.7,
+      "bytes": 3543716,
+      "sha256": "e25fb4b76bb7a745c2084b61ddccec580c121351ccaebfdee6c968454f4d4ca5"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=30000",
+      "status": 200,
+      "ms": 382.19,
+      "bytes": 3617922,
+      "sha256": "53c457f120d3ba66a62a3c05b45924f81102b964144c86756d70f68bf102dcb8"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=35000",
+      "status": 200,
+      "ms": 437.96,
+      "bytes": 3675410,
+      "sha256": "98475c43a4db957ed8f990d256fefffbc19ca7f821b450d6ee0184a23db97250"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=40000",
+      "status": 200,
+      "ms": 505.88,
+      "bytes": 3632757,
+      "sha256": "3ce013d5832251433cbb54f7bcb335d331f54f2a43ed585c2420af0389d2f360"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=45000",
+      "status": 200,
+      "ms": 429.37,
+      "bytes": 3587717,
+      "sha256": "0045ded508fded29ec24acdc1840ed85df2cf2648a9d21818421110570d12c8e"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=50000",
+      "status": 200,
+      "ms": 410.29,
+      "bytes": 3575738,
+      "sha256": "f3a976730f04bfd97e3fac62e39ad407d912a02ea8be2669040d4a99e21a68be"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=55000",
+      "status": 200,
+      "ms": 420.24,
+      "bytes": 3573052,
+      "sha256": "aa05d3f0e1ca0b66710bea8de1ac8be735ad033297ac7533c2c12e67e4b5621c"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=60000",
+      "status": 200,
+      "ms": 478.3,
+      "bytes": 3632562,
+      "sha256": "10bec66f4ec0748378bd6374f79035e93acdab16436a9239a5c364c2f460686d"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=65000",
+      "status": 200,
+      "ms": 435.69,
+      "bytes": 3580234,
+      "sha256": "2752ead009eef60562710f4b85d5a8930fc1c5ef29c5bff7cdfbb6daebcef088"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=70000",
+      "status": 200,
+      "ms": 437.39,
+      "bytes": 3591097,
+      "sha256": "eeca62f8715ec16cd95aebf03b3b4524c9c3e427202cd99511edfe7cd8d3c8b2"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=75000",
+      "status": 200,
+      "ms": 464.32,
+      "bytes": 3603982,
+      "sha256": "508bf7b9ab1345cbc25d25dacb7cbf9f1600bbf17664571c9e592b3c09528c0a"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=80000",
+      "status": 200,
+      "ms": 496.92,
+      "bytes": 3528159,
+      "sha256": "f21b4d5bb784382f08be22df353fc41c4c32fb9c926462fa76bf574a11708b08"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=85000",
+      "status": 200,
+      "ms": 465.99,
+      "bytes": 3598416,
+      "sha256": "ec000eecca893e5b8bea75d3ed024947b200fbadb54a139e8f7d21836bb64728"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=90000",
+      "status": 200,
+      "ms": 421.61,
+      "bytes": 3591949,
+      "sha256": "634c7ee509525bf18c45752004790966d58c322a7ee773b1ab8bbb372772015b"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=95000",
+      "status": 200,
+      "ms": 409.04,
+      "bytes": 3559865,
+      "sha256": "55516d89f4defe97de1fb178eba5efc436867342c431e2b0eecd004277bd4050"
+    },
+    {
+      "path": "/api/edges?limit=5000&offset=100000",
+      "status": 200,
+      "ms": 125.08,
+      "bytes": 996684,
+      "sha256": "d14cde374e3a8a7e0126ca0d713948c19b6c621cc12837834b6efd7b44302f90"
+    },
+    {
+      "path": "/chain?from=brownde03",
+      "status": 200,
+      "ms": 22.35,
+      "bytes": 491133,
+      "sha256": "2eea1694a85ab953c2ff909b592bebf82c4487d0de9b912af174239a396eb2fb"
+    },
+    {
+      "path": "/search?q=Dee%20Brown",
+      "status": 200,
+      "ms": 33.69,
+      "bytes": 2178,
+      "sha256": "40d04ad33ed82f491f6e71ce0b11fb08dce7e763da54ae829360b5fcf4defffb"
+    },
+    {
+      "path": "/players/brownde01",
+      "status": 200,
+      "ms": 6.66,
+      "bytes": 1516,
+      "sha256": "58e02e3cada2412e9c0d1dccb0dfc6f878561d2377cbc05b1d70701acb3e1672"
+    },
+    {
+      "path": "/players/brownde03",
+      "status": 200,
+      "ms": 6.81,
+      "bytes": 1512,
+      "sha256": "afb94fe6aa6ae3b8cb1fe6939b00f12839231a04bef406a9785e3c172b16e3c8"
+    },
+    {
+      "path": "/api/stats",
+      "status": 200,
+      "ms": 12684.15,
+      "bytes": 208,
+      "sha256": "db050f93fe02af838ea535ce37f76b94d3fa40732d2cd189873a49fef516ae5d"
+    }
+  ],
+  "boundary": "Pinned local graph; proof structure/arithmetic checked, historical sources not independently reconstructed.",
+  "elapsed_seconds": 25.51
+}

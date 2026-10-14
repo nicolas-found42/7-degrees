@@ -1,0 +1,24 @@
+{
+  "before_collision_groups": 39,
+  "after_collision_groups": 0,
+  "precision_before": [
+    7,
+    7
+  ],
+  "precision_after": [
+    7,
+    7
+  ],
+  "completeness_before": [
+    7,
+    7
+  ],
+  "completeness_after": [
+    7,
+    7
+  ],
+  "graph_stats_equal": true,
+  "proof_counts_equal": true,
+  "distances_equal": true,
+  "edge_pages_equal": true
+}

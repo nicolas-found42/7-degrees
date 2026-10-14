@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"tool\": \"jev_noul\",\n  \"model\": \"typesafe/jev-1.13-20260917\",\n  \"provider\": \"openrouter\",\n  \"status\": \"ok\",\n  \"results\": [\n    {\n      \"id\": \"proposition0\",\n      \"proposition\": \"Identical option labels can prevent a user choosing between distinct same-name identities without external assistance.\",\n      \"probability\": 0.87,\n      \"label\": \"likely\",\n      \"auto\": true\n    },\n    {\n      \"id\": \"proposition1\",\n      \"proposition\": \"The presence of disambiguated search result cards by itself proves the connection select is unambiguous.\",\n      \"probability\": 0.06,\n      \"label\": \"unlikely\",\n      \"auto\": true\n    },\n    {\n      \"id\": \"proposition2\",\n      \"proposition\": \"A browser tool success report without input readback establishes that the intended player search completed.\",\n      \"probability\": 0.07,\n      \"label\": \"unlikely\",\n      \"auto\": true\n    }\n  ],\n  \"thresholds\": {\n    \"auto_accept\": 0.85\n  },\n  \"usage\": {\n    \"input_tokens\": 709,\n    \"output_tokens\": 67\n  }\n}"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+   Compiling app-server v0.1.0 (/Users/Nicolas/Documents/github/7-degrees/crates/app-server)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.84s
+     Running tests/player_search.rs (target/debug/deps/player_search-0b36dd24ed6b7b4c)
+
+running 1 test
+
+thread 'search_and_profiles_display_canonical_ids_as_text' (9663710) panicked at crates/app-server/tests/player_search.rs:147:9:
+assertion failed: results.contains(&format!("Player ID: <code>{id}</code>"))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test search_and_profiles_display_canonical_ids_as_text ... FAILED
+
+failures:
+
+failures:
+    search_and_profiles_display_canonical_ids_as_text
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p app-server --test player_search`

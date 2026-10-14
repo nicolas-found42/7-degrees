@@ -1,0 +1,266 @@
+diff --git a/crates/app-server/src/chain_view.rs b/crates/app-server/src/chain_view.rs
+index d541d0f..1608671 100644
+--- a/crates/app-server/src/chain_view.rs
++++ b/crates/app-server/src/chain_view.rs
+@@ -109,6 +109,17 @@ pub fn page(
+     query: ChainQuery,
+     semantic_status: (bool, &'static str),
+     coverage: Option<&str>,
++) -> Response {
++    page_with_reports(graph, query, semantic_status, coverage, None)
++}
++
++/// Render contextual identity choices when report metadata is available.
++pub(crate) fn page_with_reports(
++    graph: &TeammateGraph,
++    query: ChainQuery,
++    semantic_status: (bool, &'static str),
++    coverage: Option<&str>,
++    reports: Option<&crate::report_data::ReportMetadata>,
+ ) -> Response {
+     let shell = format!(
+         "<h1>7 Degrees</h1>{}{}<p><a href=\"/\">← Back to the explorer</a></p>",
+@@ -167,7 +178,8 @@ pub fn page(
+                 ui::connect_form(
+                     &graph.roster.players,
+                     query.from.as_deref(),
+-                    query.to.as_deref()
++                    query.to.as_deref(),
++                    reports
+                 )
+             ),
+         );
+diff --git a/crates/app-server/src/lib.rs b/crates/app-server/src/lib.rs
+index 1e3731d..28f9238 100644
+--- a/crates/app-server/src/lib.rs
++++ b/crates/app-server/src/lib.rs
+@@ -540,6 +540,7 @@ async fn home(State(state): State<AppState>) -> Response {
+         &state.graph,
+         state.jev.status(),
+         state.reports.as_ref().map(|r| r.coverage.warning.as_str()),
++        state.reports.as_deref(),
+     )
+ }
+ 
+@@ -549,11 +550,12 @@ async fn chain_page(
+     State(state): State<AppState>,
+     Query(query): Query<chain_view::ChainQuery>,
+ ) -> Response {
+-    chain_view::page(
++    chain_view::page_with_reports(
+         &state.graph,
+         query,
+         state.jev.status(),
+         state.reports.as_ref().map(|r| r.coverage.warning.as_str()),
++        state.reports.as_deref(),
+     )
+ }
+ 
+diff --git a/crates/app-server/src/search.rs b/crates/app-server/src/search.rs
+index d7451cc..1ec8282 100644
+--- a/crates/app-server/src/search.rs
++++ b/crates/app-server/src/search.rs
+@@ -295,7 +295,8 @@ fn context(player: &SearchPlayer) -> String {
+         player.teams.join(", ")
+     };
+     format!(
+-        "<p class=\"player-context\">Seasons: {} · Teams: {}</p>",
++        "<p class=\"player-context\">Player ID: <code>{}</code> · Seasons: {} · Teams: {}</p>",
++        crate::ui::escape(&player.id),
+         crate::ui::escape(&era),
+         crate::ui::escape(&teams)
+     )
+diff --git a/crates/app-server/src/ui.rs b/crates/app-server/src/ui.rs
+index b9f5655..9dd10ee 100644
+--- a/crates/app-server/src/ui.rs
++++ b/crates/app-server/src/ui.rs
+@@ -8,6 +8,9 @@ use axum::http::{StatusCode, header};
+ use axum::response::{IntoResponse, Response};
+ 
+ use graph_core::{Player, TeammateGraph};
++use std::collections::BTreeMap;
++
++use crate::report_data::ReportMetadata;
+ 
+ /// The stylesheet served at `/style.css`.
+ pub const STYLE_CSS: &str = include_str!("style.css");
+@@ -72,7 +75,14 @@ pub(crate) fn document(status: StatusCode, title: &str, body: &str) -> Response
+ }
+ 
+ /// One `<select>` for the connect form, preselecting `selected`.
+-fn player_select(players: &[Player], field: &str, label: &str, selected: &str) -> String {
++fn player_select(
++    players: &[Player],
++    name_counts: &BTreeMap<&str, usize>,
++    reports: Option<&ReportMetadata>,
++    field: &str,
++    label: &str,
++    selected: &str,
++) -> String {
+     let options: String = players
+         .iter()
+         .map(|player| {
+@@ -81,11 +91,21 @@ fn player_select(players: &[Player], field: &str, label: &str, selected: &str) -
+             } else {
+                 ""
+             };
++            let display = if name_counts[player.name.as_str()] > 1 {
++                let era = reports
++                    .and_then(|r| r.players.get(&player.id))
++                    .map(|p| format!(" — {}–{}", p.first_season, p.last_season))
++                    .unwrap_or_default();
++                // An ID also distinguishes duplicates with identical or unknown eras.
++                format!("{}{era} · {}", player.name, player.id)
++            } else {
++                player.name.clone()
++            };
+             format!(
+                 "<option value=\"{}\"{}>{}</option>",
+                 escape(&player.id),
+                 is_selected,
+-                escape(&player.name)
++                escape(&display)
+             )
+         })
+         .collect();
+@@ -99,12 +119,23 @@ fn player_select(players: &[Player], field: &str, label: &str, selected: &str) -
+ }
+ 
+ /// The GET form that drives `/chain`, defaulting to the A→C demo pair.
+-pub(crate) fn connect_form(players: &[Player], from: Option<&str>, to: Option<&str>) -> String {
++pub(crate) fn connect_form(
++    players: &[Player],
++    from: Option<&str>,
++    to: Option<&str>,
++    reports: Option<&ReportMetadata>,
++) -> String {
++    let mut name_counts = BTreeMap::new();
++    for player in players {
++        *name_counts.entry(player.name.as_str()).or_insert(0) += 1;
++    }
+     format!(
+         "<form method=\"get\" action=\"/chain\" \
+          class=\"controls\">{}{}<button type=\"submit\">Connect</button></form>",
+         player_select(
+             players,
++            &name_counts,
++            reports,
+             "from",
+             "Player from",
+             from.unwrap_or_else(|| if players.iter().any(|p| p.id == "A") {
+@@ -115,6 +146,8 @@ pub(crate) fn connect_form(players: &[Player], from: Option<&str>, to: Option<&s
+         ),
+         player_select(
+             players,
++            &name_counts,
++            reports,
+             "to",
+             "Player to",
+             to.unwrap_or_else(|| if players.iter().any(|p| p.id == "C") {
+@@ -157,6 +190,7 @@ pub fn home(
+     graph: &TeammateGraph,
+     semantic_status: (bool, &'static str),
+     coverage: Option<&str>,
++    reports: Option<&ReportMetadata>,
+ ) -> Response {
+     let players = &graph.roster.players;
+     let edges = graph.edges();
+@@ -219,7 +253,7 @@ pub fn home(
+             "{}{}{}",
+             crate::query::form(""),
+             crate::search::form(""),
+-            connect_form(players, Some(demo_from), Some(demo_to))
++            connect_form(players, Some(demo_from), Some(demo_to), reports)
+         ),
+         edges.len(),
+         edge_items,
+diff --git a/crates/app-server/tests/chain_view_integration.rs b/crates/app-server/tests/chain_view_integration.rs
+index 781ac58..f2bd424 100644
+--- a/crates/app-server/tests/chain_view_integration.rs
++++ b/crates/app-server/tests/chain_view_integration.rs
+@@ -175,6 +175,41 @@ async fn incomplete_selection_and_invalid_pages_never_substitute_a_chain() {
+     assert!(!partial.contains("Degree of separation:"));
+ }
+ 
++#[tokio::test]
++async fn same_name_choices_without_metadata_show_escaped_ids() {
++    use graph_core::{Player, RosterData, TeammateGraph};
++    let graph = TeammateGraph::build(RosterData {
++        players: vec![
++            Player {
++                id: "first<&".into(),
++                name: "Same <name>".into(),
++            },
++            Player {
++                id: "second\"".into(),
++                name: "Same <name>".into(),
++            },
++        ],
++        ..Default::default()
++    });
++    let response = app_server::chain_view::page(
++        &graph,
++        app_server::chain_view::ChainQuery {
++            from: Some("second\"".into()),
++            ..Default::default()
++        },
++        (false, "unconfigured"),
++        None,
++    );
++    assert_eq!(response.status(), StatusCode::OK);
++    let body = response.into_body().collect().await.unwrap().to_bytes();
++    let html = String::from_utf8(body.to_vec()).unwrap();
++    assert!(html.contains("Same &lt;name&gt; · first&lt;&amp;</option>"));
++    assert!(html.contains(
++        "<option value=\"second&quot;\" selected>Same &lt;name&gt; · second&quot;</option>"
++    ));
++    assert!(!html.contains("Same <name>"));
++}
++
+ #[tokio::test]
+ async fn hostile_query_text_is_escaped_and_cannot_become_a_selected_chain() {
+     let (status, body) = html(
+diff --git a/crates/app-server/tests/player_search.rs b/crates/app-server/tests/player_search.rs
+index a83db20..c24e30f 100644
+--- a/crates/app-server/tests/player_search.rs
++++ b/crates/app-server/tests/player_search.rs
+@@ -117,6 +117,38 @@ async fn rendered_candidates_offer_identity_selection_with_era_team_and_coverage
+     assert!(profile.contains("Michael Jordan") && profile.contains("1985–2003"));
+     assert!(profile.contains("/chain?from=jordami01"));
+ }
++
++#[tokio::test]
++async fn connection_choices_distinguish_same_name_people_and_preserve_selected_identity() {
++    let app = app();
++    for uri in ["/", "/chain?from=smithjo02"] {
++        let (status, html) = request(app.clone(), uri).await;
++        assert_eq!(status, StatusCode::OK);
++        assert!(
++            html.contains("<option value=\"smithjo01\">Joe Smith — 1996–2011 · smithjo01</option>")
++        );
++        assert!(html.contains("Joe Smith — 1947–1948 · smithjo02</option>"));
++        assert!(html.contains("<option value=\"jordami01\">Michael Jordan</option>"));
++        assert!(!html.contains(">Joe Smith</option>"));
++        if uri.starts_with("/chain") {
++            let from = html.split("<select id=\"from\"").nth(1).unwrap();
++            assert!(from.split("</select>").next().unwrap().contains(
++                "<option value=\"smithjo02\" selected>Joe Smith — 1947–1948 · smithjo02</option>"
++            ));
++        }
++    }
++}
++
++#[tokio::test]
++async fn search_and_profiles_display_canonical_ids_as_text() {
++    let app = app();
++    let (_, results) = request(app.clone(), "/search?q=Joe%20Smith").await;
++    for id in ["smithjo01", "smithjo02"] {
++        assert!(results.contains(&format!("Player ID: <code>{id}</code>")));
++        let (_, profile) = request(app.clone(), &format!("/players/{id}")).await;
++        assert!(profile.contains(&format!("Player ID: <code>{id}</code>")));
++    }
++}
+ #[tokio::test]
+ async fn bounded_queries_do_not_hide_ambiguity_or_expand_an_empty_query() {
+     for uri in ["/api/search?limit=0", "/api/search?limit=51"] {
+

@@ -1,0 +1,909 @@
+{
+  "schema_version": 1,
+  "profile": "full",
+  "source_commit": "a6382963ad83f0220f6d6cb36f49faa17c657bb3",
+  "working_tree_status": " M README.md\n M crates/app-server/src/chain_view.rs\n M crates/app-server/src/lib.rs\n M crates/app-server/src/search.rs\n M crates/app-server/src/ui.rs\n M crates/app-server/tests/browser_e2e.rs\n M crates/app-server/tests/chain_view_integration.rs\n M crates/app-server/tests/player_search.rs\n M docs/agents/verification.md\n M scripts/check.py\n?? .jev-browser/\n?? docs/reports/adversarial-teardown-2026-10-11/\n?? docs/reports/adversarial-teardown-2026-10-12/\n",
+  "working_tree_diff_sha256": "129a0d60291959fd9a9b99e37926f144b136794fb43309a34297ef18307c159b",
+  "untracked_sha256": {
+    ".jev-browser/artifacts/adversarial-20261012-ambiguous-before.png": "b50d30d6adba149d63845ef15b97adfd1c69c5e71119cf34f6ce782bbe5db7b1",
+    ".jev-browser/artifacts/adversarial-20261012-choices-after.png": "934db513acb62976986c72a713b5f426066132b4a066d40e4ac5de484a526d4c",
+    ".jev-browser/artifacts/adversarial-20261012-direct-phone.png": "e47b07d861d193ccb248a33c6969ffeda9845d57f339bb2b647271d238488ced",
+    ".jev-browser/artifacts/adversarial-20261012-native-popup.png": "619dc8a4dda6c5b8e18f6b8ced2b9015bc544ad1ab6dd0a7b30b3ecd808aeff7",
+    ".jev-browser/artifacts/adversarial-direct-phone.png": "e47b07d861d193ccb248a33c6969ffeda9845d57f339bb2b647271d238488ced",
+    "docs/reports/adversarial-teardown-2026-10-11/README.md": "cacf60950288650e4e533dd761e72733244e3fe0c302225a24bb98483ba7e512",
+    "docs/reports/adversarial-teardown-2026-10-12/README.md": "184541d3a3a74d1f6a0d48ad89480ef13d502ab97573c76e2a3ea89fb69967a3",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/browser-matrix.log": "182fac4b83bf1c601ed534bd3bffbc05bc42030b1a494dd92f51644f9ae40e24",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/clippy-host.log": "54d32f1312e9ec321c58af432997bfe3bae5b14322fc06e68fd35a1f2f0e6519",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/clippy-wasm.log": "732186322402325172940531d8d6d7cfac85dc902585b2bef6715ad6839dacfd",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/derived-snapshot.log": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/format.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/historical-audit.log": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/manifest.json": "97bc693fc1bcb66fa2b1066ea0b5f115ee23995bfe33c6619386d68c5241a571",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/python-tests.log": "f9a4b810b9c8b280aa2d74cae7fcb2dd24342d61d87230716df727d26e8fbc81",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/review-summary.json": "81dd8b0b6493ff3d112960cae1464f64636da273339e5ac269641e13b5092e1d",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/rust-workspace.log": "dacc65e81484cc234325e764546b5197d0d4e1ecc9c232d8bc30276baf187809",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/semantic-audit.log": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/wasm-build.log": "6b1c8cbe0bd9cb3b12baa322a9182419af04da4050d3affc7c9798b1b46e30b5",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/F01-after.log": "bf0ad2e6fbf53cf4d838b5d1e50401fd518e1846e8245e230e4c6e8a3f37d1cc",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/F01-before.log": "596ef430c0ded4a058980ba8b33c66a5998ed1fd1d95c5aaae373f4e645e8675",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/F02-before.log": "84fce49c1434188edc6dc5eda91e05e45a28fbff2c724a80529962153db2614f",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/baseline-expanded.json": "90b46d5db2a158bca9b1f144cdc1f6d224b9acaa11fbdf93929fcffb1e174587",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/baseline-probes.json": "8294e5a395b2e0881c7151371378457ac8dd13ebf0d2e17f0a2cd6d7fc58e58b",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/browser-journey.md": "79ae5091029a7820ed1f4bbdbaae7acdbeedc4497b90c981b80e8d62142aa33f",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/choices-after-phone.png": "934db513acb62976986c72a713b5f426066132b4a066d40e4ac5de484a526d4c",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/choices-before-phone.png": "b50d30d6adba149d63845ef15b97adfd1c69c5e71119cf34f6ce782bbe5db7b1",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/comparison.json": "97034eb45f47a4d8dc2f1a77a27e51d1811906bc523c92dc65f654fa6e1edb0a",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/concurrent-build-failure.log": "2d4671cf5bb6ddfbb31678a25471deac5c51da8fe00bc4a9dc6eab31c3889d48",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/diff-jgrep.json": "9e182eba4ba4cd245f9c1ff7979450a9d6727777dd0003b97b6fd7a482badf77",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/doc-recheck.log": "d383deea9364f9fa09e3fe40890765b97f0984fc5c91472c134fe9876138ffe0",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/final-probes.json": "360a21b30a5e0daefb692575c311b247b81d2d0e616635cc6e377710b351a145",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/first-review.diff": "f8a1bd260fe31607e773bb0da237816f7bbede5c5c85ae241e98850d7b4be8c0",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/identity-browser-final.log": "2e7c018167b7498cb225141999ca009300945a159fa17372fc6a30d9c2517db3",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/identity-browser.log": "a739af7cb507f5b39ed9fb5a72e2bd984c8ebfc2b13d66a61a90482c749e7b13",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/identity-regressions.log": "780a65a22d391bc58a38e442f82853815926abb66c6184359e5de5028f7f0776",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/independent-bfs.json": "fafbe54260bdd5816eb3dc4d073cb03ba76e5b05f533affdf53d33aa3dbbcc80",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/isolated-start.json": "0c3f19b35d62093442287068e0edef57ec7c05bb644cccefb2b1dfd815f70755",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-actual-finding-verification.json": "f752e2e9dd106b04783ab54d5b36e346bbc0710fc5c93f8c0da7b30c68c6976d",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-build-hypotheses.json": "5deb7dcfca49284650a2ea569e2ddb1f926489da3a0c6f8ce559e78ed2be7640",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-combobox-screen.json": "acce9fa8df123b2ed1939b2359e27f0213f19046518add2ea5e123e3377e96bd",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-finding-classification.json": "2f882ae52d103f12e2e6bff280bfaa315cdabbb2b289ccd77d54fb59dee1396c",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-finding-independence.json": "20f6528c7bba76f361ce66c408deaf9bec8ffae6810a1899c5171c44033da418",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-finding-verification.json": "60324421000bb3235f5c0fd9ff6b56553697140ee30aa0584de963e49a2a4d25",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-first-patch-review.json": "591f57863710bfdf0a6fc17b064b494a2a36b3aaba7c2f960c1fed95e65466d7",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-hypotheses.json": "382b646a85089f247c9570ab5e98d6a8132e86b41c6075c49391207ac7b9f296",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-id-comparison.json": "596eacc426115f55383e142b41064580d6ba2e34d45ed339113873da1db3daf9",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-impact.json": "ffef3a27bad34e77fdc664e8f8deeec68c713d175f6e3016df5f3dfbf023258b",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-keyboard-hypotheses.json": "ec218668e183c372d279eb3f9d489141d7e9a6031ebb539e396f1cbfe5deba16",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-negative-controls.json": "684780afacc782954a2b689aca4a8bb9136bd9c39cd8179aadb309edac143657",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-observation-audit.json": "cf8a11e8dde38b757342819ab372fa2ef733559a4b083931a840309f311c7397",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-plan.json": "5c8c2920b59084e5b3672c09a0825cb024918473273684e5b135d9fbde466bab",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-reference-extraction.json": "ada9a4661d808ebff6d0a28919f8f0c904cedd0e711a2c0a1836ff127cfe5b6d",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-research-find.json": "1d32363dbb5ea67b81707da20f717da991b00cd171e39d33541bc872c917a536",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-research-screen.json": "bcd874039293236d1db4852e68593d31e41c3b4a468c0963b490368cf265aa0e",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-research2-screen.json": "85e592ff9cbd8ba904cbb8fb60af9056257619e4b355714ec45d54b5761cbbd4",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-selection-decision.json": "4c5e3efbeb2df70b9a002d228e64061c4d6dc3e2881246b9f2994ca7ce273c89",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/judgment-resolutions.md": "489ba2771d1eb838b7d51fef0519b589b4346184314021b8fec6a09c5d51c307",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/log-capture-final.log": "b86cebbc94a7bbf6213c4de9d00fe01976d05bbf085824aa4ddbd78ddc8f4b0c",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/native-keyboard-control.json": "3359ac2e56051333b7834708793ba6aab5b792313fa601694b5ae0ceb8359664",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/native-keyboard-probe-two-down.json": "3b005f233d4aef950ff97390c0a03eef95ad64f212d70ae02afebbef82411429",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/native-keyboard-probe.json": "633b82d259710b86ed16c23faf991ba8002ce11e90c3623aaea688f20baba321",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/parallel-browser-checks.json": "0b53b0271e659b426b5a39b62b91a4ed2e4f571609f6668369418049250727c6",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/parallel-browser-timeouts.log": "43b1e92e1a46acb83a0f2c68df180eda9c67bcbb6d9780559ac33f332b80b3a6",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/path-search-jgrep.json": "8742ffe61fbd9c27d4405cea6539e4cf1b9ac635b46543e1741327a6e47ea158",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/prekeyboard-browser-failure.log": "23bab274bfacd4b2202c9d218acffac3858a84be17fc42dea642d2c88aee3178",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/prekeyboard-checks.json": "5d65d7f6e048d8f5581822c955ea87a27bcc93a1e7c26c488675e5f7a10a25f4",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/probe.py": "e1f799d651312b36a8392ad8d4300cadcdfbd878a5f1dbc47dd07b259649b1ee",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/startup-negative.json": "e0c7a420b53c384d4ef0eb80040ae1bf530967f912b04e1a1d4a52e58d29502d",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/browser-matrix.log": "4921b97bf0880afb91fdec1327f71f2c010dff56c7c6229a649037273e9e93b2",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/clippy-host.log": "299f16a2c523be18fef769975d2df00e0505521db047540feea3a74b94666887",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/clippy-wasm.log": "59639588a6f1826f129cbcd121edc07279dab94786f5fa5bde6b3439b2e845cc",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/derived-snapshot.log": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/format.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/historical-audit.log": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/manifest.json": "237ce95ec898f763a4231f42fedd14ca6b373c22e56276d7a51f7b0181117958",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/python-tests.log": "9f32ee3e627030383f96b7042c05a3d24d945845d9420a0e48e140dd4438f0c4",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/review-summary.json": "f143a96e4e0fc9d438e04c765fb478655fc749c5a62abe4d2b81826be76d75d2",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/rust-workspace.log": "2179caa3ca37a1356fede517f7f9095d7a083b9ce71f6d6ea0f7f24b86af8f16",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/semantic-audit.log": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/wasm-build.log": "3997fc6790b8063b86c119e91f87ac7395ac6cf26135da637dcb229006bc32dc"
+  },
+  "started_at": "2026-10-13T02:53:39.768456+00:00",
+  "checks": [
+    {
+      "name": "rust-workspace",
+      "argv": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-13T02:53:39.768598+00:00",
+      "finished_at": "2026-10-13T02:53:46.995998+00:00",
+      "log": "rust-workspace.log",
+      "summary": {
+        "rust_result_groups": 30,
+        "rust_totals": {
+          "passed": 129,
+          "failed": 0,
+          "ignored": 10
+        },
+        "test_results": [
+          {
+            "name": "query::era_candidate_tests::reversed_or_out_of_range_phrases_are_not_merged",
+            "result": "ok"
+          },
+          {
+            "name": "query::era_candidate_tests::a_stated_range_is_one_candidate_not_two_single_years",
+            "result": "ok"
+          },
+          {
+            "name": "query::era_candidate_tests::unrelated_year_mentions_stay_separate_candidates",
+            "result": "ok"
+          },
+          {
+            "name": "query::evidence_filter_tests::team_and_season_filters_preserve_only_matching_count_and_game_proofs",
+            "result": "ok"
+          },
+          {
+            "name": "degraded_status_clears_after_a_later_successful_judgment",
+            "result": "ok"
+          },
+          {
+            "name": "chain_page_reports_unknown_players",
+            "result": "ok"
+          },
+          {
+            "name": "chain_page_orders_players_and_links_with_degree",
+            "result": "ok"
+          },
+          {
+            "name": "all_paths_returns_alternative_shortest_chains",
+            "result": "ok"
+          },
+          {
+            "name": "direct_teammates_report_degree_one",
+            "result": "ok"
+          },
+          {
+            "name": "chain_page_shows_direct_and_disconnected_results",
+            "result": "ok"
+          },
+          {
+            "name": "all_paths_for_disconnected_pair_returns_no_chains",
+            "result": "ok"
+          },
+          {
+            "name": "chain_page_defaults_to_the_fixture_demo_pair",
+            "result": "ok"
+          },
+          {
+            "name": "fixture_summary_lists_all_players_and_edges",
+            "result": "ok"
+          },
+          {
+            "name": "credential_canary_never_reaches_served_surfaces",
+            "result": "ok"
+          },
+          {
+            "name": "jev_unavailable_outcome_is_deterministic_across_calls",
+            "result": "ok"
+          },
+          {
+            "name": "jev_answers_surface_only_through_the_seam_not_the_graph",
+            "result": "ok"
+          },
+          {
+            "name": "home_page_shows_connect_form_and_fixture_edges",
+            "result": "ok"
+          },
+          {
+            "name": "semantic_status_reports_available_with_a_provider",
+            "result": "ok"
+          },
+          {
+            "name": "non_overlapping_same_franchise_tenures_create_no_edge",
+            "result": "ok"
+          },
+          {
+            "name": "overlap_tenures_on_same_team_create_edge",
+            "result": "ok"
+          },
+          {
+            "name": "semantic_status_reports_unavailable_without_configuration",
+            "result": "ok"
+          },
+          {
+            "name": "missing_query_parameters_are_a_bad_request",
+            "result": "ok"
+          },
+          {
+            "name": "shortest_chain_reaches_second_degree_through_b",
+            "result": "ok"
+          },
+          {
+            "name": "ui_reports_semantic_features_available_with_a_provider",
+            "result": "ok"
+          },
+          {
+            "name": "unknown_player_is_a_not_found_result",
+            "result": "ok"
+          },
+          {
+            "name": "stylesheet_is_served",
+            "result": "ok"
+          },
+          {
+            "name": "mid_season_move_links_only_overlapping_stints",
+            "result": "ok"
+          },
+          {
+            "name": "graph_and_search_features_work_with_jev_unconfigured",
+            "result": "ok"
+          },
+          {
+            "name": "statistics_report_components_diameter_and_unreachable_pairs",
+            "result": "ok"
+          },
+          {
+            "name": "edge_listings_are_paged_and_bounded",
+            "result": "ok"
+          },
+          {
+            "name": "ui_reports_semantic_features_unavailable_by_default",
+            "result": "ok"
+          },
+          {
+            "name": "unknown_ui_route_is_a_html_not_found_page",
+            "result": "ok"
+          },
+          {
+            "name": "unreachable_provider_fails_soft_and_features_keep_working",
+            "result": "ok"
+          },
+          {
+            "name": "repeated_overlaps_collapse_to_one_edge",
+            "result": "ok"
+          },
+          {
+            "name": "served_responses_and_assets_never_contain_credentials",
+            "result": "ok"
+          },
+          {
+            "name": "alternatives_filters_uncertainty_and_provider_failure_are_visible_user_outcomes",
+            "result": "ignored, actual Chromium/WASM E2E; explicitly synthetic report-backed diamond"
+          },
+          {
+            "name": "historical_chain_and_appearance_evidence_render_without_fabricated_dates",
+            "result": "ignored, actual Chromium/WASM over the repaired full historical graph"
+          },
+          {
+            "name": "home_lookup_and_connections_are_accessible_in_the_running_fixture_app",
+            "result": "ignored, actual Chromium/WASM E2E; build scripts/build-canvas.sh first"
+          },
+          {
+            "name": "maravich_mcgrady_visualizer_links_profiles_and_evidence_on_desktop_and_mobile",
+            "result": "ignored, actual Chromium responsive player-chain visualizer"
+          },
+          {
+            "name": "real_lookup_disambiguation_and_selected_edge_provenance_remain_honest",
+            "result": "ignored, actual Chromium/WASM E2E over a seven-player pinned real-data slice"
+          },
+          {
+            "name": "whole_network_renders_all_connections_and_keeps_them_when_searching_and_zooming",
+            "result": "ignored, actual Chromium over every player and every teammate connection"
+          },
+          {
+            "name": "rust_wasm_canvas_supports_pointer_keyboard_expansion_and_retains_chain_facts",
+            "result": "ignored, actual Chromium/WASM smoke: run after scripts/build-canvas.sh"
+          },
+          {
+            "name": "live_ranking_smoke_uses_the_same_service_with_declared_synthetic_chains",
+            "result": "ignored, requires an explicitly requested live OpenRouter call"
+          },
+          {
+            "name": "a_zero_weight_dimension_does_not_block_a_certain_interest_preference",
+            "result": "ok"
+          },
+          {
+            "name": "weighted_scores_reorder_only_equal_shortest_chains_and_preserve_exact_facts",
+            "result": "ok"
+          },
+          {
+            "name": "ranked_page_labels_suggestions_and_selects_original_chain_with_preserved_cursor",
+            "result": "ok"
+          },
+          {
+            "name": "multi_batch_ranking_is_bounded_and_any_later_failure_restores_the_entire_page",
+            "result": "ok"
+          },
+          {
+            "name": "frozen_calibration_accepts_point_three_scores_but_keeps_point_two_uncertain",
+            "result": "ok"
+          },
+          {
+            "name": "low_confidence_ties_boundaries_and_no_path_preserve_deterministic_behavior",
+            "result": "ok"
+          },
+          {
+            "name": "public_rank_service_reuses_real_wire_scores_order_variants_and_code_weights",
+            "result": "ok"
+          },
+          {
+            "name": "invalid_provider_cannot_change_paths_and_fallback_is_visible_and_escaped",
+            "result": "ok"
+          },
+          {
+            "name": "same_name_choices_without_metadata_show_escaped_ids",
+            "result": "ok"
+          },
+          {
+            "name": "incomplete_selection_and_invalid_pages_never_substitute_a_chain",
+            "result": "ok"
+          },
+          {
+            "name": "hostile_query_text_is_escaped_and_cannot_become_a_selected_chain",
+            "result": "ok"
+          },
+          {
+            "name": "browsing_pages_keeps_the_cursor_and_selected_shortest_chain",
+            "result": "ok"
+          },
+          {
+            "name": "disconnected_fixture_and_incomplete_history_have_distinct_visible_outcomes",
+            "result": "ok"
+          },
+          {
+            "name": "direct_indirect_and_self_chains_explain_and_export_the_exact_link_count",
+            "result": "ok"
+          },
+          {
+            "name": "equally_short_chains_have_visible_selection_and_keep_the_minimum_degree",
+            "result": "ok"
+          },
+          {
+            "name": "canvas_loader_is_only_referenced_when_assets_exist",
+            "result": "ok"
+          },
+          {
+            "name": "full_network_page_keeps_a_text_fallback_without_a_selected_chain",
+            "result": "ok"
+          },
+          {
+            "name": "direct_and_nearby_neighborhoods_expose_only_evidenced_fixture_connections",
+            "result": "ok"
+          },
+          {
+            "name": "present_and_missing_canvas_assets_are_isolated_and_preserve_binary_bytes_and_accessible_fallback",
+            "result": "ok"
+          },
+          {
+            "name": "neighborhood_and_chain_links_name_the_same_team_for_a_pair",
+            "result": "ok"
+          },
+          {
+            "name": "graph_exploration_retains_the_selected_chain_and_exact_alternative_cursor",
+            "result": "ok"
+          },
+          {
+            "name": "bounded_exploration_reports_truncation_and_rejects_invalid_graph_arguments",
+            "result": "ok"
+          },
+          {
+            "name": "real_report_neighborhood_retains_source_context_and_coverage_without_expanding_the_full_graph",
+            "result": "ok"
+          },
+          {
+            "name": "whole_network_has_every_player_and_edge_including_isolates_without_caps",
+            "result": "ok"
+          },
+          {
+            "name": "live_resolution_smoke_uses_the_runtime_service_and_pinned_catalog",
+            "result": "ignored, requires an explicitly requested live OpenRouter call"
+          },
+          {
+            "name": "exact_identity_resolution_remains_available_without_semantics",
+            "result": "ok"
+          },
+          {
+            "name": "calibrated_identity_policy_keeps_a_point_nine_four_choice_for_clarification",
+            "result": "ok"
+          },
+          {
+            "name": "runtime_service_uses_real_wire_choice_and_noul_order_variants_and_per_call_metrics",
+            "result": "ok"
+          },
+          {
+            "name": "semantic_nickname_alias_and_typo_copy_the_canonical_shortlisted_player",
+            "result": "ok"
+          },
+          {
+            "name": "stated_context_can_disambiguate_namesakes_but_uncertain_existence_cannot",
+            "result": "ok"
+          },
+          {
+            "name": "ambiguity_low_confidence_no_match_and_unavailable_are_selectable_without_a_path",
+            "result": "ok"
+          },
+          {
+            "name": "malformed_answers_cannot_select_unlisted_ids_and_status_falls_back",
+            "result": "ok"
+          },
+          {
+            "name": "identical_names_and_eras_still_have_distinct_choices",
+            "result": "ok"
+          },
+          {
+            "name": "exact_name_returns_canonical_player_with_era_and_teams",
+            "result": "ok"
+          },
+          {
+            "name": "connection_choices_distinguish_same_name_people_and_preserve_selected_identity",
+            "result": "ok"
+          },
+          {
+            "name": "search_and_profiles_display_canonical_ids_as_text",
+            "result": "ok"
+          },
+          {
+            "name": "rendered_candidates_offer_identity_selection_with_era_team_and_coverage_context",
+            "result": "ok"
+          },
+          {
+            "name": "misspelling_uses_code_ranked_shortlist_and_unrelated_text_is_no_match",
+            "result": "ok"
+          },
+          {
+            "name": "surname_and_partial_name_rank_candidates_without_collapsing_same_name_people",
+            "result": "ok"
+          },
+          {
+            "name": "bounded_queries_do_not_hide_ambiguity_or_expand_an_empty_query",
+            "result": "ok"
+          },
+          {
+            "name": "empty_no_match_and_invalid_profile_are_visible_and_query_text_is_escaped",
+            "result": "ok"
+          },
+          {
+            "name": "source_aliases_and_curated_nicknames_return_ranked_canonical_candidates",
+            "result": "ok"
+          },
+          {
+            "name": "unadmitted_edge_explains_incomplete_evidence_and_exposes_the_excluded_source_record",
+            "result": "ok"
+          },
+          {
+            "name": "opening_a_fixture_teammate_link_shows_both_stints_and_explicit_synthetic_overlap",
+            "result": "ok"
+          },
+          {
+            "name": "canvas_has_an_accessible_selected_edge_panel_and_allowlisted_source_routes",
+            "result": "ok"
+          },
+          {
+            "name": "real_acy_bogut_overlap_has_calendar_dates_both_source_records_anchors_and_versions",
+            "result": "ok"
+          },
+          {
+            "name": "a_profile_filter_limits_sourced_team_and_era_context_without_changing_identity",
+            "result": "ok"
+          },
+          {
+            "name": "frozen_routing_policy_clarifies_a_point_nine_four_operation",
+            "result": "ok"
+          },
+          {
+            "name": "evaluation_config_changes_actual_provider_criteria_and_keeps_per_call_receipts",
+            "result": "ok"
+          },
+          {
+            "name": "a_copied_misspelling_uses_shared_guarded_resolution_before_connection",
+            "result": "ok"
+          },
+          {
+            "name": "ordinary_language_connection_executes_the_deterministic_graph_and_shows_its_chain",
+            "result": "ok"
+          },
+          {
+            "name": "filtered_connection_is_scoped_and_links_explicitly_open_the_unfiltered_network",
+            "result": "ok"
+          },
+          {
+            "name": "stated_team_and_era_filters_change_the_view_and_leave_underlying_edges_unchanged",
+            "result": "ok"
+          },
+          {
+            "name": "ambiguous_names_show_context_and_explicit_choice_continues_original_request",
+            "result": "ok"
+          },
+          {
+            "name": "malformed_packets_degrade_and_uncertain_valid_packets_clarify_without_execution",
+            "result": "ok"
+          },
+          {
+            "name": "profile_neighbors_and_comparison_have_distinct_grounded_visible_outcomes",
+            "result": "ok"
+          },
+          {
+            "name": "unsupported_missing_arguments_and_provider_failure_never_guess_a_graph_action",
+            "result": "ok"
+          },
+          {
+            "name": "conflicting_duplicate_player_appearance_counts_are_rejected",
+            "result": "ok"
+          },
+          {
+            "name": "conflicting_appearance_totals_are_rejected_instead_of_creating_edges",
+            "result": "ok"
+          },
+          {
+            "name": "in_memory_and_file_import_share_strict_uncertainty_rules",
+            "result": "ok"
+          },
+          {
+            "name": "coverage_gaps_remain_inspectable_for_the_affected_player",
+            "result": "ok"
+          },
+          {
+            "name": "a_dated_shared_game_recovers_a_low_appearance_teammate_without_inventing_days",
+            "result": "ok"
+          },
+          {
+            "name": "alternative_shortest_chains_are_deterministic_and_paginated",
+            "result": "ok"
+          },
+          {
+            "name": "appearance_counts_prove_historical_chain_without_inventing_tenure_dates",
+            "result": "ok"
+          },
+          {
+            "name": "legacy_repeat_signing_continuity_note_blocks_a_runtime_edge",
+            "result": "ok"
+          },
+          {
+            "name": "insufficient_appearance_counts_and_non_overlapping_stints_do_not_create_links",
+            "result": "ok"
+          },
+          {
+            "name": "game_witnesses_cannot_create_unknown_or_self_teammates",
+            "result": "ok"
+          },
+          {
+            "name": "canonical_import_returns_real_paths_and_record_provenance",
+            "result": "ok"
+          },
+          {
+            "name": "repeated_source_rows_never_create_a_self_teammate_or_double_overlap",
+            "result": "ok"
+          },
+          {
+            "name": "season_brackets_are_uncertainty_and_never_teammate_facts",
+            "result": "ok"
+          },
+          {
+            "name": "the_final_shortest_chain_survives_the_u64_boundary",
+            "result": "ok"
+          },
+          {
+            "name": "continuation_cursors_reach_shortest_chains_beyond_fixed_integer_limits",
+            "result": "ok"
+          },
+          {
+            "name": "statistics_page_displays_hand_checked_fixture_counts_and_histogram",
+            "result": "ok"
+          },
+          {
+            "name": "multiple_nontrivial_components_and_isolates_keep_coverage_warning_visible",
+            "result": "ok"
+          },
+          {
+            "name": "statistics_page_explains_pair_scope_and_is_reachable_without_semantic_service",
+            "result": "ok"
+          },
+          {
+            "name": "isolate_only_and_empty_snapshots_show_zero_diameter_and_an_empty_histogram_message",
+            "result": "ok"
+          },
+          {
+            "name": "tests::computed_edges_match_documented_expectations",
+            "result": "ok"
+          },
+          {
+            "name": "overlap_total_tests::undated_corroboration_on_a_dated_team_keeps_the_known_total",
+            "result": "ok"
+          },
+          {
+            "name": "overlap_total_tests::a_team_with_only_undated_evidence_makes_the_total_unknown",
+            "result": "ok"
+          },
+          {
+            "name": "overlap_total_tests::bounded_lookups_match_the_full_edge_list",
+            "result": "ok"
+          },
+          {
+            "name": "tests::env_config_prefers_typesafe_then_openrouter_then_no_config",
+            "result": "ok"
+          },
+          {
+            "name": "tests::debug_output_redacts_the_api_key",
+            "result": "ok"
+          },
+          {
+            "name": "tests::question_and_request_types_stay_small_and_typed",
+            "result": "ok"
+          },
+          {
+            "name": "live_provider_answers_one_small_judgment",
+            "result": "ignored, live provider call: needs a real key + network; run with -- --ignored"
+          },
+          {
+            "name": "evaluate_panics_never_escape_a_current_thread_runtime",
+            "result": "ok"
+          },
+          {
+            "name": "an_unreachable_provider_fails_soft",
+            "result": "ok"
+          },
+          {
+            "name": "a_reply_cut_off_before_its_declared_length_is_not_trusted",
+            "result": "ok"
+          },
+          {
+            "name": "a_malformed_envelope_fails_soft",
+            "result": "ok"
+          },
+          {
+            "name": "a_retryable_status_exhausting_its_retry_fails_soft",
+            "result": "ok"
+          },
+          {
+            "name": "a_retryable_status_retries_once_and_recovers",
+            "result": "ok"
+          },
+          {
+            "name": "measured_judgments_keep_metadata_local_to_each_call_and_missing_values_unknown",
+            "result": "ok"
+          },
+          {
+            "name": "non_retryable_statuses_fail_immediately",
+            "result": "ok"
+          },
+          {
+            "name": "an_oversized_reply_fails_soft_without_being_parsed",
+            "result": "ok"
+          },
+          {
+            "name": "transport_error_then_retryable_status_does_not_create_a_third_attempt",
+            "result": "ok"
+          },
+          {
+            "name": "all_attempts_and_response_reads_share_one_call_deadline",
+            "result": "ok"
+          },
+          {
+            "name": "a_provider_timeout_fails_soft",
+            "result": "ok"
+          }
+        ],
+        "python_result": null
+      },
+      "raw_sha256": "28fd64c018cf5b17b6e77c5de28d03349ef0e2555f55df5f526c9e8f4337b2ad",
+      "published_sha256": "e758ffef69a4492516984785f301f4bbfc5d80fe71c239e6d0ff0aaa689df52c"
+    },
+    {
+      "name": "python-tests",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_*.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-13T02:53:46.996954+00:00",
+      "finished_at": "2026-10-13T02:53:47.659990+00:00",
+      "log": "python-tests.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "test_results": [],
+        "python_result": {
+          "tests": 108,
+          "result": "OK"
+        }
+      },
+      "raw_sha256": "35375a96547c546d4b65ae36524df0d4237bedee0789406e3735acab900d95f6",
+      "published_sha256": "d82f22917e2ac14ea1089371453bbd987a91aedb7487b55da9613a12bd0e8da1"
+    },
+    {
+      "name": "format",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-13T02:53:47.660201+00:00",
+      "finished_at": "2026-10-13T02:53:47.835468+00:00",
+      "log": "format.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "test_results": [],
+        "python_result": null
+      },
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clippy-host",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-13T02:53:47.835636+00:00",
+      "finished_at": "2026-10-13T02:53:48.079133+00:00",
+      "log": "clippy-host.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "test_results": [],
+        "python_result": null
+      },
+      "raw_sha256": "d7dae192715495fa89ccbe279af3efb9792c1dae1768228e369035e68a1df673",
+      "published_sha256": "d7dae192715495fa89ccbe279af3efb9792c1dae1768228e369035e68a1df673"
+    },
+    {
+      "name": "derived-snapshot",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "scripts/verify-source-snapshot.py",
+        "--derived-only"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-13T02:53:48.079328+00:00",
+      "finished_at": "2026-10-13T02:53:48.133579+00:00",
+      "log": "derived-snapshot.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "test_results": [],
+        "python_result": null
+      },
+      "raw_sha256": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84",
+      "published_sha256": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84"
+    },
+    {
+      "name": "historical-audit",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "scripts/check-historical-audit.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-13T02:53:48.133789+00:00",
+      "finished_at": "2026-10-13T02:53:48.674541+00:00",
+      "log": "historical-audit.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "test_results": [],
+        "python_result": null
+      },
+      "raw_sha256": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232",
+      "published_sha256": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232"
+    },
+    {
+      "name": "semantic-audit",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "scripts/check-semantic-evaluation.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-13T02:53:48.674969+00:00",
+      "finished_at": "2026-10-13T02:53:48.741501+00:00",
+      "log": "semantic-audit.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "test_results": [],
+        "python_result": null
+      },
+      "raw_sha256": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0",
+      "published_sha256": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0"
+    },
+    {
+      "name": "wasm-build",
+      "argv": [
+        "./scripts/build-canvas.sh"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-13T02:53:48.741687+00:00",
+      "finished_at": "2026-10-13T02:53:48.887970+00:00",
+      "log": "wasm-build.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "test_results": [],
+        "python_result": null
+      },
+      "raw_sha256": "765f1396d07f30f3a451cd3f9d9cad4e83c92c8e0aecf955ffc09061a6cf1e02",
+      "published_sha256": "765f1396d07f30f3a451cd3f9d9cad4e83c92c8e0aecf955ffc09061a6cf1e02"
+    },
+    {
+      "name": "clippy-wasm",
+      "argv": [
+        "cargo",
+        "clippy",
+        "-p",
+        "canvas-view",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-13T02:53:48.888166+00:00",
+      "finished_at": "2026-10-13T02:53:49.019428+00:00",
+      "log": "clippy-wasm.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "test_results": [],
+        "python_result": null
+      },
+      "raw_sha256": "a5f4c585ee974ca44916ac30a98bbc189e067a7e0a6bc6d2e8d6bc525be724af",
+      "published_sha256": "a5f4c585ee974ca44916ac30a98bbc189e067a7e0a6bc6d2e8d6bc525be724af"
+    },
+    {
+      "name": "browser-matrix",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "app-server",
+        "--test",
+        "browser_e2e",
+        "--test",
+        "canvas_browser",
+        "--locked",
+        "--",
+        "--ignored",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-13T02:53:49.019617+00:00",
+      "finished_at": "2026-10-13T02:54:41.055687+00:00",
+      "log": "browser-matrix.log",
+      "summary": {
+        "rust_result_groups": 2,
+        "rust_totals": {
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0
+        },
+        "test_results": [
+          {
+            "name": "historical_chain_and_appearance_evidence_render_without_fabricated_dates",
+            "result": "ok"
+          },
+          {
+            "name": "maravich_mcgrady_visualizer_links_profiles_and_evidence_on_desktop_and_mobile",
+            "result": "ok"
+          }
+        ],
+        "python_result": null
+      },
+      "raw_sha256": "c9a1e57e6998419f36c73bcebbc0f98ddf9806898d9f760182fb71cdf90b89fa",
+      "published_sha256": "2956f8ed57cb6eab9d650f3a1c56f41e350425ccc112d7125df9521108fb36b0"
+    }
+  ],
+  "completed": true,
+  "expected_checks": [
+    "rust-workspace",
+    "python-tests",
+    "format",
+    "clippy-host",
+    "derived-snapshot",
+    "historical-audit",
+    "semantic-audit",
+    "wasm-build",
+    "clippy-wasm",
+    "browser-matrix"
+  ],
+  "finished_at": "2026-10-13T02:54:41.056080+00:00"
+}

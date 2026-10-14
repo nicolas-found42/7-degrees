@@ -1,0 +1,25 @@
+{
+  "completed": true,
+  "checked_commands": 10,
+  "all_exit_codes": 0,
+  "rust_counts_from_raw_logs": {
+    "rust-workspace": {
+      "passed": 129,
+      "failed": 0,
+      "ignored": 10
+    },
+    "browser-matrix": {
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "python_count_from_raw_log": 108,
+  "before_duplicate_groups": 39,
+  "before_affected_ids": 81,
+  "after_duplicate_groups": 0,
+  "all_edge_page_rows": 101395,
+  "edge_pages": 21,
+  "independent_bfs_cases": 28,
+  "provenance_boundary": "Original source truth remains unverified; served proof arithmetic and graph computations tested."
+}

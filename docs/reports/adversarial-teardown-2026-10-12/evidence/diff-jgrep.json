@@ -1,0 +1,9 @@
+[
+  {
+    "file": "crates/app-server/src/ui.rs",
+    "start": 91,
+    "end": 111,
+    "p": 0.71,
+    "text": "             } else {\n                 \"\"\n             };\n+            let display = if name_counts[player.name.as_str()] > 1 {\n+                let era = reports\n+                    .and_then(|r| r.players.get(&player.id))\n+                    .map(|p| format!(\" — {}–{}\", p.first_season, p.last_season))\n+                    .unwrap_or_default();\n+                // An ID also distinguishes duplicates with identical or unknown eras.\n+                format!(\"{}{era} · {}\", player.name, player.id)\n+            } else {\n+                player.name.clone()\n+            };\n             format!(\n                 \"<option value=\\\"{}\\\"{}>{}</option>\",\n                 escape(&player.id),\n                 is_selected,\n-                escape(&player.name)\n+                escape(&display)\n             )\n         })\n         .collect();"
+  }
+]

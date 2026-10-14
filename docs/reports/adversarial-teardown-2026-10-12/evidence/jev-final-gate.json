@@ -1,0 +1,9 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "OpenRouter decisions API 400 (max_tokens_exceeded)"
+    }
+  ],
+  "isError": true
+}

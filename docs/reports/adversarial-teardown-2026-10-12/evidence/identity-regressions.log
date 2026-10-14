@@ -1,0 +1,30 @@
+   Compiling app-server v0.1.0 (/Users/Nicolas/Documents/github/7-degrees/crates/app-server)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.46s
+     Running tests/chain_view_integration.rs (target/debug/deps/chain_view_integration-749449d573e09888)
+
+running 7 tests
+test same_name_choices_without_metadata_show_escaped_ids ... ok
+test incomplete_selection_and_invalid_pages_never_substitute_a_chain ... ok
+test hostile_query_text_is_escaped_and_cannot_become_a_selected_chain ... ok
+test direct_indirect_and_self_chains_explain_and_export_the_exact_link_count ... ok
+test browsing_pages_keeps_the_cursor_and_selected_shortest_chain ... ok
+test disconnected_fixture_and_incomplete_history_have_distinct_visible_outcomes ... ok
+test equally_short_chains_have_visible_selection_and_keep_the_minimum_degree ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/player_search.rs (target/debug/deps/player_search-0b36dd24ed6b7b4c)
+
+running 9 tests
+test connection_choices_distinguish_same_name_people_and_preserve_selected_identity ... ok
+test exact_name_returns_canonical_player_with_era_and_teams ... ok
+test search_and_profiles_display_canonical_ids_as_text ... ok
+test rendered_candidates_offer_identity_selection_with_era_team_and_coverage_context ... ok
+test misspelling_uses_code_ranked_shortlist_and_unrelated_text_is_no_match ... ok
+test surname_and_partial_name_rank_candidates_without_collapsing_same_name_people ... ok
+test empty_no_match_and_invalid_profile_are_visible_and_query_text_is_escaped ... ok
+test source_aliases_and_curated_nicknames_return_ranked_canonical_candidates ... ok
+test bounded_queries_do_not_hide_ambiguity_or_expand_an_empty_query ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

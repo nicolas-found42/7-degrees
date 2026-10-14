@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"tool\": \"jev_noul\",\n  \"model\": \"typesafe/jev-1.13-20260917\",\n  \"provider\": \"openrouter\",\n  \"status\": \"ok\",\n  \"results\": [\n    {\n      \"id\": \"proposition0\",\n      \"proposition\": \"Concurrent differently configured Cargo builds can explain the rustdoc failure without an app code defect.\",\n      \"probability\": 0.72,\n      \"label\": \"uncertain\",\n      \"auto\": false\n    },\n    {\n      \"id\": \"proposition1\",\n      \"proposition\": \"Suppressing doc tests would be a justified way to verify this patch.\",\n      \"probability\": 0.33,\n      \"label\": \"uncertain\",\n      \"auto\": false\n    }\n  ],\n  \"thresholds\": {\n    \"auto_accept\": 0.85\n  },\n  \"usage\": {\n    \"input_tokens\": 630,\n    \"output_tokens\": 46\n  }\n}"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"tool\": \"jev_verify\",\n  \"model\": \"typesafe/jev-1.13-20260917\",\n  \"provider\": \"openrouter\",\n  \"auto_accept\": 0.8,\n  \"subject_at\": 0.5,\n  \"summary\": {\n    \"verified\": 1,\n    \"contradicted\": 1,\n    \"unsupported\": 0,\n    \"needs_review\": 1\n  },\n  \"results\": [\n    {\n      \"id\": \"claim0\",\n      \"claim\": \"Distinct Dee Brown identities can have identical visible labels in the documented connection form.\",\n      \"verdict\": \"verified\",\n      \"probabilities\": {\n        \"supports\": 0.48,\n        \"contradicts\": 0.27,\n        \"says_nothing\": 0.25\n      },\n      \"confidence\": 0.22,\n      \"action\": \"review\",\n      \"supporting_evidence\": null,\n      \"same_subject\": 0.49\n    },\n    {\n      \"id\": \"claim1\",\n      \"claim\": \"The graph merges Dee Brown identities into one player.\",\n      \"verdict\": \"contradicted\",\n      \"probabilities\": {\n        \"supports\": 0,\n        \"contradicts\": 1,\n        \"says_nothing\": 0\n      },\n      \"confidence\": 1,\n      \"action\": \"auto\",\n      \"supporting_evidence\": null,\n      \"same_subject\": 0.78\n    }\n  ],\n  \"usage\": {\n    \"input_tokens\": 943,\n    \"output_tokens\": 128\n  }\n}"
+    }
+  ]
+}
