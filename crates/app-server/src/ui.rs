@@ -8,6 +8,9 @@ use axum::http::{StatusCode, header};
 use axum::response::{IntoResponse, Response};
 
 use graph_core::{Player, TeammateGraph};
+use std::collections::BTreeMap;
+
+use crate::report_data::ReportMetadata;
 
 /// The stylesheet served at `/style.css`.
 pub const STYLE_CSS: &str = include_str!("style.css");
@@ -72,7 +75,14 @@ pub(crate) fn document(status: StatusCode, title: &str, body: &str) -> Response 
 }
 
 /// One `<select>` for the connect form, preselecting `selected`.
-fn player_select(players: &[Player], field: &str, label: &str, selected: &str) -> String {
+fn player_select(
+    players: &[Player],
+    name_counts: &BTreeMap<&str, usize>,
+    reports: Option<&ReportMetadata>,
+    field: &str,
+    label: &str,
+    selected: &str,
+) -> String {
     let options: String = players
         .iter()
         .map(|player| {
@@ -81,11 +91,21 @@ fn player_select(players: &[Player], field: &str, label: &str, selected: &str) -
             } else {
                 ""
             };
+            let display = if name_counts[player.name.as_str()] > 1 {
+                let era = reports
+                    .and_then(|r| r.players.get(&player.id))
+                    .map(|p| format!(" — {}–{}", p.first_season, p.last_season))
+                    .unwrap_or_default();
+                // An ID also distinguishes duplicates with identical or unknown eras.
+                format!("{}{era} · {}", player.name, player.id)
+            } else {
+                player.name.clone()
+            };
             format!(
                 "<option value=\"{}\"{}>{}</option>",
                 escape(&player.id),
                 is_selected,
-                escape(&player.name)
+                escape(&display)
             )
         })
         .collect();
@@ -99,12 +119,23 @@ fn player_select(players: &[Player], field: &str, label: &str, selected: &str) -
 }
 
 /// The GET form that drives `/chain`, defaulting to the A→C demo pair.
-pub(crate) fn connect_form(players: &[Player], from: Option<&str>, to: Option<&str>) -> String {
+pub(crate) fn connect_form(
+    players: &[Player],
+    from: Option<&str>,
+    to: Option<&str>,
+    reports: Option<&ReportMetadata>,
+) -> String {
+    let mut name_counts = BTreeMap::new();
+    for player in players {
+        *name_counts.entry(player.name.as_str()).or_insert(0) += 1;
+    }
     format!(
         "<form method=\"get\" action=\"/chain\" \
          class=\"controls\">{}{}<button type=\"submit\">Connect</button></form>",
         player_select(
             players,
+            &name_counts,
+            reports,
             "from",
             "Player from",
             from.unwrap_or_else(|| if players.iter().any(|p| p.id == "A") {
@@ -115,6 +146,8 @@ pub(crate) fn connect_form(players: &[Player], from: Option<&str>, to: Option<&s
         ),
         player_select(
             players,
+            &name_counts,
+            reports,
             "to",
             "Player to",
             to.unwrap_or_else(|| if players.iter().any(|p| p.id == "C") {
@@ -157,6 +190,7 @@ pub fn home(
     graph: &TeammateGraph,
     semantic_status: (bool, &'static str),
     coverage: Option<&str>,
+    reports: Option<&ReportMetadata>,
 ) -> Response {
     let players = &graph.roster.players;
     let edges = graph.edges();
@@ -219,7 +253,7 @@ pub fn home(
             "{}{}{}",
             crate::query::form(""),
             crate::search::form(""),
-            connect_form(players, Some(demo_from), Some(demo_to))
+            connect_form(players, Some(demo_from), Some(demo_to), reports)
         ),
         edges.len(),
         edge_items,

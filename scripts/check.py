@@ -21,7 +21,7 @@ def commands(profile, data_dir):
     browser = [
         ('wasm-build', ['./scripts/build-canvas.sh']),
         ('clippy-wasm', ['cargo', 'clippy', '-p', 'canvas-view', '--target', 'wasm32-unknown-unknown', '--locked', '--', '-D', 'warnings']),
-        ('browser-matrix', ['cargo', 'test', '-p', 'app-server', '--test', 'browser_e2e', '--test', 'canvas_browser', '--locked', '--', '--ignored', '--nocapture']),
+        ('browser-matrix', ['cargo', 'test', '-p', 'app-server', '--test', 'browser_e2e', '--test', 'canvas_browser', '--locked', '--', '--ignored', '--nocapture', '--test-threads=1']),
     ]
     if profile == 'portable': return portable
     if profile == 'browser': return browser

@@ -117,6 +117,55 @@ async fn rendered_candidates_offer_identity_selection_with_era_team_and_coverage
     assert!(profile.contains("Michael Jordan") && profile.contains("1985–2003"));
     assert!(profile.contains("/chain?from=jordami01"));
 }
+
+#[tokio::test]
+async fn connection_choices_distinguish_same_name_people_and_preserve_selected_identity() {
+    let app = app();
+    for uri in ["/", "/chain?from=smithjo02"] {
+        let (status, html) = request(app.clone(), uri).await;
+        assert_eq!(status, StatusCode::OK);
+        assert!(
+            html.contains("<option value=\"smithjo01\">Joe Smith — 1996–2011 · smithjo01</option>")
+        );
+        assert!(html.contains("Joe Smith — 1947–1948 · smithjo02</option>"));
+        assert!(html.contains("<option value=\"jordami01\">Michael Jordan</option>"));
+        assert!(!html.contains(">Joe Smith</option>"));
+        if uri.starts_with("/chain") {
+            let from = html.split("<select id=\"from\"").nth(1).unwrap();
+            assert!(from.split("</select>").next().unwrap().contains(
+                "<option value=\"smithjo02\" selected>Joe Smith — 1947–1948 · smithjo02</option>"
+            ));
+        }
+    }
+}
+
+#[tokio::test]
+async fn search_and_profiles_display_canonical_ids_as_text() {
+    let app = app();
+    let (_, results) = request(app.clone(), "/search?q=Joe%20Smith").await;
+    for id in ["smithjo01", "smithjo02"] {
+        assert!(results.contains(&format!("Player ID: <code>{id}</code>")));
+        let (_, profile) = request(app.clone(), &format!("/players/{id}")).await;
+        assert!(profile.contains(&format!("Player ID: <code>{id}</code>")));
+    }
+}
+
+#[tokio::test]
+async fn identical_names_and_eras_still_have_distinct_choices() {
+    let root = std::env::temp_dir().join(format!("seven-same-era-{}", std::process::id()));
+    std::fs::create_dir_all(root.join("t3")).unwrap();
+    std::fs::create_dir_all(root.join("t4")).unwrap();
+    std::fs::write(root.join("t3/player-universe.csv"),
+        "bbr_player_id,display_name,first_season,last_season,aba_only,s1_display_name\na,Same Name,2000,2001,N,\nb,Same Name,2000,2001,N,\n").unwrap();
+    std::fs::write(root.join("t4/tenures.csv"),
+        "bbr_player_id,season,lg,canonical_franchise,membership_source,evidence_class,start_day,end_day,start_anchored,end_anchored\n").unwrap();
+    let app =
+        app_server::app_with_report_data(root, app_server::JevHandle::unconfigured()).unwrap();
+    let (status, html) = request(app, "/chain?from=b").await;
+    assert_eq!(status, StatusCode::OK);
+    assert!(html.contains("<option value=\"a\">Same Name — 2000–2001 · a</option>"));
+    assert!(html.contains("<option value=\"b\" selected>Same Name — 2000–2001 · b</option>"));
+}
 #[tokio::test]
 async fn bounded_queries_do_not_hide_ambiguity_or_expand_an_empty_query() {
     for uri in ["/api/search?limit=0", "/api/search?limit=51"] {

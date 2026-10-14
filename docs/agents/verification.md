@@ -11,6 +11,8 @@ Run `python3 scripts/check.py --profile full` for a local delivery check. The ru
 
 GitHub Actions runs portable and browser jobs separately on pushes and PRs. It installs browser dependencies and obtains the wasm-bindgen CLI version from Cargo.lock. Both jobs upload receipts even when a check fails. CI does not download the raw datasets or invoke paid semantic providers.
 
+The browser matrix runs one journey at a time (`--test-threads=1`). Simultaneous Chromium journeys produced intermittent search, page-load and native evidence-tab timeouts on the local macOS host; the same assertions passed when serialized. This reduces concurrent browser resource use and native-input contention, at the cost of parallel test speed. It does not establish the precise cause of those timeouts. Each test app still runs on a multithreaded server, and portable Rust tests retain their normal parallel execution. See the [adversarial teardown receipts](../reports/adversarial-teardown-2026-10-12/README.md).
+
 ## Receipts and review
 
 Each run writes `manifest.json` with the source commit, working-tree status and tracked-diff hash and untracked-file hashes, expected check list, actual argument vectors, start/end times, exit codes, log hashes and parsed test results. `review-summary.json` omits the full test-name lists and retains counts and log pointers. Supply that compact receipt once as model-review evidence; attach relevant raw excerpts for behavioral claims. Complete logs remain authoritative and accessible. Review the recorded working-tree state when relating a run to a later commit.

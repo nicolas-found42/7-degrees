@@ -110,6 +110,17 @@ pub fn page(
     semantic_status: (bool, &'static str),
     coverage: Option<&str>,
 ) -> Response {
+    page_with_reports(graph, query, semantic_status, coverage, None)
+}
+
+/// Render contextual identity choices when report metadata is available.
+pub(crate) fn page_with_reports(
+    graph: &TeammateGraph,
+    query: ChainQuery,
+    semantic_status: (bool, &'static str),
+    coverage: Option<&str>,
+    reports: Option<&crate::report_data::ReportMetadata>,
+) -> Response {
     let shell = format!(
         "<h1>7 Degrees</h1>{}{}<p><a href=\"/\">← Back to the explorer</a></p>",
         ui::semantic_status_line(semantic_status),
@@ -167,7 +178,8 @@ pub fn page(
                 ui::connect_form(
                     &graph.roster.players,
                     query.from.as_deref(),
-                    query.to.as_deref()
+                    query.to.as_deref(),
+                    reports
                 )
             ),
         );

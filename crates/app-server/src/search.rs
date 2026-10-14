@@ -295,7 +295,8 @@ fn context(player: &SearchPlayer) -> String {
         player.teams.join(", ")
     };
     format!(
-        "<p class=\"player-context\">Seasons: {} · Teams: {}</p>",
+        "<p class=\"player-context\">Player ID: <code>{}</code> · Seasons: {} · Teams: {}</p>",
+        crate::ui::escape(&player.id),
         crate::ui::escape(&era),
         crate::ui::escape(&teams)
     )

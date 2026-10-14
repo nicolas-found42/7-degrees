@@ -176,6 +176,41 @@ async fn incomplete_selection_and_invalid_pages_never_substitute_a_chain() {
 }
 
 #[tokio::test]
+async fn same_name_choices_without_metadata_show_escaped_ids() {
+    use graph_core::{Player, RosterData, TeammateGraph};
+    let graph = TeammateGraph::build(RosterData {
+        players: vec![
+            Player {
+                id: "first<&".into(),
+                name: "Same <name>".into(),
+            },
+            Player {
+                id: "second\"".into(),
+                name: "Same <name>".into(),
+            },
+        ],
+        ..Default::default()
+    });
+    let response = app_server::chain_view::page(
+        &graph,
+        app_server::chain_view::ChainQuery {
+            from: Some("second\"".into()),
+            ..Default::default()
+        },
+        (false, "unconfigured"),
+        None,
+    );
+    assert_eq!(response.status(), StatusCode::OK);
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    let html = String::from_utf8(body.to_vec()).unwrap();
+    assert!(html.contains("Same &lt;name&gt; · first&lt;&amp;</option>"));
+    assert!(html.contains(
+        "<option value=\"second&quot;\" selected>Same &lt;name&gt; · second&quot;</option>"
+    ));
+    assert!(!html.contains("Same <name>"));
+}
+
+#[tokio::test]
 async fn hostile_query_text_is_escaped_and_cannot_become_a_selected_chain() {
     let (status, body) = html(
         app_server::app_with_fixture_data(),
