@@ -1,0 +1,270 @@
+{
+  "schema_version": 1,
+  "profile": "full",
+  "source_commit": "a6382963ad83f0220f6d6cb36f49faa17c657bb3",
+  "working_tree_status": " M crates/app-server/src/chain_view.rs\n M crates/app-server/src/lib.rs\n M crates/app-server/src/search.rs\n M crates/app-server/src/ui.rs\n M crates/app-server/tests/browser_e2e.rs\n M crates/app-server/tests/chain_view_integration.rs\n M crates/app-server/tests/player_search.rs\n?? .jev-browser/\n?? docs/reports/adversarial-teardown-2026-10-11/\n?? docs/reports/adversarial-teardown-2026-10-12/\n",
+  "working_tree_diff_sha256": "ba233189897d7933b7b704211c448a1e7c390de857496d0fcad887aca3288165",
+  "untracked_sha256": {
+    ".jev-browser/artifacts/adversarial-20261012-ambiguous-before.png": "b50d30d6adba149d63845ef15b97adfd1c69c5e71119cf34f6ce782bbe5db7b1",
+    ".jev-browser/artifacts/adversarial-20261012-choices-after.png": "934db513acb62976986c72a713b5f426066132b4a066d40e4ac5de484a526d4c",
+    ".jev-browser/artifacts/adversarial-20261012-direct-phone.png": "e47b07d861d193ccb248a33c6969ffeda9845d57f339bb2b647271d238488ced",
+    ".jev-browser/artifacts/adversarial-direct-phone.png": "e47b07d861d193ccb248a33c6969ffeda9845d57f339bb2b647271d238488ced",
+    "docs/reports/adversarial-teardown-2026-10-11/README.md": "cacf60950288650e4e533dd761e72733244e3fe0c302225a24bb98483ba7e512",
+    "docs/reports/adversarial-teardown-2026-10-12/README.md": "890b533f5f69bbe0182789015d7ca15559c7fdf77af70eaaa2a1b1b6c9b19d6e",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/F01-after.log": "bf0ad2e6fbf53cf4d838b5d1e50401fd518e1846e8245e230e4c6e8a3f37d1cc",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/F01-before.log": "596ef430c0ded4a058980ba8b33c66a5998ed1fd1d95c5aaae373f4e645e8675",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/F02-before.log": "84fce49c1434188edc6dc5eda91e05e45a28fbff2c724a80529962153db2614f",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/baseline-expanded.json": "90b46d5db2a158bca9b1f144cdc1f6d224b9acaa11fbdf93929fcffb1e174587",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/baseline-probes.json": "8294e5a395b2e0881c7151371378457ac8dd13ebf0d2e17f0a2cd6d7fc58e58b",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/final-probes.json": "360a21b30a5e0daefb692575c311b247b81d2d0e616635cc6e377710b351a145",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/identity-browser.log": "a739af7cb507f5b39ed9fb5a72e2bd984c8ebfc2b13d66a61a90482c749e7b13",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/identity-regressions.log": "780a65a22d391bc58a38e442f82853815926abb66c6184359e5de5028f7f0776",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/independent-bfs.json": "fafbe54260bdd5816eb3dc4d073cb03ba76e5b05f533affdf53d33aa3dbbcc80",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-actual-finding-verification.json": "f752e2e9dd106b04783ab54d5b36e346bbc0710fc5c93f8c0da7b30c68c6976d",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-combobox-screen.json": "acce9fa8df123b2ed1939b2359e27f0213f19046518add2ea5e123e3377e96bd",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-finding-classification.json": "2f882ae52d103f12e2e6bff280bfaa315cdabbb2b289ccd77d54fb59dee1396c",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-finding-verification.json": "60324421000bb3235f5c0fd9ff6b56553697140ee30aa0584de963e49a2a4d25",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-first-patch-review.json": "591f57863710bfdf0a6fc17b064b494a2a36b3aaba7c2f960c1fed95e65466d7",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-hypotheses.json": "382b646a85089f247c9570ab5e98d6a8132e86b41c6075c49391207ac7b9f296",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-id-comparison.json": "596eacc426115f55383e142b41064580d6ba2e34d45ed339113873da1db3daf9",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-negative-controls.json": "684780afacc782954a2b689aca4a8bb9136bd9c39cd8179aadb309edac143657",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-plan.json": "5c8c2920b59084e5b3672c09a0825cb024918473273684e5b135d9fbde466bab",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-research-find.json": "1d32363dbb5ea67b81707da20f717da991b00cd171e39d33541bc872c917a536",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-research-screen.json": "bcd874039293236d1db4852e68593d31e41c3b4a468c0963b490368cf265aa0e",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-research2-screen.json": "85e592ff9cbd8ba904cbb8fb60af9056257619e4b355714ec45d54b5761cbbd4",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-selection-decision.json": "4c5e3efbeb2df70b9a002d228e64061c4d6dc3e2881246b9f2994ca7ce273c89",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/probe.py": "e1f799d651312b36a8392ad8d4300cadcdfbd878a5f1dbc47dd07b259649b1ee"
+  },
+  "started_at": "2026-10-13T01:42:30.484769+00:00",
+  "completed": true,
+  "expected_checks": [
+    "rust-workspace",
+    "python-tests",
+    "format",
+    "clippy-host",
+    "derived-snapshot",
+    "historical-audit",
+    "semantic-audit",
+    "wasm-build",
+    "clippy-wasm",
+    "browser-matrix"
+  ],
+  "finished_at": "2026-10-13T01:43:32.301730+00:00",
+  "checks": [
+    {
+      "name": "rust-workspace",
+      "argv": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-13T01:42:30.485026+00:00",
+      "finished_at": "2026-10-13T01:43:02.596653+00:00",
+      "log": "rust-workspace.log",
+      "sha256": "5e947241ef28ba8062865b71d1a9c7a58539abea99502f8bbc5937b3541d2542",
+      "summary": {
+        "rust_result_groups": 30,
+        "rust_totals": {
+          "passed": 129,
+          "failed": 0,
+          "ignored": 10
+        },
+        "python_result": null
+      }
+    },
+    {
+      "name": "python-tests",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_*.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-13T01:43:02.597964+00:00",
+      "finished_at": "2026-10-13T01:43:03.397380+00:00",
+      "log": "python-tests.log",
+      "sha256": "97e9dca72e49a8de7f5398350d9fa72d59b34aa19f5e84fac998e4f60ac7143c",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": {
+          "tests": 108,
+          "result": "OK"
+        }
+      }
+    },
+    {
+      "name": "format",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-13T01:43:03.397680+00:00",
+      "finished_at": "2026-10-13T01:43:03.653256+00:00",
+      "log": "format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      }
+    },
+    {
+      "name": "clippy-host",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-13T01:43:03.653517+00:00",
+      "finished_at": "2026-10-13T01:43:07.642297+00:00",
+      "log": "clippy-host.log",
+      "sha256": "1e9a8cfd603393b077f23b7929f862ada55d02359087b9cc0fdba6c75e399907",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      }
+    },
+    {
+      "name": "derived-snapshot",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "scripts/verify-source-snapshot.py",
+        "--derived-only"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-13T01:43:07.642757+00:00",
+      "finished_at": "2026-10-13T01:43:07.759963+00:00",
+      "log": "derived-snapshot.log",
+      "sha256": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      }
+    },
+    {
+      "name": "historical-audit",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "scripts/check-historical-audit.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-13T01:43:07.760419+00:00",
+      "finished_at": "2026-10-13T01:43:08.732436+00:00",
+      "log": "historical-audit.log",
+      "sha256": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      }
+    },
+    {
+      "name": "semantic-audit",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "scripts/check-semantic-evaluation.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-13T01:43:08.732800+00:00",
+      "finished_at": "2026-10-13T01:43:08.846926+00:00",
+      "log": "semantic-audit.log",
+      "sha256": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      }
+    },
+    {
+      "name": "wasm-build",
+      "argv": [
+        "./scripts/build-canvas.sh"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-13T01:43:08.847187+00:00",
+      "finished_at": "2026-10-13T01:43:09.081980+00:00",
+      "log": "wasm-build.log",
+      "sha256": "b65d97c967cb13bb2fd061b2f5b86011ef366acea387375a92a9808f93395384",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      }
+    },
+    {
+      "name": "clippy-wasm",
+      "argv": [
+        "cargo",
+        "clippy",
+        "-p",
+        "canvas-view",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-13T01:43:09.082215+00:00",
+      "finished_at": "2026-10-13T01:43:09.278937+00:00",
+      "log": "clippy-wasm.log",
+      "sha256": "a41051563a4cb5fc1b1bcdd9aa0ba28ca80f7736d629d90cc138218756e8e3a9",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      }
+    },
+    {
+      "name": "browser-matrix",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "app-server",
+        "--test",
+        "browser_e2e",
+        "--test",
+        "canvas_browser",
+        "--locked",
+        "--",
+        "--ignored",
+        "--nocapture"
+      ],
+      "exit_code": 101,
+      "started_at": "2026-10-13T01:43:09.279293+00:00",
+      "finished_at": "2026-10-13T01:43:32.301146+00:00",
+      "log": "browser-matrix.log",
+      "sha256": "23bab274bfacd4b2202c9d218acffac3858a84be17fc42dea642d2c88aee3178",
+      "summary": {
+        "rust_result_groups": 1,
+        "rust_totals": {
+          "passed": 5,
+          "failed": 1,
+          "ignored": 0
+        },
+        "python_result": null
+      }
+    }
+  ]
+}

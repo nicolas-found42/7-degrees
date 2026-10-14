@@ -67,7 +67,7 @@ python3 -m unittest discover -s scripts -p 'test_*.py'
 cargo fmt --all --check
 cargo clippy --workspace --all-targets -- -D warnings
 cargo clippy -p canvas-view --target wasm32-unknown-unknown -- -D warnings
-cargo test -p app-server --test browser_e2e --test canvas_browser -- --ignored --nocapture
+cargo test -p app-server --test browser_e2e --test canvas_browser -- --ignored --nocapture --test-threads=1
 RUSTFLAGS='--cfg test_capture' cargo test -p app-server --test log_capture -- --nocapture
 cargo run -p app-server --bin semantic-eval -- --validate
 cargo run -p app-server --bin semantic-eval -- --replay

@@ -1,0 +1,41 @@
+   Compiling app-server v0.1.0 (/Users/Nicolas/Documents/github/7-degrees/crates/app-server)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.12s
+     Running tests/browser_e2e.rs (target/debug/deps/browser_e2e-ac78b2c5539a4913)
+
+running 6 tests
+Pinned real slice: 7 players, 79 exact committed tenure rows; mapping retains original record references and snapshot SHA-256.
+Chromium "153.0.8010.12"
+
+thread 'home_lookup_and_connections_are_accessible_in_the_running_fixture_app' (9705108) panicked at crates/app-server/tests/support/browser.rs:42:9:
+assertion `left == right` failed: {"name":"Search players","op":"click","role":"button"}: {"error":"TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Search players', exact: true })\u001b[22m\n","ok":false}
+  left: Bool(false)
+ right: true
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'alternatives_filters_uncertainty_and_provider_failure_are_visible_user_outcomes' (9705106) panicked at crates/app-server/tests/support/browser.rs:42:9:
+assertion `left == right` failed: {"op":"response-contains","text":"browser-server-only-canary-17"}: {"error":"TimeoutError: page.waitForLoadState: Timeout 30000ms exceeded.","ok":false}
+  left: Bool(false)
+ right: true
+
+thread 'real_lookup_disambiguation_and_selected_edge_provenance_remain_honest' (9705110) panicked at crates/app-server/tests/support/browser.rs:42:9:
+assertion `left == right` failed: {"op":"open-link-text","path":"/Users/Nicolas/Documents/github/7-degrees/crates/app-server/../../target/browser-e2e/real-evidence-page.png","selector":"#selected-chain .links a"}: {"error":"Error: TimeoutError: page.waitForLoadState: Timeout 30000ms exceeded.; clicked=true; link={\"href\":\"http://127.0.0.1:50712/edge?from=acyqu01&to=bogutan01\",\"target\":\"_blank\",\"html\":\"<a href=\\\"/edge?from=acyqu01&amp;to=bogutan01\\\" target=\\\"_blank\\\" rel=\\\"noopener\\\">Open overlap evidence</a>\"}; pages=[\"http://127.0.0.1:50712/chain?from=acyqu01&to=bogutan01\",\"http://127.0.0.1:50712/edge?from=acyqu01&to=bogutan01\"]; screenshot=/Users/Nicolas/Documents/github/7-degrees/target/browser-e2e/tab-failure.png","ok":false}
+  left: Bool(false)
+ right: true
+Whole network: 5106 players / 101395 connections ready in 1237 ms
+test home_lookup_and_connections_are_accessible_in_the_running_fixture_app ... FAILED
+test alternatives_filters_uncertainty_and_provider_failure_are_visible_user_outcomes ... FAILED
+test real_lookup_disambiguation_and_selected_edge_provenance_remain_honest ... FAILED
+test maravich_mcgrady_visualizer_links_profiles_and_evidence_on_desktop_and_mobile ... ok
+test historical_chain_and_appearance_evidence_render_without_fabricated_dates ... ok
+test whole_network_renders_all_connections_and_keeps_them_when_searching_and_zooming ... ok
+
+failures:
+
+failures:
+    alternatives_filters_uncertainty_and_provider_failure_are_visible_user_outcomes
+    home_lookup_and_connections_are_accessible_in_the_running_fixture_app
+    real_lookup_disambiguation_and_selected_edge_provenance_remain_honest
+
+test result: FAILED. 3 passed; 3 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.03s
+
+error: test failed, to rerun pass `-p app-server --test browser_e2e`

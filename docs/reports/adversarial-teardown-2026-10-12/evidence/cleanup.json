@@ -1,0 +1,14 @@
+[
+  {
+    "port": 3312,
+    "pid": 77009,
+    "command": "target/debug/app-server",
+    "action": "SIGTERM owned test server"
+  },
+  {
+    "port": 3313,
+    "pid": 78736,
+    "command": "target/debug/app-server",
+    "action": "SIGTERM owned test server"
+  }
+]

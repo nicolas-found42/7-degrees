@@ -1,0 +1,19 @@
+{
+  "env_names": [
+    "HOME",
+    "NBA_CANVAS_ASSET_DIR",
+    "NBA_PORT",
+    "PATH"
+  ],
+  "home_initially_empty": true,
+  "semantic": {
+    "available": false,
+    "reason": "unconfigured"
+  },
+  "players": 5106,
+  "total_edges": 101395,
+  "new_dependencies": [],
+  "scope": "Existing built executable and committed reports; not a from-scratch Rust installation.",
+  "server_log": "7-degrees listening on http://127.0.0.1:3314\n",
+  "shutdown_returncode": -15
+}

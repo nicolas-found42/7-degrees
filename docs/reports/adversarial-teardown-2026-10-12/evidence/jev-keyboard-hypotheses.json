@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"tool\": \"jev_noul\",\n  \"model\": \"typesafe/jev-1.13-20260917\",\n  \"provider\": \"openrouter\",\n  \"status\": \"ok\",\n  \"results\": [\n    {\n      \"id\": \"proposition0\",\n      \"proposition\": \"Reading a native select's committed value before closing its popup can produce a harness failure even when keyboard selection works.\",\n      \"probability\": 0.83,\n      \"label\": \"uncertain\",\n      \"auto\": false\n    },\n    {\n      \"id\": \"proposition1\",\n      \"proposition\": \"The failed test proves the app's native select lacks keyboard accessibility.\",\n      \"probability\": 0.07,\n      \"label\": \"unlikely\",\n      \"auto\": true\n    }\n  ],\n  \"thresholds\": {\n    \"auto_accept\": 0.85\n  },\n  \"usage\": {\n    \"input_tokens\": 589,\n    \"output_tokens\": 46\n  }\n}"
+    }
+  ]
+}

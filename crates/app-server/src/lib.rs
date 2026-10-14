@@ -540,6 +540,7 @@ async fn home(State(state): State<AppState>) -> Response {
         &state.graph,
         state.jev.status(),
         state.reports.as_ref().map(|r| r.coverage.warning.as_str()),
+        state.reports.as_deref(),
     )
 }
 
@@ -549,11 +550,12 @@ async fn chain_page(
     State(state): State<AppState>,
     Query(query): Query<chain_view::ChainQuery>,
 ) -> Response {
-    chain_view::page(
+    chain_view::page_with_reports(
         &state.graph,
         query,
         state.jev.status(),
         state.reports.as_ref().map(|r| r.coverage.warning.as_str()),
+        state.reports.as_deref(),
     )
 }
 

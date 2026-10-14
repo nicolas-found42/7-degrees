@@ -1,0 +1,207 @@
+{
+  "nodes": 5106,
+  "edges": 101395,
+  "self_edges": 0,
+  "duplicate_edges": 0,
+  "isolates": 41,
+  "independent_bfs_cases": [
+    {
+      "from": "acyqu01",
+      "to": "bogutan01",
+      "bfs_degree": 1,
+      "api_degree": 1,
+      "result": "connected"
+    },
+    {
+      "from": "maravpe01",
+      "to": "abdulka01",
+      "bfs_degree": 2,
+      "api_degree": 2,
+      "result": "connected"
+    },
+    {
+      "from": "brownde01",
+      "to": "brownde03",
+      "bfs_degree": 3,
+      "api_degree": 3,
+      "result": "connected"
+    },
+    {
+      "from": "acyqu01",
+      "to": "allenti01",
+      "bfs_degree": null,
+      "api_degree": null,
+      "result": "disconnected"
+    },
+    {
+      "from": "nnajize01",
+      "to": "allenla01",
+      "bfs_degree": 2,
+      "api_degree": 2,
+      "result": "connected"
+    },
+    {
+      "from": "bolomjo01",
+      "to": "achiupr01",
+      "bfs_degree": 3,
+      "api_degree": 3,
+      "result": "connected"
+    },
+    {
+      "from": "bingda01",
+      "to": "tysonja01",
+      "bfs_degree": 5,
+      "api_degree": 5,
+      "result": "connected"
+    },
+    {
+      "from": "stolkar01",
+      "to": "brownha01",
+      "bfs_degree": 1,
+      "api_degree": 1,
+      "result": "connected"
+    },
+    {
+      "from": "hardati01",
+      "to": "murphca01",
+      "bfs_degree": 2,
+      "api_degree": 2,
+      "result": "connected"
+    },
+    {
+      "from": "bolma01",
+      "to": "fishma01",
+      "bfs_degree": 2,
+      "api_degree": 2,
+      "result": "connected"
+    },
+    {
+      "from": "hassetr01",
+      "to": "trappjo01",
+      "bfs_degree": 4,
+      "api_degree": 4,
+      "result": "connected"
+    },
+    {
+      "from": "turneel01",
+      "to": "haywala01",
+      "bfs_degree": 4,
+      "api_degree": 4,
+      "result": "connected"
+    },
+    {
+      "from": "budkowa01",
+      "to": "williwa01",
+      "bfs_degree": 2,
+      "api_degree": 2,
+      "result": "connected"
+    },
+    {
+      "from": "thomate01",
+      "to": "lamban01",
+      "bfs_degree": 6,
+      "api_degree": 6,
+      "result": "connected"
+    },
+    {
+      "from": "phelpmi01",
+      "to": "crawfjo02",
+      "bfs_degree": 3,
+      "api_degree": 3,
+      "result": "connected"
+    },
+    {
+      "from": "tayloje01",
+      "to": "davismo01",
+      "bfs_degree": 3,
+      "api_degree": 3,
+      "result": "connected"
+    },
+    {
+      "from": "camarto01",
+      "to": "malonmo01",
+      "bfs_degree": 4,
+      "api_degree": 4,
+      "result": "connected"
+    },
+    {
+      "from": "johnsde02",
+      "to": "wileyge01",
+      "bfs_degree": 5,
+      "api_degree": 5,
+      "result": "connected"
+    },
+    {
+      "from": "wallare01",
+      "to": "queende01",
+      "bfs_degree": 8,
+      "api_degree": 8,
+      "result": "connected"
+    },
+    {
+      "from": "youngmi01",
+      "to": "bridgju01",
+      "bfs_degree": 2,
+      "api_degree": 2,
+      "result": "connected"
+    },
+    {
+      "from": "jordade01",
+      "to": "cheekma01",
+      "bfs_degree": 3,
+      "api_degree": 3,
+      "result": "connected"
+    },
+    {
+      "from": "cartede02",
+      "to": "motiedo01",
+      "bfs_degree": 3,
+      "api_degree": 3,
+      "result": "connected"
+    },
+    {
+      "from": "reathdu01",
+      "to": "thompla01",
+      "bfs_degree": 4,
+      "api_degree": 4,
+      "result": "connected"
+    },
+    {
+      "from": "lumpkph01",
+      "to": "brownto01",
+      "bfs_degree": 3,
+      "api_degree": 3,
+      "result": "connected"
+    },
+    {
+      "from": "josepco01",
+      "to": "wohlda01",
+      "bfs_degree": 4,
+      "api_degree": 4,
+      "result": "connected"
+    },
+    {
+      "from": "baumjo01",
+      "to": "aleksch01",
+      "bfs_degree": 3,
+      "api_degree": 3,
+      "result": "connected"
+    },
+    {
+      "from": "josepco01",
+      "to": "davisji01",
+      "bfs_degree": 5,
+      "api_degree": 5,
+      "result": "connected"
+    },
+    {
+      "from": "nichode01",
+      "to": "lawsoty01",
+      "bfs_degree": 2,
+      "api_degree": 2,
+      "result": "connected"
+    }
+  ],
+  "elapsed_ms": 1789.88,
+  "scope": "Exact graph distances in API network payload; does not independently establish historical roster truth."
+}

@@ -1,0 +1,19 @@
+   Compiling app-server v0.1.0 (/Users/Nicolas/Documents/github/7-degrees/crates/app-server)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.08s
+     Running tests/player_search.rs (target/debug/deps/player_search-0b36dd24ed6b7b4c)
+
+running 1 test
+
+thread 'connection_choices_distinguish_same_name_people_and_preserve_selected_identity' (9657630) panicked at crates/app-server/tests/player_search.rs:127:9:
+assertion failed: html.contains("<option value=\"smithjo01\">Joe Smith — 1996–2011 · smithjo01</option>")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test connection_choices_distinguish_same_name_people_and_preserve_selected_identity ... FAILED
+
+failures:
+
+failures:
+    connection_choices_distinguish_same_name_people_and_preserve_selected_identity
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p app-server --test player_search`

@@ -1,0 +1,14 @@
+[
+  {
+    "case": "invalid-port",
+    "exit_code": 101,
+    "output": "\nthread 'main' (9690613) panicked at crates/app-server/src/lib.rs:591:10:\nvalid NBA_PORT: ParseIntError { kind: InvalidDigit }\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n",
+    "expected": "Fail startup with contextual diagnostic; no listening process"
+  },
+  {
+    "case": "missing-reports",
+    "exit_code": 101,
+    "output": "\nthread 'main' (9691032) panicked at crates/app-server/src/lib.rs:586:14:\nload canonical T3/T4 report data: \"No such file or directory (os error 2)\"\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n",
+    "expected": "Fail startup with contextual diagnostic; no listening process"
+  }
+]

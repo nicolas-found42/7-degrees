@@ -1,0 +1,22 @@
+   Compiling app-server v0.1.0 (/Users/Nicolas/Documents/github/7-degrees/crates/app-server)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.26s
+     Running tests/browser_e2e.rs (target/debug/deps/browser_e2e-ac78b2c5539a4913)
+
+running 1 test
+Pinned real slice: 7 players, 79 exact committed tenure rows; mapping retains original record references and snapshot SHA-256.
+
+thread 'real_lookup_disambiguation_and_selected_edge_provenance_remain_honest' (9670563) panicked at crates/app-server/tests/browser_e2e.rs:755:5:
+assertion `left == right` failed
+  left: "Dee Brown — 1991–2002 · brownde01"
+ right: "Dee Brown — 2007–2009 · brownde03"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test real_lookup_disambiguation_and_selected_edge_provenance_remain_honest ... FAILED
+
+failures:
+
+failures:
+    real_lookup_disambiguation_and_selected_edge_provenance_remain_honest
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 5 filtered out; finished in 7.95s
+
+error: test failed, to rerun pass `-p app-server --test browser_e2e`

@@ -1,0 +1,174 @@
+[
+  {
+    "command": {
+      "op": "launch"
+    },
+    "result": {
+      "ok": true,
+      "result": "153.0.8010.12"
+    }
+  },
+  {
+    "command": {
+      "op": "goto",
+      "url": "http://127.0.0.1:3312/chain?from=brownde03"
+    },
+    "result": {
+      "ok": true,
+      "result": "http://127.0.0.1:3312/chain?from=brownde03"
+    }
+  },
+  {
+    "command": {
+      "op": "select",
+      "selector": "#to",
+      "value": "brownde01"
+    },
+    "result": {
+      "ok": true,
+      "result": true
+    }
+  },
+  {
+    "command": {
+      "op": "focus",
+      "selector": "#to"
+    },
+    "result": {
+      "ok": true,
+      "result": true
+    }
+  },
+  {
+    "command": {
+      "op": "key",
+      "key": "ArrowDown"
+    },
+    "result": {
+      "ok": true,
+      "result": true
+    }
+  },
+  {
+    "command": {
+      "op": "text",
+      "selector": "#to option:checked"
+    },
+    "result": {
+      "ok": true,
+      "result": "Dee Brown"
+    }
+  },
+  {
+    "command": {
+      "op": "goto",
+      "url": "http://127.0.0.1:3313/chain?from=brownde03"
+    },
+    "result": {
+      "ok": true,
+      "result": "http://127.0.0.1:3313/chain?from=brownde03"
+    }
+  },
+  {
+    "command": {
+      "op": "select",
+      "selector": "#to",
+      "value": "brownde01"
+    },
+    "result": {
+      "ok": true,
+      "result": true
+    }
+  },
+  {
+    "command": {
+      "op": "focus",
+      "selector": "#to"
+    },
+    "result": {
+      "ok": true,
+      "result": true
+    }
+  },
+  {
+    "command": {
+      "op": "key",
+      "key": "ArrowDown"
+    },
+    "result": {
+      "ok": true,
+      "result": true
+    }
+  },
+  {
+    "command": {
+      "op": "text",
+      "selector": "#to option:checked"
+    },
+    "result": {
+      "ok": true,
+      "result": "Dee Brown \u2014 1991\u20132002 \u00b7 brownde01"
+    }
+  },
+  {
+    "command": {
+      "op": "select",
+      "selector": "#to",
+      "value": "brownde03"
+    },
+    "result": {
+      "ok": true,
+      "result": true
+    }
+  },
+  {
+    "command": {
+      "op": "focus",
+      "selector": "#to"
+    },
+    "result": {
+      "ok": true,
+      "result": true
+    }
+  },
+  {
+    "command": {
+      "op": "key",
+      "key": "Tab"
+    },
+    "result": {
+      "ok": true,
+      "result": true
+    }
+  },
+  {
+    "command": {
+      "op": "key",
+      "key": "Enter"
+    },
+    "result": {
+      "ok": true,
+      "result": true
+    }
+  },
+  {
+    "command": {
+      "op": "attribute",
+      "selector": "#selected-chain",
+      "name": "data-path"
+    },
+    "result": {
+      "ok": true,
+      "result": "[\"brownde03\"]"
+    }
+  },
+  {
+    "command": {
+      "op": "close"
+    },
+    "result": {
+      "ok": true,
+      "result": true
+    }
+  }
+]

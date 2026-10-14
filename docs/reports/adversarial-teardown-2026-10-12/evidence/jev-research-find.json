@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"tool\": \"jev_find\",\n  \"model\": \"typesafe/jev-1.13-20260917\",\n  \"provider\": \"openrouter\",\n  \"query\": \"Primary evidence describing extra behavior and accessibility obligations if we implement a custom editable player selector instead of improving native option labels.\",\n  \"exists\": 0.9,\n  \"exists_verdict\": \"answered\",\n  \"top\": [\n    {\n      \"id\": \"w3c_combobox\",\n      \"probability\": 1,\n      \"text\": \"W3C APG Combobox pattern: editable and select-only variants; Down/Up Arrow, Escape, Enter, Tab interactions; expanded, controls, activedescendant, autocomplete roles and states.\"\n    },\n    {\n      \"id\": \"w3c_labels\",\n      \"probability\": 0,\n      \"text\": \"W3C Labeling Controls: visible labels identify purpose of form controls; for attribute must exactly match control id.\"\n    }\n  ],\n  \"usage\": {\n    \"input_tokens\": 620,\n    \"output_tokens\": 77\n  }\n}"
+    }
+  ]
+}

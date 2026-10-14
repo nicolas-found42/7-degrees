@@ -1,0 +1,358 @@
+{
+  "schema_version": 1,
+  "profile": "full",
+  "source_commit": "a6382963ad83f0220f6d6cb36f49faa17c657bb3",
+  "working_tree_status": " M README.md\n M crates/app-server/src/chain_view.rs\n M crates/app-server/src/lib.rs\n M crates/app-server/src/search.rs\n M crates/app-server/src/ui.rs\n M crates/app-server/tests/browser_e2e.rs\n M crates/app-server/tests/chain_view_integration.rs\n M crates/app-server/tests/player_search.rs\n M docs/agents/verification.md\n M scripts/check.py\n?? .jev-browser/\n?? docs/reports/adversarial-teardown-2026-10-11/\n?? docs/reports/adversarial-teardown-2026-10-12/\n",
+  "working_tree_diff_sha256": "129a0d60291959fd9a9b99e37926f144b136794fb43309a34297ef18307c159b",
+  "untracked_sha256": {
+    ".jev-browser/artifacts/adversarial-20261012-ambiguous-before.png": "b50d30d6adba149d63845ef15b97adfd1c69c5e71119cf34f6ce782bbe5db7b1",
+    ".jev-browser/artifacts/adversarial-20261012-choices-after.png": "934db513acb62976986c72a713b5f426066132b4a066d40e4ac5de484a526d4c",
+    ".jev-browser/artifacts/adversarial-20261012-direct-phone.png": "e47b07d861d193ccb248a33c6969ffeda9845d57f339bb2b647271d238488ced",
+    ".jev-browser/artifacts/adversarial-20261012-native-popup.png": "619dc8a4dda6c5b8e18f6b8ced2b9015bc544ad1ab6dd0a7b30b3ecd808aeff7",
+    ".jev-browser/artifacts/adversarial-direct-phone.png": "e47b07d861d193ccb248a33c6969ffeda9845d57f339bb2b647271d238488ced",
+    "docs/reports/adversarial-teardown-2026-10-11/README.md": "cacf60950288650e4e533dd761e72733244e3fe0c302225a24bb98483ba7e512",
+    "docs/reports/adversarial-teardown-2026-10-12/README.md": "66fa3896678fcc0ea4d27aa3e8924e0571f5117a969cea00ac4a5aee18c61340",
+    "docs/reports/adversarial-teardown-2026-10-12/artifact-hashes.json": "62f584d1531282b886523078d580506aba08ef1e0f0d6717a310ff853f10888d",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/browser-matrix.log": "182fac4b83bf1c601ed534bd3bffbc05bc42030b1a494dd92f51644f9ae40e24",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/clippy-host.log": "54d32f1312e9ec321c58af432997bfe3bae5b14322fc06e68fd35a1f2f0e6519",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/clippy-wasm.log": "732186322402325172940531d8d6d7cfac85dc902585b2bef6715ad6839dacfd",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/derived-snapshot.log": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/format.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/historical-audit.log": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/manifest.json": "97bc693fc1bcb66fa2b1066ea0b5f115ee23995bfe33c6619386d68c5241a571",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/python-tests.log": "f9a4b810b9c8b280aa2d74cae7fcb2dd24342d61d87230716df727d26e8fbc81",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/review-summary.json": "81dd8b0b6493ff3d112960cae1464f64636da273339e5ac269641e13b5092e1d",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/rust-workspace.log": "dacc65e81484cc234325e764546b5197d0d4e1ecc9c232d8bc30276baf187809",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/semantic-audit.log": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0",
+    "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/wasm-build.log": "6b1c8cbe0bd9cb3b12baa322a9182419af04da4050d3affc7c9798b1b46e30b5",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/F01-after.log": "bf0ad2e6fbf53cf4d838b5d1e50401fd518e1846e8245e230e4c6e8a3f37d1cc",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/F01-before.log": "596ef430c0ded4a058980ba8b33c66a5998ed1fd1d95c5aaae373f4e645e8675",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/F02-before.log": "84fce49c1434188edc6dc5eda91e05e45a28fbff2c724a80529962153db2614f",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/baseline-expanded.json": "90b46d5db2a158bca9b1f144cdc1f6d224b9acaa11fbdf93929fcffb1e174587",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/baseline-probes.json": "8294e5a395b2e0881c7151371378457ac8dd13ebf0d2e17f0a2cd6d7fc58e58b",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/browser-journey.md": "79ae5091029a7820ed1f4bbdbaae7acdbeedc4497b90c981b80e8d62142aa33f",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/choices-after-phone.png": "934db513acb62976986c72a713b5f426066132b4a066d40e4ac5de484a526d4c",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/choices-before-phone.png": "b50d30d6adba149d63845ef15b97adfd1c69c5e71119cf34f6ce782bbe5db7b1",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/cleanup.json": "5b38f8fd58befa7a74d498d6c7e6a8d8366a614aacbb79a13f37544991090845",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/comparison.json": "97034eb45f47a4d8dc2f1a77a27e51d1811906bc523c92dc65f654fa6e1edb0a",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/concurrent-build-failure.log": "2d4671cf5bb6ddfbb31678a25471deac5c51da8fe00bc4a9dc6eab31c3889d48",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/deterministic-claim-audit.json": "81cc2997222655f43bce307eb1673533d3bc84d6d27153e1123e54f889da59f8",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/diff-jgrep.json": "9e182eba4ba4cd245f9c1ff7979450a9d6727777dd0003b97b6fd7a482badf77",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/doc-recheck.log": "d383deea9364f9fa09e3fe40890765b97f0984fc5c91472c134fe9876138ffe0",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/duplicate-name-regression-phone.png": "b34f160ea7a5b514f8b9dd6b9866497311bd9751a4e05facc5e02bee177cabda",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/final-probes.json": "360a21b30a5e0daefb692575c311b247b81d2d0e616635cc6e377710b351a145",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/first-review.diff": "f8a1bd260fe31607e773bb0da237816f7bbede5c5c85ae241e98850d7b4be8c0",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/identity-browser-final.log": "2e7c018167b7498cb225141999ca009300945a159fa17372fc6a30d9c2517db3",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/identity-browser.log": "a739af7cb507f5b39ed9fb5a72e2bd984c8ebfc2b13d66a61a90482c749e7b13",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/identity-regressions.log": "780a65a22d391bc58a38e442f82853815926abb66c6184359e5de5028f7f0776",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/independent-bfs.json": "fafbe54260bdd5816eb3dc4d073cb03ba76e5b05f533affdf53d33aa3dbbcc80",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/isolated-start.json": "0c3f19b35d62093442287068e0edef57ec7c05bb644cccefb2b1dfd815f70755",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-actual-finding-verification.json": "f752e2e9dd106b04783ab54d5b36e346bbc0710fc5c93f8c0da7b30c68c6976d",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-bounded-gate-input.json": "d7dc3ad30d723cc8225522fdfe62c9f6abf620db58beaab277c24a67b2941d79",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-bounded-gate.json": "fff802d28f3479cd5102363f2a18b59cc3eff5c2dd811fc97a845770da005c44",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-build-hypotheses.json": "5deb7dcfca49284650a2ea569e2ddb1f926489da3a0c6f8ce559e78ed2be7640",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-combobox-screen.json": "acce9fa8df123b2ed1939b2359e27f0213f19046518add2ea5e123e3377e96bd",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-final-gate-input.json": "244cc73e8846d9ea3b253857cf11e21c375c61b04fceab4a6c55513158543d8c",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-final-gate.json": "9603f861eaec7d210cd4214f0710714b906466626069607e96cde3c983ebb501",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-final-report-verification.json": "7d52c465acde5d7e579b05e4327bf81833a5574e668ea313d581342cf0f453e5",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-finding-classification.json": "2f882ae52d103f12e2e6bff280bfaa315cdabbb2b289ccd77d54fb59dee1396c",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-finding-independence.json": "20f6528c7bba76f361ce66c408deaf9bec8ffae6810a1899c5171c44033da418",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-finding-verification.json": "60324421000bb3235f5c0fd9ff6b56553697140ee30aa0584de963e49a2a4d25",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-first-patch-review.json": "591f57863710bfdf0a6fc17b064b494a2a36b3aaba7c2f960c1fed95e65466d7",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-hypotheses.json": "382b646a85089f247c9570ab5e98d6a8132e86b41c6075c49391207ac7b9f296",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-id-comparison.json": "596eacc426115f55383e142b41064580d6ba2e34d45ed339113873da1db3daf9",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-impact.json": "ffef3a27bad34e77fdc664e8f8deeec68c713d175f6e3016df5f3dfbf023258b",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-keyboard-hypotheses.json": "ec218668e183c372d279eb3f9d489141d7e9a6031ebb539e396f1cbfe5deba16",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-negative-controls.json": "684780afacc782954a2b689aca4a8bb9136bd9c39cd8179aadb309edac143657",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-observation-audit.json": "cf8a11e8dde38b757342819ab372fa2ef733559a4b083931a840309f311c7397",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-plan.json": "5c8c2920b59084e5b3672c09a0825cb024918473273684e5b135d9fbde466bab",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-probe-review.json": "f4b7dc75c3c049b03ec0b4693d6c557f7e75b432de3e9f70dbc4923e09ea5c02",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-reference-extraction.json": "ada9a4661d808ebff6d0a28919f8f0c904cedd0e711a2c0a1836ff127cfe5b6d",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-research-find.json": "1d32363dbb5ea67b81707da20f717da991b00cd171e39d33541bc872c917a536",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-research-screen.json": "bcd874039293236d1db4852e68593d31e41c3b4a468c0963b490368cf265aa0e",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-research2-screen.json": "85e592ff9cbd8ba904cbb8fb60af9056257619e4b355714ec45d54b5761cbbd4",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-runner-decision.json": "e778478bcdef561e79ae45b4470ad772ce1db1202515eba7cc25bd76dcaf1f7a",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-selection-decision.json": "4c5e3efbeb2df70b9a002d228e64061c4d6dc3e2881246b9f2994ca7ce273c89",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/jev-timeout-probes.json": "f7a28d2b39fb6201dcadabe84e012dc70c50f7508853b10a6f9fe7192dc4ecd1",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/judgment-resolutions.md": "d7dab117a4b3b6a22b4804dc941ee1292b93dfda73cc8a1570187953ec1a0c5f",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/log-capture-final.log": "b86cebbc94a7bbf6213c4de9d00fe01976d05bbf085824aa4ddbd78ddc8f4b0c",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/native-keyboard-control.json": "3359ac2e56051333b7834708793ba6aab5b792313fa601694b5ae0ceb8359664",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/native-keyboard-probe-two-down.json": "3b005f233d4aef950ff97390c0a03eef95ad64f212d70ae02afebbef82411429",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/native-keyboard-probe.json": "633b82d259710b86ed16c23faf991ba8002ce11e90c3623aaea688f20baba321",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/parallel-browser-checks.json": "0b53b0271e659b426b5a39b62b91a4ed2e4f571609f6668369418049250727c6",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/parallel-browser-timeouts.log": "43b1e92e1a46acb83a0f2c68df180eda9c67bcbb6d9780559ac33f332b80b3a6",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/path-search-jgrep.json": "8742ffe61fbd9c27d4405cea6539e4cf1b9ac635b46543e1741327a6e47ea158",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/prekeyboard-browser-failure.log": "23bab274bfacd4b2202c9d218acffac3858a84be17fc42dea642d2c88aee3178",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/prekeyboard-checks.json": "5d65d7f6e048d8f5581822c955ea87a27bcc93a1e7c26c488675e5f7a10a25f4",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/probe.py": "e1f799d651312b36a8392ad8d4300cadcdfbd878a5f1dbc47dd07b259649b1ee",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/startup-negative.json": "e0c7a420b53c384d4ef0eb80040ae1bf530967f912b04e1a1d4a52e58d29502d",
+    "docs/reports/adversarial-teardown-2026-10-12/evidence/stronger-reviews.md": "5b4f8adbb5b9cc98501292ba2a7f056b4104ba8ea9ae2810fa595214de5efeba",
+    "docs/reports/adversarial-teardown-2026-10-12/final-checks/browser-matrix.log": "2956f8ed57cb6eab9d650f3a1c56f41e350425ccc112d7125df9521108fb36b0",
+    "docs/reports/adversarial-teardown-2026-10-12/final-checks/clippy-host.log": "d7dae192715495fa89ccbe279af3efb9792c1dae1768228e369035e68a1df673",
+    "docs/reports/adversarial-teardown-2026-10-12/final-checks/clippy-wasm.log": "a5f4c585ee974ca44916ac30a98bbc189e067a7e0a6bc6d2e8d6bc525be724af",
+    "docs/reports/adversarial-teardown-2026-10-12/final-checks/derived-snapshot.log": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84",
+    "docs/reports/adversarial-teardown-2026-10-12/final-checks/format.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/reports/adversarial-teardown-2026-10-12/final-checks/historical-audit.log": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232",
+    "docs/reports/adversarial-teardown-2026-10-12/final-checks/manifest.json": "c465d4bb2a7141d789df6fbd55d23d06ce8b2c0b4bbf86dc40a180ce384a1802",
+    "docs/reports/adversarial-teardown-2026-10-12/final-checks/python-tests.log": "d82f22917e2ac14ea1089371453bbd987a91aedb7487b55da9613a12bd0e8da1",
+    "docs/reports/adversarial-teardown-2026-10-12/final-checks/review-summary.json": "eb37523f8dd27a60a1bf61ed6eb2407c52fbc61008aa617ec2c4ea6d78f819b9",
+    "docs/reports/adversarial-teardown-2026-10-12/final-checks/rust-workspace.log": "e758ffef69a4492516984785f301f4bbfc5d80fe71c239e6d0ff0aaa689df52c",
+    "docs/reports/adversarial-teardown-2026-10-12/final-checks/semantic-audit.log": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0",
+    "docs/reports/adversarial-teardown-2026-10-12/final-checks/wasm-build.log": "765f1396d07f30f3a451cd3f9d9cad4e83c92c8e0aecf955ffc09061a6cf1e02",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/browser-matrix.log": "4921b97bf0880afb91fdec1327f71f2c010dff56c7c6229a649037273e9e93b2",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/clippy-host.log": "299f16a2c523be18fef769975d2df00e0505521db047540feea3a74b94666887",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/clippy-wasm.log": "59639588a6f1826f129cbcd121edc07279dab94786f5fa5bde6b3439b2e845cc",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/derived-snapshot.log": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/format.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/historical-audit.log": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/manifest.json": "237ce95ec898f763a4231f42fedd14ca6b373c22e56276d7a51f7b0181117958",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/python-tests.log": "9f32ee3e627030383f96b7042c05a3d24d945845d9420a0e48e140dd4438f0c4",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/review-summary.json": "f143a96e4e0fc9d438e04c765fb478655fc749c5a62abe4d2b81826be76d75d2",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/rust-workspace.log": "2179caa3ca37a1356fede517f7f9095d7a083b9ce71f6d6ea0f7f24b86af8f16",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/semantic-audit.log": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0",
+    "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/wasm-build.log": "3997fc6790b8063b86c119e91f87ac7395ac6cf26135da637dcb229006bc32dc"
+  },
+  "started_at": "2026-10-14T00:51:02.937238+00:00",
+  "completed": true,
+  "expected_checks": [
+    "rust-workspace",
+    "python-tests",
+    "format",
+    "clippy-host",
+    "derived-snapshot",
+    "historical-audit",
+    "semantic-audit",
+    "wasm-build",
+    "clippy-wasm",
+    "browser-matrix"
+  ],
+  "finished_at": "2026-10-14T00:52:14.358975+00:00",
+  "checks": [
+    {
+      "name": "rust-workspace",
+      "argv": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T00:51:02.937398+00:00",
+      "finished_at": "2026-10-14T00:51:19.652988+00:00",
+      "log": "rust-workspace.log",
+      "summary": {
+        "rust_result_groups": 30,
+        "rust_totals": {
+          "passed": 129,
+          "failed": 0,
+          "ignored": 10
+        },
+        "python_result": null
+      },
+      "raw_sha256": "774f8c513ce456e525c48c52f14444197dd12b6a4ee99412b87c7f562ebed9a5",
+      "published_sha256": "58c0c7eb1e31204b500ee48bf8ab10cb9603835c15382dc5d350026f9b9726f6"
+    },
+    {
+      "name": "python-tests",
+      "argv": [
+        "/opt/homebrew/opt/python@3.15/bin/python3.15",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_*.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T00:51:19.653518+00:00",
+      "finished_at": "2026-10-14T00:51:20.246444+00:00",
+      "log": "python-tests.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": {
+          "tests": 108,
+          "result": "OK"
+        }
+      },
+      "raw_sha256": "2251cdefea02f5514919ea99081c9876ca962656cf72d93de06a8b097e0a1732",
+      "published_sha256": "e55483992577e9156199e0e3862dc1e9bd3e7ce850a223081623bfc647f34c7c"
+    },
+    {
+      "name": "format",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T00:51:20.246648+00:00",
+      "finished_at": "2026-10-14T00:51:20.399691+00:00",
+      "log": "format.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clippy-host",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T00:51:20.399845+00:00",
+      "finished_at": "2026-10-14T00:51:20.581680+00:00",
+      "log": "clippy-host.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "a41051563a4cb5fc1b1bcdd9aa0ba28ca80f7736d629d90cc138218756e8e3a9",
+      "published_sha256": "a41051563a4cb5fc1b1bcdd9aa0ba28ca80f7736d629d90cc138218756e8e3a9"
+    },
+    {
+      "name": "derived-snapshot",
+      "argv": [
+        "/opt/homebrew/opt/python@3.15/bin/python3.15",
+        "scripts/verify-source-snapshot.py",
+        "--derived-only"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T00:51:20.581840+00:00",
+      "finished_at": "2026-10-14T00:51:20.624795+00:00",
+      "log": "derived-snapshot.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84",
+      "published_sha256": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84"
+    },
+    {
+      "name": "historical-audit",
+      "argv": [
+        "/opt/homebrew/opt/python@3.15/bin/python3.15",
+        "scripts/check-historical-audit.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T00:51:20.624952+00:00",
+      "finished_at": "2026-10-14T00:51:21.037455+00:00",
+      "log": "historical-audit.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232",
+      "published_sha256": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232"
+    },
+    {
+      "name": "semantic-audit",
+      "argv": [
+        "/opt/homebrew/opt/python@3.15/bin/python3.15",
+        "scripts/check-semantic-evaluation.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T00:51:21.037735+00:00",
+      "finished_at": "2026-10-14T00:51:21.096496+00:00",
+      "log": "semantic-audit.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0",
+      "published_sha256": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0"
+    },
+    {
+      "name": "wasm-build",
+      "argv": [
+        "./scripts/build-canvas.sh"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T00:51:21.096657+00:00",
+      "finished_at": "2026-10-14T00:51:21.243917+00:00",
+      "log": "wasm-build.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "3997fc6790b8063b86c119e91f87ac7395ac6cf26135da637dcb229006bc32dc",
+      "published_sha256": "3997fc6790b8063b86c119e91f87ac7395ac6cf26135da637dcb229006bc32dc"
+    },
+    {
+      "name": "clippy-wasm",
+      "argv": [
+        "cargo",
+        "clippy",
+        "-p",
+        "canvas-view",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T00:51:21.244070+00:00",
+      "finished_at": "2026-10-14T00:51:21.364132+00:00",
+      "log": "clippy-wasm.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "59639588a6f1826f129cbcd121edc07279dab94786f5fa5bde6b3439b2e845cc",
+      "published_sha256": "59639588a6f1826f129cbcd121edc07279dab94786f5fa5bde6b3439b2e845cc"
+    },
+    {
+      "name": "browser-matrix",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "app-server",
+        "--test",
+        "browser_e2e",
+        "--test",
+        "canvas_browser",
+        "--locked",
+        "--",
+        "--ignored",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-14T00:51:21.364290+00:00",
+      "finished_at": "2026-10-14T00:52:14.358412+00:00",
+      "log": "browser-matrix.log",
+      "summary": {
+        "rust_result_groups": 2,
+        "rust_totals": {
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0
+        },
+        "python_result": null
+      },
+      "raw_sha256": "2ce923fa23c8462404241cff94f5dba65371266e13bf542d4be32d11b5f3ff5c",
+      "published_sha256": "1809bb94651d295098ea3e0df4c818c62b1b67d858d0305c6db28100caa31866"
+    }
+  ]
+}

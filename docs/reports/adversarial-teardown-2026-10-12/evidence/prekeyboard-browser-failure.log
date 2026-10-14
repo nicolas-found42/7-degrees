@@ -1,0 +1,30 @@
+   Compiling app-server v0.1.0 (/Users/Nicolas/Documents/github/7-degrees/crates/app-server)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.09s
+     Running tests/browser_e2e.rs (target/debug/deps/browser_e2e-ac78b2c5539a4913)
+
+running 6 tests
+Pinned real slice: 7 players, 79 exact committed tenure rows; mapping retains original record references and snapshot SHA-256.
+Chromium "153.0.8010.12"
+
+thread 'real_lookup_disambiguation_and_selected_edge_provenance_remain_honest' (9680697) panicked at crates/app-server/tests/browser_e2e.rs:755:5:
+assertion `left == right` failed
+  left: "Dee Brown — 1991–2002 · brownde01"
+ right: "Dee Brown — 2007–2009 · brownde03"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+Synthetic diamond: equal alternatives/cursor/selection, team+era filters/removal, uncertainty/unsupported/provider-down fallback passed.
+Whole network: 5106 players / 101395 connections ready in 1644 ms
+test home_lookup_and_connections_are_accessible_in_the_running_fixture_app ... ok
+test real_lookup_disambiguation_and_selected_edge_provenance_remain_honest ... FAILED
+test alternatives_filters_uncertainty_and_provider_failure_are_visible_user_outcomes ... ok
+test maravich_mcgrady_visualizer_links_profiles_and_evidence_on_desktop_and_mobile ... ok
+test historical_chain_and_appearance_evidence_render_without_fabricated_dates ... ok
+test whole_network_renders_all_connections_and_keeps_them_when_searching_and_zooming ... ok
+
+failures:
+
+failures:
+    real_lookup_disambiguation_and_selected_edge_provenance_remain_honest
+
+test result: FAILED. 5 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.84s
+
+error: test failed, to rerun pass `-p app-server --test browser_e2e`

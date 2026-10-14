@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"tool\": \"jev_rerank\",\n  \"model\": \"typesafe/jev-1.13-20260917\",\n  \"provider\": \"openrouter\",\n  \"query\": \"Find a bounded discriminating probe for browser timeouts after a small UI-text patch. Do not weaken expected app behavior or suppress tests.\",\n  \"summary\": {\n    \"candidates\": 4,\n    \"returned\": 4\n  },\n  \"ranked\": [\n    {\n      \"rank\": 1,\n      \"id\": \"isolate\",\n      \"relevance\": 0.71,\n      \"text\": \"Run identical full suite with RUST_TEST_THREADS=1, same code and assertions; distinguishes multi-browser scheduling/contention from repeatable per-journey failures. Record reduced concurrency limit.\"\n    },\n    {\n      \"rank\": 2,\n      \"id\": \"inspect\",\n      \"relevance\": 0.52,\n      \"text\": \"Inspect actual failing screenshots and server/page logs to identify wrong content or asset-loading issues; prior single identity test passed.\"\n    },\n    {\n      \"rank\": 3,\n      \"id\": \"suppress\",\n      \"relevance\": 0.1,\n      \"text\": \"Remove assertions on failed browser journeys or ignore their results so remaining checks are green.\"\n    },\n    {\n      \"rank\": 4,\n      \"id\": \"repeat\",\n      \"relevance\": 0.08,\n      \"text\": \"Repeat unchanged parallel tests until one passes; no discriminating variable or new evidence.\"\n    }\n  ],\n  \"usage\": {\n    \"input_tokens\": 669,\n    \"output_tokens\": 76\n  }\n}"
+    }
+  ]
+}

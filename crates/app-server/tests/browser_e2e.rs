@@ -716,6 +716,14 @@ async fn real_lookup_disambiguation_and_selected_edge_provenance_remain_honest()
     b.call(json!({"op":"goto","url":format!("{}/",server.url)}));
     b.call(json!({"op":"fill","selector":"#player-query","value":"Dee Brown"}));
     b.click("Search players");
+    assert!(
+        b.text(".search-candidates")
+            .contains("Player ID: brownde01")
+    );
+    assert!(
+        b.text(".search-candidates")
+            .contains("Player ID: brownde03")
+    );
     assert_eq!(
         b.call(json!({"op":"count","selector":".search-candidates > li"})),
         2
@@ -725,6 +733,42 @@ async fn real_lookup_disambiguation_and_selected_edge_provenance_remain_honest()
         assert!(choices.contains(context));
     }
     b.call(json!({"op":"click","selector":"a[href='/players/brownde03']"}));
+    assert!(b.text(".player-context").contains("Player ID: brownde03"));
+    b.call(json!({"op":"click","role":"link","name":"Start a connection with Dee Brown"}));
+    b.call(json!({"op":"viewport","width":390,"height":844}));
+    assert_eq!(
+        b.text("#from option:checked"),
+        "Dee Brown — 2007–2009 · brownde03"
+    );
+    assert_eq!(
+        b.text("#to option[value=brownde01]"),
+        "Dee Brown — 1991–2002 · brownde01"
+    );
+    for selector in ["#from", "#to"] {
+        let bounds = b.call(json!({"op":"box","selector":selector}));
+        assert!(bounds["x"].as_f64().unwrap() + bounds["width"].as_f64().unwrap() <= 390.0);
+    }
+    screenshot(&mut b, "duplicate-name-phone.png", None);
+    // Native option selection by the displayed context, followed by keyboard submission.
+    // Headless macOS popup arrow navigation is not established by this driver.
+    b.call(json!({"op":"select","selector":"#to","value":{"label":"Dee Brown — 1991–2002 · brownde01"}}));
+    assert_eq!(
+        b.text("#to option:checked"),
+        "Dee Brown — 1991–2002 · brownde01"
+    );
+    b.call(json!({"op":"select","selector":"#to","value":{"label":"Dee Brown — 2007–2009 · brownde03"}}));
+    assert_eq!(
+        b.text("#to option:checked"),
+        "Dee Brown — 2007–2009 · brownde03"
+    );
+    b.call(json!({"op":"focus","selector":"#to"}));
+    b.call(json!({"op":"key","key":"Tab"}));
+    b.call(json!({"op":"key","key":"Enter"}));
+    assert_eq!(
+        b.call(json!({"op":"attribute","selector":"#selected-chain","name":"data-path"})),
+        "[\"brownde03\"]"
+    );
+    b.call(json!({"op":"goto","url":format!("{}/players/brownde03",server.url)}));
     assert!(b.text("main").contains("2007–2009"));
     assert!(!b.text("main").contains("1991–2002"));
     b.call(json!({"op":"goto","url":format!("{}/resolve?q=Dee%20Brown",server.url)}));

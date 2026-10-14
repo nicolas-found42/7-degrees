@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"tool\": \"jev_verify\",\n  \"model\": \"typesafe/jev-1.13-20260917\",\n  \"provider\": \"openrouter\",\n  \"auto_accept\": 0.8,\n  \"subject_at\": 0.5,\n  \"summary\": {\n    \"verified\": 1,\n    \"contradicted\": 0,\n    \"unsupported\": 1,\n    \"needs_review\": 2\n  },\n  \"results\": [\n    {\n      \"id\": \"claim0\",\n      \"claim\": \"F01 and F02 are independently fixable: connection options need contextual labels, while search cards need visible IDs.\",\n      \"verdict\": \"verified\",\n      \"probabilities\": {\n        \"supports\": 0.77,\n        \"contradicts\": 0.23,\n        \"says_nothing\": 0\n      },\n      \"confidence\": 0.66,\n      \"action\": \"review\",\n      \"supporting_evidence\": null,\n      \"same_subject\": 0.72\n    },\n    {\n      \"id\": \"claim1\",\n      \"claim\": \"Fixing option labels requires rebuilding historical roster sources.\",\n      \"verdict\": \"unsupported\",\n      \"relation_verdict\": \"contradicted\",\n      \"probabilities\": {\n        \"supports\": 0,\n        \"contradicts\": 0.99,\n        \"says_nothing\": 0.01\n      },\n      \"confidence\": 0.98,\n      \"action\": \"review\",\n      \"supporting_evidence\": null,\n      \"same_subject\": 0.27\n    }\n  ],\n  \"usage\": {\n    \"input_tokens\": 943,\n    \"output_tokens\": 128\n  }\n}"
+    }
+  ]
+}
