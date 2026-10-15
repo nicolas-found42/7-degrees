@@ -1443,3 +1443,62 @@ async fn dismissed_player_results_reopen_before_keyboard_selection() {
     }
     assert_eq!(b.call(json!({"op":"errors"})), json!([]));
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "actual Chromium/WASM shareable pair URL regression"]
+async fn pair_url_tracks_selection_clear_and_evidence_history() {
+    let server = Server::start(app_server::app_with_fixture_data()).await;
+    let mut b = Browser::start();
+    b.call(json!({"op":"launch"}));
+    b.call(json!({"op":"goto","url":format!("{}/graph?from=A&to=C",server.url)}));
+    b.ready();
+    b.click("Clear chain");
+    assert_eq!(
+        b.call(json!({"op":"url"})),
+        format!("{}/graph?from=A", server.url)
+    );
+    b.call(json!({"op":"select","selector":"#graph-target","value":"B"}));
+    b.call(json!({"op":"ready","selector":"#graph-chain[data-state=connected]"}));
+    let pair = format!("{}/graph?from=A&to=B", server.url);
+    assert_eq!(b.call(json!({"op":"url"})), pair);
+    b.call(json!({"op":"click","selector":"#graph-chain a[data-evidence]"}));
+    b.call(json!({"op":"ready","selector":"#drawer-content .proof-card >> nth=0"}));
+    assert!(
+        b.call(json!({"op":"url"}))
+            .as_str()
+            .unwrap()
+            .ends_with("/edge?from=A&to=B")
+    );
+    b.call(json!({"op":"history","direction":"back"}));
+    assert_eq!(b.call(json!({"op":"url"})), pair);
+    b.call(json!({"op":"history","direction":"forward"}));
+    b.call(json!({"op":"ready","selector":"#drawer-content .proof-card >> nth=0"}));
+    b.click("Close evidence");
+    b.call(json!({"op":"goto","url":pair}));
+    b.ready();
+    assert!(b.text("#graph-chain").contains("degree 1"));
+    b.call(json!({"op":"fill","selector":"#graph-player","value":"not a player"}));
+    assert_eq!(
+        b.call(json!({"op":"url"})),
+        format!("{}/graph?to=B", server.url)
+    );
+    b.call(json!({"op":"select","selector":"#graph-player","value":"C"}));
+    assert_eq!(
+        b.call(json!({"op":"url"})),
+        format!("{}/graph?from=C&to=B", server.url)
+    );
+    b.click("Random pair");
+    let a = b.call(json!({"op":"attribute","selector":"#graph-player","name":"data-selected-id"}));
+    let target =
+        b.call(json!({"op":"attribute","selector":"#graph-target","name":"data-selected-id"}));
+    assert_eq!(
+        b.call(json!({"op":"url"})),
+        format!(
+            "{}/graph?from={}&to={}",
+            server.url,
+            a.as_str().unwrap(),
+            target.as_str().unwrap()
+        )
+    );
+    assert_eq!(b.call(json!({"op":"errors"})), json!([]));
+}

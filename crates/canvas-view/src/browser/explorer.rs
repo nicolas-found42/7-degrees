@@ -42,6 +42,35 @@ pub(super) fn set_picker(document: &Document, id: &str, value: &str, name: &str)
     }
 }
 impl CanvasView {
+    pub(super) fn sync_pair_url(&self) {
+        let window = web_sys::window().unwrap();
+        let location = window.location();
+        let path = location.pathname().unwrap_or_default();
+        // Evidence has its own history entry; keep that URL until the drawer closes.
+        if path != "/" && path != "/graph" {
+            return;
+        }
+        let mut params = Vec::new();
+        if !self.selected.is_empty() {
+            params.push(format!("from={}", encoded(&self.selected)));
+        }
+        if !self.graph.target.is_empty() {
+            params.push(format!("to={}", encoded(&self.graph.target)));
+        }
+        let search = if params.is_empty() {
+            String::new()
+        } else {
+            format!("?{}", params.join("&"))
+        };
+        if location.search().unwrap_or_default() != search {
+            let url = path + &search + &location.hash().unwrap_or_default();
+            if let Ok(history) = window.history() {
+                let state = history.state().unwrap_or(JsValue::NULL);
+                let _ = history.replace_state_with_url(&state, "", Some(&url));
+            }
+        }
+    }
+
     pub(super) fn report_filters(&self) {
         let matching = self
             .graph
@@ -161,6 +190,7 @@ pub(super) fn request_chain(view: View) {
         let mut v = view.borrow_mut();
         v.chain_generation += 1;
         v.clear_highlight();
+        v.sync_pair_url();
         let chain = element(&v.document, "graph-chain");
         if v.selected.is_empty() || v.graph.target.is_empty() {
             v.draw();
@@ -505,6 +535,7 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
                 } else {
                     v.graph.target.clear();
                 }
+                v.sync_pair_url();
                 v.draw();
             }
             let generation = {
@@ -950,6 +981,7 @@ pub(super) fn install(view: View) -> Result<(), JsValue> {
                     v.chain_generation += 1;
                     v.clear_highlight();
                     set_picker(&v.document, "graph-target", "", "");
+                    v.sync_pair_url();
                 }
                 "reset-filters" => {
                     v.eras = [true; 8];
