@@ -1454,13 +1454,13 @@ async fn pair_url_tracks_selection_clear_and_evidence_history() {
     b.ready();
     b.click("Clear chain");
     assert_eq!(
-        b.call(json!({"op":"url"})),
+        b.call(json!({"op":"wait-url","url":format!("{}/graph?from=A", server.url)})),
         format!("{}/graph?from=A", server.url)
     );
     b.call(json!({"op":"select","selector":"#graph-target","value":"B"}));
     b.call(json!({"op":"ready","selector":"#graph-chain[data-state=connected]"}));
     let pair = format!("{}/graph?from=A&to=B", server.url);
-    assert_eq!(b.call(json!({"op":"url"})), pair);
+    assert_eq!(b.call(json!({"op":"wait-url","url":pair})), pair);
     b.call(json!({"op":"click","selector":"#graph-chain a[data-evidence]"}));
     b.call(json!({"op":"ready","selector":"#drawer-content .proof-card >> nth=0"}));
     assert!(
@@ -1470,7 +1470,7 @@ async fn pair_url_tracks_selection_clear_and_evidence_history() {
             .ends_with("/edge?from=A&to=B")
     );
     b.call(json!({"op":"history","direction":"back"}));
-    assert_eq!(b.call(json!({"op":"url"})), pair);
+    assert_eq!(b.call(json!({"op":"wait-url","url":pair})), pair);
     b.call(json!({"op":"history","direction":"forward"}));
     b.call(json!({"op":"ready","selector":"#drawer-content .proof-card >> nth=0"}));
     b.click("Close evidence");
@@ -1479,12 +1479,12 @@ async fn pair_url_tracks_selection_clear_and_evidence_history() {
     assert!(b.text("#graph-chain").contains("degree 1"));
     b.call(json!({"op":"fill","selector":"#graph-player","value":"not a player"}));
     assert_eq!(
-        b.call(json!({"op":"url"})),
+        b.call(json!({"op":"wait-url","url":format!("{}/graph?to=B", server.url)})),
         format!("{}/graph?to=B", server.url)
     );
     b.call(json!({"op":"select","selector":"#graph-player","value":"C"}));
     assert_eq!(
-        b.call(json!({"op":"url"})),
+        b.call(json!({"op":"wait-url","url":format!("{}/graph?from=C&to=B", server.url)})),
         format!("{}/graph?from=C&to=B", server.url)
     );
     b.click("Random pair");
