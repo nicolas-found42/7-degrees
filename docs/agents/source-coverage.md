@@ -11,3 +11,9 @@ For changes to source acquisition, identity reconciliation, tenure certification
 Current source pins are authoritative for current file bytes. Older final-verification reports and original audit receipts describe their named snapshots. Preserve their original hashes and case IDs. Update current pins only after inspecting a reviewed data change, then run the committed-data consistency check; preserve raw source versions separately.
 
 Use the source manifest's scripts and their current CLI arguments for reconstruction. A connected graph, zero isolates or zero missing edges relative to existing certificates does not establish complete historical relationships. Measure coverage against an explicit era/team/player or pair denominator and retain unresolved cases with source attempts.
+
+Jev judgments are triage signals for this work, never a proof class; pins, audits and certificates record source evidence only.
+
+- Sources disagree on a player's tenure, team or identity: `jev_compare` with aspects such as team, season and dates.
+- Identity candidates: `jev_find`; an `absent` `exists_verdict` becomes an unresolved flag.
+- Values from cached pages: `jev_extract`, then `jev_audit` against the page text.

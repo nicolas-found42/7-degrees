@@ -84,6 +84,7 @@ async function command(c) {
     case 'input-value': return target().inputValue();
     case 'history': if(c.direction==='back') await page.goBack(); else await page.goForward(); return page.url();
     case 'url': return page.url();
+    case 'wait-url': await page.waitForURL(c.url,{timeout:5000}); return page.url();
     case 'motion': await page.emulateMedia({reducedMotion:c.value}); return true;
     case 'page-size': return page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
     case 'sequence': for(const selector of c.selectors) await page.locator(selector).click({force:true}); return true;
@@ -171,7 +172,16 @@ async function command(c) {
   for await(const line of readline.createInterface({input:process.stdin})) {
     let c;
     try { c=JSON.parse(line); process.stdout.write(JSON.stringify({ok:true,result:await command(c)})+'\n'); }
-    catch(e) { process.stdout.write(JSON.stringify({ok:false,error:String(e)})+'\n'); }
+    catch(e) {
+      const diagnostic = {url:page?.url(), errors:[...errors]};
+      try {
+        const directory = path.join(__dirname,'../target/browser-e2e');
+        fs.mkdirSync(directory,{recursive:true});
+        diagnostic.screenshot = path.join(directory,`failure-${process.pid}-${Date.now()}.png`);
+        await page.screenshot({path:diagnostic.screenshot,timeout:3000});
+      } catch(captureError) { diagnostic.captureError=String(captureError); }
+      process.stdout.write(JSON.stringify({ok:false,error:String(e),diagnostic})+'\n');
+    }
     if(c?.op==='close') break;
   }
 })().finally(async()=>{if(browser)await browser.close();});

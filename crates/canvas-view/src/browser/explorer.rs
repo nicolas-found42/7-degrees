@@ -40,8 +40,47 @@ pub(super) fn set_picker(document: &Document, id: &str, value: &str, name: &str)
     } else if let Some(select) = picker.dyn_ref::<HtmlSelectElement>() {
         select.set_value(value);
     }
+    if let Some(notice) = document.get_element_by_id(&format!("{id}-search-status")) {
+        notice.set_text_content(Some(&if value.is_empty() {
+            String::new()
+        } else {
+            format!("Selected: {name}.")
+        }));
+    }
+    if let Ok(event) = web_sys::Event::new("explorer-picker-set") {
+        let _ = picker.dispatch_event(&event);
+    }
 }
 impl CanvasView {
+    pub(super) fn sync_pair_url(&self) {
+        let window = web_sys::window().unwrap();
+        let location = window.location();
+        let path = location.pathname().unwrap_or_default();
+        // Evidence has its own history entry; keep that URL until the drawer closes.
+        if path != "/" && path != "/graph" {
+            return;
+        }
+        let mut params = Vec::new();
+        if !self.selected.is_empty() {
+            params.push(format!("from={}", encoded(&self.selected)));
+        }
+        if !self.graph.target.is_empty() {
+            params.push(format!("to={}", encoded(&self.graph.target)));
+        }
+        let search = if params.is_empty() {
+            String::new()
+        } else {
+            format!("?{}", params.join("&"))
+        };
+        if location.search().unwrap_or_default() != search {
+            let url = path + &search + &location.hash().unwrap_or_default();
+            if let Ok(history) = window.history() {
+                let state = history.state().unwrap_or(JsValue::NULL);
+                let _ = history.replace_state_with_url(&state, "", Some(&url));
+            }
+        }
+    }
+
     pub(super) fn report_filters(&self) {
         let matching = self
             .graph
@@ -161,6 +200,7 @@ pub(super) fn request_chain(view: View) {
         let mut v = view.borrow_mut();
         v.chain_generation += 1;
         v.clear_highlight();
+        v.sync_pair_url();
         let chain = element(&v.document, "graph-chain");
         if v.selected.is_empty() || v.graph.target.is_empty() {
             v.draw();
@@ -375,6 +415,50 @@ struct PickerState {
     generation: u64,
     candidates: Vec<(String, String)>,
     active: Option<usize>,
+    pending: bool,
+}
+fn dismiss_picker(document: &Document, id: &str, state: &Rc<RefCell<PickerState>>) {
+    let mut state = state.borrow_mut();
+    state.generation += 1;
+    state.active = None;
+    let pending = std::mem::take(&mut state.pending);
+    drop(state);
+    let _ = element(document, &format!("{id}-results")).set_attribute("hidden", "");
+    let input = element(document, id);
+    let _ = input.set_attribute("aria-expanded", "false");
+    let _ = input.remove_attribute("aria-activedescendant");
+    if pending {
+        element(document, &format!("{id}-search-status"))
+            .set_text_content(Some("Search dismissed. Type to search again."));
+    }
+}
+fn position_picker_results(document: &Document, id: &str) {
+    let input = element(document, id)
+        .dyn_into::<HtmlInputElement>()
+        .unwrap();
+    let bounds = input.get_bounding_client_rect();
+    let height = web_sys::window()
+        .unwrap()
+        .inner_height()
+        .ok()
+        .and_then(|h| h.as_f64())
+        .unwrap_or(600.0);
+    let below = (height - bounds.bottom() - 8.0).max(0.0);
+    let above = (bounds.top() - 8.0).max(0.0);
+    let placement = if below < 144.0 && above > below {
+        format!(
+            "top:auto;bottom:calc(100% - {}px);max-height:{}px",
+            input.offset_top(),
+            (above - 2.0).clamp(0.0, 288.0)
+        )
+    } else {
+        format!(
+            "top:{}px;bottom:auto;max-height:{}px",
+            input.offset_top() + input.offset_height(),
+            (below - 2.0).clamp(0.0, 288.0)
+        )
+    };
+    let _ = element(document, &format!("{id}-results")).set_attribute("style", &placement);
 }
 fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
     let document = view.borrow().document.clone();
@@ -472,6 +556,42 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
     ));
     parent.append_child(&franchise)?;
     let state = Rc::new(RefCell::new(PickerState::default()));
+    let reset_state = state.clone();
+    let reset_input = input.clone();
+    let reset_list = list.clone();
+    listen(input.as_ref(), "explorer-picker-set", move |_| {
+        let mut state = reset_state.borrow_mut();
+        state.generation += 1;
+        state.candidates.clear();
+        state.active = None;
+        state.pending = false;
+        drop(state);
+        reset_list.set_inner_html("");
+        let _ = reset_list.set_attribute("hidden", "");
+        let _ = reset_input.set_attribute("aria-expanded", "false");
+        let _ = reset_input.remove_attribute("aria-activedescendant");
+    })?;
+    let focus_state = state.clone();
+    let focus_document = document.clone();
+    listen(parent.as_ref(), "focusout", move |event| {
+        let next = event
+            .dyn_into::<web_sys::FocusEvent>()
+            .ok()
+            .and_then(|e| e.related_target())
+            .and_then(|target| target.dyn_into::<web_sys::Element>().ok());
+        // A pointer selection moves focus into an option before its click arrives.
+        if next.is_some_and(|next| {
+            next.id() == id
+                || next
+                    .closest(&format!("#{id}-results"))
+                    .ok()
+                    .flatten()
+                    .is_some()
+        }) {
+            return;
+        }
+        dismiss_picker(&focus_document, id, &focus_state);
+    })?;
     for (target, event) in [
         (input.clone().into(), "input"),
         (era.clone().into(), "change"),
@@ -505,6 +625,7 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
                 } else {
                     v.graph.target.clear();
                 }
+                v.sync_pair_url();
                 v.draw();
             }
             let generation = {
@@ -512,14 +633,18 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
                 s.generation += 1;
                 s.candidates.clear();
                 s.active = None;
+                s.pending = true;
                 s.generation
             };
             let document = view.borrow().document.clone();
             let list = element(&document, &format!("{id}-results"));
             list.set_inner_html("");
+            position_picker_results(&document, id);
             let _ = list.remove_attribute("hidden");
             let _ = input.set_attribute("aria-expanded", "true");
             let _ = input.remove_attribute("aria-activedescendant");
+            element(&view.borrow().document, &format!("{id}-search-status"))
+                .set_text_content(Some("Searching players…"));
             let mut q = input.value();
             let mut decade = era.value();
             let mut team = franchise.value();
@@ -562,6 +687,8 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
                 if s.generation != generation {
                     return;
                 }
+                s.pending = false;
+                position_picker_results(&document, id);
                 let notice = element(&document, &format!("{id}-search-status"));
                 match answer {
                     Ok(data) => {
@@ -625,10 +752,8 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
                 s.generation += 1;
                 s.active = None;
             }
-            input.set_value(&name);
-            let _ = input.set_attribute("data-selected-id", &pid);
-            let _ = input.set_attribute("aria-expanded", "false");
-            let _ = input.remove_attribute("aria-activedescendant");
+            let _ = input.focus();
+            set_picker(&view.borrow().document, id, &pid, &name);
             {
                 let mut v = view.borrow_mut();
                 let _ = element(&v.document, &format!("{id}-results")).set_attribute("hidden", "");
@@ -669,6 +794,9 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
                 if n == 0 {
                     return;
                 }
+                position_picker_results(&document, id);
+                let _ = element(&document, &format!("{id}-results")).remove_attribute("hidden");
+                let _ = input_copy.set_attribute("aria-expanded", "true");
                 let i = match (s.active, e.key().as_str()) {
                     (Some(i), "ArrowDown") => (i + 1) % n,
                     (Some(i), _) => (i + n - 1) % n,
@@ -682,21 +810,38 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
                 }
                 let _ =
                     input_copy.set_attribute("aria-activedescendant", &format!("{id}-option-{i}"));
+                let list = element(&document, &format!("{id}-results"));
+                let option = element(&document, &format!("{id}-option-{i}"));
+                let bounds = list.get_bounding_client_rect();
+                let option_bounds = option.get_bounding_client_rect();
+                let top = bounds.top() + f64::from(list.client_top());
+                let bottom = top + f64::from(list.client_height());
+                let delta = if option_bounds.top() < top {
+                    (option_bounds.top() - top).floor()
+                } else if option_bounds.bottom() > bottom {
+                    (option_bounds.bottom() - bottom).ceil()
+                } else {
+                    0.0
+                };
+                list.set_scroll_top(list.scroll_top() + delta as i32);
             }
             "Enter" => {
                 e.prevent_default();
-                let index = state.borrow().active;
+                let index = if input_copy.get_attribute("aria-expanded").as_deref() == Some("true")
+                {
+                    state.borrow().active
+                } else {
+                    None
+                };
                 if let Some(i) = index {
                     choose(i);
                 }
             }
             "Escape" => {
                 e.prevent_default();
-                state.borrow_mut().generation += 1;
-                let _ = element(&document, &format!("{id}-results")).set_attribute("hidden", "");
-                let _ = input_copy.set_attribute("aria-expanded", "false");
-                let _ = input_copy.remove_attribute("aria-activedescendant");
+                dismiss_picker(&document, id, &state);
             }
+            "Tab" => dismiss_picker(&document, id, &state),
             _ => {}
         }
     })?;
@@ -882,6 +1027,30 @@ pub(super) fn install(view: View) -> Result<(), JsValue> {
         "submit",
         move |event| {
             event.prevent_default();
+            {
+                let v = state.borrow();
+                let missing = if v.selected.is_empty() {
+                    Some(("graph-player", "Player A"))
+                } else if v.graph.target.is_empty() {
+                    Some(("graph-target", "Player B"))
+                } else {
+                    None
+                };
+                if let Some((id, label)) = missing {
+                    let chain = element(&v.document, "graph-chain");
+                    chain.set_text_content(Some(&if v.graph.nodes.is_empty() {
+                        "No players are available in this snapshot.".into()
+                    } else {
+                        format!("Choose {label} from the search results before connecting players.")
+                    }));
+                    let _ = chain.set_attribute("data-state", "incomplete");
+                    let _ = element(&v.document, id)
+                        .dyn_into::<HtmlInputElement>()
+                        .unwrap()
+                        .focus();
+                    return;
+                }
+            }
             request_chain(state.clone());
         },
     )?;
@@ -938,6 +1107,7 @@ pub(super) fn install(view: View) -> Result<(), JsValue> {
                     v.chain_generation += 1;
                     v.clear_highlight();
                     set_picker(&v.document, "graph-target", "", "");
+                    v.sync_pair_url();
                 }
                 "reset-filters" => {
                     v.eras = [true; 8];

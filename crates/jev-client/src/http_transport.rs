@@ -8,15 +8,15 @@
 //!   base URL `https://openrouter.ai/api`)
 //! - header `Authorization: Bearer $OPENROUTER_API_KEY` plus
 //!   `Content-Type: application/json`
-//! - body `{ "model": "typesafe/jev-1.13", "state": ..., "questions": ... }`
+//! - body `{ "model": "typesafe/jev-1.14", "state": ..., "questions": ... }`
 //!   (state: string or structured value; questions: typed `noul`/`choice`/
 //!   `score` with `instructions` and optional `criteria`)
 //! - response envelope `{ "model", "answers": { id: { type, noul | choice +
 //!   probabilities + confidence | score + legend + probabilities +
 //!   confidence } }, "usage": ... }` (OpenRouter adds `id`, `provider`,
 //!   `usage.cost` — pass-through, ignored)
-//! - model routing: `typesafe/jev-1.13` is used as-is by OpenRouter (verified
-//!   in the smoke response: `"model": "typesafe/jev-1.13-20260917"`)
+//! - model routing: `typesafe/jev-1.14` is configured as the explicit OpenRouter
+//!   model id.
 //!
 //! The transport holds the API key only in memory; it never logs the key or
 //! the request body, and failures fail soft to

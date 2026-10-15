@@ -1402,3 +1402,282 @@ async fn shared_pair_link_frames_the_same_chain_as_an_explicit_request() {
     );
     assert_eq!(b.call(json!({"op":"errors"})), json!([]));
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "actual Chromium/WASM dismissed combobox keyboard regression"]
+async fn dismissed_player_results_reopen_before_keyboard_selection() {
+    let server = Server::start(app_server::app_with_fixture_data()).await;
+    let mut b = Browser::start();
+    b.call(json!({"op":"launch"}));
+    b.call(json!({"op":"goto","url":server.url}));
+    b.ready();
+    for id in ["graph-player", "graph-target"] {
+        let selector = format!("#{id}");
+        b.call(json!({"op":"fill","selector":selector,"value":"Player"}));
+        b.call(json!({"op":"ready","selector":format!("#{id}-results [role=option] >> nth=0")}));
+        b.call(json!({"op":"key","key":"ArrowDown"}));
+        b.call(json!({"op":"key","key":"Escape"}));
+        b.call(json!({"op":"key","key":"Enter"}));
+        assert_eq!(
+            b.call(json!({"op":"attribute","selector":selector,"name":"data-selected-id"})),
+            ""
+        );
+        b.call(json!({"op":"key","key":"ArrowDown"}));
+        assert_eq!(
+            b.call(json!({"op":"attribute","selector":selector,"name":"aria-expanded"})),
+            "true"
+        );
+        assert_eq!(
+            b.call(json!({"op":"attribute","selector":format!("#{id}-results"),"name":"hidden"})),
+            serde_json::Value::Null
+        );
+        b.call(json!({"op":"key","key":"Enter"}));
+        assert_eq!(
+            b.call(json!({"op":"input-value","selector":selector})),
+            "Player A"
+        );
+        assert_eq!(
+            b.text(&format!("#{id}-search-status")),
+            "Selected: Player A."
+        );
+    }
+    assert_eq!(b.call(json!({"op":"errors"})), json!([]));
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "actual Chromium/WASM shareable pair URL regression"]
+async fn pair_url_tracks_selection_clear_and_evidence_history() {
+    let server = Server::start(app_server::app_with_fixture_data()).await;
+    let mut b = Browser::start();
+    b.call(json!({"op":"launch"}));
+    b.call(json!({"op":"goto","url":format!("{}/graph?from=A&to=C",server.url)}));
+    b.ready();
+    b.click("Clear chain");
+    assert_eq!(
+        b.call(json!({"op":"wait-url","url":format!("{}/graph?from=A", server.url)})),
+        format!("{}/graph?from=A", server.url)
+    );
+    b.call(json!({"op":"select","selector":"#graph-target","value":"B"}));
+    b.call(json!({"op":"ready","selector":"#graph-chain[data-state=connected]"}));
+    let pair = format!("{}/graph?from=A&to=B", server.url);
+    assert_eq!(b.call(json!({"op":"wait-url","url":pair})), pair);
+    b.call(json!({"op":"click","selector":"#graph-chain a[data-evidence]"}));
+    b.call(json!({"op":"ready","selector":"#drawer-content .proof-card >> nth=0"}));
+    assert!(
+        b.call(json!({"op":"url"}))
+            .as_str()
+            .unwrap()
+            .ends_with("/edge?from=A&to=B")
+    );
+    b.call(json!({"op":"history","direction":"back"}));
+    assert_eq!(b.call(json!({"op":"wait-url","url":pair})), pair);
+    b.call(json!({"op":"history","direction":"forward"}));
+    b.call(json!({"op":"ready","selector":"#drawer-content .proof-card >> nth=0"}));
+    b.click("Close evidence");
+    b.call(json!({"op":"goto","url":pair}));
+    b.ready();
+    assert!(b.text("#graph-chain").contains("degree 1"));
+    b.call(json!({"op":"fill","selector":"#graph-player","value":"not a player"}));
+    assert_eq!(
+        b.call(json!({"op":"wait-url","url":format!("{}/graph?to=B", server.url)})),
+        format!("{}/graph?to=B", server.url)
+    );
+    b.call(json!({"op":"select","selector":"#graph-player","value":"C"}));
+    assert_eq!(
+        b.call(json!({"op":"wait-url","url":format!("{}/graph?from=C&to=B", server.url)})),
+        format!("{}/graph?from=C&to=B", server.url)
+    );
+    b.click("Random pair");
+    let a = b.call(json!({"op":"attribute","selector":"#graph-player","name":"data-selected-id"}));
+    let target =
+        b.call(json!({"op":"attribute","selector":"#graph-target","name":"data-selected-id"}));
+    assert_eq!(
+        b.call(json!({"op":"url"})),
+        format!(
+            "{}/graph?from={}&to={}",
+            server.url,
+            a.as_str().unwrap(),
+            target.as_str().unwrap()
+        )
+    );
+    assert_eq!(b.call(json!({"op":"errors"})), json!([]));
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "actual Chromium/WASM programmatic picker reset regression"]
+async fn programmatic_pair_changes_clear_stale_feedback_and_pending_search() {
+    let server = Server::start(app_server::app_with_fixture_data()).await;
+    let mut b = Browser::start();
+    b.call(json!({"op":"launch"}));
+    b.call(json!({"op":"goto","url":server.url}));
+    b.ready();
+    b.call(json!({"op":"select","selector":"#graph-player","value":"A"}));
+    b.call(json!({"op":"select","selector":"#graph-target","value":"B"}));
+    b.click("Clear chain");
+    assert_eq!(b.text("#graph-target-search-status"), "");
+    b.call(json!({"op":"intercept","pattern":"**/api/search*","delay":900}));
+    b.call(json!({"op":"fill","selector":"#graph-target","value":"Player C"}));
+    b.click("Clear chain");
+    b.call(json!({"op":"network-idle"}));
+    assert_eq!(b.text("#graph-target-search-status"), "");
+    assert_eq!(
+        b.call(json!({"op":"attribute","selector":"#graph-target","name":"aria-expanded"})),
+        "false"
+    );
+    b.call(json!({"op":"fill","selector":"#graph-player","value":"Player C"}));
+    b.click("Random pair");
+    b.call(json!({"op":"network-idle"}));
+    for id in ["graph-player", "graph-target"] {
+        let name = b.call(json!({"op":"input-value","selector":format!("#{id}")}));
+        assert_eq!(
+            b.text(&format!("#{id}-search-status")),
+            format!("Selected: {}.", name.as_str().unwrap())
+        );
+        assert_eq!(
+            b.call(json!({"op":"attribute","selector":format!("#{id}"),"name":"aria-expanded"})),
+            "false"
+        );
+        assert_eq!(
+            b.call(json!({"op":"count","selector":format!("#{id}-results [role=option]")})),
+            0
+        );
+    }
+    assert_eq!(b.call(json!({"op":"errors"})), json!([]));
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "actual Chromium/WASM long combobox keyboard visibility"]
+async fn picker_keyboard_navigation_keeps_active_result_inside_the_list() {
+    let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../docs/reports");
+    let server = Server::start(
+        app_server::app_with_report_data(root, app_server::JevHandle::unconfigured()).unwrap(),
+    )
+    .await;
+    let mut b = Browser::start();
+    b.call(json!({"op":"launch"}));
+    b.call(json!({"op":"viewport","width":390,"height":844}));
+    b.call(json!({"op":"goto","url":server.url}));
+    b.ready();
+    for id in ["graph-player", "graph-target"] {
+        b.call(json!({"op":"fill","selector":format!("#{id}"),"value":"Smith"}));
+        b.call(json!({"op":"ready","selector":format!("#{id}-option-19")}));
+        let input = b.call(json!({"op":"box","selector":format!("#{id}")}));
+        for key in ["ArrowUp", "ArrowDown", "ArrowUp"] {
+            b.call(json!({"op":"key","key":key}));
+            let active = b.call(json!({"op":"attribute","selector":format!("#{id}"),"name":"aria-activedescendant"}));
+            let option =
+                b.call(json!({"op":"box","selector":format!("#{}", active.as_str().unwrap())}));
+            let list = b.call(json!({"op":"box","selector":format!("#{id}-results")}));
+            let top = option["y"].as_f64().unwrap();
+            let bottom = top + option["height"].as_f64().unwrap();
+            assert!(
+                top >= 0.0 && bottom <= 844.0,
+                "active option is outside phone viewport: {option}"
+            );
+            assert!(
+                top >= list["y"].as_f64().unwrap(),
+                "active option is above list: {option} / {list}"
+            );
+            assert!(
+                bottom <= list["y"].as_f64().unwrap() + list["height"].as_f64().unwrap(),
+                "active option is below list: {option} / {list}"
+            );
+        }
+        assert_eq!(
+            b.call(json!({"op":"box","selector":format!("#{id}")}))["y"],
+            input["y"]
+        );
+        b.call(json!({"op":"key","key":"Enter"}));
+        assert_eq!(
+            b.call(json!({"op":"attribute","selector":format!("#{id}"),"name":"data-selected-id"})),
+            "smithdr01"
+        );
+    }
+    assert_eq!(b.call(json!({"op":"errors"})), json!([]));
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "actual Chromium/WASM combobox focus and delayed dismissal"]
+async fn picker_focus_departure_dismisses_results_without_losing_pointer_selection() {
+    let server = Server::start(app_server::app_with_fixture_data()).await;
+    let mut b = Browser::start();
+    b.call(json!({"op":"launch"}));
+    b.call(json!({"op":"goto","url":server.url}));
+    b.ready();
+    for id in ["graph-player", "graph-target"] {
+        b.call(json!({"op":"fill","selector":format!("#{id}"),"value":"Player"}));
+        b.call(json!({"op":"ready","selector":format!("#{id}-option-0")}));
+        b.call(json!({"op":"key","key":"ArrowDown"}));
+        b.call(json!({"op":"key","key":"Tab"}));
+        assert_eq!(b.call(json!({"op":"active-id"})), format!("{id}-era"));
+        assert_eq!(
+            b.call(json!({"op":"attribute","selector":format!("#{id}"),"name":"aria-expanded"})),
+            "false"
+        );
+        assert_eq!(
+            b.call(
+                json!({"op":"attribute","selector":format!("#{id}"),"name":"aria-activedescendant"})
+            ),
+            serde_json::Value::Null
+        );
+        b.call(json!({"op":"key","key":"Shift+Tab"}));
+        b.call(json!({"op":"key","key":"ArrowDown"}));
+        b.call(json!({"op":"click","selector":format!("#{id}-results [data-player-id='B']")}));
+        assert_eq!(
+            b.call(json!({"op":"attribute","selector":format!("#{id}"),"name":"data-selected-id"})),
+            "B"
+        );
+        assert_eq!(b.call(json!({"op":"active-id"})), id);
+        b.call(json!({"op":"intercept","pattern":"**/api/search*","delay":900}));
+        b.call(json!({"op":"fill","selector":format!("#{id}"),"value":"Player A"}));
+        b.call(json!({"op":"key","key":"Tab"}));
+        b.call(json!({"op":"network-idle"}));
+        assert_eq!(
+            b.call(json!({"op":"attribute","selector":format!("#{id}"),"name":"aria-expanded"})),
+            "false"
+        );
+        b.call(json!({"op":"unroute","pattern":"**/api/search*"}));
+    }
+    assert_eq!(b.call(json!({"op":"errors"})), json!([]));
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "actual Chromium/WASM incomplete pair form feedback"]
+async fn connecting_an_incomplete_pair_explains_and_focuses_the_missing_player() {
+    let server = Server::start(app_server::app_with_fixture_data()).await;
+    let mut b = Browser::start();
+    b.call(json!({"op":"launch"}));
+    b.call(json!({"op":"goto","url":server.url}));
+    b.ready();
+    b.click("Connect players");
+    assert!(
+        b.text("#graph-chain")
+            .contains("Choose Player A from the search results")
+    );
+    assert_eq!(b.call(json!({"op":"active-id"})), "graph-player");
+    b.call(json!({"op":"fill","selector":"#graph-player","value":"Player A"}));
+    b.call(json!({"op":"ready","selector":"#graph-player-option-0"}));
+    b.click("Connect players");
+    assert!(
+        b.text("#graph-chain")
+            .contains("Choose Player A from the search results")
+    );
+    b.call(json!({"op":"key","key":"ArrowDown"}));
+    b.call(json!({"op":"key","key":"Enter"}));
+    b.click("Connect players");
+    assert!(
+        b.text("#graph-chain")
+            .contains("Choose Player B from the search results")
+    );
+    assert_eq!(b.call(json!({"op":"active-id"})), "graph-target");
+    b.call(json!({"op":"select","selector":"#graph-target","value":"B"}));
+    b.call(json!({"op":"ready","selector":"#graph-chain[data-state=connected]"}));
+    assert!(b.text("#graph-chain").contains("degree 1"));
+    b.click("Clear chain");
+    b.click("Connect players");
+    assert!(
+        b.text("#graph-chain")
+            .contains("Choose Player B from the search results")
+    );
+    assert_eq!(b.call(json!({"op":"errors"})), json!([]));
+}

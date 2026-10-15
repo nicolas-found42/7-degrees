@@ -219,6 +219,7 @@ impl CanvasView {
             self.chain_generation += 1;
         }
         explorer::set_picker(&self.document, "graph-player", id, &n.name);
+        self.sync_pair_url();
         self.render_franchises();
         self.edge = None;
         self.recompute_hop();

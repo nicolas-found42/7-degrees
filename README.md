@@ -48,7 +48,7 @@ Machine-readable routes include `/api/players`, `/api/search?q=...`, `/api/resol
 
 ## Semantic availability and measured limits
 
-The server reads an existing `OPENROUTER_API_KEY` or `TYPESAFE_API_KEY` from its environment. When a key is already present in the launching shell, no additional setup is needed. The Rust client calls `https://openrouter.ai/api` with `typesafe/jev-1.13`; see the [verified client configuration](docs/reports/t11-jev-client.md). Credentials stay server-side. Browser canary checks and an explicit log-capture test cover the exercised routes and routine provider logs.
+The server reads an existing `OPENROUTER_API_KEY` or `TYPESAFE_API_KEY` from its environment. When a key is already present in the launching shell, no additional setup is needed. The Rust client calls `https://openrouter.ai/api` with `typesafe/jev-1.14`; see the [earlier 1.13 client verification](docs/reports/t11-jev-client.md) for the transport smoke test. Credentials stay server-side. Browser canary checks and an explicit log-capture test cover the exercised routes and routine provider logs.
 
 With no key or a provider failure, pages report semantic features unavailable and deterministic browsing, distances, paths, evidence and statistics remain usable. The client has one total ten-second deadline and at most two transport attempts. Semantic output cannot create players/edges or override graph calculations.
 
