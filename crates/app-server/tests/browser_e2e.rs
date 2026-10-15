@@ -1544,3 +1544,99 @@ async fn programmatic_pair_changes_clear_stale_feedback_and_pending_search() {
     }
     assert_eq!(b.call(json!({"op":"errors"})), json!([]));
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "actual Chromium/WASM long combobox keyboard visibility"]
+async fn picker_keyboard_navigation_keeps_active_result_inside_the_list() {
+    let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../docs/reports");
+    let server = Server::start(
+        app_server::app_with_report_data(root, app_server::JevHandle::unconfigured()).unwrap(),
+    )
+    .await;
+    let mut b = Browser::start();
+    b.call(json!({"op":"launch"}));
+    b.call(json!({"op":"viewport","width":390,"height":844}));
+    b.call(json!({"op":"goto","url":server.url}));
+    b.ready();
+    for id in ["graph-player", "graph-target"] {
+        b.call(json!({"op":"fill","selector":format!("#{id}"),"value":"Smith"}));
+        b.call(json!({"op":"ready","selector":format!("#{id}-option-19")}));
+        let input = b.call(json!({"op":"box","selector":format!("#{id}")}));
+        for key in ["ArrowUp", "ArrowDown", "ArrowUp"] {
+            b.call(json!({"op":"key","key":key}));
+            let active = b.call(json!({"op":"attribute","selector":format!("#{id}"),"name":"aria-activedescendant"}));
+            let option =
+                b.call(json!({"op":"box","selector":format!("#{}", active.as_str().unwrap())}));
+            let list = b.call(json!({"op":"box","selector":format!("#{id}-results")}));
+            let top = option["y"].as_f64().unwrap();
+            let bottom = top + option["height"].as_f64().unwrap();
+            assert!(
+                top >= 0.0 && bottom <= 844.0,
+                "active option is outside phone viewport: {option}"
+            );
+            assert!(
+                top >= list["y"].as_f64().unwrap(),
+                "active option is above list: {option} / {list}"
+            );
+            assert!(
+                bottom <= list["y"].as_f64().unwrap() + list["height"].as_f64().unwrap(),
+                "active option is below list: {option} / {list}"
+            );
+        }
+        assert_eq!(
+            b.call(json!({"op":"box","selector":format!("#{id}")}))["y"],
+            input["y"]
+        );
+        b.call(json!({"op":"key","key":"Enter"}));
+        assert_eq!(
+            b.call(json!({"op":"attribute","selector":format!("#{id}"),"name":"data-selected-id"})),
+            "smithdr01"
+        );
+    }
+    assert_eq!(b.call(json!({"op":"errors"})), json!([]));
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "actual Chromium/WASM combobox focus and delayed dismissal"]
+async fn picker_focus_departure_dismisses_results_without_losing_pointer_selection() {
+    let server = Server::start(app_server::app_with_fixture_data()).await;
+    let mut b = Browser::start();
+    b.call(json!({"op":"launch"}));
+    b.call(json!({"op":"goto","url":server.url}));
+    b.ready();
+    for id in ["graph-player", "graph-target"] {
+        b.call(json!({"op":"fill","selector":format!("#{id}"),"value":"Player"}));
+        b.call(json!({"op":"ready","selector":format!("#{id}-option-0")}));
+        b.call(json!({"op":"key","key":"ArrowDown"}));
+        b.call(json!({"op":"key","key":"Tab"}));
+        assert_eq!(b.call(json!({"op":"active-id"})), format!("{id}-era"));
+        assert_eq!(
+            b.call(json!({"op":"attribute","selector":format!("#{id}"),"name":"aria-expanded"})),
+            "false"
+        );
+        assert_eq!(
+            b.call(
+                json!({"op":"attribute","selector":format!("#{id}"),"name":"aria-activedescendant"})
+            ),
+            serde_json::Value::Null
+        );
+        b.call(json!({"op":"key","key":"Shift+Tab"}));
+        b.call(json!({"op":"key","key":"ArrowDown"}));
+        b.call(json!({"op":"click","selector":format!("#{id}-results [data-player-id='B']")}));
+        assert_eq!(
+            b.call(json!({"op":"attribute","selector":format!("#{id}"),"name":"data-selected-id"})),
+            "B"
+        );
+        assert_eq!(b.call(json!({"op":"active-id"})), id);
+        b.call(json!({"op":"intercept","pattern":"**/api/search*","delay":900}));
+        b.call(json!({"op":"fill","selector":format!("#{id}"),"value":"Player A"}));
+        b.call(json!({"op":"key","key":"Tab"}));
+        b.call(json!({"op":"network-idle"}));
+        assert_eq!(
+            b.call(json!({"op":"attribute","selector":format!("#{id}"),"name":"aria-expanded"})),
+            "false"
+        );
+        b.call(json!({"op":"unroute","pattern":"**/api/search*"}));
+    }
+    assert_eq!(b.call(json!({"op":"errors"})), json!([]));
+}

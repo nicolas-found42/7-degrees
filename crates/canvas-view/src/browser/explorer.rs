@@ -415,6 +415,50 @@ struct PickerState {
     generation: u64,
     candidates: Vec<(String, String)>,
     active: Option<usize>,
+    pending: bool,
+}
+fn dismiss_picker(document: &Document, id: &str, state: &Rc<RefCell<PickerState>>) {
+    let mut state = state.borrow_mut();
+    state.generation += 1;
+    state.active = None;
+    let pending = std::mem::take(&mut state.pending);
+    drop(state);
+    let _ = element(document, &format!("{id}-results")).set_attribute("hidden", "");
+    let input = element(document, id);
+    let _ = input.set_attribute("aria-expanded", "false");
+    let _ = input.remove_attribute("aria-activedescendant");
+    if pending {
+        element(document, &format!("{id}-search-status"))
+            .set_text_content(Some("Search dismissed. Type to search again."));
+    }
+}
+fn position_picker_results(document: &Document, id: &str) {
+    let input = element(document, id)
+        .dyn_into::<HtmlInputElement>()
+        .unwrap();
+    let bounds = input.get_bounding_client_rect();
+    let height = web_sys::window()
+        .unwrap()
+        .inner_height()
+        .ok()
+        .and_then(|h| h.as_f64())
+        .unwrap_or(600.0);
+    let below = (height - bounds.bottom() - 8.0).max(0.0);
+    let above = (bounds.top() - 8.0).max(0.0);
+    let placement = if below < 144.0 && above > below {
+        format!(
+            "top:auto;bottom:calc(100% - {}px);max-height:{}px",
+            input.offset_top(),
+            (above - 2.0).clamp(0.0, 288.0)
+        )
+    } else {
+        format!(
+            "top:{}px;bottom:auto;max-height:{}px",
+            input.offset_top() + input.offset_height(),
+            (below - 2.0).clamp(0.0, 288.0)
+        )
+    };
+    let _ = element(document, &format!("{id}-results")).set_attribute("style", &placement);
 }
 fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
     let document = view.borrow().document.clone();
@@ -520,10 +564,33 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
         state.generation += 1;
         state.candidates.clear();
         state.active = None;
+        state.pending = false;
+        drop(state);
         reset_list.set_inner_html("");
         let _ = reset_list.set_attribute("hidden", "");
         let _ = reset_input.set_attribute("aria-expanded", "false");
         let _ = reset_input.remove_attribute("aria-activedescendant");
+    })?;
+    let focus_state = state.clone();
+    let focus_document = document.clone();
+    listen(parent.as_ref(), "focusout", move |event| {
+        let next = event
+            .dyn_into::<web_sys::FocusEvent>()
+            .ok()
+            .and_then(|e| e.related_target())
+            .and_then(|target| target.dyn_into::<web_sys::Element>().ok());
+        // A pointer selection moves focus into an option before its click arrives.
+        if next.is_some_and(|next| {
+            next.id() == id
+                || next
+                    .closest(&format!("#{id}-results"))
+                    .ok()
+                    .flatten()
+                    .is_some()
+        }) {
+            return;
+        }
+        dismiss_picker(&focus_document, id, &focus_state);
     })?;
     for (target, event) in [
         (input.clone().into(), "input"),
@@ -566,11 +633,13 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
                 s.generation += 1;
                 s.candidates.clear();
                 s.active = None;
+                s.pending = true;
                 s.generation
             };
             let document = view.borrow().document.clone();
             let list = element(&document, &format!("{id}-results"));
             list.set_inner_html("");
+            position_picker_results(&document, id);
             let _ = list.remove_attribute("hidden");
             let _ = input.set_attribute("aria-expanded", "true");
             let _ = input.remove_attribute("aria-activedescendant");
@@ -618,6 +687,8 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
                 if s.generation != generation {
                     return;
                 }
+                s.pending = false;
+                position_picker_results(&document, id);
                 let notice = element(&document, &format!("{id}-search-status"));
                 match answer {
                     Ok(data) => {
@@ -671,6 +742,7 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
     let choose = {
         let view = view.clone();
         let state = state.clone();
+        let input = input.clone();
         move |index: usize| {
             let Some((pid, name)) = state.borrow().candidates.get(index).cloned() else {
                 return;
@@ -680,6 +752,7 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
                 s.generation += 1;
                 s.active = None;
             }
+            let _ = input.focus();
             set_picker(&view.borrow().document, id, &pid, &name);
             {
                 let mut v = view.borrow_mut();
@@ -721,6 +794,7 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
                 if n == 0 {
                     return;
                 }
+                position_picker_results(&document, id);
                 let _ = element(&document, &format!("{id}-results")).remove_attribute("hidden");
                 let _ = input_copy.set_attribute("aria-expanded", "true");
                 let i = match (s.active, e.key().as_str()) {
@@ -736,6 +810,20 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
                 }
                 let _ =
                     input_copy.set_attribute("aria-activedescendant", &format!("{id}-option-{i}"));
+                let list = element(&document, &format!("{id}-results"));
+                let option = element(&document, &format!("{id}-option-{i}"));
+                let bounds = list.get_bounding_client_rect();
+                let option_bounds = option.get_bounding_client_rect();
+                let top = bounds.top() + f64::from(list.client_top());
+                let bottom = top + f64::from(list.client_height());
+                let delta = if option_bounds.top() < top {
+                    (option_bounds.top() - top).floor()
+                } else if option_bounds.bottom() > bottom {
+                    (option_bounds.bottom() - bottom).ceil()
+                } else {
+                    0.0
+                };
+                list.set_scroll_top(list.scroll_top() + delta as i32);
             }
             "Enter" => {
                 e.prevent_default();
@@ -751,12 +839,9 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
             }
             "Escape" => {
                 e.prevent_default();
-                state.borrow_mut().generation += 1;
-                state.borrow_mut().active = None;
-                let _ = element(&document, &format!("{id}-results")).set_attribute("hidden", "");
-                let _ = input_copy.set_attribute("aria-expanded", "false");
-                let _ = input_copy.remove_attribute("aria-activedescendant");
+                dismiss_picker(&document, id, &state);
             }
+            "Tab" => dismiss_picker(&document, id, &state),
             _ => {}
         }
     })?;
