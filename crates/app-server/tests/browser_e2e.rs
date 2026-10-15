@@ -1502,3 +1502,45 @@ async fn pair_url_tracks_selection_clear_and_evidence_history() {
     );
     assert_eq!(b.call(json!({"op":"errors"})), json!([]));
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "actual Chromium/WASM programmatic picker reset regression"]
+async fn programmatic_pair_changes_clear_stale_feedback_and_pending_search() {
+    let server = Server::start(app_server::app_with_fixture_data()).await;
+    let mut b = Browser::start();
+    b.call(json!({"op":"launch"}));
+    b.call(json!({"op":"goto","url":server.url}));
+    b.ready();
+    b.call(json!({"op":"select","selector":"#graph-player","value":"A"}));
+    b.call(json!({"op":"select","selector":"#graph-target","value":"B"}));
+    b.click("Clear chain");
+    assert_eq!(b.text("#graph-target-search-status"), "");
+    b.call(json!({"op":"intercept","pattern":"**/api/search*","delay":900}));
+    b.call(json!({"op":"fill","selector":"#graph-target","value":"Player C"}));
+    b.click("Clear chain");
+    b.call(json!({"op":"network-idle"}));
+    assert_eq!(b.text("#graph-target-search-status"), "");
+    assert_eq!(
+        b.call(json!({"op":"attribute","selector":"#graph-target","name":"aria-expanded"})),
+        "false"
+    );
+    b.call(json!({"op":"fill","selector":"#graph-player","value":"Player C"}));
+    b.click("Random pair");
+    b.call(json!({"op":"network-idle"}));
+    for id in ["graph-player", "graph-target"] {
+        let name = b.call(json!({"op":"input-value","selector":format!("#{id}")}));
+        assert_eq!(
+            b.text(&format!("#{id}-search-status")),
+            format!("Selected: {}.", name.as_str().unwrap())
+        );
+        assert_eq!(
+            b.call(json!({"op":"attribute","selector":format!("#{id}"),"name":"aria-expanded"})),
+            "false"
+        );
+        assert_eq!(
+            b.call(json!({"op":"count","selector":format!("#{id}-results [role=option]")})),
+            0
+        );
+    }
+    assert_eq!(b.call(json!({"op":"errors"})), json!([]));
+}

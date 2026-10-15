@@ -40,6 +40,16 @@ pub(super) fn set_picker(document: &Document, id: &str, value: &str, name: &str)
     } else if let Some(select) = picker.dyn_ref::<HtmlSelectElement>() {
         select.set_value(value);
     }
+    if let Some(notice) = document.get_element_by_id(&format!("{id}-search-status")) {
+        notice.set_text_content(Some(&if value.is_empty() {
+            String::new()
+        } else {
+            format!("Selected: {name}.")
+        }));
+    }
+    if let Ok(event) = web_sys::Event::new("explorer-picker-set") {
+        let _ = picker.dispatch_event(&event);
+    }
 }
 impl CanvasView {
     pub(super) fn sync_pair_url(&self) {
@@ -502,6 +512,19 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
     ));
     parent.append_child(&franchise)?;
     let state = Rc::new(RefCell::new(PickerState::default()));
+    let reset_state = state.clone();
+    let reset_input = input.clone();
+    let reset_list = list.clone();
+    listen(input.as_ref(), "explorer-picker-set", move |_| {
+        let mut state = reset_state.borrow_mut();
+        state.generation += 1;
+        state.candidates.clear();
+        state.active = None;
+        reset_list.set_inner_html("");
+        let _ = reset_list.set_attribute("hidden", "");
+        let _ = reset_input.set_attribute("aria-expanded", "false");
+        let _ = reset_input.remove_attribute("aria-activedescendant");
+    })?;
     for (target, event) in [
         (input.clone().into(), "input"),
         (era.clone().into(), "change"),
@@ -648,7 +671,6 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
     let choose = {
         let view = view.clone();
         let state = state.clone();
-        let input = input.clone();
         move |index: usize| {
             let Some((pid, name)) = state.borrow().candidates.get(index).cloned() else {
                 return;
@@ -658,12 +680,7 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
                 s.generation += 1;
                 s.active = None;
             }
-            input.set_value(&name);
-            let _ = input.set_attribute("data-selected-id", &pid);
-            let _ = input.set_attribute("aria-expanded", "false");
-            let _ = input.remove_attribute("aria-activedescendant");
-            element(&view.borrow().document, &format!("{id}-search-status"))
-                .set_text_content(Some(&format!("Selected: {name}.")));
+            set_picker(&view.borrow().document, id, &pid, &name);
             {
                 let mut v = view.borrow_mut();
                 let _ = element(&v.document, &format!("{id}-results")).set_attribute("hidden", "");
