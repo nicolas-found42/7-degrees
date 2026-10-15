@@ -1,8 +1,6 @@
 //! The 7-degrees local app server: Axum routes over a deterministic
 //! teammate graph, plus the minimal server-rendered UI.
 
-mod chain_map;
-pub mod chain_view;
 mod fixture_data;
 pub mod graph_view;
 mod jev;
@@ -13,7 +11,6 @@ pub mod report_data;
 pub mod resolution;
 pub mod search;
 mod semantic_policy;
-mod stats_view;
 mod ui;
 
 use axum::{
@@ -49,6 +46,7 @@ pub struct AppState {
     jev: JevHandle,
     reports: Option<std::sync::Arc<report_data::ReportMetadata>>,
     canvas_assets: graph_view::CanvasAssets,
+    visual_links: std::sync::Arc<Vec<canvas_view::GraphLink>>,
 }
 
 /// The router with the fixture graph preloaded and Jev deterministically
@@ -71,8 +69,11 @@ pub fn app_with_jev_and_canvas_assets(
     jev: JevHandle,
     canvas_assets: graph_view::CanvasAssets,
 ) -> Router {
+    let graph = fixture_data::fixture_graph();
+    let visual_links = std::sync::Arc::new(graph_view::visual_links(&graph));
     let state = AppState {
-        graph: std::sync::Arc::new(fixture_data::fixture_graph()),
+        graph: std::sync::Arc::new(graph),
+        visual_links,
         jev,
         reports: None,
         canvas_assets,
@@ -88,6 +89,7 @@ fn app(state: AppState) -> Router {
         .route("/sources/transactions", get(provenance::transactions))
         .route("/assets/{asset}", get(graph_view::asset))
         .route("/graph", get(graph_view::page))
+        .route("/", get(graph_view::page))
         .route("/api/neighborhood", get(graph_view::api))
         .route("/api/network", get(graph_view::network_api))
         .route("/api/fixture", get(fixture_summary))
@@ -97,22 +99,14 @@ fn app(state: AppState) -> Router {
         .route("/api/connection", get(connection))
         .route("/api/paths", get(all_paths))
         .route("/api/stats", get(stats))
-        .route("/stats", get(statistics_page))
         .route("/api/coverage", get(coverage))
         .route("/api/coverage/{player}", get(player_coverage))
         .route("/api/players", get(players))
         .route("/api/query", get(query::api))
-        .route("/query", get(query::page))
         .route("/api/search", get(search::api))
         .route("/api/resolve", get(resolution::api))
         .route("/api/rank", get(ranking::api))
-        .route("/rank", get(ranking::page))
-        .route("/resolve", get(resolution::page))
-        .route("/search", get(search::page))
-        .route("/players/{id}", get(search::profile))
         .route("/api/semantic-status", get(semantic_status))
-        .route("/", get(home))
-        .route("/chain", get(chain_page))
         .route("/style.css", get(style_css))
         .fallback(not_found)
         .with_state(state)
@@ -148,7 +142,9 @@ pub fn app_with_report_data_and_canvas_assets(
     canvas_assets: graph_view::CanvasAssets,
 ) -> Result<Router, String> {
     let (graph, reports) = report_data::load(root.as_ref())?;
+    let visual_links = std::sync::Arc::new(graph_view::visual_links(&graph));
     Ok(app(AppState {
+        visual_links,
         graph: std::sync::Arc::new(graph),
         jev,
         reports: Some(std::sync::Arc::new(reports)),
@@ -451,18 +447,6 @@ fn statistics_failed() -> Response {
         .into_response()
 }
 
-async fn statistics_page(State(state): State<AppState>) -> Response {
-    // Warms the graph's statistics cache off the async workers; the page then reads it.
-    if compute_statistics(&state).await.is_none() {
-        return statistics_failed();
-    }
-    stats_view::page(
-        &state.graph,
-        state.jev.status(),
-        state.reports.as_ref().map(|r| r.coverage.warning.as_str()),
-    )
-}
-
 async fn stats(State(state): State<AppState>) -> Response {
     let Some(stats) = compute_statistics(&state).await else {
         return statistics_failed();
@@ -531,32 +515,6 @@ async fn semantic_status(State(state): State<AppState>) -> Json<serde_json::Valu
         "available": available,
         "reason": reason,
     }))
-}
-
-/// The minimal UI home page: the connect form and the fixture edge list,
-/// rendered server-side in Rust.
-async fn home(State(state): State<AppState>) -> Response {
-    ui::home(
-        &state.graph,
-        state.jev.status(),
-        state.reports.as_ref().map(|r| r.coverage.warning.as_str()),
-        state.reports.as_deref(),
-    )
-}
-
-/// The `/chain` UI page: the shortest teammate chain between the queried pair
-/// as ordered players and links, with its degree of separation.
-async fn chain_page(
-    State(state): State<AppState>,
-    Query(query): Query<chain_view::ChainQuery>,
-) -> Response {
-    chain_view::page_with_reports(
-        &state.graph,
-        query,
-        state.jev.status(),
-        state.reports.as_ref().map(|r| r.coverage.warning.as_str()),
-        state.reports.as_deref(),
-    )
 }
 
 /// The UI stylesheet, authored in the server crate and served as a static

@@ -101,70 +101,57 @@ async fn surname_and_partial_name_rank_candidates_without_collapsing_same_name_p
     );
 }
 #[tokio::test]
-async fn rendered_candidates_offer_identity_selection_with_era_team_and_coverage_context() {
-    let (status, html) = request(app(), "/search?q=Joe%20Smith").await;
-    assert_eq!(status, StatusCode::OK);
-    assert!(html.contains("Choose the intended player"));
-    assert!(html.contains("1996–2011") && html.contains("1947–1948"));
-    assert!(html.contains("WARRIORS") && html.contains("STAGS"));
-    assert!(
-        html.contains("href=\"/players/smithjo01\"")
-            && html.contains("href=\"/players/smithjo02\"")
-    );
-    assert!(html.contains("Incomplete dated roster coverage"));
-    let (status, profile) = request(app(), "/players/jordami01").await;
-    assert_eq!(status, StatusCode::OK);
-    assert!(profile.contains("Michael Jordan") && profile.contains("1985–2003"));
-    assert!(profile.contains("/chain?from=jordami01"));
+async fn ambiguous_candidates_carry_era_team_and_coverage_context() {
+    // Same-name people stay separate in the search API, each with the era and
+    // team context that distinguishes them.
+    let result = json_get("/api/search?q=Joe%20Smith").await;
+    assert_eq!(result["status"], "ambiguous");
+    let candidates = result["candidates"].as_array().unwrap();
+    assert_eq!(candidates.len(), 2);
+    assert_eq!(candidates[0]["player"]["first_season"], 1996);
+    assert_eq!(candidates[0]["player"]["last_season"], 2011);
+    assert_eq!(candidates[1]["player"]["first_season"], 1947);
+    assert_eq!(candidates[1]["player"]["last_season"], 1948);
+    let teams: Vec<&str> = candidates
+        .iter()
+        .flat_map(|c| c["player"]["teams"].as_array().unwrap())
+        .map(|t| t.as_str().unwrap())
+        .collect();
+    assert!(teams.contains(&"WARRIORS") && teams.contains(&"STAGS"));
 }
 
 #[tokio::test]
-async fn connection_choices_distinguish_same_name_people_and_preserve_selected_identity() {
-    let app = app();
-    for uri in ["/", "/chain?from=smithjo02"] {
-        let (status, html) = request(app.clone(), uri).await;
-        assert_eq!(status, StatusCode::OK);
+async fn graph_page_picker_holds_every_player_by_id_including_same_name_people() {
+    // The graph page is the whole network: both Joe Smiths are picker options
+    // with their own ids, so the canvas and the picker keep them distinct.
+    let (status, html) = request(app(), "/").await;
+    assert_eq!(status, StatusCode::OK);
+    for id in ["smithjo01", "smithjo02", "jordami01"] {
         assert!(
-            html.contains("<option value=\"smithjo01\">Joe Smith — 1996–2011 · smithjo01</option>")
+            html.contains(&format!("value=\"{id}\"")),
+            "{id} is a picker option"
         );
-        assert!(html.contains("Joe Smith — 1947–1948 · smithjo02</option>"));
-        assert!(html.contains("<option value=\"jordami01\">Michael Jordan</option>"));
-        assert!(!html.contains(">Joe Smith</option>"));
-        if uri.starts_with("/chain") {
-            let from = html.split("<select id=\"from\"").nth(1).unwrap();
-            assert!(from.split("</select>").next().unwrap().contains(
-                "<option value=\"smithjo02\" selected>Joe Smith — 1947–1948 · smithjo02</option>"
-            ));
-        }
     }
+    assert!(!html.contains("data-select-player="));
 }
 
 #[tokio::test]
-async fn search_and_profiles_display_canonical_ids_as_text() {
-    let app = app();
-    let (_, results) = request(app.clone(), "/search?q=Joe%20Smith").await;
+async fn search_api_displays_canonical_ids_as_text() {
+    // The search and profile pages are removed; canonical ids remain visible in
+    // the search API and in the graph page's picker options.
+    let results = json_get("/api/search?q=Joe%20Smith").await;
     for id in ["smithjo01", "smithjo02"] {
-        assert!(results.contains(&format!("Player ID: <code>{id}</code>")));
-        let (_, profile) = request(app.clone(), &format!("/players/{id}")).await;
-        assert!(profile.contains(&format!("Player ID: <code>{id}</code>")));
+        assert!(
+            results["candidates"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|c| c["player"]["id"] == id),
+            "{id} is a canonical candidate"
+        );
     }
-}
-
-#[tokio::test]
-async fn identical_names_and_eras_still_have_distinct_choices() {
-    let root = std::env::temp_dir().join(format!("seven-same-era-{}", std::process::id()));
-    std::fs::create_dir_all(root.join("t3")).unwrap();
-    std::fs::create_dir_all(root.join("t4")).unwrap();
-    std::fs::write(root.join("t3/player-universe.csv"),
-        "bbr_player_id,display_name,first_season,last_season,aba_only,s1_display_name\na,Same Name,2000,2001,N,\nb,Same Name,2000,2001,N,\n").unwrap();
-    std::fs::write(root.join("t4/tenures.csv"),
-        "bbr_player_id,season,lg,canonical_franchise,membership_source,evidence_class,start_day,end_day,start_anchored,end_anchored\n").unwrap();
-    let app =
-        app_server::app_with_report_data(root, app_server::JevHandle::unconfigured()).unwrap();
-    let (status, html) = request(app, "/chain?from=b").await;
-    assert_eq!(status, StatusCode::OK);
-    assert!(html.contains("<option value=\"a\">Same Name — 2000–2001 · a</option>"));
-    assert!(html.contains("<option value=\"b\" selected>Same Name — 2000–2001 · b</option>"));
+    let (_, html) = request(app(), "/").await;
+    assert!(html.contains("smithjo01") && html.contains("smithjo02"));
 }
 #[tokio::test]
 async fn bounded_queries_do_not_hide_ambiguity_or_expand_an_empty_query() {
@@ -183,19 +170,41 @@ async fn bounded_queries_do_not_hide_ambiguity_or_expand_an_empty_query() {
     assert_eq!(empty["matches_total"], 0);
 }
 #[tokio::test]
-async fn empty_no_match_and_invalid_profile_are_visible_and_query_text_is_escaped() {
-    assert!(
-        request(app(), "/search")
-            .await
-            .1
-            .contains("Enter a player name")
-    );
-    let (_, html) = request(app(), "/search?q=%3Cscript%3Ealert%281%29%3C%2Fscript%3E").await;
-    assert!(html.contains("No matching players found"));
-    assert!(html.contains("&lt;script&gt;"));
-    assert!(!html.contains("<script>"));
-    let (status, html) = request(app(), "/players/unknown").await;
-    assert_eq!(status, StatusCode::NOT_FOUND);
-    assert!(html.contains("Player not found"));
-    assert!(request(app(), "/").await.1.contains("action=\"/search\""));
+async fn empty_no_match_and_query_text_round_trips() {
+    let empty = json_get("/api/search?q=...").await;
+    assert_eq!(empty["status"], "empty_query");
+    // A script-shaped query is not a match, and the JSON API is not HTML: the
+    // query round-trips as a JSON string rather than being served as markup.
+    let (status, body) = request(
+        app(),
+        "/api/search?q=%3Cscript%3Ealert%281%29%3C%2Fscript%3E",
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+    let value: Value = serde_json::from_str(&body).unwrap();
+    assert_eq!(value["status"], "no_match");
+    // The removed search and profile pages are gone.
+    for removed in ["/search", "/search?q=Joe%20Smith", "/players/unknown"] {
+        assert_eq!(
+            request(app(), removed).await.0,
+            StatusCode::NOT_FOUND,
+            "{removed}"
+        );
+    }
+    // The graph page is the only page.
+    assert!(request(app(), "/").await.1.contains("Graph exploration"));
+}
+
+#[tokio::test]
+async fn context_filters_precede_limits_and_preserve_duplicate_identity() {
+    let result = json_get("/api/search?q=Smith&era=1940&limit=1").await;
+    assert_eq!(result["candidates"][0]["player"]["id"], "smithjo02");
+    assert_eq!(result["matches_total"], 1);
+    assert_eq!(result["has_more"], false);
+    let result = json_get("/api/search?franchise=SIXERS&limit=1").await;
+    assert_eq!(result["matches_total"], 2);
+    assert_eq!(result["has_more"], true);
+    for path in ["/api/search?era=1941", "/api/search?franchise=invalid"] {
+        assert_eq!(request(app(), path).await.0, StatusCode::BAD_REQUEST);
+    }
 }

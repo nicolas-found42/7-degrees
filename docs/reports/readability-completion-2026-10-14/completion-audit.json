@@ -1,0 +1,31 @@
+{
+  "conclusion": "Complete after review of current source, actual assertions, matching successful receipts and final images. No unresolved implementation requirement remains.",
+  "checked_source_bytes": true,
+  "all_manifest_exit_codes_zero": true,
+  "counts": {
+    "S": 22,
+    "B": 14,
+    "E": 10,
+    "A": 35
+  },
+  "covered": 80,
+  "superseded": [
+    "A08"
+  ],
+  "source_and_assertion_markers_valid": true,
+  "standards_findings": "All camera ordering, CSS pinch, picking, cache and canonical-curve findings corrected; regressions pass.",
+  "spec_findings": "Dense Force and phone Concentric visual checks pass; remaining initial acceptance gaps corrected.",
+  "jev_gate_action": "escalate",
+  "jev_gate_review_composite": 0.6371818181818182,
+  "jev_gate_safe_to_apply": 0.27,
+  "jev_gate_resolution": "No automatic acceptance claimed. Per-file review returned low-confidence rubrics without actionable source findings. The compound six-hop/default claim was marked contradicted at confidence0.09; actual assertions and passing log were re-inspected. Focused verification with the omitted B-before-A assertions verified six-hop retention at0.82 and default recomputation at0.70. Root manually confirmed both. Report verification then supports browser coverage at0.89, execution at0.98 and solver facts at0.80. Requirement counts were independently counted from unique IDs; the report verifier count confidence0.30 does not replace exact counting.",
+  "final_verification": "checks/manifest.json",
+  "capture_hashes": "screenshots.json",
+  "source_certificate": "source-bytes.json",
+  "numeric_audit_resolution": "Jev numeric audit passed execution/gate/report metrics and flagged solver samples as off-target at0.80. Exact regex extraction from the published original solver log independently matches1195/3871/4292ms; solver report verification supports the same facts at0.80.",
+  "solver_samples_exactly_match_log": {
+    "extended": 1195,
+    "fa2-base": 3871,
+    "fa2-hub": 4292
+  }
+}

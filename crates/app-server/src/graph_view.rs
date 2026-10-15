@@ -59,6 +59,8 @@ fn node(state: &AppState, id: &str, distance: Option<usize>) -> GraphNode {
             era: format!("{}–{} seasons", context.first_season, context.last_season),
             teams: context.teams.clone(),
             distance,
+            debut_season: Some(context.first_season),
+            degree: state.graph.neighbor_ids(id).len(),
         };
     }
     let tenures: Vec<_> = state
@@ -82,6 +84,8 @@ fn node(state: &AppState, id: &str, distance: Option<usize>) -> GraphNode {
         era,
         teams: teams.into_iter().collect(),
         distance,
+        debut_season: None,
+        degree: state.graph.neighbor_ids(id).len(),
     }
 }
 
@@ -142,20 +146,15 @@ fn neighborhood(
             truncated = true;
             continue;
         }
-        let evidence = edge.strongest_evidence();
-        let (team, overlap_days, minimum_shared_games) = (
-            evidence.team.clone(),
-            evidence.overlap_days,
-            evidence.minimum_shared_games(),
-        );
-        links.push(GraphLink {
-            from: edge.a,
-            to: edge.b,
-            team,
-            overlap_days,
-            minimum_shared_games,
-            on_path,
-        });
+        let index = state
+            .visual_links
+            .binary_search_by(|link| {
+                (link.from.as_str(), link.to.as_str()).cmp(&(edge.a.as_str(), edge.b.as_str()))
+            })
+            .expect("complete cached visual graph");
+        let mut link = state.visual_links[index].clone();
+        link.on_path = on_path;
+        links.push(link);
     }
     GraphPayload {
         full_network: false,
@@ -164,6 +163,7 @@ fn neighborhood(
         path: path.to_vec(),
         degree: (!path.is_empty()).then(|| path.len() - 1),
         focus: player.into(),
+        target: String::new(),
         coverage: state
             .reports
             .as_ref()
@@ -192,6 +192,95 @@ pub async fn api(
     Json(neighborhood(&state, &query.player, depth, limit, &[])).into_response()
 }
 
+/// Fixed saturation scales: five roster years or three full appearance seasons.
+/// Units remain separate visual mappings; neither mapping certifies duration.
+pub fn edge_visual_weight(edge: &graph_core::TeammateEdge) -> (f64, String) {
+    fn mapped(count: u64, saturation: f64) -> f64 {
+        if count == 0 {
+            0.1
+        } else {
+            (0.15 + 0.85 * (count as f64).ln_1p() / saturation.ln_1p()).clamp(0.1, 1.0)
+        }
+    }
+    let mut groups: BTreeMap<&str, (u64, u64, bool)> = BTreeMap::new();
+    for proof in &edge.evidence {
+        let group = groups.entry(&proof.team).or_default();
+        group.0 += u64::from(proof.overlap_days.unwrap_or(0));
+        if let Some(p) = &proof.appearance_proof {
+            // N is the admitted season's actual total, including shortened seasons.
+            group.1 += (u64::from(p.a_games) + u64::from(p.b_games))
+                .saturating_sub(u64::from(p.team_games));
+        }
+        group.2 |= proof.game_witness.is_some();
+    }
+    let strength = |days, games, witness| {
+        mapped(days, 1825.0)
+            .max(mapped(games, 246.0))
+            .max(if witness { 0.15 } else { 0.1 })
+    };
+    let mut primary = "";
+    let mut best = 0.0;
+    let (mut days, mut games, mut witness) = (0, 0, false);
+    for (team, (d, g, w)) in groups {
+        let weight = strength(d, g, w);
+        if weight > best {
+            best = weight;
+            primary = team;
+        }
+        days += d;
+        games += g;
+        witness |= w;
+    }
+    (strength(days, games, witness), primary.to_owned())
+}
+
+/// Derived once from the complete evidence, before any view or filter exists.
+pub(crate) fn visual_links(graph: &graph_core::TeammateGraph) -> Vec<GraphLink> {
+    let mut links: Vec<_> = graph
+        .edges()
+        .into_iter()
+        .map(|edge| {
+            let proof = edge.strongest_evidence();
+            let (weight, primary_franchise) = edge_visual_weight(&edge);
+            GraphLink {
+                team: proof.team.clone(),
+                overlap_days: proof.overlap_days,
+                minimum_shared_games: proof.minimum_shared_games(),
+                franchises: edge
+                    .evidence
+                    .iter()
+                    .map(|e| e.team.clone())
+                    .collect::<BTreeSet<_>>()
+                    .into_iter()
+                    .collect(),
+                from: edge.a,
+                to: edge.b,
+                on_path: false,
+                weight,
+                primary_franchise,
+                in_visual_backbone: false,
+            }
+        })
+        .collect();
+    let nodes: Vec<_> = graph
+        .roster
+        .players
+        .iter()
+        .map(|p| GraphNode {
+            id: p.id.clone(),
+            name: p.name.clone(),
+            era: String::new(),
+            teams: Vec::new(),
+            distance: None,
+            debut_season: None,
+            degree: graph.neighbor_ids(&p.id).len(),
+        })
+        .collect();
+    canvas_view::visual::mark_backbone(&nodes, &mut links);
+    links.sort_by(|a, b| (&a.from, &a.to).cmp(&(&b.from, &b.to)));
+    links
+}
+
 fn network(state: &AppState, focus: &str, path: &[String]) -> GraphPayload {
     let nodes = state
         .graph
@@ -200,25 +289,12 @@ fn network(state: &AppState, focus: &str, path: &[String]) -> GraphPayload {
         .iter()
         .map(|p| node(state, &p.id, None))
         .collect();
-    let links = state
-        .graph
-        .edges()
-        .into_iter()
-        .map(|edge| {
-            let proof = edge.strongest_evidence();
-            let on_path = path
-                .windows(2)
-                .any(|p| (p[0] == edge.a && p[1] == edge.b) || (p[1] == edge.a && p[0] == edge.b));
-            GraphLink {
-                team: proof.team.clone(),
-                overlap_days: proof.overlap_days,
-                minimum_shared_games: proof.minimum_shared_games(),
-                on_path,
-                from: edge.a,
-                to: edge.b,
-            }
-        })
-        .collect();
+    let mut links = state.visual_links.as_ref().clone();
+    for link in &mut links {
+        link.on_path = path.windows(2).any(|p| {
+            (p[0] == link.from && p[1] == link.to) || (p[1] == link.from && p[0] == link.to)
+        });
+    }
     GraphPayload {
         full_network: true,
         nodes,
@@ -226,6 +302,7 @@ fn network(state: &AppState, focus: &str, path: &[String]) -> GraphPayload {
         path: path.to_vec(),
         degree: (!path.is_empty()).then(|| path.len() - 1),
         focus: focus.into(),
+        target: String::new(),
         coverage: state
             .reports
             .as_ref()
@@ -236,336 +313,132 @@ fn network(state: &AppState, focus: &str, path: &[String]) -> GraphPayload {
 }
 
 pub async fn network_api(State(state): State<AppState>) -> Response {
-    let focus = state
-        .graph
-        .roster
-        .players
-        .first()
-        .map(|p| p.id.as_str())
-        .unwrap_or("");
-    Json(network(&state, focus, &[])).into_response()
+    Json(network(&state, "", &[])).into_response()
 }
 
 #[derive(Default, Deserialize)]
-pub struct GraphQuery {
-    pub all: Option<bool>,
-    pub from: Option<String>,
-    pub to: Option<String>,
-    pub selected: Option<usize>,
-    pub cursor: Option<String>,
-    pub offset: Option<u64>,
-    pub limit: Option<usize>,
-    pub player: Option<String>,
-    pub depth: Option<usize>,
-    pub neighbor_limit: Option<usize>,
-}
-
-struct GraphSelection {
-    chain: crate::chain_view::ChainQuery,
+pub struct ExplorerQuery {
     player: Option<String>,
-    depth: Option<usize>,
-    neighbor_limit: Option<usize>,
+    from: Option<String>,
+    to: Option<String>,
 }
 
-pub async fn page(State(state): State<AppState>, Query(query): Query<GraphQuery>) -> Response {
-    let full_network = query.all.unwrap_or(false);
-    if full_network
-        && state.graph.roster.players.is_empty()
-        && query.from.is_none()
-        && query.to.is_none()
-        && query.player.is_none()
+/// Whole-network explorer with a native GET-form fallback for exact chains.
+pub async fn page(State(state): State<AppState>, Query(query): Query<ExplorerQuery>) -> Response {
+    let from = query.from.or(query.player).unwrap_or_default();
+    let to = query.to.unwrap_or_default();
+    let mut path = Vec::new();
+    let mut chain = String::new();
+    if (!from.is_empty() && !state.graph.contains_player(&from))
+        || (!to.is_empty() && !state.graph.contains_player(&to))
     {
-        return ui::document(
-            StatusCode::OK,
-            "7 Degrees — All connections",
-            "<h1>All players and connections</h1><p>0 players · 0 connections. No players are present in this snapshot.</p><p><a href=\"/\">Back to explorer</a></p>",
-        );
-    }
-    let query = GraphSelection {
-        chain: crate::chain_view::ChainQuery {
-            from: query.from,
-            to: query.to,
-            selected: query.selected,
-            cursor: query.cursor,
-            offset: query.offset,
-            limit: query.limit,
-        },
-        player: query.player,
-        depth: query.depth,
-        neighbor_limit: query.neighbor_limit,
-    };
-    let failure = |status, message: &str| {
-        ui::document(
-            status,
-            "7 Degrees — Graph",
-            &format!(
-                "<h1>Graph exploration</h1><p class=\"error\">{}</p><p><a href=\"/\">Back to explorer</a></p>",
-                ui::escape(message)
-            ),
-        )
-    };
-    let depth = query.depth.unwrap_or(0);
-    let neighbor_limit = query.neighbor_limit.unwrap_or(60);
-    let limit = query.chain.limit.unwrap_or(20);
-    if depth > 2
-        || !(1..=200).contains(&neighbor_limit)
-        || !(1..=100).contains(&limit)
-        || (query.chain.cursor.is_some() && query.chain.offset.is_some())
-    {
-        return failure(
-            StatusCode::BAD_REQUEST,
-            "Invalid graph page: depth is 0–2, neighborhood limit is 1–200, chain page size is 1–100; use either cursor or offset.",
-        );
-    }
-    let cursor = query
-        .chain
-        .cursor
-        .clone()
-        .unwrap_or_else(|| format!("v1:{}", query.chain.offset.unwrap_or(0)));
-    let mut selected = None;
-    match (query.chain.from.as_deref(), query.chain.to.as_deref()) {
-        (Some(from), Some(to)) => {
-            if !state.graph.contains_player(from) || !state.graph.contains_player(to) {
-                return failure(StatusCode::NOT_FOUND, "Unknown endpoint player.");
+        chain
+            .push_str("<p class=\"error\">Unknown player endpoint. Choose an existing player.</p>");
+    } else if !from.is_empty() && !to.is_empty() {
+        match state.graph.shortest_chain(&from, &to).expect("validated players") {
+            graph_core::Connection::Connected(result) => {
+                path = result.path;
+                chain.push_str(&format!("<h3>Shortest teammate chain · degree {}</h3><ol>", result.links.len()));
+                for (index, id) in path.iter().enumerate() {
+                    chain.push_str(&format!("<li><button type=\"button\" data-center-player=\"{}\">{}</button>", ui::escape(id), ui::escape(ui::display_name(&state.graph.roster.players, id))));
+                    if let Some(link) = result.links.get(index) {
+                        chain.push_str(&format!(" <a href=\"/edge?from={}&amp;to={}\" data-evidence> {} · {}</a>", ui::url_encode(&link.from), ui::url_encode(&link.to), ui::escape(&link.team), ui::escape(&api_types::overlap_description(link.overlap_days, link.minimum_shared_games))));
+                    }
+                    chain.push_str("</li>");
+                }
+                chain.push_str("</ol>");
             }
-            let page = match state
-                .graph
-                .shortest_chains_page_cursor(from, to, &cursor, limit)
-            {
-                Ok(Some(page)) => page,
-                Err(message) => return failure(StatusCode::BAD_REQUEST, &message),
-                _ => return failure(StatusCode::NOT_FOUND, "Unknown endpoint player."),
-            };
-            if page.total_exact == "0" {
-                return crate::chain_view::page(
-                    &state.graph,
-                    query.chain,
-                    state.jev.status(),
-                    state.reports.as_ref().map(|r| r.coverage.warning.as_str()),
-                );
-            }
-            let Some(chain) = page.chains.get(query.chain.selected.unwrap_or(0)) else {
-                return failure(
-                    StatusCode::BAD_REQUEST,
-                    "The selected alternative is outside this page.",
-                );
-            };
-            selected = Some(crate::chain_view::SelectedChain::from_chain(
-                &state.graph,
-                chain,
-            ));
-        }
-        (None, None)
-            if (query.player.is_some() || full_network)
-                && query.chain.selected.is_none()
-                && query.chain.cursor.is_none()
-                && query.chain.offset.is_none() => {}
-        _ => {
-            return failure(
-                StatusCode::BAD_REQUEST,
-                "Choose both chain endpoints or a single neighborhood player.",
-            );
+            graph_core::Connection::Disconnected => chain.push_str(if state.reports.is_some() {"<p>No teammate chain in this evidenced graph. Missing evidence may connect these players historically.</p>"} else {"<p>No teammate chain in this complete synthetic fixture.</p>"}),
         }
     }
-    let focus = query
-        .player
-        .as_deref()
-        .or_else(|| {
-            selected
-                .as_ref()
-                .and_then(|s| s.path.first().map(|p| p.id.as_str()))
-        })
-        .or_else(|| full_network.then(|| state.graph.roster.players.first().unwrap().id.as_str()))
-        .expect("selection validated");
-    if !state.graph.contains_player(focus) {
-        return failure(StatusCode::NOT_FOUND, "Unknown neighborhood player.");
-    }
-    let path: Vec<_> = selected
-        .as_ref()
-        .map(|s| s.path.iter().map(|p| p.id.clone()).collect())
-        .unwrap_or_default();
-    let payload = if full_network {
-        network(&state, focus, &path)
+    let valid_from = if state.graph.contains_player(&from) {
+        from.as_str()
     } else {
-        neighborhood(&state, focus, depth, neighbor_limit, &path)
+        ""
     };
-    let json = serde_json::to_string(&payload).expect("graph facts serialize");
-    let hidden = |name: &str, value: &str| {
-        format!(
-            "<input type=\"hidden\" name=\"{name}\" value=\"{}\">",
-            ui::escape(value)
-        )
-    };
-    let mut fields = String::new();
-    let chain_link = if let (Some(from), Some(to)) = (&query.chain.from, &query.chain.to) {
-        fields.push_str(&hidden("from", from));
-        fields.push_str(&hidden("to", to));
-        fields.push_str(&hidden("cursor", &cursor));
-        fields.push_str(&hidden("limit", &limit.to_string()));
-        fields.push_str(&hidden(
-            "selected",
-            &query.chain.selected.unwrap_or(0).to_string(),
-        ));
-        format!(
-            "<p><a href=\"/chain?from={}&amp;to={}&amp;cursor={}&amp;limit={limit}&amp;selected={}\">Compare shortest alternatives</a></p>",
-            ui::url_encode(from),
-            ui::url_encode(to),
-            ui::url_encode(&cursor),
-            query.chain.selected.unwrap_or(0)
-        )
+    let mut payload = network(&state, valid_from, &path);
+    payload.target = if state.graph.contains_player(&to) {
+        to.clone()
     } else {
         String::new()
     };
-    fields.push_str(&hidden("neighbor_limit", &neighbor_limit.to_string()));
-    if full_network {
-        fields.push_str(&hidden("all", "true"));
-    }
-    let options: String = payload
-        .nodes
-        .iter()
-        .map(|n| {
-            format!(
-                "<option value=\"{}\"{}>{} — {}; {}</option>",
-                ui::escape(&n.id),
-                if n.id == focus { " selected" } else { "" },
-                ui::escape(&n.name),
-                ui::escape(&n.era),
-                ui::escape(&n.teams.join(", "))
-            )
-        })
-        .collect();
-    // The complete network is canvas-only, so the server-rendered fallback lists the selected
-    // chain plus the selected player's direct teammates; any other player is one form
-    // submission away through the player selector.
-    let text_visible: BTreeSet<&str> = if full_network {
-        path.iter()
-            .map(String::as_str)
-            .chain(std::iter::once(focus))
-            .chain(state.graph.neighbor_ids(focus))
+    let json = serde_json::to_string(&payload)
+        .expect("graph facts serialize")
+        .replace('<', "\\u003c")
+        .replace('>', "\\u003e")
+        .replace('&', "\\u0026");
+    let options = |selected: &str| -> String {
+        payload
+            .nodes
+            .iter()
+            .map(|n| {
+                format!(
+                    "<option value=\"{}\"{}>{} — {}; {} ({})</option>",
+                    ui::escape(&n.id),
+                    if n.id == selected { " selected" } else { "" },
+                    ui::escape(&n.name),
+                    ui::escape(&n.era),
+                    ui::escape(&n.teams.join(", ")),
+                    ui::escape(&n.id)
+                )
+            })
             .collect()
-    } else {
-        BTreeSet::new()
     };
-    let players:String=payload.nodes.iter().enumerate().filter(|(_,n)| !full_network || text_visible.contains(n.id.as_str())).map(|(index,n)|format!("<li><button id=\"select-node-{index}\" type=\"button\" data-select-player=\"{}\">{}</button> — {}; teams: {}</li>",ui::escape(&n.id),ui::escape(&n.name),ui::escape(&n.era),ui::escape(&n.teams.join(", ")))).collect();
-    let edges:String=payload.links.iter().enumerate().filter(|(_,e)| !full_network || e.on_path || e.from == focus || e.to == focus).map(|(index,e)|format!("<li><button id=\"select-edge-{index}\" type=\"button\" data-select-edge-from=\"{}\" data-select-edge-to=\"{}\">{} ↔ {}</button> — {}, {}{} <a href=\"/edge?from={}&amp;to={}\" target=\"_blank\" rel=\"noopener\">Open overlap evidence</a></li>",ui::escape(&e.from),ui::escape(&e.to),ui::escape(ui::display_name(&state.graph.roster.players,&e.from)),ui::escape(ui::display_name(&state.graph.roster.players,&e.to)),ui::escape(&e.team),api_types::overlap_description(e.overlap_days,e.minimum_shared_games),if e.on_path{"; selected chain link"}else{""},ui::url_encode(&e.from),ui::url_encode(&e.to))).collect();
-    let buttons: String = [
+    let button = |id: &str, name: &str| {
+        format!("<button type=\"button\" id=\"{id}\" aria-label=\"{name}\">{name}</button>")
+    };
+    let camera: String = [
         ("zoom-in", "Zoom in"),
         ("zoom-out", "Zoom out"),
         ("pan-left", "Pan left"),
         ("pan-right", "Pan right"),
         ("pan-up", "Pan up"),
         ("pan-down", "Pan down"),
-        ("refocus", "Refocus selected chain"),
+        ("fit-network", "Fit whole network"),
+        ("focus-player", "Zoom to selected player"),
     ]
     .iter()
-    .map(|(id, name)| format!("<button type=\"button\" id=\"{id}\">{name}</button>"))
+    .map(|(id, name)| button(id, name))
     .collect();
-    let selected_text = selected
-        .as_ref()
-        .map(crate::chain_view::render_selected_chain)
-        .unwrap_or_else(|| {
-            "<p>Neighborhood exploration; no player-to-player chain requested.</p>".into()
-        });
-    let source_panel = if let Some(edge) = payload
-        .links
-        .iter()
-        .find(|e| e.on_path)
-        .or_else(|| payload.links.first())
-    {
-        format!(
-            "<section id=\"edge-provenance-panel\"><h3>Selected relationship evidence</h3><p>Select a relationship to load its overlap evidence here, or open any evidence link in a separate page.</p><p><a id=\"open-selected-edge\" href=\"/edge?from={}&amp;to={}\" target=\"_blank\" rel=\"noopener\">Open selected relationship evidence in a separate page</a></p><iframe id=\"edge-provenance-frame\" title=\"Selected teammate overlap evidence\" src=\"about:blank\" sandbox=\"allow-popups allow-popups-to-escape-sandbox\"></iframe></section>",
-            ui::url_encode(&edge.from),
-            ui::url_encode(&edge.to)
-        )
+    let layouts: String = [
+        ("layout-era", "Era lanes layout"),
+        ("layout-concentric", "Concentric rings layout"),
+        ("layout-force", "Force-directed layout"),
+    ]
+    .iter()
+    .map(|(id, name)| button(id, name))
+    .collect();
+    let layouts = if payload.nodes.is_empty() {
+        layouts.replace("type=\"button\"", "type=\"button\" disabled")
     } else {
-        "<p>No relationship is present in this view; source evidence may be incomplete.</p>".into()
+        layouts
     };
-    let source_panel = if full_network {
-        let source_panel = source_panel.replacen(
-            "id=\"open-selected-edge\"",
-            "id=\"open-selected-edge\" hidden",
-            1,
-        );
-        format!(
-            "<details><summary>Inspect selected relationship evidence</summary>{source_panel}</details>"
-        )
+    let colors = [
+        "#1b9e77", "#d95f02", "#7570b3", "#e7298a", "#65a41e", "#bb8b02", "#a6761d", "#666666",
+    ];
+    let eras: String = colors.iter().enumerate().map(|(i,color)|format!("<li><button type=\"button\" id=\"era-{i}\" aria-pressed=\"true\"><span class=\"swatch\" style=\"background:{color}\" aria-hidden=\"true\"></span>{}{} debut</button></li>",1940+i*10,if i==7 {"s+"} else {"s"})).collect();
+    let available = state.canvas_assets.available();
+    let disabled = if payload.nodes.len() < 2 {
+        " disabled title=\"At least two players are required\""
     } else {
-        source_panel
+        ""
     };
-    let canvas_status = if state.canvas_assets.available() {
-        "Canvas loading; the text lists remain available."
-    } else {
-        "Canvas unavailable; use the accessible player and relationship lists."
-    };
-    let heading = if full_network {
-        "All players · all teammate connections"
-    } else {
-        "Selected chain and neighborhood"
-    };
-    let coverage_markup = if full_network {
-        format!(
-            "<details><summary>Source coverage is incomplete</summary><p>{}</p></details>",
-            ui::escape(&payload.coverage)
-        )
-    } else {
-        format!("<p>{}</p>", ui::escape(&payload.coverage))
-    };
-    let expansion = if full_network {
-        "<button type=\"button\" id=\"focus-player\">Zoom to selected player</button><button type=\"button\" id=\"fit-network\">Fit whole network</button><button type=\"submit\" id=\"list-connections\">List connections</button>".to_string()
-    } else {
-        "<button name=\"depth\" value=\"1\">Expand direct connections</button><button name=\"depth\" value=\"2\">Expand nearby connections</button>".into()
-    };
-    let search_options: String = payload
+    let selection = payload
         .nodes
         .iter()
+        .find(|n| n.id == valid_from)
         .map(|n| {
             format!(
-                "<option value=\"{} · {}\"></option>",
+                "Selected player: {} — {}; teams: {}; {} teammate connections",
                 ui::escape(&n.name),
-                ui::escape(&n.id)
+                ui::escape(&n.era),
+                ui::escape(&n.teams.join(", ")),
+                n.degree
             )
         })
-        .collect();
-    let network_controls = if full_network {
-        format!(
-            "<p class=\"network-legend\">Every player and every evidenced connection is loaded. Players are arranged by debut season; colors mark eras. Blue lines highlight your selected chain; orange lines show the selected player's connections. Zoom in to read names.</p><form id=\"network-search-form\" class=\"controls\"><label for=\"network-search\">Find a player</label><input id=\"network-search\" list=\"network-search-players\" placeholder=\"Player name or ID\" autocomplete=\"off\"><datalist id=\"network-search-players\">{search_options}</datalist><button type=\"submit\">Find in network</button></form><p id=\"network-search-status\" role=\"status\"></p><p><a id=\"focus-player-profile\" href=\"#\">Open selected player profile</a></p><h3>Connections of selected player</h3><ul id=\"network-player-links\"></ul>"
-        )
-    } else {
-        String::new()
-    };
-    let (top_chain, bottom_chain) = if full_network {
-        (
-            String::new(),
-            format!(
-                "<details><summary>Selected shortest chain and evidence</summary>{selected_text}</details>"
-            ),
-        )
-    } else {
-        (selected_text, String::new())
-    };
-    let serialized = if full_network {
-        format!(
-            "<script type=\"application/json\" id=\"graph-payload\">{}</script>",
-            json.replace('<', "\\u003c")
-                .replace('>', "\\u003e")
-                .replace('&', "\\u0026")
-        )
-    } else {
-        format!(
-            "<template id=\"graph-payload\" data-payload=\"{}\"></template>",
-            ui::escape(&json)
-        )
-    };
-    let fallback_note = if full_network {
-        format!(
-            "<p id=\"network-text-fallback\">Text view without the canvas: the lists below show the selected chain and the direct teammates of {}. Choose another player above and press List connections to list theirs.</p>",
-            ui::escape(ui::display_name(&state.graph.roster.players, focus))
-        )
-    } else {
-        String::new()
-    };
-    let canvas_loader = if state.canvas_assets.available() {
-        "<script type=\"module\" src=\"/assets/canvas-loader.js\"></script>"
+        .unwrap_or_default();
+    let empty = if payload.nodes.is_empty() {
+        "<p>0 players · 0 connections. No players are present in this snapshot.</p>"
     } else {
         ""
     };
@@ -573,13 +446,24 @@ pub async fn page(State(state): State<AppState>, Query(query): Query<GraphQuery>
         StatusCode::OK,
         "7 Degrees — Graph",
         &format!(
-            "<h1>Graph exploration</h1>{}<p><a href=\"/\">Back to explorer</a></p>{chain_link}{top_chain}<section class=\"graph-view\" data-full-network=\"{full_network}\"><h2>{heading}</h2>{coverage_markup}{}<canvas id=\"graph-canvas\" width=\"1000\" height=\"600\" tabindex=\"0\" aria-label=\"Interactive teammate graph\" aria-describedby=\"graph-help graph-selection\">Use the player and relationship lists below to explore.</canvas><p id=\"graph-help\">Drag to pan; scroll to zoom. Arrow keys pan; + and − zoom. Select a player or relationship in the canvas or lists.</p><p id=\"canvas-status\" role=\"status\" data-ready=\"false\">{canvas_status}</p><div class=\"controls\">{buttons}</div><form id=\"graph-expand\" class=\"controls\" action=\"/graph\" method=\"get\">{fields}<label for=\"graph-player\">Selected player</label><select id=\"graph-player\" name=\"player\">{options}</select>{expansion}</form><p id=\"graph-selection\" role=\"status\"></p><p id=\"selected-edge\" role=\"status\">Select a teammate relationship to inspect its graph facts.</p>{network_controls}{source_panel}{bottom_chain}{fallback_note}<h3>Selected players</h3><ul id=\"graph-players\">{players}</ul><h3>Visible relationships</h3><ul id=\"graph-links\">{edges}</ul>{serialized}{canvas_loader}</section>",
-            ui::semantic_status_line(state.jev.status()),
-            if payload.truncated {
-                "<p class=\"hint\" data-truncated=\"true\">This bounded view omits some neighbors or relationships. Select a visible player to explore its neighborhood; the selected chain is retained.</p>"
+            r#"<h1>Graph exploration</h1>{semantic}{empty}<section class="graph-view" data-full-network="true"><h2>All players · all teammate connections</h2><p class="coverage-warning">{coverage}</p><p class="network-legend">Every player and every evidenced connection is loaded. Players are arranged by debut season; colors mark eras. Unknown debut is unclassified context. Select two players for an exact shortest teammate chain.</p>
+<div id="explorer-controls"><form method="get" action="/graph" id="pair-form" class="controls"><div class="picker"><label for="graph-player">Player A</label><select name="from" id="graph-player"><option value="">Pick a player</option>{a}</select></div><div class="picker"><label for="graph-target">Player B</label><select name="to" id="graph-target"><option value="">Pick a player</option>{b}</select></div><button type="submit">Connect players</button><button type="button" id="random-pair"{disabled}>Random pair</button><button type="button" id="clear-chain">Clear chain</button></form><div class="controls" aria-label="Graph layout">{layouts}</div><p id="graph-selection" role="status" data-player="{focus}">{selection}</p><section id="graph-chain" aria-label="Shortest teammate chain" role="status">{chain}</section><ul class="legend" aria-label="Debut era filters">{eras}</ul><div id="franchise-filters" class="controls" aria-label="Selected player franchises"></div><div class="controls"><button type="button" id="ego-toggle" aria-pressed="false">Show ego network only (1–2 hops)</button><button type="button" id="reset-filters">Reset filters</button></div><p id="filter-status" role="status">All eras emphasized; whole network visible.</p></div>
+<div class="canvas-container"><canvas id="graph-canvas" width="1000" height="600" tabindex="0" aria-label="Interactive teammate graph" aria-describedby="graph-help graph-selection">Use the player pickers to explore.</canvas><button type="button" id="minimap-toggle" aria-expanded="true" aria-controls="graph-minimap">Network overview</button><canvas id="graph-minimap" width="200" height="120" aria-label="Network overview"></canvas><div class="controls camera-controls">{camera}</div></div><p id="graph-tooltip" role="status" hidden></p><p id="graph-help">Drag to pan; scroll or pinch to zoom. Arrow keys pan; + and − zoom; f fits the network. Pick a player or click a relationship to inspect evidence.</p><p id="canvas-status" role="status" data-ready="false">{canvas_status}</p><script type="application/json" id="graph-payload">{json}</script>{loader}</section><dialog id="edge-evidence-drawer" aria-labelledby="drawer-title"><h2 id="drawer-title">Relationship evidence</h2><button type="button" id="close-evidence">Close evidence</button><p id="drawer-status" role="status"></p><div id="drawer-content"></div></dialog>"#,
+            semantic = ui::semantic_status_line(state.jev.status()),
+            coverage = ui::escape(&payload.coverage),
+            a = options(valid_from),
+            b = options(&to),
+            focus = ui::escape(valid_from),
+            canvas_status = if available {
+                "Canvas loading; the player picker remains available."
+            } else {
+                "Canvas unavailable; use the player picker below."
+            },
+            loader = if available {
+                "<script type=\"module\" src=\"/assets/canvas-loader.js\"></script>"
             } else {
                 ""
-            },
+            }
         ),
     )
 }
@@ -619,7 +503,7 @@ pub async fn asset(
             .into_response(),
         Err(_) => (
             StatusCode::SERVICE_UNAVAILABLE,
-            "Canvas assets unavailable; accessible lists remain available.",
+            "Canvas assets unavailable; the player picker remains available.",
         )
             .into_response(),
     }

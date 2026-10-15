@@ -1,0 +1,12 @@
+{
+  "png_files": 25,
+  "png_hashes_match": true,
+  "fresh_capture_count": 9,
+  "verified_report_copies": 16,
+  "browser_errors": 0,
+  "pdf_pages": 25,
+  "pdf_image_count_per_page": 1,
+  "pdf_hash_matches": true,
+  "local_guide_links_exist": true,
+  "visual_inspection": "All 25 final PDF page renders inspected via contact sheet; full-size pages 1, 19, 23 and 25 inspected. No added caption/footer overlap or clipping; app drawer content remains intentionally scrollable."
+}

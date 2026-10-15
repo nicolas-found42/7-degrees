@@ -1,0 +1,82 @@
+{
+  "all-player-network.png": {
+    "sha256": "7aee9de8651d08fe14b70d1a31f88567dfba934d33926959f3e950486fbef34e",
+    "origin": "browser-matrix"
+  },
+  "all-player-network-phone.png": {
+    "sha256": "9301ce48506f8f82f84316ee3f330cbb7d534a9cae9f3a79dfc6f9537da47563",
+    "origin": "browser-matrix"
+  },
+  "maravich-era-overview.png": {
+    "sha256": "0b7057aebd2f7673c40b79fe0741ef0c7f1b8db93a7f2bba4a5a65dede50d51f",
+    "origin": "browser-matrix"
+  },
+  "maravich-era-labels.png": {
+    "sha256": "e9ee32a51186bbdee16c117e661848ad118a51dd11db373c3ab7c3784a156975",
+    "origin": "browser-matrix"
+  },
+  "maravich-concentric-overview.png": {
+    "sha256": "52ff2740eb694027f953f9c56c441fc20ca958a565bb88eb128998256416c080",
+    "origin": "browser-matrix"
+  },
+  "maravich-concentric-labels.png": {
+    "sha256": "7f11ddb244fd02d0a107fe8963fb31a24ece5731fe028d0b58b2573a97eddebc",
+    "origin": "browser-matrix"
+  },
+  "maravich-force-overview.png": {
+    "sha256": "cab111a9a1f08bff54467b10a4d58ea66644b1e4131636af8176a42168ff48ba",
+    "origin": "browser-matrix"
+  },
+  "maravich-force-labels.png": {
+    "sha256": "398fdcdd36dbd8a96808f6712a726f2f3ab434db1849bc1288242f98e5ed82fc",
+    "origin": "browser-matrix"
+  },
+  "maravich-chain.png": {
+    "sha256": "f14876393ac9328579faad8e23930de5fc57f2b846240fe2c8e8be28732847e7",
+    "origin": "browser-matrix"
+  },
+  "maravich-count-drawer.png": {
+    "sha256": "70299e398212fd202be63a262805504fe2f6a8af4be2d137924b31c2d4356bf7",
+    "origin": "browser-matrix"
+  },
+  "maravich-ego.png": {
+    "sha256": "42bf49f1b3a425a4e251fb42a057fddb88d81785de9e24b28022c6f7fb3dd9c5",
+    "origin": "browser-matrix"
+  },
+  "fixture-chain-filtered.png": {
+    "sha256": "0a260e25ebcb7f3536562646c1163fc345c977cc8975f13c09d5cc5b78f285ad",
+    "origin": "browser-matrix"
+  },
+  "fixture-drawer.png": {
+    "sha256": "236a33c0ffbfe93d1e5f42f8d7e2393fe7926a2414bc42d9613439c5714ed80d",
+    "origin": "browser-matrix"
+  },
+  "fixture-mobile-toolbar.png": {
+    "sha256": "9c3cdfc6799b36177d1d7368ac579180c4ae11b1ee56389fa0f883c4a38b801c",
+    "origin": "browser-matrix"
+  },
+  "fixture-mobile-drawer.png": {
+    "sha256": "bea6ce18cdf5cb8306b804ef6de94a5db50ed8be954103a625f9c96a70401e02",
+    "origin": "browser-matrix"
+  },
+  "shortened-season-and-game-witness.png": {
+    "sha256": "0ff3ad6ec87c3461a674d70581cdfcd3211e3fb2010ef01b713793f314490962",
+    "origin": "browser-matrix"
+  },
+  "mobile-count-drawer.png": {
+    "sha256": "4edf5671d55bb7e2573462b2e8ae5a31a09d2c53c99869546e8982a459709832",
+    "origin": "supplemental actual-browser capture"
+  },
+  "reduced-motion-final.png": {
+    "sha256": "bd1289e06b376d24f11aca2a80e42bd5c772d61ae8c87b3d9bf65d580386c7d2",
+    "origin": "supplemental actual-browser capture"
+  },
+  "acy-bogut-dated-drawer.png": {
+    "sha256": "32da5f7052c039dfc0638988fd4687df45ba2975fb6e72c2ac93d58186cb84ee",
+    "origin": "supplemental actual-browser capture"
+  },
+  "maravich-franchise-era-filter.png": {
+    "sha256": "324efb561b5324838bd272c1156218cf94574be70c82816e58418925de97fa8a",
+    "origin": "supplemental actual-browser capture"
+  }
+}

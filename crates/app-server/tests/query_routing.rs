@@ -139,20 +139,12 @@ async fn ordinary_language_connection_executes_the_deterministic_graph_and_shows
         "Semantic interpretation; graph results are deterministic"
     );
     let (_, html) = get(app, "/query?q=connect%20Player%20A%20to%20Player%20C").await;
-    for text in [
-        "Shortest teammate chain",
-        "Player A",
-        "Player B",
-        "Player C",
-        "Degree of separation: <strong>2</strong>",
-    ] {
-        assert!(html.contains(text), "missing {text}");
-    }
+    // The natural-language page is removed; the route 404s.
     assert!(!html.contains("fixture-secret-not-for-browser"));
 }
 
 #[tokio::test]
-async fn profile_neighbors_and_comparison_have_distinct_grounded_visible_outcomes() {
+async fn profile_neighbors_and_comparison_have_distinct_grounded_api_outcomes() {
     for (operation, first, second, uri, heading) in [
         (
             "Show a player's sourced identity, teams and era",
@@ -177,8 +169,6 @@ async fn profile_neighbors_and_comparison_have_distinct_grounded_visible_outcome
         ),
     ] {
         let app = configured(operation, first, second);
-        let (_, html) = get(app.clone(), &format!("/query?q={uri}")).await;
-        assert!(html.contains(heading), "missing visible outcome {heading}");
         let (_, body) = get(app, &format!("/api/query?q={uri}")).await;
         let value: Value = serde_json::from_str(&body).unwrap();
         assert_eq!(value["status"], "executed");
@@ -215,8 +205,6 @@ async fn unsupported_missing_arguments_and_provider_failure_never_guess_a_graph_
         let value: Value = serde_json::from_str(&body).unwrap();
         assert_eq!(value["status"], "unsupported");
         assert!(value["data"].is_null());
-        let (_, html) = get(app.clone(), &format!("/query?q={q}")).await;
-        assert!(html.contains("data-query-status=\"unsupported\""));
     }
     let app = configured(
         "Connect two players through their shortest teammate chain",
@@ -227,21 +215,27 @@ async fn unsupported_missing_arguments_and_provider_failure_never_guess_a_graph_
     let value: Value = serde_json::from_str(&body).unwrap();
     assert_eq!(value["status"], "clarification");
     assert!(value["data"].is_null());
-    let (_, html) = get(
+    // With Jev unconfigured the API reports unavailable and invents nothing.
+    let (_, body) = get(
         app_server::app_with_fixture_data(),
-        "/query?q=connect%20Player%20A%20to%20Player%20C",
+        "/api/query?q=connect%20Player%20A%20to%20Player%20C",
     )
     .await;
-    for text in [
-        "data-query-status=\"unavailable\"",
-        "Semantic features (Jev): unavailable",
-        "href=\"/search\"",
-        "href=\"/chain\"",
+    let value: Value = serde_json::from_str(&body).unwrap();
+    assert_eq!(value["status"], "unavailable");
+    // The natural-language and search/chain pages are removed.
+    let app = app_server::app_with_fixture_data();
+    for removed in [
+        "/query?q=connect%20Player%20A%20to%20Player%20C",
+        "/search",
+        "/chain?from=A&to=C",
     ] {
-        assert!(html.contains(text), "missing fallback {text}");
+        assert_eq!(
+            get(app.clone(), removed).await.0,
+            StatusCode::NOT_FOUND,
+            "{removed}"
+        );
     }
-    let (_, home) = get(app_server::app_with_fixture_data(), "/").await;
-    assert!(home.contains("action=\"/query\""));
 }
 
 fn historical_fixture(jev: app_server::JevHandle) -> Router {
@@ -290,21 +284,17 @@ async fn stated_team_and_era_filters_change_the_view_and_leave_underlying_edges_
             .collect::<Vec<_>>(),
         vec!["b"]
     );
-    let (_, html) = get(
-        app.clone(),
-        "/query?q=who%20did%20Player%20Alpha%20play%20with%20on%20RED%20in%20the%202000s",
-    )
-    .await;
-    for text in [
-        "Filtered view",
-        "2000–2009",
-        "RED",
-        "Player Beta",
-        "underlying teammate graph is unchanged",
-    ] {
-        assert!(html.contains(text), "missing filter scope {text}");
-    }
-    assert!(!html.contains(">Player Delta</a>"));
+    // The query page is removed; the filtered scope stays in the API payload
+    // and the underlying graph is unchanged.
+    assert_eq!(
+        get(
+            app.clone(),
+            "/query?q=who%20did%20Player%20Alpha%20play%20with%20on%20RED%20in%20the%202000s"
+        )
+        .await
+        .0,
+        StatusCode::NOT_FOUND
+    );
     let (_, after) = get(app.clone(), "/api/edges/a").await;
     assert_eq!(before, after);
     let (_, chain) = get(app, "/api/connection?from=a&to=c").await;
@@ -313,7 +303,7 @@ async fn stated_team_and_era_filters_change_the_view_and_leave_underlying_edges_
 }
 
 #[tokio::test]
-async fn filtered_connection_is_scoped_and_links_explicitly_open_the_unfiltered_network() {
+async fn filtered_connection_scope_and_unfiltered_degree_stay_in_the_api() {
     let app = historical_fixture(app_server::JevHandle::from_client(JevClient::new(
         JevConfig::new("test-key".into()),
         Provider {
@@ -333,19 +323,20 @@ async fn filtered_connection_is_scoped_and_links_explicitly_open_the_unfiltered_
     assert_eq!(value["data"]["result"], "disconnected");
     assert_eq!(value["data"]["unfiltered_degree"], 2);
     assert_eq!(value["data"]["certainty"], "filtered_view");
-    let (_, html) = get(
-        app,
-        "/query?q=connect%20Player%20Alpha%20to%20Player%20Gamma%20on%20RED",
-    )
-    .await;
-    for text in [
-        "No teammate chain is established in this filtered view",
-        "Unfiltered degree: 2",
-        "opens the unfiltered network",
-        "/chain?from=a&amp;to=c",
-    ] {
-        assert!(html.contains(text), "missing scope/navigation {text}");
-    }
+    // The query page is removed: the scope stays in the API payload, and the
+    // unfiltered graph remains reachable through the connection API.
+    assert_eq!(
+        get(
+            app.clone(),
+            "/query?q=connect%20Player%20Alpha%20to%20Player%20Gamma%20on%20RED"
+        )
+        .await
+        .0,
+        StatusCode::NOT_FOUND
+    );
+    let (_, unfiltered) = get(app, "/api/connection?from=a&to=c").await;
+    let unfiltered: Value = serde_json::from_str(&unfiltered).unwrap();
+    assert_eq!(unfiltered["degree"], 2);
 }
 
 #[tokio::test]
@@ -601,13 +592,33 @@ async fn ambiguous_names_show_context_and_explicit_choice_continues_original_req
     let initial: Value = serde_json::from_str(&body).unwrap();
     assert_eq!(initial["status"], "clarification");
     assert!(initial["data"].get("path").is_none());
-    let (_, html) = get(
-        app.clone(),
-        "/query?q=connect%20Dee%20Brown%20to%20Quincy%20Acy%20on%20RED%20in%20the%202000s",
-    )
-    .await;
-    assert!(html.contains("1991–2002") && html.contains("2007–2009"));
-    assert!(html.contains("Choose Dee Brown (brownde01)"));
+    // Both namesakes are offered as separate choices with era context, in the
+    // API payload; the namesake-choice page no longer exists.
+    let candidates = initial["data"]["candidates"].as_array().unwrap();
+    let ids: Vec<&str> = candidates
+        .iter()
+        .map(|c| c["player"]["id"].as_str().unwrap())
+        .collect();
+    assert_eq!(ids, vec!["brownde01", "brownde03"]);
+    assert!(
+        candidates
+            .iter()
+            .any(|c| c["player"]["first_season"] == 1991 && c["player"]["last_season"] == 2002)
+    );
+    assert!(
+        candidates
+            .iter()
+            .any(|c| c["player"]["first_season"] == 2007 && c["player"]["last_season"] == 2009)
+    );
+    assert_eq!(
+        get(
+            app.clone(),
+            "/query?q=connect%20Dee%20Brown%20to%20Quincy%20Acy%20on%20RED%20in%20the%202000s",
+        )
+        .await
+        .0,
+        StatusCode::NOT_FOUND
+    );
     let continuation = initial["data"]["continuation"].to_string();
     let encode = |v: &str| v.bytes().map(|c| format!("%{c:02X}")).collect::<String>();
     let uri = format!(

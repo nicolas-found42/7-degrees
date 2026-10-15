@@ -1,0 +1,6 @@
+   Compiling solver-comparison v0.0.0 (<repo>/target/solver-comparison)
+    Finished `release` profile [optimized] target(s) in 0.47s
+     Running `target/release/solver-comparison network.json`
+extended: 1195ms
+fa2-base: 3871ms
+fa2-hub: 4292ms

@@ -1,0 +1,383 @@
+{
+  "completed": true,
+  "captured_at": "2026-10-14T19:36:06.503734+00:00",
+  "commands": [
+    {
+      "command": {
+        "op": "launch"
+      },
+      "response": {
+        "ok": true,
+        "result": "156.0.8078.4"
+      }
+    },
+    {
+      "command": {
+        "op": "goto",
+        "url": "http://127.0.0.1:43121/graph?from=maravpe01"
+      },
+      "response": {
+        "ok": true,
+        "result": "http://127.0.0.1:43121/graph?from=maravpe01"
+      }
+    },
+    {
+      "command": {
+        "op": "ready",
+        "selector": "#canvas-status[data-ready=true]"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "motion",
+        "value": "reduce"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "click",
+        "role": "button",
+        "name": "Concentric rings layout"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "attribute",
+        "selector": "#canvas-status",
+        "name": "data-transition"
+      },
+      "response": {
+        "ok": true,
+        "result": "settled"
+      }
+    },
+    {
+      "command": {
+        "op": "screenshot",
+        "selector": "#graph-canvas",
+        "path": "<checkout>/target/issue21-visuals/reduced-motion-final.png"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "click",
+        "role": "button",
+        "name": "Era lanes layout"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "click",
+        "selector": "[data-franchise='JAZZ']"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "click",
+        "selector": "#era-0"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "click",
+        "selector": "#era-1"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "click",
+        "selector": "#era-2"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "click",
+        "selector": "#era-4"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "click",
+        "selector": "#era-5"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "click",
+        "selector": "#era-6"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "click",
+        "selector": "#era-7"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "attribute",
+        "selector": "#canvas-status",
+        "name": "data-players"
+      },
+      "response": {
+        "ok": true,
+        "result": "5106"
+      }
+    },
+    {
+      "command": {
+        "op": "attribute",
+        "selector": "#canvas-status",
+        "name": "data-relationships"
+      },
+      "response": {
+        "ok": true,
+        "result": "101395"
+      }
+    },
+    {
+      "command": {
+        "op": "screenshot",
+        "selector": "#graph-canvas",
+        "path": "<checkout>/target/issue21-visuals/maravich-franchise-era-filter.png"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "click",
+        "role": "button",
+        "name": "Reset filters"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "goto",
+        "url": "http://127.0.0.1:43121/graph?from=acyqu01&to=bogutan01"
+      },
+      "response": {
+        "ok": true,
+        "result": "http://127.0.0.1:43121/graph?from=acyqu01&to=bogutan01"
+      }
+    },
+    {
+      "command": {
+        "op": "ready",
+        "selector": "#canvas-status[data-ready=true]"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "click",
+        "selector": "#graph-chain a[data-evidence]"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "ready",
+        "selector": "#drawer-content .proof-card >> nth=0"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "text",
+        "selector": "#drawer-content"
+      },
+      "response": {
+        "ok": true,
+        "result": "Teammate overlap evidenceQuincy Acy \u2194 Andrew BogutTeammate relationship admitted by the deterministic graph. The evidence below states which dates or shared games are proved.Canonical franchise: MAVERICKSQuincy Acy \u2194 Andrew BogutCertified dated roster overlapOverlap: [2016-07-20, 2016-11-18) \u2014 121 day(s); end exclusive.Source record t4/tenures.csv:123: Quincy Acy \u2014 canonical franchise MAVERICKS; Season 2016\u201317 (ending 2017); roster tenure [2016-07-20, 2016-11-18) (end exclusive).Evidence classdirectly-evidencedMembership sourceS2Arrival boundary: transaction anchoredArrival events: 2016-07-20Departure boundary: transaction anchoredDeparture events: 2016-11-18Source notesNone reportedSource/version manifestdocs/data/source-manifest.md (S1 v238; S2 v56; BBR request ledger) \u2014 Open source/version manifest; Pinned transaction page inventorySource record t4/tenures.csv:2602: Andrew Bogut \u2014 canonical franchise MAVERICKS; Season 2016\u201317 (ending 2017); roster tenure [2016-07-07, 2017-02-23) (end exclusive).Evidence classdirectly-evidencedMembership sourceS2Arrival boundary: transaction anchoredArrival events: 2016-07-07Departure boundary: transaction anchoredDeparture events: 2017-02-23Source notesNone reportedSource/version manifestdocs/data/source-manifest.md (S1 v238; S2 v56; BBR request ledger) \u2014 Open source/version manifest; Pinned transaction page inventorySource evidence is incompleteMissing evidence does not prove a historical non-relationship.Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players.Coverage gaps for these players \u00b7 23 excluded record(s)Excluded from teammate evidence; these records are not admitted proofs.Player / source recordFranchiseSeasonIntervalEvidence classReasonQuincy Acy \u00b7 t4/tenures.csv:115RAPTORSSeason 2012\u201313 (ending 2013)dated interval unavailableunresolvedno-dated-evidence(membership-season-only; S1-window-missing-or-season-past-2022-23)Quincy Acy \u00b7 t4/tenures.csv:116KINGSSeason 2013\u201314 (ending 2014)[2013-12-09, 2014-04-17)cross-checkedNo certified pair of dated transaction boundariesQuincy Acy \u00b7 t4/tenures.csv:117RAPTORSSeason 2013\u201314 (ending 2014)[2013-10-30, 2013-12-09)cross-checkedNo certified pair of dated transaction boundariesQuincy Acy \u00b7 t4/tenures.csv:118KNICKSSeason 2014\u201315 (ending 2015)[2014-08-06, 2015-04-16)cross-checkedNo certified pair of dated transaction boundariesQuincy Acy \u00b7 t4/tenures.csv:119KINGSSeason 2015\u201316 (ending 2016)[2015-07-22, 2016-04-14)cross-checkedNo certified pair of dated transaction boundariesQuincy Acy \u00b7 t4/tenures.csv:120NETSSeason 2016\u201317 (ending 2017)[2017-01-10, 2017-01-20)unresolvedrepeat-signing-prior-end-unknownQuincy Acy \u00b7 t4/tenures.csv:121NETSSeason 2016\u201317 (ending 2017)[2017-01-20, 2017-01-30)unresolvedrepeat-signing-prior-end-unknownQuincy Acy \u00b7 t4/tenures.csv:122NETSSeason 2016\u201317 (ending 2017)[2017-01-30, 2017-04-13)cross-checkedNo certified pair of dated transaction boundariesQuincy Acy \u00b7 t4/tenures.csv:124NETSSeason 2017\u201318 (ending 2018)[2017-10-18, 2018-04-12)inferredNo certified pair of dated transaction boundariesQuincy Acy \u00b7 t4/tenures.csv:125SUNSSeason 2018\u201319 (ending 2019)[2019-01-07, 2019-01-17)unresolvedrepeat-signing-prior-end-unknownQuincy Acy \u00b7 t4/tenures.csv:126SUNSSeason 2018\u201319 (ending 2019)[2019-01-17, 2019-04-10)cross-checkedNo certified pair of dated transaction boundariesAndrew Bogut \u00b7 t4/tenures.csv:2590BUCKSSeason 2005\u201306 (ending 2006)[2005-11-01, 2006-04-19)inferredNo certified pair of dated transaction boundariesAndrew Bogut \u00b7 t4/tenures.csv:2591BUCKSSeason 2006\u201307 (ending 2007)[2006-11-01, 2007-04-19)inferredNo certified pair of dated transaction boundariesAndrew Bogut \u00b7 t4/tenures.csv:2592BUCKSSeason 2007\u201308 (ending 2008)[2007-10-31, 2008-04-17)inferredNo certified pair of dated transaction boundariesAndrew Bogut \u00b7 t4/tenures.csv:2593BUCKSSeason 2008\u201309 (ending 2009)[2008-10-28, 2009-04-16)inferredNo certified pair of dated transaction boundariesAndrew Bogut \u00b7 t4/tenures.csv:2594BUCKSSeason 2009\u201310 (ending 2010)[2009-10-30, 2010-05-03)inferredNo certified pair of dated transaction boundariesAndrew Bogut \u00b7 t4/tenures.csv:2595BUCKSSeason 2010\u201311 (ending 2011)[2010-10-27, 2011-04-14)inferredNo certified pair of dated transaction boundariesAndrew Bogut \u00b7 t4/tenures.csv:2596BUCKSSeason 2011\u201312 (ending 2012)[2011-12-26, 2012-03-13)cross-checkedNo certified pair of dated transaction boundariesAndrew Bogut \u00b7 t4/tenures.csv:2597WARRIORSSeason 2012\u201313 (ending 2013)[2013-04-20, 2013-05-17)inferredNo certified pair of dated transaction boundariesAndrew Bogut \u00b7 t4/tenures.csv:2598WARRIORSSeason 2013\u201314 (ending 2014)[2013-10-30, 2014-05-04)inferredNo certified pair of dated transaction boundariesAndrew Bogut \u00b7 t4/tenures.csv:2599WARRIORSSeason 2014\u201315 (ending 2015)[2014-10-29, 2015-06-17)inferredNo certified pair of dated transaction boundariesAndrew Bogut \u00b7 t4/tenures.csv:2600WARRIORSSeason 2015\u201316 (ending 2016)[2015-10-27, 2016-06-20)inferredNo certified pair of dated transaction boundariesAndrew Bogut \u00b7 t4/tenures.csv:2604WARRIORSSeason 2018\u201319 (ending 2019)[2019-03-06, 2019-06-14)cross-checkedNo certified pair of dated transaction boundaries"
+      }
+    },
+    {
+      "command": {
+        "op": "screenshot",
+        "selector": "#edge-evidence-drawer",
+        "path": "<checkout>/target/issue21-visuals/acy-bogut-dated-drawer.png"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "click",
+        "role": "button",
+        "name": "Close evidence"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "viewport",
+        "width": 390,
+        "height": 844
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "goto",
+        "url": "http://127.0.0.1:43121/graph?from=maravpe01&to=goodrga01"
+      },
+      "response": {
+        "ok": true,
+        "result": "http://127.0.0.1:43121/graph?from=maravpe01&to=goodrga01"
+      }
+    },
+    {
+      "command": {
+        "op": "ready",
+        "selector": "#canvas-status[data-ready=true]"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "page-size"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "width": 390,
+          "scroll": 390
+        }
+      }
+    },
+    {
+      "command": {
+        "op": "click",
+        "selector": "#graph-chain a[data-evidence]"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "ready",
+        "selector": "#drawer-content .proof-card >> nth=0"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "screenshot",
+        "selector": "#edge-evidence-drawer",
+        "path": "<checkout>/target/issue21-visuals/mobile-count-drawer.png"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    },
+    {
+      "command": {
+        "op": "errors"
+      },
+      "response": {
+        "ok": true,
+        "result": []
+      }
+    },
+    {
+      "command": {
+        "op": "close"
+      },
+      "response": {
+        "ok": true,
+        "result": true
+      }
+    }
+  ],
+  "screenshots": {
+    "mobile-count-drawer.png": "4edf5671d55bb7e2573462b2e8ae5a31a09d2c53c99869546e8982a459709832",
+    "reduced-motion-final.png": "bd1289e06b376d24f11aca2a80e42bd5c772d61ae8c87b3d9bf65d580386c7d2",
+    "acy-bogut-dated-drawer.png": "32da5f7052c039dfc0638988fd4687df45ba2975fb6e72c2ac93d58186cb84ee",
+    "maravich-franchise-era-filter.png": "324efb561b5324838bd272c1156218cf94574be70c82816e58418925de97fa8a"
+  }
+}

@@ -1,0 +1,36 @@
+   Compiling app-server v0.1.0 (<checkout>/crates/app-server)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.29s
+     Running tests/browser_e2e.rs (target/debug/deps/browser_e2e-0b5cd79a87a29c1f)
+
+running 12 tests
+test chain_framing_supersedes_animation_without_live_region_churn ... ok
+test explorer_ignores_old_search_chain_and_closed_drawer_responses_and_recovers ... Injected boundary failures: ["Failed to load resource: net::ERR_FAILED","Failed to load resource: net::ERR_FAILED"]; retry recovered without runtime errors.
+ok
+test explorer_pair_filters_drawer_history_and_mobile_are_reversible ... ok
+test historical_network_renders_and_appearance_evidence_avoids_fabricated_dates ... ok
+test real_slice_renders_every_player_and_standalone_edge_provenance ... Pinned real slice: 7 players, 79 exact committed tenure rows; mapping retains original record references and snapshot SHA-256.
+Real slice: the whole seven-player network renders on the single page, and standalone edge provenance stays honest.
+ok
+test shared_pair_link_frames_the_same_chain_as_an_explicit_request ... ok
+test small_snapshots_keep_empty_isolated_and_game_proof_states_usable ... ok
+test synthetic_diamond_renders_its_whole_network_on_the_single_page ... Synthetic diamond: the whole network renders on the single page with no chain-specific UI.
+ok
+test the_graph_page_shows_every_fixture_player_and_relationship_and_supports_exploration ... Chromium "156.0.8078.4"
+ok
+test touch_pan_pinch_cancel_and_minimap_drag_keep_selection_stable ... ok
+test whole_network_keeps_all_players_and_relations_when_panning_and_zooming ... Whole network: 5106 players / 101395 connections ready in 823 ms
+ok
+test whole_network_renders_desktop_and_phone_and_selects_players_by_pointer ... Macro: 13583 drawn background edges / 13583 backbone / 101395 loaded; 7.00 ms
+Micro: 14446 local drawn background edges; 3.00 ms
+ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 96.74s
+
+     Running tests/canvas_browser.rs (target/debug/deps/canvas_browser-ea27411469de8c18)
+
+running 1 test
+test rust_wasm_canvas_renders_the_whole_network_and_supports_pointer_and_keyboard ... Chromium "156.0.8078.4"
+WASM initialized; the whole network renders with canvas pixels changing under pointer drag, wheel and button/keyboard transforms; picker selection reports players and the standalone fixture plus real Acy/Bogut evidence assert the provenance seam.
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.17s

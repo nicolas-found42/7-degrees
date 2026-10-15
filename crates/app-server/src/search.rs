@@ -149,6 +149,45 @@ impl PlayerCatalog {
         query: &str,
         limit: usize,
     ) -> Result<SearchResult, SearchError> {
+        self.filtered_shortlist(query, limit, None, None)
+    }
+    pub fn filtered_shortlist(
+        &self,
+        query: &str,
+        limit: usize,
+        era: Option<u32>,
+        franchise: Option<&str>,
+    ) -> Result<SearchResult, SearchError> {
+        if era.is_some_and(|d| !(1940..=2010).contains(&d) || d % 10 != 0) {
+            return Err(SearchError {
+                error: "era must be a supported debut decade (1940 through 2010)",
+            });
+        }
+        if franchise.is_some_and(|team| {
+            !self
+                .players
+                .iter()
+                .any(|p| p.teams.iter().any(|t| t == team))
+        }) {
+            return Err(SearchError {
+                error: "unknown canonical franchise",
+            });
+        }
+        let players: Vec<_> = self
+            .players
+            .iter()
+            .filter(|p| {
+                era.is_none_or(|d| {
+                    p.first_season.is_some_and(|year| {
+                        if d == 2010 {
+                            year >= 2010
+                        } else {
+                            (d..d + 10).contains(&year)
+                        }
+                    })
+                }) && franchise.is_none_or(|team| p.teams.iter().any(|t| t == team))
+            })
+            .collect();
         if !(1..=50).contains(&limit) {
             return Err(SearchError {
                 error: "limit must be between 1 and 50",
@@ -160,13 +199,12 @@ impl PlayerCatalog {
             });
         }
         let q = normalize(query);
-        let mut candidates: Vec<_> = self
-            .players
+        let mut candidates: Vec<_> = players
             .iter()
             .filter_map(|p| {
                 if !q.is_empty() && normalize(&p.name) == q {
                     Some(SearchCandidate {
-                        player: p.clone(),
+                        player: (*p).clone(),
                         match_kind: "exact_name".into(),
                         matched_name: p.name.clone(),
                         score: 1000,
@@ -178,7 +216,7 @@ impl PlayerCatalog {
                             !q.is_empty() && normalize(a).replace(' ', "") == q.replace(' ', "")
                         })
                         .map(|a| SearchCandidate {
-                            player: p.clone(),
+                            player: (*p).clone(),
                             match_kind: "alias".into(),
                             matched_name: a.clone(),
                             score: 950,
@@ -188,8 +226,7 @@ impl PlayerCatalog {
             .collect();
         if candidates.is_empty() && q.chars().count() >= 2 {
             let max = if q.chars().count() >= 8 { 2 } else { 1 };
-            candidates = self
-                .players
+            candidates = players
                 .iter()
                 .filter_map(|p| {
                     std::iter::once(&p.name)
@@ -223,13 +260,24 @@ impl PlayerCatalog {
                                 None
                             };
                             ranked.map(|(score, kind)| SearchCandidate {
-                                player: p.clone(),
+                                player: (*p).clone(),
                                 match_kind: kind.into(),
                                 matched_name: name.clone(),
                                 score,
                             })
                         })
                         .max_by_key(|c| c.score)
+                })
+                .collect();
+        }
+        if q.is_empty() && (era.is_some() || franchise.is_some()) {
+            candidates = players
+                .iter()
+                .map(|p| SearchCandidate {
+                    player: (**p).clone(),
+                    match_kind: "context".into(),
+                    matched_name: p.name.clone(),
+                    score: 0,
                 })
                 .collect();
         }
@@ -266,129 +314,21 @@ impl PlayerCatalog {
 pub(crate) struct SearchQuery {
     q: Option<String>,
     limit: Option<usize>,
+    era: Option<u32>,
+    franchise: Option<String>,
 }
 pub(crate) async fn api(
     State(state): State<AppState>,
     Query(query): Query<SearchQuery>,
 ) -> Response {
     let catalog = PlayerCatalog::from_graph(&state.graph, state.reports.as_deref());
-    match catalog.lexical_shortlist(query.q.as_deref().unwrap_or(""), query.limit.unwrap_or(20)) {
+    match catalog.filtered_shortlist(
+        query.q.as_deref().unwrap_or(""),
+        query.limit.unwrap_or(20),
+        query.era,
+        query.franchise.as_deref(),
+    ) {
         Ok(result) => (StatusCode::OK, Json(result)).into_response(),
         Err(error) => (StatusCode::BAD_REQUEST, Json(error)).into_response(),
     }
-}
-
-pub(crate) fn form(query: &str) -> String {
-    format!(
-        "<section class=\"player-search\"><h2>Find a player</h2><form class=\"controls\" method=\"get\" action=\"/search\"><label for=\"player-query\">Player name or nickname</label><input id=\"player-query\" name=\"q\" type=\"search\" maxlength=\"160\" value=\"{}\" placeholder=\"e.g. Michael Jordan or Shaq\"><button type=\"submit\">Search players</button></form></section>",
-        crate::ui::escape(query)
-    )
-}
-fn context(player: &SearchPlayer) -> String {
-    let era = match (player.first_season, player.last_season) {
-        (Some(first), Some(last)) => format!("{first}–{last}"),
-        _ => "Era not recorded".into(),
-    };
-    let teams = if player.teams.is_empty() {
-        "Teams not recorded".into()
-    } else {
-        player.teams.join(", ")
-    };
-    format!(
-        "<p class=\"player-context\">Player ID: <code>{}</code> · Seasons: {} · Teams: {}</p>",
-        crate::ui::escape(&player.id),
-        crate::ui::escape(&era),
-        crate::ui::escape(&teams)
-    )
-}
-fn shell(state: &AppState, status: StatusCode, title: &str, body: &str) -> Response {
-    crate::ui::document(
-        status,
-        title,
-        &format!(
-            "<nav><a href=\"/\">Back to explorer</a></nav>{}{}{}",
-            crate::ui::semantic_status_line(state.jev.status()),
-            crate::ui::coverage_line(state.reports.as_ref().map(|r| r.coverage.warning.as_str())),
-            body
-        ),
-    )
-}
-pub(crate) async fn page(
-    State(state): State<AppState>,
-    Query(query): Query<SearchQuery>,
-) -> Response {
-    let q = query.q.as_deref().unwrap_or("");
-    let catalog = PlayerCatalog::from_graph(&state.graph, state.reports.as_deref());
-    let result = match catalog.lexical_shortlist(q, query.limit.unwrap_or(20)) {
-        Ok(result) => result,
-        Err(error) => {
-            return shell(
-                &state,
-                StatusCode::BAD_REQUEST,
-                "Invalid search — 7 Degrees",
-                &format!(
-                    "<h1>Invalid search</h1><p>{}</p>{}",
-                    crate::ui::escape(error.error),
-                    form(q)
-                ),
-            );
-        }
-    };
-    let mut body = format!("<h1>Player search</h1>{}", form(q));
-    if result.status == "empty_query" {
-        body.push_str("<p>Enter a player name, nickname or spelling variation.</p>");
-    } else if result.candidates.is_empty() {
-        body.push_str("<p role=\"status\">No matching players found. Try a full name or a different spelling.</p>");
-    } else {
-        body.push_str("<h2>Choose the intended player</h2><p>Compare seasons and teams, then select a player.</p><ol class=\"search-candidates\">");
-        for candidate in &result.candidates {
-            body.push_str(&format!("<li><h3><a href=\"/players/{}\">{}</a></h3>{}<p><a href=\"/chain?from={}\">Start a connection with {}</a></p></li>",crate::ui::url_encode(&candidate.player.id),crate::ui::escape(&candidate.player.name),context(&candidate.player),crate::ui::url_encode(&candidate.player.id),crate::ui::escape(&candidate.player.name)));
-        }
-        body.push_str("</ol>");
-        if result.has_more {
-            body.push_str(&format!(
-                "<p>Showing {} of {} candidates. Enter a fuller name to narrow the list.</p>",
-                result.candidates.len(),
-                result.matches_total
-            ));
-        }
-    }
-    shell(&state, StatusCode::OK, "Player search — 7 Degrees", &body)
-}
-pub(crate) async fn profile(
-    State(state): State<AppState>,
-    axum::extract::Path(id): axum::extract::Path<String>,
-) -> Response {
-    let catalog = PlayerCatalog::from_graph(&state.graph, state.reports.as_deref());
-    let Some(player) = catalog.player(&id) else {
-        return shell(
-            &state,
-            StatusCode::NOT_FOUND,
-            "Player not found — 7 Degrees",
-            "<h1>Player not found</h1><p>No player has that identity. <a href=\"/search\">Search players</a>.</p>",
-        );
-    };
-    let alias_text = if player.aliases.is_empty() {
-        String::new()
-    } else {
-        format!(
-            "<p>Also known as: {}</p>",
-            crate::ui::escape(&player.aliases.join(", "))
-        )
-    };
-    shell(
-        &state,
-        StatusCode::OK,
-        &format!("{} — 7 Degrees", player.name),
-        &format!(
-            "<h1>{}</h1>{}{}<p><a href=\"/chain?from={}\">Start a connection with {}</a></p><p><a href=\"/api/edges/{}\">View evidenced teammate links</a> · <a href=\"/api/coverage/{}\">View roster coverage</a></p>",
-            crate::ui::escape(&player.name),
-            context(player),
-            alias_text,
-            crate::ui::url_encode(&player.id),
-            crate::ui::escape(&player.name),
-            crate::ui::url_encode(&player.id),
-            crate::ui::url_encode(&player.id)
-        ),
-    )
 }

@@ -42,9 +42,26 @@ async fn opening_a_fixture_teammate_link_shows_both_stints_and_explicit_syntheti
         !body.contains("1946-01-03"),
         "fixture days must not masquerade as historical dates"
     );
-    let (_, chain) = get(app, "/chain?from=A&to=C&cursor=v1:00&selected=0&limit=1").await;
-    assert!(chain.contains("href=\"/edge?from=A&amp;to=B\""));
-    assert!(chain.contains("Degree of separation: <strong>2</strong>"));
+    // The graph page ships the whole network for canvas selection plus the
+    // picker; standalone evidence and the removed sections stay as asserted.
+    let (_, graph) = get(app, "/").await;
+    assert!(graph.contains("id=\"graph-payload\""));
+    assert!(graph.contains("id=\"graph-player\""));
+    assert!(!graph.contains("data-select-edge-from="));
+    for removed in [
+        "id=\"graph-players\"",
+        "data-select-player=",
+        "id=\"network-player-links\"",
+        "Connections of selected player",
+        "id=\"edge-provenance-panel\"",
+        "id=\"edge-provenance-frame\"",
+        "Selected relationship evidence",
+    ] {
+        assert!(
+            !graph.contains(removed),
+            "removed section still present: {removed}"
+        );
+    }
 }
 
 #[tokio::test]
@@ -146,24 +163,26 @@ async fn unadmitted_edge_explains_incomplete_evidence_and_exposes_the_excluded_s
 }
 
 #[tokio::test]
-async fn canvas_has_an_accessible_selected_edge_panel_and_allowlisted_source_routes() {
+async fn canvas_page_has_no_in_page_evidence_panel_and_allowlisted_source_routes() {
     let app = app_server::app_with_jev_and_canvas_assets(
         app_server::JevHandle::unconfigured(),
         app_server::graph_view::CanvasAssets::Unavailable,
     );
-    let (_, graph) = get(
-        app.clone(),
-        "/graph?from=A&to=C&cursor=v1:00&limit=1&selected=0",
-    )
-    .await;
-    assert!(
-        graph.contains("Canvas unavailable; use the accessible player and relationship lists.")
-    );
-    assert!(graph.contains("id=\"edge-provenance-frame\""));
-    assert!(graph.contains("title=\"Selected teammate overlap evidence\""));
-    assert!(graph.contains("id=\"open-selected-edge\""));
-    assert!(graph.contains("href=\"/edge?from=A&amp;to=B\""));
-    assert!(graph.contains("name=\"cursor\" value=\"v1:00\""));
+    let (_, graph) = get(app.clone(), "/graph").await;
+    assert!(graph.contains("Canvas unavailable; use the player picker below."));
+    for removed in [
+        "id=\"edge-provenance-frame\"",
+        "Selected teammate overlap evidence",
+        "id=\"open-selected-edge\"",
+        "Selected relationship evidence",
+        "id=\"graph-players\"",
+        "id=\"network-player-links\"",
+    ] {
+        assert!(
+            !graph.contains(removed),
+            "removed section still present: {removed}"
+        );
+    }
     for uri in [
         "/sources/tenure?record=../../.env",
         "/sources/tenure?record=javascript:alert(1)",
@@ -178,4 +197,62 @@ async fn canvas_has_an_accessible_selected_edge_panel_and_allowlisted_source_rou
     assert!(repeated.contains("Overlap: [day 9, day 11)"));
     let (_, source) = get(app, "/sources/tenure?record=fixture%3Atenure%3A1").await;
     assert!(source.contains("Source record fixture:tenure:1"));
+}
+
+#[tokio::test]
+async fn drawer_representation_is_a_fragment_for_success_and_error_states() {
+    let app = app_server::app_with_fixture_data();
+    for (pair, expected, status) in [
+        ("A&to=B", "Overlap: [day 2, day 4)", 200),
+        ("A&to=D", "No admitted direct teammate edge", 200),
+        ("missing&to=B", "Unknown player endpoint", 404),
+    ] {
+        let (actual, body) = get(app.clone(), &format!("/edge?from={pair}&view=drawer")).await;
+        assert_eq!(actual, status);
+        assert!(body.contains(expected));
+        assert!(!body.contains("<!doctype"));
+        assert!(!body.contains("<html"));
+    }
+}
+
+#[tokio::test]
+async fn shortened_season_and_game_witness_cards_preserve_proof_limits() {
+    let root = std::env::temp_dir().join(format!("seven-proof-upgrade-{}", std::process::id()));
+    std::fs::create_dir_all(root.join("t3")).unwrap();
+    std::fs::create_dir_all(root.join("t4")).unwrap();
+    std::fs::write(root.join("t3/player-universe.csv"),"bbr_player_id,display_name,first_season,last_season,aba_only\na,Player Alpha,1999,1999,N\nb,Player Beta,1999,1999,N\n").unwrap();
+    std::fs::write(root.join("t4/tenures.csv"),"bbr_player_id,season,lg,canonical_franchise,membership_source,evidence_class,start_day,end_day,start_anchored,end_anchored\na,1999,NBA,RED,S2,inferred,,,0,0\nb,1999,NBA,RED,S2,inferred,,,0,0\n").unwrap();
+    std::fs::write(root.join("t4/appearance-counts.csv"),"player,team,season,lg,games,team_games,player_record,team_record\na,RED,1999,NBA,60,66,S2:player:1,S2:team:1\nb,RED,1999,NBA,50,66,S2:player:2,S2:team:1\n").unwrap();
+    let app =
+        app_server::app_with_report_data(&root, app_server::JevHandle::unconfigured()).unwrap();
+    let (_, html) = get(app, "/edge?from=b&to=a&view=drawer").await;
+    for text in [
+        "60 + 50 − 66 = at least 44",
+        "Player Alpha: 60/66",
+        "Player Beta: 50/66",
+        "actual season total 66",
+        "max=\"66\"",
+        "which specific games",
+        "2 excluded record(s)",
+        "dated interval unavailable",
+        "S2:player:1",
+    ] {
+        assert!(html.contains(text), "missing {text}: {html}");
+    }
+    assert!(!html.contains("82-game season"));
+    std::fs::remove_file(root.join("t4/appearance-counts.csv")).unwrap();
+    std::fs::write(root.join("t4/game-witnesses.csv"),"a,b,team,season,game_id,date,a_source,b_source\na,b,RED,1999,0029800001,1998-11-01,S1:game:1:event:10:player1,S1:game:1:event:11:player1\n").unwrap();
+    let app =
+        app_server::app_with_report_data(&root, app_server::JevHandle::unconfigured()).unwrap();
+    let (_, html) = get(app, "/edge?from=a&to=b").await;
+    for text in [
+        "1998-11-01",
+        "0029800001",
+        "S1:game:1:event:10:player1",
+        "duration remain unknown",
+        "S1 v238",
+    ] {
+        assert!(html.contains(text), "missing {text}");
+    }
+    assert!(!html.contains("Overlap: ["));
 }

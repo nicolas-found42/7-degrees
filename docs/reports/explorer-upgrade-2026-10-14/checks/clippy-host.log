@@ -1,0 +1,3 @@
+    Checking canvas-view v0.1.0 (<checkout>/crates/canvas-view)
+    Checking app-server v0.1.0 (<checkout>/crates/app-server)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.81s

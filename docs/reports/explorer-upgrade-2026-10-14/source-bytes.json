@@ -1,0 +1,27 @@
+{
+  "base_commit": "dd4c8d35f988a41843eed95cd166164e76dc8039",
+  "working_tree_diff_sha256": "681e2b34f85ccf29a9a43ddf26ceed0061c5e9e674f628dbea11c0b707b7d400",
+  "files": {
+    "Cargo.lock": "dbb5167cb5b3d3edc7947ea9826b1935713aa18d47dd6f16b8c9fb9557fe3446",
+    "README.md": "462a27169286373aa2a867be73ab7a50ca4bdd482764d29b3a24f720506303e2",
+    "crates/api-types/Cargo.toml": "b1880c16c3d9e3dce271e02314ad9621425efaa5b16e31efd6ba5845e28c2532",
+    "crates/api-types/src/lib.rs": "f57cf1f27609ab71f040bc4ed4fb23180387154238c238bbdb41fcd30f2ea9fb",
+    "crates/app-server/src/graph_view.rs": "4c8861cfe7227503202471b029379b3016973f9e937e0dbe16c212969e77e35a",
+    "crates/app-server/src/provenance.rs": "b30c5a111cb3ef5b77d872387cf460e0716e349535521b1193a2a2ff16581027",
+    "crates/app-server/src/search.rs": "0355aa830a4585938c0a77009867f3edafa4f31341d209346d411afbb28e4564",
+    "crates/app-server/src/style.css": "c1e4aeae8ba86ae30e3be2b84c924c2e0a4b5a384b837b74698e855dd8a23898",
+    "crates/app-server/tests/api_integration.rs": "9a567eeb81e999c2f0a92bfaafee25e93d9bbdbcf861c5178c880cb6835ed739",
+    "crates/app-server/tests/browser_e2e.rs": "6bf3ef9591cdebcde2e7db64a24e08c77c164a717fa88e8d211e5114046707f2",
+    "crates/app-server/tests/canvas_browser.rs": "3750414d4af11084a0126d46ed824cc436f558581ec81264ee2e245dca82ca55",
+    "crates/app-server/tests/graph_view.rs": "058195c8d09d04082cff0b014495b385d1a082662b185fd66b5a61fa716939c2",
+    "crates/app-server/tests/player_search.rs": "d69d0fe1a4d4698ca6cbb65a704af89ec12f9ab55caddfc7cd50bef6ab2b187b",
+    "crates/app-server/tests/provenance.rs": "74a2e100d71215563d0afc073a840a4c1cf92327133a9250b720fff05af534ba",
+    "crates/canvas-view/Cargo.toml": "11ed27877a41162a58472e1965f91072da573dbc03497b9a8c1e8eaadfb09f9f",
+    "crates/canvas-view/src/browser.rs": "c9470e060e3af5255219ee82ca9b5380ebbf7ef45f49abeef1e5b2ec2dac8033",
+    "crates/canvas-view/src/lib.rs": "88e4a34ed29cd26af26dff822461b9e09ad6e52c51c02fb51b64e7dd9c1ab486",
+    "scripts/browser_driver.cjs": "ac47fc7b16b298dea2d9e0d0a36751eb9b77235631688b3eb09b1b6ab51703b3",
+    "crates/canvas-view/src/browser/explorer.rs": "8e0672fa2ee2f09a7cd2540e9836af33ed5ac4be67780cad26321d8a384d7b64",
+    "crates/canvas-view/src/layout.rs": "1870169b450f3a88a5a9a5a142d34d13c335e7dad288bcc8987c0fc8f0c8e5a6",
+    "rustfmt.toml": "d7ba9ffc9c806610c30e3b90eea35880702cdc6d06c8e3e5ab407cbaaffae18f"
+  }
+}

@@ -112,19 +112,8 @@ async fn weighted_scores_reorder_only_equal_shortest_chains_and_preserve_exact_f
     }
 }
 #[tokio::test]
-async fn ranked_page_labels_suggestions_and_selects_original_chain_with_preserved_cursor() {
+async fn ranked_api_labels_suggestions_and_preserves_exact_cursor() {
     let router = app(scripted([(2.0, 0.0), (0.0, 2.0)]));
-    let (status, html) = request(
-        router.clone(),
-        "/rank?from=s&to=g&interest=Gamma&selected=1",
-    )
-    .await;
-    assert_eq!(status, StatusCode::OK);
-    assert!(html.contains("Semantic suggestions for this page"));
-    assert!(html.contains("Graph/source facts"));
-    assert!(html.contains("data-path=\"[&quot;s&quot;,&quot;c&quot;,&quot;g&quot;]\""));
-    assert!(html.contains("Degree of separation: <strong>2</strong>"));
-    assert!(!html.contains("test-ranking-secret"));
     let first = get(
         router.clone(),
         "/api/rank?from=s&to=g&interest=Gamma&limit=1",
@@ -170,15 +159,11 @@ async fn invalid_provider_cannot_change_paths_and_fallback_is_visible_and_escape
             get(router.clone(), "/api/semantic-status").await["available"],
             false
         );
-        let (s, html) = request(
-            router,
-            "/rank?from=s&to=g&interest=%3Cscript%3Eevil%3C%2Fscript%3E",
-        )
-        .await;
-        assert_eq!(s, StatusCode::OK);
-        assert!(html.contains("Semantic ranking unavailable"));
-        assert!(html.contains("&lt;script&gt;"));
-        assert!(!html.contains("<script>"));
+        // The removed ranking page is gone; the API keeps its escaped output.
+        assert_eq!(
+            request(router, "/rank?from=s&to=g&interest=x").await.0,
+            StatusCode::NOT_FOUND
+        );
     }
 }
 #[tokio::test]
@@ -209,7 +194,6 @@ async fn low_confidence_ties_boundaries_and_no_path_preserve_deterministic_behav
         "/api/rank?from=s&to=g&limit=0",
         "/api/rank?from=s&to=g&limit=21",
         "/api/rank?from=s&to=g&cursor=bad",
-        "/rank?from=s&to=g&selected=2",
     ] {
         assert_eq!(
             request(router.clone(), uri).await.0,

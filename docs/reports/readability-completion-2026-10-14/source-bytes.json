@@ -1,0 +1,21 @@
+{
+  "starting_commit": "55a28573a8f59e57096684ee45baab7aa635ef58",
+  "run": "issue22-completion-20261014-deliverable",
+  "tracked_diff_sha256": "2cd34b73906ac23a2ea21ea46b95aa016c62d85b32335fad3310a1f952b3e9e3",
+  "tracked_diff_matches_receipt": true,
+  "untracked_code_matches_receipt": true,
+  "files": {
+    "crates/app-server/src/style.css": "a561bfa31ea525f0f140e3f686b48010d8bd1e8162f4b669d4c9510f6903d308",
+    "crates/app-server/tests/browser_e2e.rs": "444f2085649d2e32f47eab86ba888054bb909340e091074dad2e7778d15b9b8c",
+    "crates/canvas-view/src/browser.rs": "f1056819dade6e6ad116e714a716e59b2b76b70c12433af531d81d5321831e62",
+    "crates/canvas-view/src/browser/explorer.rs": "1dccbab5d0379e6d0274c991989abfe699e3c77aaee61d25bbeac7569aa6e792",
+    "crates/canvas-view/src/layout.rs": "0988188f89e2a02dac8e4615f060038ec151e060f3351a972213f58a15b89a7e",
+    "crates/canvas-view/src/lib.rs": "8ec5a9e46f5d78a1c0e01b369bca0a941b67dbc3efe3a7326a318fd235114f83",
+    "crates/canvas-view/src/visual.rs": "1513e8eb03a37415ebf8f177092363d7de8b65cef09e790cd5b014f8523addd6",
+    "crates/canvas-view/tests/readability.rs": "337de565e3e239a7e5a11615c72c0e0017691a68f3ed237eb4eb833dbadb2df3",
+    "scripts/browser_driver.cjs": "4af6e73d86b2f1081db738874028e817748b12a133f59850433e3e320b7af426",
+    "crates/canvas-view/src/camera.rs": "ecd52f57ec89d5fc6044900c1c0b7e06e81c9e81bd14c333d249a273045bc101",
+    "crates/canvas-view/src/layout/force.rs": "9ae8aa9f516af4b8a09e3c122f893703667252c443ed2e4c64ee03f58fd9f188"
+  },
+  "post_run_additions": "Only this generated report and its evidence; application and test bytes remain unchanged."
+}

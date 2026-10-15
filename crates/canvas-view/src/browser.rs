@@ -1,28 +1,90 @@
 //! All application canvas rendering and interaction are Rust.
 use crate::GraphPayload;
+use crate::camera::{Camera, Viewport};
+use crate::layout::{LayoutMode, compute_layout};
+use crate::visual::{self, Curve, LabelCandidate, LabelPriority, Rect, ZoomTier};
 use std::{cell::RefCell, collections::HashMap, rc::Rc};
 use wasm_bindgen::{JsCast, prelude::*};
 use web_sys::{
-    CanvasRenderingContext2d, Document, Event, HtmlCanvasElement, HtmlInputElement,
-    HtmlSelectElement, KeyboardEvent, PointerEvent, WheelEvent,
+    CanvasRenderingContext2d, Document, Event, HtmlCanvasElement, KeyboardEvent, PointerEvent,
+    WheelEvent,
 };
+
+mod explorer;
+
+struct Transition {
+    start: f64,
+    from: Vec<(f64, f64)>,
+    to: Vec<(f64, f64)>,
+    camera_from: Camera,
+    camera_to: Camera,
+}
+
+#[derive(Clone, Copy)]
+enum HitTarget {
+    Node(usize),
+    Edge(usize),
+}
+
+fn layout_signature(points: &[(f64, f64)]) -> String {
+    let signature = points.iter().fold(2166136261_u64, |hash, p| {
+        [p.0.to_bits(), p.1.to_bits()]
+            .iter()
+            .fold(hash, |hash, &bits| (hash ^ bits).wrapping_mul(16777619))
+    });
+    format!("{signature:016x}")
+}
 
 struct CanvasView {
     document: Document,
     canvas: HtmlCanvasElement,
     ctx: CanvasRenderingContext2d,
     graph: GraphPayload,
+    layout: LayoutMode,
     points: Vec<(f64, f64)>,
     indexed_links: Vec<(usize, usize)>,
+    /// Adjacency list over node indices, built once at startup.
+    adjacency: Vec<Vec<usize>>,
     indices: HashMap<String, usize>,
     spatial: HashMap<(i32, i32), Vec<usize>>,
-    scale: f64,
-    x: f64,
-    y: f64,
+    camera: Camera,
+    viewport: Viewport,
     selected: String,
     edge: Option<usize>,
     drag: Option<(f64, f64, f64, f64, bool)>,
+    press_target: Option<HitTarget>,
     frames: usize,
+    status_text: Option<String>,
+    /// Hop distance to the selected player (BFS capped at 2), recomputed on
+    /// selection client-side so focus never waits on a server round-trip.
+    hop: HashMap<String, usize>,
+    /// Node index under the pointer, for hover labels.
+    hovered: Option<usize>,
+    hovered_edge: Option<usize>,
+    minimap_drag: Option<(f64, f64)>,
+    pending_layout: bool,
+    eras: [bool; 8],
+    franchise: Option<String>,
+    franchise_nodes: std::collections::HashSet<usize>,
+    ego: bool,
+    chain_generation: u64,
+    transition: Option<Transition>,
+    animation_scheduled: bool,
+    pointers: HashMap<i32, (f64, f64)>,
+    pinch: Option<((f64, f64), f64)>,
+    gesture_moved: bool,
+    label_widths: Vec<f64>,
+    landmarks: Vec<bool>,
+    backbone_edges: Vec<usize>,
+    foreground_edges: Vec<usize>,
+    focus_weights: Vec<f64>,
+    trunks: HashMap<usize, Curve>,
+    trunk_plan: visual::TrunkPlan,
+    auto_focus: Option<String>,
+    sector_headers: Vec<(crate::layout::FranchiseSector, f64)>,
+    badge_targets: Vec<(usize, Rect)>,
+    layout_signature: String,
+    touch_input: bool,
 }
 impl CanvasView {
     fn fit(&mut self) {
@@ -39,64 +101,97 @@ impl CanvasView {
             .filter(|(n, _)| ids.contains(&n.id.as_str()))
             .map(|(_, p)| *p)
             .collect();
-        let lo = points.iter().map(|p| p.0).reduce(f64::min).unwrap_or(0.0);
-        let hi = points.iter().map(|p| p.0).reduce(f64::max).unwrap_or(0.0);
-        let ylo = points.iter().map(|p| p.1).reduce(f64::min).unwrap_or(0.0);
-        let yhi = points.iter().map(|p| p.1).reduce(f64::max).unwrap_or(0.0);
-        self.scale = (800.0 / (hi - lo + 200.0))
-            .min(400.0 / (yhi - ylo + 200.0))
-            .clamp(0.000001, 1.6);
-        self.x = 500.0 - (lo + hi) / 2.0 * self.scale;
-        self.y = 300.0 - (ylo + yhi) / 2.0 * self.scale;
+        self.frame_points(&points);
     }
     fn zoom(&mut self, factor: f64, anchor: (f64, f64)) {
-        let previous = self.scale;
-        self.scale = (self.scale * factor).clamp(0.000001, 4.0);
-        self.x = anchor.0 - (anchor.0 - self.x) * self.scale / previous;
-        self.y = anchor.1 - (anchor.1 - self.y) * self.scale / previous;
+        self.camera.zoom(factor, anchor);
     }
     fn at(&self, id: &str) -> (f64, f64) {
         self.points[self.indices[id]]
     }
     fn fit_network(&mut self) {
-        let lo = self
-            .points
-            .iter()
-            .map(|p| p.0)
-            .reduce(f64::min)
-            .unwrap_or(0.0);
-        let hi = self
-            .points
-            .iter()
-            .map(|p| p.0)
-            .reduce(f64::max)
-            .unwrap_or(0.0);
-        let bottom = self
-            .points
-            .iter()
-            .map(|p| p.1)
-            .reduce(f64::min)
-            .unwrap_or(0.0);
-        let top = self
-            .points
-            .iter()
-            .map(|p| p.1)
-            .reduce(f64::max)
-            .unwrap_or(0.0);
-        self.scale = (900.0 / (hi - lo + 100.0))
-            .min(500.0 / (top - bottom + 100.0))
-            .clamp(0.000001, 1.6);
-        self.x = 500.0 - (lo + hi) / 2.0 * self.scale;
-        self.y = 300.0 - (bottom + top) / 2.0 * self.scale;
+        let area = Rect {
+            left: self.viewport.width * 0.05,
+            right: self.viewport.width * 0.95,
+            top: self.viewport.height * 0.08,
+            bottom: self.viewport.height * 0.92,
+        };
+        if let Some(camera) = self.viewport.frame(&self.points, area) {
+            self.camera = camera;
+        }
+    }
+    /// Recompute node coordinates for a new layout mode, then rebuild the
+    /// spatial index and fit the network. Concentric rings follow the current
+    /// hop distances, which must already be computed for the selection.
+    fn relayout(&mut self, mode: LayoutMode) {
+        if mode == LayoutMode::Concentric && self.selected.is_empty() {
+            self.pending_layout = true;
+            if let Some(picker) = self
+                .document
+                .get_element_by_id("graph-player")
+                .and_then(|e| e.dyn_into::<web_sys::HtmlElement>().ok())
+            {
+                let _ = picker.focus();
+            }
+            self.document
+                .get_element_by_id("graph-selection")
+                .unwrap()
+                .set_text_content(Some("Select a player to use Concentric rings."));
+            return;
+        }
+        self.pending_layout = false;
+        self.transition = None;
+        self.layout = mode;
+        self.points = compute_layout(
+            &self.graph.nodes,
+            &self.graph.links,
+            mode,
+            &self.selected,
+            &self.graph.path,
+            self.graph.full_network,
+            &self.hop,
+        );
+        self.layout_signature = layout_signature(&self.points);
+        self.rebuild_spatial();
+        if self.graph.full_network {
+            self.fit_network();
+        } else {
+            self.fit();
+        }
+        self.report_layout();
+    }
+    /// Mirror the active layout in the status element so tests and assistive
+    /// technology can observe it without reading canvas pixels.
+    fn report_layout(&self) {
+        if let Some(status) = self.document.get_element_by_id("canvas-status") {
+            let _ = status.set_attribute("data-layout", self.layout.as_str());
+            for (id, mode) in [
+                ("layout-era", LayoutMode::EraLane),
+                ("layout-concentric", LayoutMode::Concentric),
+                ("layout-force", LayoutMode::Force),
+            ] {
+                if let Some(button) = self.document.get_element_by_id(id) {
+                    let _ = button.set_attribute(
+                        "aria-pressed",
+                        if self.layout == mode { "true" } else { "false" },
+                    );
+                }
+            }
+        }
     }
     fn focus_player(&mut self) {
+        if !self.indices.contains_key(&self.selected) {
+            return;
+        }
         let point = self.at(&self.selected);
-        self.scale = 1.0;
-        self.x = 500.0 - point.0;
-        self.y = 300.0 - point.1;
+        self.camera = self.viewport.centered(
+            point,
+            1.0,
+            (self.viewport.width / 2.0, self.viewport.height / 2.0),
+        );
     }
     fn screen(&self, p: (f64, f64)) -> (f64, f64) {
-        (p.0 * self.scale + self.x, p.1 * self.scale + self.y)
+        self.viewport.screen(p, self.camera)
     }
     fn pointer(&self, e: &PointerEvent) -> (f64, f64) {
         let r = self.canvas.get_bounding_client_rect();
@@ -106,130 +201,162 @@ impl CanvasView {
         )
     }
     fn select(&mut self, id: &str) {
-        if self.graph.full_network && self.selected != id {
-            self.edge = None;
-            if let Some(element) = self.document.get_element_by_id("selected-edge") {
-                element.set_text_content(Some(
-                    "Select a teammate relationship to inspect its graph facts.",
-                ));
-                let _ = element.remove_attribute("data-from");
-                let _ = element.remove_attribute("data-to");
-            }
-            if let Some(frame) = self.document.get_element_by_id("edge-provenance-frame") {
-                let _ = frame.set_attribute("src", "about:blank");
-            }
-            if let Some(link) = self.document.get_element_by_id("open-selected-edge") {
-                let _ = link.remove_attribute("href");
-                let _ = link.set_attribute("hidden", "");
-            }
-        }
-        self.selected = id.into();
-        if let Some(n) = self.graph.nodes.iter().find(|n| n.id == id) {
-            let element = self.document.get_element_by_id("graph-selection").unwrap();
-            element.set_text_content(Some(&format!(
-                "Selected player: {} — {}; teams: {}",
-                n.name,
-                n.era,
-                n.teams.join(", ")
-            )));
-            let _ = element.set_attribute("data-player", id);
-            self.player_connections();
-            self.document
-                .get_element_by_id("graph-player")
-                .unwrap()
-                .dyn_into::<HtmlSelectElement>()
-                .unwrap()
-                .set_value(id);
-        }
-    }
-    fn player_connections(&self) {
-        let Some(list) = self.document.get_element_by_id("network-player-links") else {
+        let animate = self.layout == LayoutMode::Concentric
+            && self.selected != id
+            && !explorer::reduced_motion();
+        let old = animate.then(|| (self.points.clone(), self.camera));
+        self.settle_layout();
+        let Some(n) = self.graph.nodes.iter().find(|n| n.id == id).cloned() else {
             return;
         };
-        list.set_text_content(None);
-        if let Some(profile) = self.document.get_element_by_id("focus-player-profile") {
-            let _ = profile.set_attribute(
-                "href",
-                &format!(
-                    "/players/{}",
-                    js_sys::encode_uri_component(&self.selected)
-                        .as_string()
-                        .unwrap()
-                ),
-            );
+        let changed = self.selected != id;
+        self.selected = id.into();
+        self.auto_focus = None;
+        if changed {
+            self.franchise = None;
+            self.franchise_nodes.clear();
+            self.clear_highlight();
+            self.chain_generation += 1;
         }
-        for (i, e) in self
+        explorer::set_picker(&self.document, "graph-player", id, &n.name);
+        self.render_franchises();
+        self.edge = None;
+        self.recompute_hop();
+        self.trunk_plan =
+            visual::TrunkPlan::new(&self.graph.nodes, &self.graph.links, &self.selected);
+        self.ctx.set_font("bold 12px sans-serif");
+        self.sector_headers = crate::layout::concentric_sectors(&self.graph.links, &self.selected)
+            .into_iter()
+            .map(|sector| {
+                let name = if sector.franchise.is_empty() {
+                    "Unknown"
+                } else {
+                    &sector.franchise
+                };
+                let width = self
+                    .ctx
+                    .measure_text(name)
+                    .map(|m| m.width())
+                    .unwrap_or(90.0);
+                (sector, width)
+            })
+            .collect();
+        if self.layout == LayoutMode::Concentric || self.pending_layout {
+            if changed || self.pending_layout {
+                self.ego = true;
+            }
+            self.relayout(LayoutMode::Concentric);
+        }
+        if self.ego && self.layout == LayoutMode::Concentric {
+            self.fit_visible();
+        } else {
+            self.focus_player();
+        }
+        if let Some(element) = self.document.get_element_by_id("graph-selection") {
+            element.set_text_content(Some(&format!(
+                "Selected player: {} — {}; teams: {}; {} teammate connections",
+                n.name,
+                n.era,
+                n.teams.join(", "),
+                self.adjacency[self.indices[id]].len(),
+            )));
+            let _ = element.set_attribute("data-player", id);
+        }
+        if let Some((points, camera)) = old {
+            self.transition = Some(Transition {
+                start: js_sys::Date::now(),
+                from: points.clone(),
+                to: self.points.clone(),
+                camera_from: camera,
+                camera_to: self.camera,
+            });
+            self.points = points;
+            self.camera = camera;
+            self.rebuild_spatial();
+        }
+    }
+    /// BFS from the selected player over the adjacency list, capped at depth 2.
+    /// Client-side so selecting never waits on a server round-trip (Liu & Heer
+    /// 2014: feedback under ~100 ms keeps exploration fluid).
+    fn recompute_hop(&mut self) {
+        self.hop.clear();
+        self.foreground_edges.clear();
+        self.focus_weights.fill(0.0);
+        let Some(&start) = self.indices.get(&self.selected) else {
+            return;
+        };
+        let mut queue = std::collections::VecDeque::from([(start, 0usize)]);
+        self.hop.insert(self.selected.clone(), 0);
+        while let Some((node, depth)) = queue.pop_front() {
+            if depth >= 2 {
+                continue;
+            }
+            for &other in &self.adjacency[node] {
+                let id = &self.graph.nodes[other].id;
+                if !self.hop.contains_key(id) {
+                    self.hop.insert(id.clone(), depth + 1);
+                    queue.push_back((other, depth + 1));
+                }
+            }
+        }
+        self.foreground_edges = self
             .graph
             .links
             .iter()
             .enumerate()
-            .filter(|(_, e)| e.from == self.selected || e.to == self.selected)
-        {
-            let other = if e.from == self.selected {
-                &e.to
-            } else {
-                &e.from
-            };
-            let item = self.document.create_element("li").unwrap();
-            let button = self.document.create_element("button").unwrap();
-            let _ = button.set_attribute("type", "button");
-            let _ = button.set_attribute("data-network-edge-index", &i.to_string());
-            button.set_text_content(Some(&format!(
-                "{} — {}",
-                self.graph.nodes[self.indices[other]].name, e.team
-            )));
-            let _ = item.append_child(&button);
-            let _ = list.append_child(&item);
-        }
+            .filter_map(|(i, e)| {
+                let direct = e.from == self.selected || e.to == self.selected;
+                if direct {
+                    let other = if e.from == self.selected {
+                        &e.to
+                    } else {
+                        &e.from
+                    };
+                    self.focus_weights[self.indices[other]] = e.weight;
+                }
+                let nearby = self.hop.contains_key(&e.from) && self.hop.contains_key(&e.to);
+                (direct || nearby).then_some(i)
+            })
+            .collect();
     }
+
     fn select_edge(&mut self, index: usize) {
         self.edge = Some(index);
         let e = &self.graph.links[index];
-        let element = self.document.get_element_by_id("selected-edge").unwrap();
-        let name = |id: &str| {
-            self.graph
-                .nodes
-                .iter()
-                .find(|n| n.id == id)
-                .map(|n| n.name.as_str())
-                .unwrap_or("")
-        };
-        element.set_text_content(Some(&format!(
-            "Selected relationship: {} ↔ {} — {}, {}. {}",
-            name(&e.from),
-            name(&e.to),
-            e.team,
-            e.overlap_days
-                .map(|d| format!("{d} overlap day(s)"))
-                .unwrap_or_else(|| api_types::overlap_description(None, e.minimum_shared_games)),
-            self.graph.coverage
-        )));
-        let _ = element.set_attribute("data-from", &e.from);
-        let _ = element.set_attribute("data-to", &e.to);
         let url = format!(
             "/edge?from={}&to={}",
             js_sys::encode_uri_component(&e.from).as_string().unwrap(),
             js_sys::encode_uri_component(&e.to).as_string().unwrap()
         );
-        if let Some(frame) = self.document.get_element_by_id("edge-provenance-frame") {
-            let _ = frame.set_attribute("src", &url);
-        }
-        if let Some(link) = self.document.get_element_by_id("open-selected-edge") {
-            let _ = link.set_attribute("href", &url);
-            let _ = link.remove_attribute("hidden");
-        }
-        let detail = web_sys::CustomEventInit::new();
-        detail.set_detail(&JsValue::from_str(&serde_json::to_string(e).unwrap()));
-        if let Ok(event) =
-            web_sys::CustomEvent::new_with_event_init_dict("teammate-edge-selected", &detail)
-        {
-            let _ = self.document.dispatch_event(&event);
-        }
+        explorer::dispatch_evidence(&self.document, &url);
     }
-    fn hit(&mut self, p: (f64, f64)) {
-        let radius = if self.graph.full_network { 7.0 } else { 22.0 };
-        let world = ((p.0 - self.x) / self.scale, (p.1 - self.y) / self.scale);
-        let r = radius / self.scale;
+
+    /// Nearest node to a logical-space point within the pick radius, if any.
+    /// Shared by click hit-testing and hover tracking.
+    fn badge_at(&self, p: (f64, f64)) -> Option<usize> {
+        self.badge_targets
+            .iter()
+            .rev()
+            .find(|(_, b)| {
+                p.0 >= b.left && p.0 <= b.right && p.1 >= b.top - 9.0 && p.1 <= b.bottom + 9.0
+            })
+            .map(|(i, _)| *i)
+    }
+    fn nearest_node(&self, p: (f64, f64)) -> Option<usize> {
+        let css = self.viewport.css(p);
+        if let Some(i) = self.badge_at(css) {
+            return Some(i);
+        }
+        let radius = if self.touch_input || !self.graph.full_network {
+            22.0
+        } else {
+            9.0
+        };
+        let rect = self.canvas.get_bounding_client_rect();
+        let css_x = 1000.0 / rect.width().max(1.0);
+        let css_y = 600.0 / rect.height().max(1.0);
+        let world = self.viewport.world(p, self.camera);
+        let r = radius * css_x / self.camera.scale;
         // Extremely zoomed-out hit tests scan the finite node set instead of
         // iterating an unbounded rectangle of empty spatial cells.
         let candidates: Vec<usize> = if (r / 40.0 + 3.0).powi(2) > self.spatial.len() as f64 {
@@ -249,26 +376,62 @@ impl CanvasView {
             }
             candidates
         };
-        let nearest = candidates
+        candidates
             .into_iter()
             .map(|i| {
                 let point = self.screen(self.points[i]);
-                (i, (point.0 - p.0).hypot(point.1 - p.1))
+                (i, ((point.0 - p.0) / css_x).hypot((point.1 - p.1) / css_y))
             })
-            .filter(|(_, d)| *d <= radius)
+            .filter(|(i, d)| *d <= radius && self.visible(*i))
             .min_by(|a, b| a.1.total_cmp(&b.1))
-            .map(|(i, _)| i);
-        if let Some(i) = nearest {
-            let id = self.graph.nodes[i].id.clone();
-            self.select(&id);
-            return;
+            .map(|(i, _)| i)
+    }
+    fn pick(&self, p: (f64, f64)) -> Option<HitTarget> {
+        let css = self.viewport.css(p);
+        if let Some(i) = self.badge_at(css) {
+            return Some(HitTarget::Node(i));
         }
+        let node = self.nearest_node(p);
+        let edge = self.nearest_edge(p);
+        if self.touch_input
+            && let Some(i) = edge
+        {
+            let edge_distance = self
+                .edge_curve(i, true)
+                .map(|p| self.viewport.css(self.screen(p)))
+                .distance(css);
+            let node_distance = node
+                .map(|i| {
+                    let q = self.viewport.css(self.screen(self.points[i]));
+                    (q.0 - css.0).hypot(q.1 - css.1)
+                })
+                .unwrap_or(f64::INFINITY);
+            if edge_distance < node_distance && node_distance > 4.0 {
+                return Some(HitTarget::Edge(i));
+            }
+        }
+        node.map(HitTarget::Node)
+            .or_else(|| edge.map(HitTarget::Edge))
+    }
+    fn activate(&mut self, target: HitTarget) {
+        match target {
+            HitTarget::Node(i) => {
+                let id = self.graph.nodes[i].id.clone();
+                self.select(&id);
+            }
+            HitTarget::Edge(i) => self.select_edge(i),
+        }
+    }
+    fn nearest_edge(&self, p: (f64, f64)) -> Option<usize> {
+        let rect = self.canvas.get_bounding_client_rect();
+        let css_x = 1000.0 / rect.width().max(1.0);
+        let css_y = 600.0 / rect.height().max(1.0);
+        let p = (p.0 / css_x, p.1 / css_y);
         // The nearest link within reach wins, and in the complete network only links that are
         // drawn prominently (selected chain, selected player's links, current selection) are
         // targets, so a click in empty space never selects a faint background link.
         let full_network = self.graph.full_network;
-        let edge = self
-            .graph
+        self.graph
             .links
             .iter()
             .enumerate()
@@ -278,153 +441,663 @@ impl CanvasView {
                     || e.from == self.selected
                     || e.to == self.selected
                     || self.edge == Some(*i)
+                    || self.hovered_edge == Some(*i)
             })
             .filter_map(|(i, e)| {
-                let a = self.screen(self.at(&e.from));
-                let b = self.screen(self.at(&e.to));
-                let vx = b.0 - a.0;
-                let vy = b.1 - a.1;
-                let length = vx * vx + vy * vy;
-                let t = if length == 0.0 {
-                    0.0
-                } else {
-                    (((p.0 - a.0) * vx + (p.1 - a.1) * vy) / length).clamp(0.0, 1.0)
-                };
-                let distance = (p.0 - a.0 - t * vx).hypot(p.1 - a.1 - t * vy);
-                (distance < 8.0).then_some((i, distance))
+                if !self.visible(self.indices[&e.from]) || !self.visible(self.indices[&e.to]) {
+                    return None;
+                }
+                let curve = self.edge_curve(i, true).map(|point| {
+                    let point = self.screen(point);
+                    (point.0 / css_x, point.1 / css_y)
+                });
+                let distance = curve.distance(p);
+                (distance < if self.touch_input { 22.0 } else { 8.0 }).then_some((i, distance))
             })
             .min_by(|a, b| a.1.total_cmp(&b.1))
-            .map(|(i, _)| i);
-        if let Some(index) = edge {
-            self.select_edge(index);
+            .map(|(i, _)| i)
+    }
+    fn clear_highlight(&mut self) {
+        self.graph.path.clear();
+        self.graph.degree = None;
+        for e in &mut self.graph.links {
+            e.on_path = false;
+        }
+        if let Some(chain) = self.document.get_element_by_id("graph-chain") {
+            chain.set_inner_html("");
+            let _ = chain.set_attribute("data-state", "idle");
         }
     }
+    fn visible(&self, index: usize) -> bool {
+        !self.ego || self.hop.contains_key(&self.graph.nodes[index].id) || self.important(index)
+    }
+    fn important(&self, index: usize) -> bool {
+        let id = &self.graph.nodes[index].id;
+        id == &self.selected
+            || id == &self.graph.target
+            || self.graph.path.contains(id)
+            || self.hovered == Some(index)
+    }
+    fn emphasized(&self, index: usize) -> bool {
+        let n = &self.graph.nodes[index];
+        let era = n
+            .debut_season
+            .map(|y| self.eras[(y.saturating_sub(1940) / 10).min(7) as usize])
+            .unwrap_or(self.eras.iter().all(|x| *x));
+        era && (self.franchise.is_none()
+            || self.franchise_nodes.contains(&index)
+            || n.id == self.selected)
+    }
+    fn edge_curve(&self, index: usize, curved: bool) -> Curve {
+        let e = &self.graph.links[index];
+        let (a, b) = self.indexed_links[index];
+        if !e.on_path
+            && curved
+            && let Some(curve) = self.trunks.get(&index)
+        {
+            return *curve;
+        }
+        if curved {
+            visual::unbundled_curve(e, self.points[a], self.points[b])
+        } else {
+            Curve::Line(self.points[a], self.points[b])
+        }
+    }
+    fn stroke_edge(&self, index: usize, curved: bool) -> bool {
+        let (a, b) = self.indexed_links[index];
+        if !self.visible(a) || !self.visible(b) {
+            return false;
+        }
+        let curve = self
+            .edge_curve(index, curved)
+            .map(|p| self.viewport.css(self.screen(p)));
+        // Include spline control points in viewport culling, not only its chord.
+        let points = match curve {
+            Curve::Line(a, b) => [a, b, a, b],
+            Curve::Quadratic(a, c, b) => [a, c, b, b],
+            Curve::Cubic(a, c, d, b) => [a, c, d, b],
+        };
+        if !self.graph.links[index].on_path
+            && (points.iter().all(|p| p.0 < 0.0)
+                || points.iter().all(|p| p.0 > self.viewport.width)
+                || points.iter().all(|p| p.1 < 0.0)
+                || points.iter().all(|p| p.1 > self.viewport.height))
+        {
+            return false;
+        }
+        let a = curve.point(0.0);
+        self.ctx.move_to(a.0, a.1);
+        match curve {
+            Curve::Line(_, b) => self.ctx.line_to(b.0, b.1),
+            Curve::Quadratic(_, c, b) => self.ctx.quadratic_curve_to(c.0, c.1, b.0, b.1),
+            Curve::Cubic(_, c, d, b) => self.ctx.bezier_curve_to(c.0, c.1, d.0, d.1, b.0, b.1),
+        }
+        true
+    }
     fn draw(&mut self) {
+        let rect = self.canvas.get_bounding_client_rect();
+        self.viewport = Viewport::new(rect.width(), rect.height());
+        let css_x = 1000.0 / rect.width().max(1.0);
+        let css_y = 600.0 / rect.height().max(1.0);
+
+        let started = js_sys::Date::now();
+        let zoom_tier = ZoomTier::at(self.camera.scale);
+        let reduced = explorer::reduced_motion();
+        let micro_blend = visual::zoom_blend(self.camera.scale, 0.75, reduced);
+        let meso_blend = visual::zoom_blend(self.camera.scale, 0.25, reduced);
+        self.trunks = if self.layout == LayoutMode::Concentric {
+            HashMap::new()
+        } else {
+            self.trunk_plan
+                .curves(&self.graph.links, &self.points, |i| {
+                    let p = self.screen(self.points[i]);
+                    self.visible(i) && (0.0..=1000.0).contains(&p.0) && (0.0..=600.0).contains(&p.1)
+                })
+        };
+        let mut drawn_background = 0;
+        let mut drawn_non_backbone = 0;
+        let mut drawn_focus = 0;
+        let mut drawn_chain = 0;
+        const COLORS: [&str; 8] = [
+            "#1b9e77", "#d95f02", "#7570b3", "#e7298a", "#65a41e", "#bb8b02", "#a6761d", "#666666",
+        ];
+        self.ctx.set_global_alpha(1.0);
         self.ctx.set_fill_style_str("#ffffff");
         self.ctx.fill_rect(0.0, 0.0, 1000.0, 600.0);
-        if self.graph.full_network {
-            self.ctx.set_stroke_style_str("rgba(66,109,122,0.075)");
-            self.ctx.set_line_width(0.6);
+        if self.layout == LayoutMode::EraLane {
+            for (i, color) in COLORS.iter().enumerate() {
+                let year = 1940 + i * 10;
+                let x = (year as f64 - 1947.0) * 110.0 * self.camera.scale + self.camera.x;
+                let end = if i == 7 {
+                    1000.0
+                } else {
+                    x + 1100.0 * self.camera.scale
+                };
+                self.ctx.set_global_alpha(0.045);
+                self.ctx.set_fill_style_str(color);
+                self.ctx.fill_rect(x, 0.0, end - x, 600.0);
+                self.ctx.set_global_alpha(1.0);
+                self.ctx.set_fill_style_str("#0f172a");
+                self.ctx.set_text_align("left");
+                self.ctx.set_font("bold 13px sans-serif");
+                if end > 0.0 && x < 1000.0 {
+                    let _ = self.ctx.fill_text(
+                        &format!("{year}s{}", if i == 7 { "+" } else { "" }),
+                        x.max(4.0) + 4.0,
+                        20.0,
+                    );
+                }
+            }
+        }
+        let active = !self.graph.path.is_empty();
+        self.ctx.save();
+        let _ = self.ctx.scale(css_x, css_y);
+        // Overview iterates the cached backbone, rather than four full edge passes.
+        let passes: &[(bool, bool)] = if self.franchise.is_none() && self.eras.iter().all(|x| *x) {
+            &[(false, true), (true, true)]
+        } else {
+            &[(false, true), (false, false), (true, true), (true, false)]
+        };
+        for &(local, matching) in passes {
+            if local && micro_blend == 0.0 {
+                continue;
+            }
+            self.ctx.set_stroke_style_str("#426d7a");
+            self.ctx.set_line_width(0.5);
             self.ctx.begin_path();
-            // The faint background lattice is the expensive part of a 100k-link frame: it is
-            // skipped while a drag is moving (the pointer-up redraw restores it) and links
-            // wholly off one side of the canvas are never submitted.
-            let dragging = matches!(self.drag, Some((_, _, _, _, true)));
-            if !dragging {
-                for &(a, b) in &self.indexed_links {
-                    let a = self.screen(self.points[a]);
-                    let b = self.screen(self.points[b]);
-                    if (a.0 < 0.0 && b.0 < 0.0)
-                        || (a.0 > 1000.0 && b.0 > 1000.0)
-                        || (a.1 < 0.0 && b.1 < 0.0)
-                        || (a.1 > 600.0 && b.1 > 600.0)
-                    {
-                        continue;
+            self.ctx.set_global_alpha(
+                (0.02 + 0.02 * meso_blend)
+                    * if local { micro_blend } else { 1.0 }
+                    * if active || !matching { 0.05 } else { 1.0 },
+            );
+            let candidates: Box<dyn Iterator<Item = usize>> = if local {
+                Box::new(0..self.graph.links.len())
+            } else {
+                Box::new(self.backbone_edges.iter().copied())
+            };
+            for i in candidates {
+                let e = &self.graph.links[i];
+                if e.on_path
+                    || self.edge == Some(i)
+                    || self.hovered_edge == Some(i)
+                    || (local && e.in_visual_backbone)
+                {
+                    continue;
+                }
+                if self.hop.contains_key(&e.from) && self.hop.contains_key(&e.to) {
+                    continue;
+                }
+                let (a, b) = self.indexed_links[i];
+                if (self.emphasized(a) && self.emphasized(b)) != matching {
+                    continue;
+                }
+                if self.stroke_edge(i, false) {
+                    drawn_background += 1;
+                    if local {
+                        drawn_non_backbone += 1;
                     }
-                    self.ctx.move_to(a.0, a.1);
-                    self.ctx.line_to(b.0, b.1);
                 }
             }
             self.ctx.stroke();
-            self.ctx.set_stroke_style_str("rgba(176,79,0,0.45)");
-            self.ctx.set_line_width(1.3);
+        }
+        // One context stroke prevents thousands of overlaps from accumulating
+        // opacity into a solid orange field. Every two-hop curve stays included.
+        for matching in [true, false] {
+            self.ctx.set_global_alpha(
+                (0.04 + 0.015 * micro_blend) * if active || !matching { 0.05 } else { 1.0 },
+            );
+            self.ctx.set_stroke_style_str("#b04f00");
+            self.ctx.set_line_width(0.5);
             self.ctx.begin_path();
-            for (i, _e) in self
+            for &i in &self.foreground_edges {
+                let e = &self.graph.links[i];
+                let (a, b) = self.indexed_links[i];
+                if e.on_path
+                    || self.edge == Some(i)
+                    || self.hovered_edge == Some(i)
+                    || e.from == self.selected
+                    || e.to == self.selected
+                    || (self.emphasized(a) && self.emphasized(b)) != matching
+                {
+                    continue;
+                }
+                if self.stroke_edge(i, true) {
+                    drawn_focus += 1;
+                }
+            }
+            self.ctx.stroke();
+        }
+        for &i in &self.foreground_edges {
+            let e = &self.graph.links[i];
+            let (a, b) = self.indexed_links[i];
+            if e.on_path
+                || self.edge == Some(i)
+                || self.hovered_edge == Some(i)
+                || (e.from != self.selected && e.to != self.selected)
+            {
+                continue;
+            }
+            self.ctx.set_global_alpha(
+                (0.18 + 0.10 * (e.weight.clamp(0.1, 1.0) - 0.1) / 0.9)
+                    * if active || !self.emphasized(a) || !self.emphasized(b) {
+                        0.05
+                    } else {
+                        1.0
+                    },
+            );
+            self.ctx.set_stroke_style_str("#b04f00");
+            self.ctx.set_line_width(0.65 + 0.85 * e.weight);
+            self.ctx.begin_path();
+            if self.stroke_edge(i, true) {
+                drawn_focus += 1;
+            }
+            self.ctx.stroke();
+        }
+        // Chain and inspection always bypass backbone, filters and semantic zoom.
+        let mut highlighted: Vec<_> = self
+            .graph
+            .path
+            .windows(2)
+            .filter_map(|p| {
+                self.graph
+                    .links
+                    .binary_search_by(|e| {
+                        let pair = if p[0] < p[1] {
+                            (&p[0], &p[1])
+                        } else {
+                            (&p[1], &p[0])
+                        };
+                        (&e.from, &e.to).cmp(&pair)
+                    })
+                    .ok()
+            })
+            .collect();
+        // Custom/fixture payloads need not arrive in pair order.
+        if highlighted.len() != self.graph.path.len().saturating_sub(1) {
+            highlighted = self
                 .graph
                 .links
                 .iter()
                 .enumerate()
-                .filter(|(_, e)| e.from == self.selected || e.to == self.selected)
-            {
-                let (a, b) = self.indexed_links[i];
-                let a = self.screen(self.points[a]);
-                let b = self.screen(self.points[b]);
-                self.ctx.move_to(a.0, a.1);
-                self.ctx.line_to(b.0, b.1);
+                .filter_map(|(i, e)| e.on_path.then_some(i))
+                .collect();
+        }
+        highlighted.extend(self.edge);
+        highlighted.extend(self.hovered_edge);
+        highlighted.sort_unstable();
+        highlighted.dedup();
+        self.ctx.set_global_alpha(1.0);
+        for i in highlighted {
+            let e = &self.graph.links[i];
+            self.ctx
+                .set_stroke_style_str(if e.on_path { "#176896" } else { "#b04f00" });
+            self.ctx.set_line_width(2.2);
+            self.ctx.begin_path();
+            if self.stroke_edge(i, true) && e.on_path {
+                drawn_chain += 1;
             }
             self.ctx.stroke();
         }
-        for (index, edge) in self.graph.links.iter().enumerate() {
-            if self.graph.full_network && !edge.on_path && self.edge != Some(index) {
+        self.ctx.restore();
+        // Nodes and labels use CSS pixels even when the logical canvas is resized.
+        self.ctx.save();
+        let _ = self.ctx.scale(css_x, css_y);
+        self.ctx.set_font("15px sans-serif");
+        self.ctx.set_text_align("center");
+        for (i, (n, p)) in self.graph.nodes.iter().zip(&self.points).enumerate() {
+            if !self.visible(i) {
                 continue;
             }
-            let (a, b) = self.indexed_links[index];
-            let a = self.screen(self.points[a]);
-            let b = self.screen(self.points[b]);
-            self.ctx.set_stroke_style_str(if self.edge == Some(index) {
-                "#b04f00"
-            } else if edge.on_path {
-                "#176896"
+            let logical = self.screen(*p);
+            let p = (logical.0 / css_x, logical.1 / css_y);
+            if p.0 < -150.0
+                || p.0 > rect.width() + 150.0
+                || p.1 < -50.0
+                || p.1 > rect.height() + 50.0
+            {
+                continue;
+            }
+            let important = self.important(i);
+            let alpha = if important {
+                1.0
+            } else if active
+                || !self.emphasized(i)
+                || (self.layout == LayoutMode::Concentric && !self.hop.contains_key(&n.id))
+            {
+                0.05
             } else {
-                "#a4b4bd"
-            });
-            self.ctx
-                .set_line_width(if edge.on_path || self.edge == Some(index) {
-                    4.0
+                match self.hop.get(&n.id) {
+                    Some(2) => 0.55,
+                    _ => 1.0,
+                }
+            };
+            let landmark = self.landmarks[i] || important;
+            let macro_radius = ZoomTier::Macro.radius(self.adjacency[i].len(), landmark);
+            let meso_radius = ZoomTier::Meso.radius(self.adjacency[i].len(), landmark);
+            let micro_radius = ZoomTier::Micro.radius(self.adjacency[i].len(), landmark);
+            let radius = (macro_radius * (1.0 - meso_blend) + meso_radius * meso_blend)
+                * (1.0 - micro_blend)
+                + micro_radius * micro_blend;
+            let alpha = alpha
+                * if alpha > 0.05 && !important && !self.landmarks[i] {
+                    0.45 + 0.55 * meso_blend
                 } else {
-                    1.3
+                    1.0
+                };
+            let radius = radius * if rect.width() <= 640.0 { 0.6 } else { 1.0 };
+            self.ctx.set_global_alpha(alpha);
+            self.ctx
+                .set_fill_style_str(if self.graph.path.contains(&n.id) {
+                    "#176896"
+                } else if n.id == self.selected {
+                    "#b04f00"
+                } else {
+                    n.debut_season
+                        .map(|y| COLORS[(y.saturating_sub(1940) / 10).min(7) as usize])
+                        .unwrap_or("#94a3b8")
                 });
             self.ctx.begin_path();
-            self.ctx.move_to(a.0, a.1);
-            self.ctx.line_to(b.0, b.1);
-            self.ctx.stroke();
-        }
-        for (node, point) in self.graph.nodes.iter().zip(&self.points) {
-            let p = self.screen(*point);
-            self.ctx.begin_path();
-            let important = node.id == self.selected || self.graph.path.contains(&node.id);
-            let radius = if self.graph.full_network {
-                if important {
-                    5.0
-                } else {
-                    (5.0 * self.scale).clamp(1.3, 8.0)
-                }
-            } else {
-                18.0
-            };
-            let _ = self.ctx.arc(p.0, p.1, radius, 0.0, std::f64::consts::TAU);
-            self.ctx.set_fill_style_str(if node.id == self.selected {
-                "#b04f00"
-            } else if self.graph.path.contains(&node.id) {
-                "#176896"
-            } else if self.graph.full_network {
-                let year = node
-                    .era
-                    .get(..4)
-                    .and_then(|s| s.parse::<usize>().ok())
-                    .unwrap_or(1980);
-                [
-                    "#64748b", "#8b5cf6", "#c05b9c", "#ca734b", "#bc9a2c", "#679a50", "#2d9f91",
-                    "#3880b6", "#5a68bd",
-                ][(year.saturating_sub(1940) / 10).min(8)]
-            } else {
-                "#657c6b"
-            });
+            let _ = self
+                .ctx
+                .arc(p.0, p.1, radius.max(1.3), 0.0, std::f64::consts::TAU);
             self.ctx.fill();
-            self.ctx.set_fill_style_str("#172e41");
-            self.ctx.set_font("15px sans-serif");
-            self.ctx.set_text_align("center");
-            if !self.graph.full_network || important || self.scale >= 0.7 {
-                let _ = self.ctx.fill_text(
-                    &node.name,
-                    p.0,
-                    p.1 + if self.graph.full_network { 20.0 } else { 36.0 },
-                );
+        }
+        self.ctx.set_global_alpha(1.0);
+        let mut reserved = Vec::new();
+        for selector in [
+            ".camera-controls",
+            "#graph-minimap",
+            "#minimap-toggle",
+            "#edge-evidence-drawer[open]",
+        ] {
+            if let Ok(Some(overlay)) = self.document.query_selector(selector) {
+                let bounds = overlay.get_bounding_client_rect();
+                if bounds.width() > 0.0 && bounds.height() > 0.0 {
+                    reserved.push(Rect {
+                        left: bounds.left() - rect.left(),
+                        top: bounds.top() - rect.top(),
+                        right: bounds.right() - rect.left(),
+                        bottom: bounds.bottom() - rect.top(),
+                    });
+                }
             }
         }
+        let mut sector_geometry = Vec::new();
+        if self.layout == LayoutMode::Concentric {
+            let mut headers = Vec::new();
+            for (index, (sector, width)) in self.sector_headers.iter().enumerate() {
+                let angle = (sector.start + sector.end) / 2.0;
+                let point = self
+                    .viewport
+                    .css(self.screen((500.0 * angle.cos(), 500.0 * angle.sin())));
+                if point.0 < 0.0
+                    || point.0 > rect.width()
+                    || point.1 < 25.0
+                    || point.1 > rect.height() - 25.0
+                {
+                    continue;
+                }
+                headers.push(LabelCandidate {
+                    index,
+                    id: if sector.franchise.is_empty() {
+                        "~"
+                    } else {
+                        &sector.franchise
+                    },
+                    priority: LabelPriority::Important,
+                    weight: 0.0,
+                    count: 0,
+                    matching: true,
+                    point,
+                    width: width + 14.0,
+                });
+                sector_geometry.push(point);
+            }
+            self.ctx.set_font("bold 12px sans-serif");
+            self.ctx.set_fill_style_str("#334155");
+            for label in
+                visual::place_labels(&mut headers, rect.width(), rect.height(), 0, &reserved)
+            {
+                let text = &self.sector_headers[label.index].0.franchise;
+                let _ = self.ctx.fill_text(
+                    if text.is_empty() { "Unknown" } else { text },
+                    label.x,
+                    label.y,
+                );
+                reserved.push(label.bounds);
+            }
+        }
+        let mut candidates = Vec::new();
+        for (i, n) in self.graph.nodes.iter().enumerate() {
+            if !self.visible(i) {
+                continue;
+            }
+            let important = self.important(i);
+            if !important && (zoom_tier == ZoomTier::Macro && !self.landmarks[i]) {
+                continue;
+            }
+            let logical = self.screen(self.points[i]);
+            let point = (logical.0 / css_x, logical.1 / css_y);
+            if !important
+                && (point.0 < 0.0
+                    || point.0 > rect.width()
+                    || point.1 < 35.0
+                    || point.1 > rect.height() - 30.0)
+            {
+                continue;
+            }
+            candidates.push(LabelCandidate {
+                index: i,
+                id: &n.id,
+                priority: if important {
+                    LabelPriority::Important
+                } else if self.hop.get(&n.id) == Some(&1) {
+                    LabelPriority::DirectTeammate
+                } else {
+                    LabelPriority::Context
+                },
+                weight: self.focus_weights[i],
+                count: self.adjacency[i].len(),
+                matching: self.emphasized(i),
+                point,
+                width: self.label_widths[i] + 14.0,
+            });
+        }
+        let cap = zoom_tier.label_cap(rect.width());
+        let labels =
+            visual::place_labels(&mut candidates, rect.width(), rect.height(), cap, &reserved);
+        self.badge_targets = labels
+            .iter()
+            .filter(|l| {
+                l.priority == LabelPriority::Important
+                    || (zoom_tier == ZoomTier::Macro && self.landmarks[l.index])
+            })
+            .map(|l| (l.index, l.bounds))
+            .collect();
+        let mut ordinary_rank = 0;
+        let mut label_items = Vec::new();
+        for label in &labels {
+            let n = &self.graph.nodes[label.index];
+            let important = label.priority == LabelPriority::Important;
+            let tier_alpha = if important {
+                1.0
+            } else {
+                visual::label_zoom_alpha(
+                    self.camera.scale,
+                    ordinary_rank,
+                    self.landmarks[label.index],
+                    rect.width(),
+                    reduced,
+                )
+            };
+            let alpha = tier_alpha
+                * if important || label.priority == LabelPriority::DirectTeammate {
+                    1.0
+                } else if self.emphasized(label.index) {
+                    0.7
+                } else {
+                    0.16
+                };
+            self.ctx.set_global_alpha(alpha);
+            label_items.push(serde_json::json!({"id":n.id,"priority":format!("{:?}",label.priority),"weight":self.focus_weights[label.index],"alpha":alpha,"bounds":label.bounds,"anchor":self.viewport.css(self.screen(self.points[label.index]))}));
+            if !important {
+                ordinary_rank += 1;
+            }
+            self.ctx
+                .set_font(if label.priority <= LabelPriority::DirectTeammate {
+                    "bold 15px sans-serif"
+                } else {
+                    "15px sans-serif"
+                });
+            if important {
+                let node_point = self.viewport.css(self.screen(self.points[label.index]));
+                if (node_point.0 - label.x).hypot(node_point.1 - label.y) > 35.0 {
+                    self.ctx.set_stroke_style_str("#94a3b8");
+                    self.ctx.set_line_width(1.0);
+                    self.ctx.begin_path();
+                    self.ctx.move_to(node_point.0, node_point.1);
+                    self.ctx.line_to(label.x, label.y - 6.0);
+                    self.ctx.stroke();
+                }
+            }
+            if important || (zoom_tier == ZoomTier::Macro && self.landmarks[label.index]) {
+                self.ctx.set_fill_style_str("#172e41");
+                self.ctx.begin_path();
+                let _ = self.ctx.round_rect_with_f64(
+                    label.bounds.left,
+                    label.bounds.top,
+                    label.bounds.right - label.bounds.left,
+                    26.0,
+                    6.0,
+                );
+                self.ctx.fill();
+                self.ctx.set_stroke_style_str(
+                    n.debut_season
+                        .map(|v| COLORS[(v.saturating_sub(1940) / 10).min(7) as usize])
+                        .unwrap_or("#94a3b8"),
+                );
+                self.ctx.set_line_width(1.5);
+                self.ctx.stroke();
+                self.ctx.set_fill_style_str("#ffffff");
+            } else {
+                self.ctx.set_stroke_style_str("#ffffff");
+                self.ctx.set_line_width(3.0);
+                self.ctx.set_line_join("round");
+                let _ = self.ctx.stroke_text(&n.name, label.x, label.y);
+                self.ctx.set_fill_style_str("#0f172a");
+            }
+            let _ = self.ctx.fill_text(&n.name, label.x, label.y);
+        }
+        self.ctx.set_global_alpha(1.0);
+        self.ctx.restore();
+        let _ = self
+            .document
+            .get_element_by_id("canvas-status")
+            .unwrap()
+            .set_attribute(
+                "data-transition",
+                if self.transition.is_some() {
+                    "running"
+                } else {
+                    "settled"
+                },
+            );
         self.frames += 1;
         let status = self.document.get_element_by_id("canvas-status").unwrap();
-        status.set_text_content(Some(&format!(
-            "Canvas ready — {} players, {} relationships. Zoom {:.0}%.",
+        // role="status" is an atomic live region: rewriting identical text on every
+        // frame floods screen readers during a drag, so only changed content is set.
+        let text = format!(
+            "Canvas ready — {} players, {} relationships. Zoom {:.0}%.{}",
             self.graph.nodes.len(),
             self.graph.links.len(),
-            self.scale * 100.0
-        )));
+            self.camera.scale * 100.0,
+            self.auto_focus
+                .as_ref()
+                .map(|name| format!(" Default focal player: {name}, chosen by teammate count."))
+                .unwrap_or_default()
+        );
+        if self.transition.is_none()
+            && self.pointers.is_empty()
+            && self.status_text.as_deref() != Some(text.as_str())
+        {
+            self.status_text = Some(text.clone());
+            status.set_text_content(Some(&text));
+        }
+        self.report_filters();
+        self.report_hover();
+        self.draw_minimap();
         for (key, value) in [
+            (
+                "data-sector-geometry",
+                serde_json::to_string(&sector_geometry).unwrap(),
+            ),
+            ("data-layout-signature", self.layout_signature.clone()),
+            (
+                "data-label-items",
+                serde_json::to_string(&label_items).unwrap(),
+            ),
+            (
+                "data-focus-point",
+                self.indices
+                    .get(&self.selected)
+                    .map(|&i| {
+                        serde_json::to_string(&self.viewport.css(self.screen(self.points[i])))
+                            .unwrap()
+                    })
+                    .unwrap_or_default(),
+            ),
+            (
+                "data-hovered-edge",
+                self.hovered_edge
+                    .map(|i| format!("{}|{}", self.graph.links[i].from, self.graph.links[i].to))
+                    .unwrap_or_default(),
+            ),
+            ("data-bundles", {
+                let mut curves: Vec<_> = self
+                    .trunks
+                    .iter()
+                    .map(|(&i, &curve)| {
+                        (
+                            &self.graph.links[i].from,
+                            &self.graph.links[i].to,
+                            curve.map(|p| self.viewport.css(self.screen(p))),
+                        )
+                    })
+                    .collect();
+                curves.sort_by(|a, b| (&a.0, &a.1).cmp(&(&b.0, &b.1)));
+                serde_json::to_string(&curves).unwrap()
+            }),
+            ("data-tier", zoom_tier.name().into()),
+            ("data-label-cap", cap.to_string()),
+            (
+                "data-labels",
+                labels
+                    .iter()
+                    .map(|l| self.graph.nodes[l.index].id.as_str())
+                    .collect::<Vec<_>>()
+                    .join(","),
+            ),
+            (
+                "data-ordinary-labels",
+                labels
+                    .iter()
+                    .filter(|l| l.priority != LabelPriority::Important)
+                    .count()
+                    .to_string(),
+            ),
+            ("data-non-backbone-edges", drawn_non_backbone.to_string()),
+            ("data-background-edges", drawn_background.to_string()),
+            ("data-focus-edges", drawn_focus.to_string()),
+            ("data-chain-edges", drawn_chain.to_string()),
+            ("data-bundled-edges", self.trunks.len().to_string()),
+            (
+                "data-draw-ms",
+                format!("{:.2}", js_sys::Date::now() - started),
+            ),
             ("data-ready", "true".into()),
-            ("data-zoom", format!("{:.6}", self.scale)),
-            ("data-pan-x", format!("{:.2}", self.x)),
-            ("data-pan-y", format!("{:.2}", self.y)),
+            ("data-zoom", format!("{:.6}", self.camera.scale)),
+            ("data-pan-x", format!("{:.2}", self.camera.x)),
+            ("data-pan-y", format!("{:.2}", self.camera.y)),
             ("data-frame", self.frames.to_string()),
             ("data-players", self.graph.nodes.len().to_string()),
             ("data-relationships", self.graph.links.len().to_string()),
@@ -432,6 +1105,144 @@ impl CanvasView {
         ] {
             let _ = status.set_attribute(key, &value);
         }
+    }
+    fn request_redraw(&mut self) {
+        self.draw();
+    }
+    /// Hover tooltip: mirror the hovered player's facts into the DOM overlay
+    /// so pointer users get details on demand and screen-reader users get the
+    /// same facts through the live selection region.
+    fn report_hover(&self) {
+        let Some(tip) = self.document.get_element_by_id("graph-tooltip") else {
+            return;
+        };
+        let hovered = self.hovered.or_else(|| {
+            self.hovered_edge.map(|i| {
+                let e = &self.graph.links[i];
+                self.indices[if e.from == self.selected {
+                    &e.to
+                } else {
+                    &e.from
+                }]
+            })
+        });
+        let Some(index) = hovered else {
+            tip.set_text_content(None);
+            let _ = tip.set_attribute("hidden", "");
+            let _ = tip.remove_attribute("data-player");
+            return;
+        };
+        let node = &self.graph.nodes[index];
+        let degree = self.adjacency[index].len();
+        let text = format!(
+            "{} — {}; teams: {}; {} teammate connections",
+            node.name,
+            node.era,
+            node.teams.join(", "),
+            degree,
+        );
+        if tip.text_content().as_deref() != Some(text.as_str()) {
+            tip.set_text_content(Some(&text));
+        }
+        let _ = tip.remove_attribute("hidden");
+        let _ = tip.set_attribute("data-player", &node.id);
+    }
+    /// Minimap (overview+detail): draw every node as a dot on the small
+    /// overview canvas and frame the current viewport rectangle.
+    fn minimap_world(&self, fx: f64, fy: f64) -> (f64, f64) {
+        let first = self.points.first().copied().unwrap_or((0.0, 0.0));
+        let (lo, hi) = self.points.iter().fold((first, first), |(lo, hi), p| {
+            (
+                (lo.0.min(p.0), lo.1.min(p.1)),
+                (hi.0.max(p.0), hi.1.max(p.1)),
+            )
+        });
+        (
+            lo.0 + fx * (hi.0 - lo.0).max(1.0),
+            lo.1 + fy * (hi.1 - lo.1).max(1.0),
+        )
+    }
+    fn draw_minimap(&self) {
+        let Some(map) = self.document.get_element_by_id("graph-minimap") else {
+            return;
+        };
+        let Ok(map) = map.dyn_into::<HtmlCanvasElement>() else {
+            return;
+        };
+        let Some(ctx_obj) = map.get_context("2d").unwrap_or(None) else {
+            return;
+        };
+        let Ok(mctx) = ctx_obj.dyn_into::<CanvasRenderingContext2d>() else {
+            return;
+        };
+        let dpr = web_sys::window().unwrap().device_pixel_ratio().max(1.0);
+        if map.width() != (200.0 * dpr) as u32 || map.height() != (120.0 * dpr) as u32 {
+            map.set_width((200.0 * dpr) as u32);
+            map.set_height((120.0 * dpr) as u32);
+        }
+        let _ = mctx.set_transform(dpr, 0.0, 0.0, dpr, 0.0, 0.0);
+        let (mw, mh) = (200.0, 120.0);
+        if self.points.is_empty() {
+            return;
+        }
+        let (mut lo_x, mut hi_x, mut lo_y, mut hi_y) = (
+            f64::INFINITY,
+            f64::NEG_INFINITY,
+            f64::INFINITY,
+            f64::NEG_INFINITY,
+        );
+        for p in &self.points {
+            lo_x = lo_x.min(p.0);
+            hi_x = hi_x.max(p.0);
+            lo_y = lo_y.min(p.1);
+            hi_y = hi_y.max(p.1);
+        }
+        let span_x = (hi_x - lo_x).max(1.0);
+        let span_y = (hi_y - lo_y).max(1.0);
+        let _ = map.set_attribute(
+            "data-world-bounds",
+            &serde_json::to_string(&(lo_x, lo_y, hi_x, hi_y)).unwrap(),
+        );
+        mctx.set_fill_style_str("#ffffff");
+        mctx.fill_rect(0.0, 0.0, mw, mh);
+        mctx.set_fill_style_str("#23405a");
+        for (i, p) in self.points.iter().enumerate() {
+            mctx.set_global_alpha(if self.important(i) {
+                1.0
+            } else if !self.visible(i) || !self.emphasized(i) {
+                0.03
+            } else {
+                0.15
+            });
+            mctx.set_fill_style_str(if self.graph.path.contains(&self.graph.nodes[i].id) {
+                "#176896"
+            } else if self.graph.nodes[i].id == self.selected {
+                "#b04f00"
+            } else {
+                "#23405a"
+            });
+            mctx.fill_rect(
+                (p.0 - lo_x) / span_x * (mw - 4.0) + 2.0,
+                (p.1 - lo_y) / span_y * (mh - 4.0) + 2.0,
+                1.5,
+                1.5,
+            );
+        }
+        mctx.set_global_alpha(1.0);
+        // Viewport rectangle: invert the main camera into world units.
+        let vx0 = (0.0 - self.camera.x) / self.camera.scale;
+        let vy0 = self.viewport.world((0.0, 0.0), self.camera).1;
+        let vx1 = (1000.0 - self.camera.x) / self.camera.scale;
+        let vy1 = self.viewport.world((1000.0, 600.0), self.camera).1;
+        mctx.set_stroke_style_str("#b04f00");
+        mctx.set_line_width(1.5);
+        mctx.stroke_rect(
+            (vx0 - lo_x) / span_x * (mw - 4.0) + 2.0,
+            (vy0 - lo_y) / span_y * (mh - 4.0) + 2.0,
+            (vx1 - vx0) / span_x * (mw - 4.0),
+            (vy1 - vy0) / span_y * (mh - 4.0),
+        );
+        let _ = map.set_attribute("data-frame", &self.frames.to_string());
     }
 }
 fn listen(
@@ -464,55 +1275,33 @@ pub fn start() -> Result<(), JsValue> {
         .get_element_by_id("graph-canvas")
         .ok_or("canvas missing")?
         .dyn_into::<HtmlCanvasElement>()?;
+    // Size the bitmap to the element's logical 1000×600 box times the device
+    // pixel ratio so the canvas is not under-sampled on Retina displays (MDN,
+    // devicePixelRatio). All drawing and hit-testing stays in the fixed logical
+    // space; the context transform maps logical to device pixels.
+    let dpr = web_sys::window()
+        .map(|w| w.device_pixel_ratio())
+        .unwrap_or(1.0)
+        .max(1.0);
+    canvas.set_width((1000.0 * dpr) as u32);
+    canvas.set_height((600.0 * dpr) as u32);
     let ctx = canvas
         .get_context("2d")?
         .ok_or("2d canvas unavailable")?
         .dyn_into::<CanvasRenderingContext2d>()?;
-    let center = graph
-        .path
-        .iter()
-        .position(|id| id == &graph.focus)
-        .unwrap_or(0) as f64
-        * 170.0;
-    let off_path = graph
-        .nodes
-        .iter()
-        .filter(|n| !graph.path.contains(&n.id) && !(graph.path.is_empty() && n.id == graph.focus))
-        .count();
-    let mut extra = 0;
-    let points: Vec<(f64, f64)> = graph
-        .nodes
-        .iter()
-        .map(|node| {
-            if graph.full_network {
-                let year = node
-                    .era
-                    .get(..4)
-                    .and_then(|s| s.parse::<f64>().ok())
-                    .unwrap_or(1980.0);
-                let hash = node.id.bytes().fold(2166136261u32, |h, b| {
-                    (h ^ u32::from(b)).wrapping_mul(16777619)
-                });
-                let jitter = f64::from(hash % 1000) / 1000.0;
-                let lane = f64::from((hash / 1000) % 10000) / 10000.0;
-                (
-                    (year - 1947.0) * 110.0 + jitter * 105.0,
-                    (lane - 0.5) * 5200.0,
-                )
-            } else if let Some(index) = graph.path.iter().position(|id| id == &node.id) {
-                (index as f64 * 170.0, 0.0)
-            } else if graph.path.is_empty() && node.id == graph.focus {
-                (0.0, 0.0)
-            } else {
-                let angle = std::f64::consts::TAU * (extra % 12) as f64
-                    / (off_path - (extra / 12) * 12).min(12) as f64
-                    - std::f64::consts::FRAC_PI_2;
-                let radius = 150.0 + (extra / 12) as f64 * 100.0;
-                extra += 1;
-                (center + radius * angle.cos(), radius * angle.sin())
-            }
-        })
-        .collect();
+    ctx.scale(dpr, dpr)?;
+    // Initial coordinates come from the shared layout engine: the default
+    // era-lane placement is byte-identical to the long-standing canvas
+    // formula, so existing screenshots and hit-testing are preserved.
+    let points: Vec<(f64, f64)> = compute_layout(
+        &graph.nodes,
+        &graph.links,
+        LayoutMode::EraLane,
+        &graph.focus,
+        &graph.path,
+        graph.full_network,
+        &HashMap::new(),
+    );
     let selected = graph.focus.clone();
     let indices: HashMap<_, _> = graph
         .nodes
@@ -527,27 +1316,88 @@ pub fn start() -> Result<(), JsValue> {
             .or_default()
             .push(i);
     }
-    let indexed_links = graph
+    let indexed_links: Vec<(usize, usize)> = graph
         .links
         .iter()
         .map(|e| (indices[&e.from], indices[&e.to]))
         .collect();
+    let mut adjacency: Vec<Vec<usize>> = vec![Vec::new(); graph.nodes.len()];
+    for &(a, b) in &indexed_links {
+        adjacency[a].push(b);
+        adjacency[b].push(a);
+    }
+    ctx.set_font("bold 15px sans-serif");
+    let label_widths = graph
+        .nodes
+        .iter()
+        .map(|n| {
+            ctx.measure_text(&n.name)
+                .map(|m| m.width())
+                .unwrap_or(100.0)
+        })
+        .collect();
+    let landmarks = visual::landmarks(&graph.nodes);
+    let backbone_edges = graph
+        .links
+        .iter()
+        .enumerate()
+        .filter_map(|(i, e)| e.in_visual_backbone.then_some(i))
+        .collect();
+    let focus_weights = vec![0.0; graph.nodes.len()];
+    let layout_signature = layout_signature(&points);
     let view = Rc::new(RefCell::new(CanvasView {
         document: document.clone(),
         canvas: canvas.clone(),
         ctx,
         graph,
+        layout: LayoutMode::EraLane,
         points,
         indexed_links,
+        adjacency,
         indices,
         spatial,
-        scale: 1.0,
-        x: 0.0,
-        y: 0.0,
+        camera: Camera {
+            scale: 1.0,
+            x: 0.0,
+            y: 0.0,
+        },
+        viewport: Viewport::new(
+            canvas.get_bounding_client_rect().width(),
+            canvas.get_bounding_client_rect().height(),
+        ),
         selected: selected.clone(),
         edge: None,
         drag: None,
+        press_target: None,
         frames: 0,
+        status_text: None,
+        hop: HashMap::new(),
+        hovered: None,
+        hovered_edge: None,
+        minimap_drag: None,
+        pending_layout: false,
+        eras: [true; 8],
+        franchise: None,
+        franchise_nodes: Default::default(),
+        ego: false,
+        chain_generation: 0,
+        transition: None,
+        animation_scheduled: false,
+        pointers: HashMap::new(),
+        pinch: None,
+        gesture_moved: false,
+        label_widths,
+        landmarks,
+        backbone_edges,
+        focus_weights,
+        foreground_edges: Vec::new(),
+        trunks: HashMap::new(),
+        trunk_plan: visual::TrunkPlan::default(),
+        auto_focus: None,
+        sector_headers: Vec::new(),
+        badge_targets: Vec::new(),
+        layout_signature,
+        touch_input: false,
     }));
     {
         let mut v = view.borrow_mut();
@@ -557,6 +1407,16 @@ pub fn start() -> Result<(), JsValue> {
             v.fit();
         }
         v.select(&selected);
+        if !v.graph.path.is_empty() {
+            let points: Vec<_> = v.graph.path.iter().map(|id| v.at(id)).collect();
+            v.frame_points(&points);
+            let _ = v
+                .document
+                .get_element_by_id("graph-chain")
+                .unwrap()
+                .set_attribute("data-state", "connected");
+        }
+        v.report_layout();
         v.draw();
     }
     for (id, dx, dy, factor) in [
@@ -566,7 +1426,6 @@ pub fn start() -> Result<(), JsValue> {
         ("pan-down", 0.0, -60.0, 1.0),
         ("zoom-in", 0.0, 0.0, 1.25),
         ("zoom-out", 0.0, 0.0, 0.8),
-        ("refocus", 0.0, 0.0, 1.0),
     ] {
         let state = view.clone();
         listen(
@@ -577,105 +1436,24 @@ pub fn start() -> Result<(), JsValue> {
             "click",
             move |_| {
                 let mut v = state.borrow_mut();
-                if id == "refocus" {
-                    v.fit();
-                } else {
-                    v.x += dx;
-                    v.y += dy;
-                    v.zoom(factor, (500.0, 300.0));
-                }
-                v.draw();
+                v.settle_layout();
+                v.camera.x += dx;
+                v.camera.y += dy;
+                v.zoom(factor, (500.0, 300.0));
+                v.request_redraw();
             },
         )?;
     }
-    let node_ids: Vec<_> = view
-        .borrow()
-        .graph
-        .nodes
-        .iter()
-        .map(|n| n.id.clone())
-        .collect();
-    for (index, id) in node_ids.into_iter().enumerate() {
+    if let Some(picker) = document
+        .get_element_by_id("graph-player")
+        .and_then(|e| e.dyn_into::<web_sys::HtmlSelectElement>().ok())
+    {
         let state = view.clone();
-        let Some(element) = document.get_element_by_id(&format!("select-node-{index}")) else {
-            continue;
-        };
-        listen(element.as_ref(), "click", move |_| {
+        let picker_target: web_sys::EventTarget = picker.clone().into();
+        listen(&picker_target, "change", move |_| {
             let mut v = state.borrow_mut();
-            v.select(&id);
-            v.draw();
-        })?;
-    }
-    let edge_indices: Vec<_> = view
-        .borrow()
-        .graph
-        .links
-        .iter()
-        .enumerate()
-        .filter(|(_, e)| !view.borrow().graph.full_network || e.on_path)
-        .map(|(i, _)| i)
-        .collect();
-    for index in edge_indices {
-        let state = view.clone();
-        let Some(element) = document.get_element_by_id(&format!("select-edge-{index}")) else {
-            continue;
-        };
-        listen(element.as_ref(), "click", move |_| {
-            let mut v = state.borrow_mut();
-            v.select_edge(index);
-            v.draw();
-        })?;
-    }
-    let state = view.clone();
-    listen(
-        document.get_element_by_id("graph-player").unwrap().as_ref(),
-        "change",
-        move |e| {
-            if let Some(select) = e
-                .target()
-                .and_then(|t| t.dyn_into::<HtmlSelectElement>().ok())
-            {
-                let mut v = state.borrow_mut();
-                v.select(&select.value());
-                v.draw();
-            }
-        },
-    )?;
-    if let Some(form) = document.get_element_by_id("network-search-form") {
-        let state = view.clone();
-        listen(form.as_ref(), "submit", move |event| {
-            event.prevent_default();
-            let mut v = state.borrow_mut();
-            let input = v
-                .document
-                .get_element_by_id("network-search")
-                .unwrap()
-                .dyn_into::<HtmlInputElement>()
-                .unwrap()
-                .value();
-            let matches: Vec<_> = v
-                .graph
-                .nodes
-                .iter()
-                .filter(|n| {
-                    n.name.eq_ignore_ascii_case(input.trim())
-                        || format!("{} · {}", n.name, n.id) == input.trim()
-                        || n.id == input.trim()
-                })
-                .map(|n| n.id.clone())
-                .collect();
-            let message = if matches.len() == 1 {
-                v.select(&matches[0]);
-                v.focus_player();
-                v.draw();
-                "Player found. Their connections are highlighted; the whole network remains loaded."
-            } else {
-                "Choose a player from the suggestions, including their ID when names are shared."
-            };
-            v.document
-                .get_element_by_id("network-search-status")
-                .unwrap()
-                .set_text_content(Some(message));
+            v.select(&picker.value());
+            v.request_redraw();
         })?;
     }
     for id in ["fit-network", "focus-player"] {
@@ -683,75 +1461,229 @@ pub fn start() -> Result<(), JsValue> {
             let state = view.clone();
             listen(element.as_ref(), "click", move |_| {
                 let mut v = state.borrow_mut();
+                v.settle_layout();
                 if id == "fit-network" {
+                    v.ego = false;
                     v.fit_network();
                 } else {
                     v.focus_player();
                 }
-                v.draw();
+                v.request_redraw();
             })?;
         }
     }
-    if let Some(list) = document.get_element_by_id("network-player-links") {
+    // G6-style layout switcher: recompute coordinates through the shared
+    // layout engine, then refit. Buttons are optional; the default era-lane
+    // view renders when the page ships no switcher.
+    for (id, mode) in [
+        ("layout-era", LayoutMode::EraLane),
+        ("layout-concentric", LayoutMode::Concentric),
+        ("layout-force", LayoutMode::Force),
+    ] {
+        if let Some(element) = document.get_element_by_id(id) {
+            let state = view.clone();
+            listen(element.as_ref(), "click", move |_| {
+                explorer::change_layout(state.clone(), mode);
+            })?;
+        }
+    }
+    // Minimap click-to-navigate: jump the main camera to the clicked
+    // overview position.
+    if let Some(map) = document
+        .get_element_by_id("graph-minimap")
+        .map(|el| el.dyn_into::<HtmlCanvasElement>())
+        .transpose()
+        .unwrap_or(None)
+    {
         let state = view.clone();
-        listen(list.as_ref(), "click", move |event| {
-            if let Some(index) = event
-                .target()
-                .and_then(|e| e.dyn_into::<web_sys::Element>().ok())
-                .and_then(|e| e.get_attribute("data-network-edge-index"))
-                .and_then(|i| i.parse::<usize>().ok())
-            {
-                let mut v = state.borrow_mut();
-                if index < v.graph.links.len() {
-                    v.select_edge(index);
-                    v.draw();
-                }
+        let map_target: web_sys::EventTarget = map.clone().into();
+        listen(&map_target, "pointerdown", move |e| {
+            let e = e.dyn_into::<PointerEvent>().unwrap();
+            let r = map.get_bounding_client_rect();
+            let mut v = state.borrow_mut();
+            let _ = map.set_pointer_capture(e.pointer_id());
+            let fx =
+                ((f64::from(e.client_x()) - r.left()) / r.width().max(1.0) * 200.0 - 2.0) / 196.0;
+            let fy =
+                ((f64::from(e.client_y()) - r.top()) / r.height().max(1.0) * 120.0 - 2.0) / 116.0;
+            let (wx, wy) = v.minimap_world(fx, fy);
+            let center = v.viewport.world((500.0, 300.0), v.camera);
+            let inside = (wx - center.0).abs() <= 500.0 / v.camera.scale
+                && (wy - center.1).abs() <= 300.0 / (v.camera.scale * v.viewport.aspect_y());
+            v.settle_layout();
+            if !inside {
+                v.camera.x = 500.0 - wx * v.camera.scale;
+                v.camera.y = 300.0 - wy * v.camera.scale * v.viewport.aspect_y();
             }
+            // The next move uses final bounds; zero pointer displacement must
+            // preserve the camera just established from the displayed press.
+            let press = v.minimap_world(fx, fy);
+            let center = v.viewport.world((500.0, 300.0), v.camera);
+            v.minimap_drag = Some((press.0 - center.0, press.1 - center.1));
+            v.request_redraw();
         })?;
     }
+    if let Some(map) = document
+        .get_element_by_id("graph-minimap")
+        .and_then(|e| e.dyn_into::<HtmlCanvasElement>().ok())
+    {
+        let state = view.clone();
+        let map_copy = map.clone();
+        listen(map.as_ref(), "pointermove", move |e| {
+            let e = e.dyn_into::<PointerEvent>().unwrap();
+            if e.buttons() == 0 {
+                return;
+            }
+            let r = map_copy.get_bounding_client_rect();
+            let mut v = state.borrow_mut();
+            let fx = ((f64::from(e.client_x()) - r.left()) / r.width() * 200.0 - 2.0) / 196.0;
+            let fy = ((f64::from(e.client_y()) - r.top()) / r.height() * 120.0 - 2.0) / 116.0;
+            let point = v.minimap_world(fx, fy);
+            let offset = v.minimap_drag.unwrap_or((0.0, 0.0));
+            v.camera.x = 500.0 - (point.0 - offset.0) * v.camera.scale;
+            v.camera.y = 300.0 - (point.1 - offset.1) * v.camera.scale * v.viewport.aspect_y();
+            v.draw();
+        })?;
+    }
+    explorer::install(view.clone())?;
     let state = view.clone();
-    listen(canvas.as_ref(), "pointerdown", move |e| {
-        let e = e.dyn_into::<PointerEvent>().unwrap();
+    listen(canvas.as_ref(), "pointerdown", move |event| {
+        let e = event.dyn_into::<PointerEvent>().unwrap();
         if e.button() != 0 {
             return;
         }
         let mut v = state.borrow_mut();
+        v.touch_input = e.pointer_type() == "touch";
         let p = v.pointer(&e);
-        v.drag = Some((p.0, p.1, v.x, v.y, false));
+        let fresh = v.pointers.is_empty();
+        if fresh {
+            // Resolve the displayed geometry before completing its transition.
+            // Even an empty tap must leave deterministic final node positions.
+            v.press_target = v.pick(p);
+        }
+        v.settle_layout();
+        v.pointers.insert(e.pointer_id(), p);
+        if fresh {
+            v.gesture_moved = false;
+            v.drag = Some((p.0, p.1, v.camera.x, v.camera.y, false));
+        }
+        if v.pointers.len() == 2 {
+            v.press_target = None;
+            let ps: Vec<_> = v.pointers.values().copied().collect();
+            let centroid = ((ps[0].0 + ps[1].0) / 2.0, (ps[0].1 + ps[1].1) / 2.0);
+            let distance = v.viewport.distance(ps[0], ps[1]).max(1.0);
+            v.pinch = Some((centroid, distance));
+            v.gesture_moved = true;
+            v.drag = None;
+        }
         let _ = v.canvas.set_pointer_capture(e.pointer_id());
+        v.draw();
     })?;
     let state = view.clone();
-    listen(canvas.as_ref(), "pointermove", move |e| {
-        let e = e.dyn_into::<PointerEvent>().unwrap();
+    listen(canvas.as_ref(), "pointermove", move |event| {
+        let e = event.dyn_into::<PointerEvent>().unwrap();
         let mut v = state.borrow_mut();
-        if let Some((sx, sy, ox, oy, moved)) = v.drag {
-            let p = v.pointer(&e);
-            let moved = moved || (p.0 - sx).hypot(p.1 - sy) > 5.0;
-            v.drag = Some((sx, sy, ox, oy, moved));
-            if moved {
-                v.x = ox + p.0 - sx;
-                v.y = oy + p.1 - sy;
+        let p = v.pointer(&e);
+        if let std::collections::hash_map::Entry::Occupied(mut e) = v.pointers.entry(e.pointer_id())
+        {
+            e.insert(p);
+            if v.pointers.len() >= 2 {
+                let ps: Vec<_> = v.pointers.values().copied().collect();
+                let centroid = ((ps[0].0 + ps[1].0) / 2.0, (ps[0].1 + ps[1].1) / 2.0);
+                let distance = v.viewport.distance(ps[0], ps[1]).max(1.0);
+                if let Some((old, previous)) = v.pinch {
+                    v.zoom(distance / previous, old);
+                    v.camera.x += centroid.0 - old.0;
+                    v.camera.y += centroid.1 - old.1;
+                }
+                v.pinch = Some((centroid, distance));
+                v.gesture_moved = true;
+            } else if let Some((sx, sy, ox, oy, moved)) = v.drag {
+                let moved = moved || (p.0 - sx).hypot(p.1 - sy) > 5.0;
+                v.drag = Some((sx, sy, ox, oy, moved));
+                if moved {
+                    v.camera.x = ox + p.0 - sx;
+                    v.camera.y = oy + p.1 - sy;
+                    v.gesture_moved = true;
+                }
+            }
+            v.draw();
+        } else if v.pointers.is_empty() {
+            v.touch_input = false;
+            let hovered = v.nearest_node(p);
+            let edge = if hovered.is_none() {
+                v.nearest_edge(p)
+            } else {
+                None
+            };
+            if hovered != v.hovered || edge != v.hovered_edge {
+                v.hovered = hovered;
+                v.hovered_edge = edge;
                 v.draw();
             }
         }
     })?;
-    let state = view.clone();
-    listen(canvas.as_ref(), "pointerup", move |e| {
-        let e = e.dyn_into::<PointerEvent>().unwrap();
-        let mut v = state.borrow_mut();
-        if let Some((_, _, _, _, moved)) = v.drag.take() {
-            if !moved {
-                let p = v.pointer(&e);
-                v.hit(p);
+    for name in ["pointerup", "pointercancel", "lostpointercapture"] {
+        let state = view.clone();
+        listen(canvas.as_ref(), name, move |event| {
+            let e = event.dyn_into::<PointerEvent>().unwrap();
+            let mut v = state.borrow_mut();
+            if v.pointers.remove(&e.pointer_id()).is_none() {
+                return;
+            }
+            let old = v.selected.clone();
+            if v.pointers.is_empty() {
+                if name == "pointerup"
+                    && !v.gesture_moved
+                    && let Some(target) = v.press_target.take()
+                {
+                    v.activate(target);
+                }
+                v.press_target = None;
+                v.drag = None;
+                v.pinch = None;
+                v.gesture_moved = false;
+            } else {
+                v.gesture_moved = true;
+                v.pinch = None;
+                let p = *v.pointers.values().next().unwrap();
+                v.drag = Some((p.0, p.1, v.camera.x, v.camera.y, true));
             }
             let _ = v.canvas.release_pointer_capture(e.pointer_id());
+            v.draw();
+            let changed = v.selected != old;
+            drop(v);
+            if changed {
+                explorer::request_chain(state.clone());
+                explorer::animate(state.clone());
+            }
+        })?;
+    }
+    let state = view.clone();
+    listen(canvas.as_ref(), "pointerleave", move |_| {
+        let mut v = state.borrow_mut();
+        if v.pointers.is_empty() {
+            v.hovered = None;
+            v.hovered_edge = None;
             v.draw();
         }
     })?;
     let state = view.clone();
-    listen(canvas.as_ref(), "pointercancel", move |_| {
+    listen(web_sys::window().unwrap().as_ref(), "resize", move |_| {
         let mut v = state.borrow_mut();
+        let ids: Vec<_> = v.pointers.drain().map(|(id, _)| id).collect();
         v.drag = None;
+        v.press_target = None;
+        v.pinch = None;
+        v.gesture_moved = false;
+        v.minimap_drag = None;
+        for id in ids {
+            let _ = v.canvas.release_pointer_capture(id);
+        }
+        let dpr = web_sys::window().unwrap().device_pixel_ratio().max(1.0);
+        v.canvas.set_width((1000.0 * dpr) as u32);
+        v.canvas.set_height((600.0 * dpr) as u32);
+        let _ = v.ctx.set_transform(dpr, 0.0, 0.0, dpr, 0.0, 0.0);
         v.draw();
     })?;
     let state = view.clone();
@@ -763,8 +1695,9 @@ pub fn start() -> Result<(), JsValue> {
             (f64::from(e.client_x()) - r.left()) * 1000.0 / r.width(),
             (f64::from(e.client_y()) - r.top()) * 600.0 / r.height(),
         );
+        v.settle_layout();
         v.zoom(if e.delta_y() < 0.0 { 1.15 } else { 1.0 / 1.15 }, p);
-        v.draw();
+        v.request_redraw();
     });
     let options = web_sys::AddEventListenerOptions::new();
     options.set_passive(false);
@@ -777,19 +1710,29 @@ pub fn start() -> Result<(), JsValue> {
     let state = view.clone();
     listen(canvas.as_ref(), "keydown", move |e| {
         let e = e.dyn_into::<KeyboardEvent>().unwrap();
+        if !matches!(
+            e.key().as_str(),
+            "ArrowLeft" | "ArrowRight" | "ArrowUp" | "ArrowDown" | "+" | "=" | "-" | "f"
+        ) {
+            return;
+        }
         let mut v = state.borrow_mut();
+        v.settle_layout();
         match e.key().as_str() {
-            "ArrowLeft" => v.x += 60.0,
-            "ArrowRight" => v.x -= 60.0,
-            "ArrowUp" => v.y += 60.0,
-            "ArrowDown" => v.y -= 60.0,
+            "ArrowLeft" => v.camera.x += 60.0,
+            "ArrowRight" => v.camera.x -= 60.0,
+            "ArrowUp" => v.camera.y += 60.0,
+            "ArrowDown" => v.camera.y -= 60.0,
             "+" | "=" => v.zoom(1.25, (500.0, 300.0)),
             "-" => v.zoom(0.8, (500.0, 300.0)),
-            "f" => v.fit(),
+            "f" => {
+                v.ego = false;
+                v.fit_network();
+            }
             _ => return,
         }
         e.prevent_default();
-        v.draw();
+        v.request_redraw();
     })?;
     Ok(())
 }

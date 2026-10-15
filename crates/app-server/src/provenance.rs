@@ -3,7 +3,7 @@ use crate::{AppState, ui};
 use axum::{
     extract::{Query, State},
     http::StatusCode,
-    response::Response,
+    response::{Html, IntoResponse, Response},
 };
 use serde::Deserialize;
 use serde_json::{Value, json};
@@ -12,6 +12,7 @@ use serde_json::{Value, json};
 pub struct EdgeQuery {
     pub from: String,
     pub to: String,
+    pub view: Option<String>,
 }
 #[derive(Deserialize)]
 pub struct SourceQuery {
@@ -70,6 +71,7 @@ fn interval(start: &Value, end: &Value, synthetic: bool) -> String {
 fn season(value: &Value) -> String {
     value
         .as_u64()
+        .filter(|end| *end > 0)
         .map(|end| format!("{}–{:02} (ending {end})", end.saturating_sub(1), end % 100))
         .unwrap_or_else(|| "season unavailable".into())
 }
@@ -156,43 +158,56 @@ fn coverage(state: &AppState, from: &str, to: &str) -> String {
     let Some(reports) = &state.reports else {
         return "<p>Synthetic fixture: evidence is complete within this worked example.</p>".into();
     };
+    let ids: std::collections::BTreeSet<_> = [from, to].into_iter().collect();
+    let total: usize = ids
+        .iter()
+        .map(|id| reports.gaps.get(*id).map_or(0, Vec::len))
+        .sum();
     let mut body = format!(
-        "<section class=\"coverage\"><h2>Source evidence is incomplete</h2><p>Missing evidence does not prove a historical non-relationship.</p><p>{}</p><h3>Coverage gaps for these players</h3><ul>",
+        "<section class=\"coverage\"><h2>Source evidence is incomplete</h2><p>Missing evidence does not prove a historical non-relationship.</p><p>{}</p><details><summary>Coverage gaps for these players · {total} excluded record(s)</summary><p>Excluded from teammate evidence; these records are not admitted proofs.</p><div class=\"table-scroll\"><table><thead><tr><th>Player / source record</th><th>Franchise</th><th>Season</th><th>Interval</th><th>Evidence class</th><th>Reason</th></tr></thead><tbody>",
         ui::escape(&reports.coverage.warning)
     );
-    let mut count = 0;
-    for id in [from, to] {
-        if from == to && count > 0 {
-            break;
-        }
+    let mut shown = 0;
+    for id in ids {
         for gap in reports.gaps.get(id).into_iter().flatten().take(100) {
-            body.push_str(&gap_markup(gap, state));
-            count += 1;
-        }
-        if reports.gaps.get(id).is_some_and(|g| g.len() > 100) {
-            body.push_str("<li>Showing the first 100 source coverage gaps for this player.</li>");
+            let dates = match (gap.start_day, gap.end_day) {
+                (Some(a), Some(b)) => interval(&json!(a), &json!(b), false),
+                _ => "dated interval unavailable".into(),
+            };
+            body.push_str(&format!("<tr><td>{} · {}</td><td>{}</td><td>Season {}</td><td>{}</td><td>{}</td><td>{}</td></tr>",ui::escape(ui::display_name(&state.graph.roster.players,&gap.player)),reference(&gap.record),ui::escape(&gap.team),season(&json!(gap.season)),dates,ui::escape(&gap.evidence_class),ui::escape(if gap.reasons.is_empty() {"No certified pair of dated transaction boundaries"} else {&gap.reasons})));
+            shown += 1;
         }
     }
-    if count == 0 {
-        body.push_str("<li>No additional excluded tenure rows are listed for these endpoints. The snapshot still does not establish complete historical coverage.</li>");
+    body.push_str("</tbody></table></div>");
+    if shown < total {
+        body.push_str(&format!("<p>Showing {shown} of {total} excluded records; at most the first 100 source coverage gaps for this player are shown.</p>"));
     }
-    body.push_str("</ul></section>");
+    if total == 0 {
+        body.push_str("<p>No additional excluded tenure rows are listed for these endpoints. The snapshot still does not establish complete historical coverage.</p>");
+    }
+    body.push_str("</details></section>");
     body
+}
+fn evidence_document(query: &EdgeQuery, status: StatusCode, title: &str, body: &str) -> Response {
+    if query.view.as_deref() == Some("drawer") {
+        (status, Html(body.to_owned())).into_response()
+    } else {
+        ui::document(status, title, body)
+    }
 }
 pub async fn page(State(state): State<AppState>, Query(query): Query<EdgeQuery>) -> Response {
     if !state.graph.contains_player(&query.from) || !state.graph.contains_player(&query.to) {
-        return ui::document(
+        return evidence_document(
+            &query,
             StatusCode::NOT_FOUND,
             "Overlap evidence",
             "<h1>Overlap evidence</h1><p class=\"error\">Unknown player endpoint.</p>",
         );
     }
-    let edge =
-        state.graph.edges().into_iter().find(|e| {
-            (e.a == query.from && e.b == query.to) || (e.b == query.from && e.a == query.to)
-        });
+    let edge = state.graph.edge_between(&query.from, &query.to);
     let Some(edge) = edge else {
-        return ui::document(
+        return evidence_document(
+            &query,
             StatusCode::OK,
             "Overlap evidence",
             &format!(
@@ -203,13 +218,19 @@ pub async fn page(State(state): State<AppState>, Query(query): Query<EdgeQuery>)
             ),
         );
     };
+    let endpoints = (edge.a.clone(), edge.b.clone());
     let data = crate::edge_json(&state, edge);
     let synthetic = state.reports.is_none();
     let mut evidence = String::new();
     for item in data["evidence"].as_array().unwrap() {
         evidence.push_str(&format!(
-            "<section><h2>Canonical franchise: {}</h2>",
+            "<section class=\"proof-card\"><h2>Canonical franchise: {}</h2>",
             ui::escape(item["team"].as_str().unwrap())
+        ));
+        evidence.push_str(&format!(
+            "<p class=\"proof-endpoints\">{} ↔ {}</p>",
+            ui::escape(ui::display_name(&state.graph.roster.players, &query.from)),
+            ui::escape(ui::display_name(&state.graph.roster.players, &query.to))
         ));
         if let Some(proof) = item.get("appearance_proof").filter(|p| !p.is_null()) {
             evidence.push_str(&format!(
@@ -220,6 +241,14 @@ pub async fn page(State(state): State<AppState>, Query(query): Query<EdgeQuery>)
                 ui::escape(proof["team_record"].as_str().unwrap_or("")),
             ));
         }
+        if let Some(proof) = item.get("appearance_proof").filter(|p| !p.is_null()) {
+            let n = proof["team_games"].as_u64().unwrap_or(0);
+            for (id, key) in [(&endpoints.0, "a_games"), (&endpoints.1, "b_games")] {
+                let games = proof[key].as_u64().unwrap_or(0);
+                evidence.push_str(&format!("<p>{}: {games}/{n} appearances · actual season total {n} team games</p><meter min=\"0\" max=\"{n}\" value=\"{games}\" aria-label=\"{} appearances\">{games}/{n}</meter>",ui::escape(ui::display_name(&state.graph.roster.players,id)),ui::escape(ui::display_name(&state.graph.roster.players,id))));
+            }
+            evidence.push_str("<p>Counts do not identify which specific games were shared.</p>");
+        }
         if let Some(witness) = item.get("game_witness").filter(|w| !w.is_null()) {
             evidence.push_str(&format!(
                 "<p>Both players are identified participants of the same team game on {} (NBA game {}). This establishes a teammate relationship; full roster overlap dates and duration remain unknown.</p><p>Official event source records: {} and {}.</p><p><a href=\"https://www.kaggle.com/datasets/wyattowalsh/basketball\">Pinned NBA-derived game records, S1 v238</a></p>",
@@ -229,7 +258,7 @@ pub async fn page(State(state): State<AppState>, Query(query): Query<EdgeQuery>)
         }
         for overlap in item["overlaps"].as_array().unwrap() {
             evidence.push_str(&format!(
-                "<p>Overlap: {} — {} day(s); end exclusive.</p><ul>",
+                "<h3>Certified dated roster overlap</h3><p>Overlap: {} — {} day(s); end exclusive.</p><ul>",
                 interval(&overlap["start_day"], &overlap["end_day"], synthetic),
                 overlap["end_day"].as_u64().unwrap() - overlap["start_day"].as_u64().unwrap()
             ));
@@ -241,7 +270,8 @@ pub async fn page(State(state): State<AppState>, Query(query): Query<EdgeQuery>)
         evidence.push_str("</section>");
     }
     evidence.push_str(&coverage(&state, &query.from, &query.to));
-    ui::document(
+    evidence_document(
+        &query,
         StatusCode::OK,
         "Overlap evidence",
         &format!(
