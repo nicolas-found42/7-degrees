@@ -1640,3 +1640,44 @@ async fn picker_focus_departure_dismisses_results_without_losing_pointer_selecti
     }
     assert_eq!(b.call(json!({"op":"errors"})), json!([]));
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "actual Chromium/WASM incomplete pair form feedback"]
+async fn connecting_an_incomplete_pair_explains_and_focuses_the_missing_player() {
+    let server = Server::start(app_server::app_with_fixture_data()).await;
+    let mut b = Browser::start();
+    b.call(json!({"op":"launch"}));
+    b.call(json!({"op":"goto","url":server.url}));
+    b.ready();
+    b.click("Connect players");
+    assert!(
+        b.text("#graph-chain")
+            .contains("Choose Player A from the search results")
+    );
+    assert_eq!(b.call(json!({"op":"active-id"})), "graph-player");
+    b.call(json!({"op":"fill","selector":"#graph-player","value":"Player A"}));
+    b.call(json!({"op":"ready","selector":"#graph-player-option-0"}));
+    b.click("Connect players");
+    assert!(
+        b.text("#graph-chain")
+            .contains("Choose Player A from the search results")
+    );
+    b.call(json!({"op":"key","key":"ArrowDown"}));
+    b.call(json!({"op":"key","key":"Enter"}));
+    b.click("Connect players");
+    assert!(
+        b.text("#graph-chain")
+            .contains("Choose Player B from the search results")
+    );
+    assert_eq!(b.call(json!({"op":"active-id"})), "graph-target");
+    b.call(json!({"op":"select","selector":"#graph-target","value":"B"}));
+    b.call(json!({"op":"ready","selector":"#graph-chain[data-state=connected]"}));
+    assert!(b.text("#graph-chain").contains("degree 1"));
+    b.click("Clear chain");
+    b.click("Connect players");
+    assert!(
+        b.text("#graph-chain")
+            .contains("Choose Player B from the search results")
+    );
+    assert_eq!(b.call(json!({"op":"errors"})), json!([]));
+}

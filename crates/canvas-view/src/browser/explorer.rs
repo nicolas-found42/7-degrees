@@ -1027,6 +1027,30 @@ pub(super) fn install(view: View) -> Result<(), JsValue> {
         "submit",
         move |event| {
             event.prevent_default();
+            {
+                let v = state.borrow();
+                let missing = if v.selected.is_empty() {
+                    Some(("graph-player", "Player A"))
+                } else if v.graph.target.is_empty() {
+                    Some(("graph-target", "Player B"))
+                } else {
+                    None
+                };
+                if let Some((id, label)) = missing {
+                    let chain = element(&v.document, "graph-chain");
+                    chain.set_text_content(Some(&if v.graph.nodes.is_empty() {
+                        "No players are available in this snapshot.".into()
+                    } else {
+                        format!("Choose {label} from the search results before connecting players.")
+                    }));
+                    let _ = chain.set_attribute("data-state", "incomplete");
+                    let _ = element(&v.document, id)
+                        .dyn_into::<HtmlInputElement>()
+                        .unwrap()
+                        .focus();
+                    return;
+                }
+            }
             request_chain(state.clone());
         },
     )?;
