@@ -1,0 +1,961 @@
+{
+  "schema_version": 1,
+  "profile": "full",
+  "source_commit": "710d0bf624a3b480b4eed7aea501077d556e38a1",
+  "working_tree_status": " M README.md\n M crates/app-server/tests/browser_e2e.rs\n M crates/canvas-view/src/browser/explorer.rs\n M crates/jev-client/src/http_transport.rs\n M crates/jev-client/src/lib.rs\n M docs/agents/source-coverage.md\n M docs/agents/triage-labels.md\n M docs/agents/verification.md\n M scripts/browser_driver.cjs\n?? CLAUDE.md\n?? docs/research/graph-visualization-research.md\n?? docs/research/rust-graph-visualization-and-dx.md\n?? docs/specs/nba-graph-explorer-upgrade.md\n?? docs/specs/nba-graph-readability-scaling.md\n",
+  "working_tree_diff_sha256": "f785fb4b9b9ab716fd694ab9d1ba91c3c51e71490d3627f95ce36112c5d5124c",
+  "untracked_sha256": {
+    "CLAUDE.md": "331977402484b0de2d447ba02e7f2de546a796378aca563fd501ab8875575315",
+    "docs/research/graph-visualization-research.md": "c77bfb2432759b0451c5b91c4b90f20b6f32862aa1a7ec8a8694088718bf0a63",
+    "docs/research/rust-graph-visualization-and-dx.md": "1693df03613a6057ebe40b0cb7b7dfee9cea6b5d1c09a70dba0b5ba859ee2db5",
+    "docs/specs/nba-graph-explorer-upgrade.md": "fa827263fa07b3e65bb624dc4cd087f67d8eb9b166d1682a1dbf19cf862cbcae",
+    "docs/specs/nba-graph-readability-scaling.md": "e03f20e6091c77182ecfdc50384aa47d7d0cafe10e075591eced943c3abe8f1e"
+  },
+  "started_at": "2026-10-15T15:59:24.246190+00:00",
+  "checks": [
+    {
+      "name": "rust-workspace",
+      "argv": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-15T15:59:24.246216+00:00",
+      "finished_at": "2026-10-15T15:59:31.202711+00:00",
+      "log": "rust-workspace.log",
+      "summary": {
+        "rust_result_groups": 30,
+        "rust_totals": {
+          "passed": 139,
+          "failed": 0,
+          "ignored": 22
+        },
+        "test_results": [
+          {
+            "name": "query::era_candidate_tests::reversed_or_out_of_range_phrases_are_not_merged",
+            "result": "ok"
+          },
+          {
+            "name": "query::era_candidate_tests::a_stated_range_is_one_candidate_not_two_single_years",
+            "result": "ok"
+          },
+          {
+            "name": "query::era_candidate_tests::unrelated_year_mentions_stay_separate_candidates",
+            "result": "ok"
+          },
+          {
+            "name": "query::evidence_filter_tests::team_and_season_filters_preserve_only_matching_count_and_game_proofs",
+            "result": "ok"
+          },
+          {
+            "name": "degraded_status_clears_after_a_later_successful_judgment",
+            "result": "ok"
+          },
+          {
+            "name": "jev_unavailable_outcome_is_deterministic_across_calls",
+            "result": "ok"
+          },
+          {
+            "name": "semantic_status_reports_unavailable_without_configuration",
+            "result": "ok"
+          },
+          {
+            "name": "semantic_status_reports_available_with_a_provider",
+            "result": "ok"
+          },
+          {
+            "name": "non_overlapping_same_franchise_tenures_create_no_edge",
+            "result": "ok"
+          },
+          {
+            "name": "overlap_tenures_on_same_team_create_edge",
+            "result": "ok"
+          },
+          {
+            "name": "direct_teammates_report_degree_one",
+            "result": "ok"
+          },
+          {
+            "name": "all_paths_returns_alternative_shortest_chains",
+            "result": "ok"
+          },
+          {
+            "name": "jev_answers_surface_only_through_the_seam_not_the_graph",
+            "result": "ok"
+          },
+          {
+            "name": "empty_graph_page_reports_no_players",
+            "result": "ok"
+          },
+          {
+            "name": "missing_query_parameters_are_a_bad_request",
+            "result": "ok"
+          },
+          {
+            "name": "credential_canary_never_reaches_served_surfaces",
+            "result": "ok"
+          },
+          {
+            "name": "all_paths_for_disconnected_pair_returns_no_chains",
+            "result": "ok"
+          },
+          {
+            "name": "shortest_chain_reaches_second_degree_through_b",
+            "result": "ok"
+          },
+          {
+            "name": "stylesheet_is_served",
+            "result": "ok"
+          },
+          {
+            "name": "statistics_report_components_diameter_and_unreachable_pairs",
+            "result": "ok"
+          },
+          {
+            "name": "unknown_player_is_a_not_found_result",
+            "result": "ok"
+          },
+          {
+            "name": "ui_reports_semantic_features_available_with_a_provider",
+            "result": "ok"
+          },
+          {
+            "name": "mid_season_move_links_only_overlapping_stints",
+            "result": "ok"
+          },
+          {
+            "name": "unknown_ui_route_is_a_html_not_found_page",
+            "result": "ok"
+          },
+          {
+            "name": "fixture_summary_lists_all_players_and_edges",
+            "result": "ok"
+          },
+          {
+            "name": "unreachable_provider_fails_soft_and_features_keep_working",
+            "result": "ok"
+          },
+          {
+            "name": "ui_reports_semantic_features_unavailable_by_default",
+            "result": "ok"
+          },
+          {
+            "name": "repeated_overlaps_collapse_to_one_edge",
+            "result": "ok"
+          },
+          {
+            "name": "edge_listings_are_paged_and_bounded",
+            "result": "ok"
+          },
+          {
+            "name": "graph_and_search_features_work_with_jev_unconfigured",
+            "result": "ok"
+          },
+          {
+            "name": "graph_page_is_the_only_page_and_shows_every_player",
+            "result": "ok"
+          },
+          {
+            "name": "served_responses_and_assets_never_contain_credentials",
+            "result": "ok"
+          },
+          {
+            "name": "chain_framing_supersedes_animation_without_live_region_churn",
+            "result": "ignored, actual Chromium/WASM interrupted layout and chain-framing regression"
+          },
+          {
+            "name": "connecting_an_incomplete_pair_explains_and_focuses_the_missing_player",
+            "result": "ignored, actual Chromium/WASM incomplete pair form feedback"
+          },
+          {
+            "name": "dismissed_player_results_reopen_before_keyboard_selection",
+            "result": "ignored, actual Chromium/WASM dismissed combobox keyboard regression"
+          },
+          {
+            "name": "explorer_ignores_old_search_chain_and_closed_drawer_responses_and_recovers",
+            "result": "ignored, actual Chromium/WASM delayed and rejected HTTP boundaries"
+          },
+          {
+            "name": "explorer_pair_filters_drawer_history_and_mobile_are_reversible",
+            "result": "ignored, actual Chromium/WASM explorer upgrade acceptance"
+          },
+          {
+            "name": "historical_network_renders_and_appearance_evidence_avoids_fabricated_dates",
+            "result": "ignored, actual Chromium/WASM over the repaired full historical graph"
+          },
+          {
+            "name": "pair_url_tracks_selection_clear_and_evidence_history",
+            "result": "ignored, actual Chromium/WASM shareable pair URL regression"
+          },
+          {
+            "name": "picker_focus_departure_dismisses_results_without_losing_pointer_selection",
+            "result": "ignored, actual Chromium/WASM combobox focus and delayed dismissal"
+          },
+          {
+            "name": "picker_keyboard_navigation_keeps_active_result_inside_the_list",
+            "result": "ignored, actual Chromium/WASM long combobox keyboard visibility"
+          },
+          {
+            "name": "programmatic_pair_changes_clear_stale_feedback_and_pending_search",
+            "result": "ignored, actual Chromium/WASM programmatic picker reset regression"
+          },
+          {
+            "name": "real_slice_renders_every_player_and_standalone_edge_provenance",
+            "result": "ignored, actual Chromium/WASM E2E over a seven-player pinned real-data slice"
+          },
+          {
+            "name": "shared_pair_link_frames_the_same_chain_as_an_explicit_request",
+            "result": "ignored, actual Chromium/WASM shared pair initial framing"
+          },
+          {
+            "name": "small_snapshots_keep_empty_isolated_and_game_proof_states_usable",
+            "result": "ignored, actual Chromium/WASM empty, isolate and proof-card fixtures"
+          },
+          {
+            "name": "synthetic_diamond_renders_its_whole_network_on_the_single_page",
+            "result": "ignored, actual Chromium/WASM E2E; explicitly synthetic report-backed diamond"
+          },
+          {
+            "name": "the_graph_page_shows_every_fixture_player_and_relationship_and_supports_exploration",
+            "result": "ignored, actual Chromium/WASM E2E; build scripts/build-canvas.sh first"
+          },
+          {
+            "name": "touch_pan_pinch_cancel_and_minimap_drag_keep_selection_stable",
+            "result": "ignored, actual touch-capable Chromium/WASM pointer gestures"
+          },
+          {
+            "name": "whole_network_keeps_all_players_and_relations_when_panning_and_zooming",
+            "result": "ignored, actual Chromium over every player and every teammate connection"
+          },
+          {
+            "name": "whole_network_renders_desktop_and_phone_and_selects_players_by_pointer",
+            "result": "ignored, actual Chromium over the whole committed report network"
+          },
+          {
+            "name": "rust_wasm_canvas_renders_the_whole_network_and_supports_pointer_and_keyboard",
+            "result": "ignored, actual Chromium/WASM smoke: run after scripts/build-canvas.sh"
+          },
+          {
+            "name": "live_ranking_smoke_uses_the_same_service_with_declared_synthetic_chains",
+            "result": "ignored, requires an explicitly requested live OpenRouter call"
+          },
+          {
+            "name": "a_zero_weight_dimension_does_not_block_a_certain_interest_preference",
+            "result": "ok"
+          },
+          {
+            "name": "ranked_api_labels_suggestions_and_preserves_exact_cursor",
+            "result": "ok"
+          },
+          {
+            "name": "weighted_scores_reorder_only_equal_shortest_chains_and_preserve_exact_facts",
+            "result": "ok"
+          },
+          {
+            "name": "frozen_calibration_accepts_point_three_scores_but_keeps_point_two_uncertain",
+            "result": "ok"
+          },
+          {
+            "name": "public_rank_service_reuses_real_wire_scores_order_variants_and_code_weights",
+            "result": "ok"
+          },
+          {
+            "name": "multi_batch_ranking_is_bounded_and_any_later_failure_restores_the_entire_page",
+            "result": "ok"
+          },
+          {
+            "name": "low_confidence_ties_boundaries_and_no_path_preserve_deterministic_behavior",
+            "result": "ok"
+          },
+          {
+            "name": "invalid_provider_cannot_change_paths_and_fallback_is_visible_and_escaped",
+            "result": "ok"
+          },
+          {
+            "name": "canvas_loader_is_only_referenced_when_assets_exist",
+            "result": "ok"
+          },
+          {
+            "name": "page_lists_every_player_in_the_picker_without_an_in_page_evidence_panel",
+            "result": "ok"
+          },
+          {
+            "name": "direct_and_nearby_neighborhoods_expose_only_evidenced_fixture_connections",
+            "result": "ok"
+          },
+          {
+            "name": "neighborhood_and_chain_links_name_the_same_team_for_a_pair",
+            "result": "ok"
+          },
+          {
+            "name": "graph_page_renders_the_whole_network_with_pair_parameters",
+            "result": "ok"
+          },
+          {
+            "name": "present_and_missing_canvas_assets_are_isolated_and_preserve_binary_bytes_and_accessible_fallback",
+            "result": "ok"
+          },
+          {
+            "name": "rendering_hints_are_additive_stable_and_do_not_remove_relationships",
+            "result": "ok"
+          },
+          {
+            "name": "pair_get_form_returns_exact_chain_without_replacing_the_network",
+            "result": "ok"
+          },
+          {
+            "name": "bounded_exploration_reports_truncation_and_rejects_invalid_neighborhood_arguments",
+            "result": "ok"
+          },
+          {
+            "name": "real_report_neighborhood_retains_source_context_and_coverage_without_expanding_the_full_graph",
+            "result": "ok"
+          },
+          {
+            "name": "whole_network_has_every_player_and_edge_including_isolates_without_caps",
+            "result": "ok"
+          },
+          {
+            "name": "live_resolution_smoke_uses_the_runtime_service_and_pinned_catalog",
+            "result": "ignored, requires an explicitly requested live OpenRouter call"
+          },
+          {
+            "name": "exact_identity_resolution_remains_available_without_semantics",
+            "result": "ok"
+          },
+          {
+            "name": "calibrated_identity_policy_keeps_a_point_nine_four_choice_for_clarification",
+            "result": "ok"
+          },
+          {
+            "name": "runtime_service_uses_real_wire_choice_and_noul_order_variants_and_per_call_metrics",
+            "result": "ok"
+          },
+          {
+            "name": "semantic_nickname_alias_and_typo_copy_the_canonical_shortlisted_player",
+            "result": "ok"
+          },
+          {
+            "name": "stated_context_can_disambiguate_namesakes_but_uncertain_existence_cannot",
+            "result": "ok"
+          },
+          {
+            "name": "ambiguity_low_confidence_no_match_and_unavailable_are_selectable_without_a_path",
+            "result": "ok"
+          },
+          {
+            "name": "malformed_answers_cannot_select_unlisted_ids_and_status_falls_back",
+            "result": "ok"
+          },
+          {
+            "name": "graph_page_picker_holds_every_player_by_id_including_same_name_people",
+            "result": "ok"
+          },
+          {
+            "name": "ambiguous_candidates_carry_era_team_and_coverage_context",
+            "result": "ok"
+          },
+          {
+            "name": "exact_name_returns_canonical_player_with_era_and_teams",
+            "result": "ok"
+          },
+          {
+            "name": "search_api_displays_canonical_ids_as_text",
+            "result": "ok"
+          },
+          {
+            "name": "misspelling_uses_code_ranked_shortlist_and_unrelated_text_is_no_match",
+            "result": "ok"
+          },
+          {
+            "name": "surname_and_partial_name_rank_candidates_without_collapsing_same_name_people",
+            "result": "ok"
+          },
+          {
+            "name": "context_filters_precede_limits_and_preserve_duplicate_identity",
+            "result": "ok"
+          },
+          {
+            "name": "source_aliases_and_curated_nicknames_return_ranked_canonical_candidates",
+            "result": "ok"
+          },
+          {
+            "name": "bounded_queries_do_not_hide_ambiguity_or_expand_an_empty_query",
+            "result": "ok"
+          },
+          {
+            "name": "empty_no_match_and_query_text_round_trips",
+            "result": "ok"
+          },
+          {
+            "name": "drawer_representation_is_a_fragment_for_success_and_error_states",
+            "result": "ok"
+          },
+          {
+            "name": "unadmitted_edge_explains_incomplete_evidence_and_exposes_the_excluded_source_record",
+            "result": "ok"
+          },
+          {
+            "name": "opening_a_fixture_teammate_link_shows_both_stints_and_explicit_synthetic_overlap",
+            "result": "ok"
+          },
+          {
+            "name": "canvas_page_has_no_in_page_evidence_panel_and_allowlisted_source_routes",
+            "result": "ok"
+          },
+          {
+            "name": "shortened_season_and_game_witness_cards_preserve_proof_limits",
+            "result": "ok"
+          },
+          {
+            "name": "real_acy_bogut_overlap_has_calendar_dates_both_source_records_anchors_and_versions",
+            "result": "ok"
+          },
+          {
+            "name": "evaluation_config_changes_actual_provider_criteria_and_keeps_per_call_receipts",
+            "result": "ok"
+          },
+          {
+            "name": "frozen_routing_policy_clarifies_a_point_nine_four_operation",
+            "result": "ok"
+          },
+          {
+            "name": "filtered_connection_scope_and_unfiltered_degree_stay_in_the_api",
+            "result": "ok"
+          },
+          {
+            "name": "a_copied_misspelling_uses_shared_guarded_resolution_before_connection",
+            "result": "ok"
+          },
+          {
+            "name": "a_profile_filter_limits_sourced_team_and_era_context_without_changing_identity",
+            "result": "ok"
+          },
+          {
+            "name": "ordinary_language_connection_executes_the_deterministic_graph_and_shows_its_chain",
+            "result": "ok"
+          },
+          {
+            "name": "stated_team_and_era_filters_change_the_view_and_leave_underlying_edges_unchanged",
+            "result": "ok"
+          },
+          {
+            "name": "ambiguous_names_show_context_and_explicit_choice_continues_original_request",
+            "result": "ok"
+          },
+          {
+            "name": "profile_neighbors_and_comparison_have_distinct_grounded_api_outcomes",
+            "result": "ok"
+          },
+          {
+            "name": "unsupported_missing_arguments_and_provider_failure_never_guess_a_graph_action",
+            "result": "ok"
+          },
+          {
+            "name": "malformed_packets_degrade_and_uncertain_valid_packets_clarify_without_execution",
+            "result": "ok"
+          },
+          {
+            "name": "conflicting_appearance_totals_are_rejected_instead_of_creating_edges",
+            "result": "ok"
+          },
+          {
+            "name": "conflicting_duplicate_player_appearance_counts_are_rejected",
+            "result": "ok"
+          },
+          {
+            "name": "coverage_gaps_remain_inspectable_for_the_affected_player",
+            "result": "ok"
+          },
+          {
+            "name": "in_memory_and_file_import_share_strict_uncertainty_rules",
+            "result": "ok"
+          },
+          {
+            "name": "legacy_repeat_signing_continuity_note_blocks_a_runtime_edge",
+            "result": "ok"
+          },
+          {
+            "name": "alternative_shortest_chains_are_deterministic_and_paginated",
+            "result": "ok"
+          },
+          {
+            "name": "insufficient_appearance_counts_and_non_overlapping_stints_do_not_create_links",
+            "result": "ok"
+          },
+          {
+            "name": "season_brackets_are_uncertainty_and_never_teammate_facts",
+            "result": "ok"
+          },
+          {
+            "name": "a_dated_shared_game_recovers_a_low_appearance_teammate_without_inventing_days",
+            "result": "ok"
+          },
+          {
+            "name": "appearance_counts_prove_historical_chain_without_inventing_tenure_dates",
+            "result": "ok"
+          },
+          {
+            "name": "game_witnesses_cannot_create_unknown_or_self_teammates",
+            "result": "ok"
+          },
+          {
+            "name": "repeated_source_rows_never_create_a_self_teammate_or_double_overlap",
+            "result": "ok"
+          },
+          {
+            "name": "canonical_import_returns_real_paths_and_record_provenance",
+            "result": "ok"
+          },
+          {
+            "name": "the_final_shortest_chain_survives_the_u64_boundary",
+            "result": "ok"
+          },
+          {
+            "name": "continuation_cursors_reach_shortest_chains_beyond_fixed_integer_limits",
+            "result": "ok"
+          },
+          {
+            "name": "all_admitted_proofs_contribute_without_inventing_roster_dates",
+            "result": "ok"
+          },
+          {
+            "name": "layout::tests::layout_mode_serialization_and_parsing",
+            "result": "ok"
+          },
+          {
+            "name": "layout::tests::era_lane_layout_uses_explicit_debut_season",
+            "result": "ok"
+          },
+          {
+            "name": "layout::tests::concentric_layout_rings_follow_hop_distance",
+            "result": "ok"
+          },
+          {
+            "name": "camera_keeps_world_circles_round_and_inverts_input_on_phone_and_desktop",
+            "result": "ok"
+          },
+          {
+            "name": "detailed_labels_fade_at_zoom_boundaries_and_settle_under_reduced_motion",
+            "result": "ok"
+          },
+          {
+            "name": "bundled_curves_keep_exact_endpoints_and_leave_chains_and_small_groups_unbundled",
+            "result": "ok"
+          },
+          {
+            "name": "crowded_chain_badges_spread_horizontally_before_overlapping",
+            "result": "ok"
+          },
+          {
+            "name": "concentric_sectors_separate_franchises_and_encode_proof_in_radius",
+            "result": "ok"
+          },
+          {
+            "name": "old_payloads_have_compatible_rendering_defaults",
+            "result": "ok"
+          },
+          {
+            "name": "rotating_a_mobile_pinch_keeps_its_css_distance",
+            "result": "ok"
+          },
+          {
+            "name": "unbundled_undirected_curves_keep_the_same_bend_when_endpoints_reverse",
+            "result": "ok"
+          },
+          {
+            "name": "important_badges_find_a_free_gap_between_reserved_hud_bands",
+            "result": "ok"
+          },
+          {
+            "name": "labels_rank_proof_strength_reserve_padding_and_exempt_important_badges",
+            "result": "ok"
+          },
+          {
+            "name": "unknown_franchise_sectors_follow_known_franchises",
+            "result": "ok"
+          },
+          {
+            "name": "backbone_thins_a_clique_preserves_components_and_top_three",
+            "result": "ok"
+          },
+          {
+            "name": "tied_proofs_spread_direct_teammates_through_the_concentric_band",
+            "result": "ok"
+          },
+          {
+            "name": "curve_picking_covers_the_full_spline_in_screen_space_at_high_zoom",
+            "result": "ok"
+          },
+          {
+            "name": "force_layout_is_weight_sensitive_and_reproducible",
+            "result": "ok"
+          },
+          {
+            "name": "force_separates_heavy_roster_cliques_joined_by_brief_bridge_edges",
+            "result": "ok"
+          },
+          {
+            "name": "tests::computed_edges_match_documented_expectations",
+            "result": "ok"
+          },
+          {
+            "name": "overlap_total_tests::undated_corroboration_on_a_dated_team_keeps_the_known_total",
+            "result": "ok"
+          },
+          {
+            "name": "overlap_total_tests::a_team_with_only_undated_evidence_makes_the_total_unknown",
+            "result": "ok"
+          },
+          {
+            "name": "overlap_total_tests::bounded_lookups_match_the_full_edge_list",
+            "result": "ok"
+          },
+          {
+            "name": "tests::env_config_prefers_typesafe_then_openrouter_then_no_config",
+            "result": "ok"
+          },
+          {
+            "name": "tests::debug_output_redacts_the_api_key",
+            "result": "ok"
+          },
+          {
+            "name": "tests::question_and_request_types_stay_small_and_typed",
+            "result": "ok"
+          },
+          {
+            "name": "live_provider_answers_one_small_judgment",
+            "result": "ignored, live provider call: needs a real key + network; run with -- --ignored"
+          },
+          {
+            "name": "evaluate_panics_never_escape_a_current_thread_runtime",
+            "result": "ok"
+          },
+          {
+            "name": "an_unreachable_provider_fails_soft",
+            "result": "ok"
+          },
+          {
+            "name": "a_reply_cut_off_before_its_declared_length_is_not_trusted",
+            "result": "ok"
+          },
+          {
+            "name": "a_malformed_envelope_fails_soft",
+            "result": "ok"
+          },
+          {
+            "name": "non_retryable_statuses_fail_immediately",
+            "result": "ok"
+          },
+          {
+            "name": "measured_judgments_keep_metadata_local_to_each_call_and_missing_values_unknown",
+            "result": "ok"
+          },
+          {
+            "name": "a_retryable_status_exhausting_its_retry_fails_soft",
+            "result": "ok"
+          },
+          {
+            "name": "a_retryable_status_retries_once_and_recovers",
+            "result": "ok"
+          },
+          {
+            "name": "an_oversized_reply_fails_soft_without_being_parsed",
+            "result": "ok"
+          },
+          {
+            "name": "transport_error_then_retryable_status_does_not_create_a_third_attempt",
+            "result": "ok"
+          },
+          {
+            "name": "all_attempts_and_response_reads_share_one_call_deadline",
+            "result": "ok"
+          },
+          {
+            "name": "a_provider_timeout_fails_soft",
+            "result": "ok"
+          }
+        ],
+        "python_result": null
+      },
+      "raw_sha256": "219038ae700e4cecb0b179499ab921e0d80fa628ac4c27d18b409b2cfd4297d2",
+      "published_sha256": "e22104181d4158ad43f7119a29961686c40e8db763922e78791ec3fc40c944a1"
+    },
+    {
+      "name": "python-tests",
+      "argv": [
+        "/opt/homebrew/opt/python@3.13/bin/python3.13",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_*.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-15T15:59:31.203205+00:00",
+      "finished_at": "2026-10-15T15:59:31.547798+00:00",
+      "log": "python-tests.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "test_results": [],
+        "python_result": {
+          "tests": 108,
+          "result": "OK"
+        }
+      },
+      "raw_sha256": "5fb5953ede44f9badb23a31b465fa3a4eab06ce61422a119c5028fc1b1b5a19a",
+      "published_sha256": "e3e5d7606865c9bf570eaa07f4af11c7b9e4b92a412731c0807e0a62d78d9627"
+    },
+    {
+      "name": "format",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-15T15:59:31.547994+00:00",
+      "finished_at": "2026-10-15T15:59:31.690064+00:00",
+      "log": "format.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "test_results": [],
+        "python_result": null
+      },
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clippy-host",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-15T15:59:31.690236+00:00",
+      "finished_at": "2026-10-15T15:59:31.992682+00:00",
+      "log": "clippy-host.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "test_results": [],
+        "python_result": null
+      },
+      "raw_sha256": "77cbb79a1972a03bc4eee70c514046e4f87811c818ab09d96d23f43e2b61d91b",
+      "published_sha256": "5f66289c1903c8d003d123929dbe16ea121a9657765eead2882d7b1fea5ef8df"
+    },
+    {
+      "name": "derived-snapshot",
+      "argv": [
+        "/opt/homebrew/opt/python@3.13/bin/python3.13",
+        "scripts/verify-source-snapshot.py",
+        "--derived-only"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-15T15:59:31.992891+00:00",
+      "finished_at": "2026-10-15T15:59:32.034211+00:00",
+      "log": "derived-snapshot.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "test_results": [],
+        "python_result": null
+      },
+      "raw_sha256": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84",
+      "published_sha256": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84"
+    },
+    {
+      "name": "historical-audit",
+      "argv": [
+        "/opt/homebrew/opt/python@3.13/bin/python3.13",
+        "scripts/check-historical-audit.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-15T15:59:32.034385+00:00",
+      "finished_at": "2026-10-15T15:59:32.349869+00:00",
+      "log": "historical-audit.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "test_results": [],
+        "python_result": null
+      },
+      "raw_sha256": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232",
+      "published_sha256": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232"
+    },
+    {
+      "name": "semantic-audit",
+      "argv": [
+        "/opt/homebrew/opt/python@3.13/bin/python3.13",
+        "scripts/check-semantic-evaluation.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-15T15:59:32.350211+00:00",
+      "finished_at": "2026-10-15T15:59:32.399316+00:00",
+      "log": "semantic-audit.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "test_results": [],
+        "python_result": null
+      },
+      "raw_sha256": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0",
+      "published_sha256": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0"
+    },
+    {
+      "name": "wasm-build",
+      "argv": [
+        "./scripts/build-canvas.sh"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-15T15:59:32.399479+00:00",
+      "finished_at": "2026-10-15T15:59:32.518256+00:00",
+      "log": "wasm-build.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "test_results": [],
+        "python_result": null
+      },
+      "raw_sha256": "64d0cbd4b7e4c6329fde55978dd3d261407b55f34c21add0feebf7e0575ee531",
+      "published_sha256": "64d0cbd4b7e4c6329fde55978dd3d261407b55f34c21add0feebf7e0575ee531"
+    },
+    {
+      "name": "clippy-wasm",
+      "argv": [
+        "cargo",
+        "clippy",
+        "-p",
+        "canvas-view",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-15T15:59:32.518469+00:00",
+      "finished_at": "2026-10-15T15:59:32.614944+00:00",
+      "log": "clippy-wasm.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "test_results": [],
+        "python_result": null
+      },
+      "raw_sha256": "99f71393b9903dca098310bb446022a4bdee195ea9996f351a787195555210a6",
+      "published_sha256": "99f71393b9903dca098310bb446022a4bdee195ea9996f351a787195555210a6"
+    },
+    {
+      "name": "browser-matrix",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "app-server",
+        "--test",
+        "browser_e2e",
+        "--test",
+        "canvas_browser",
+        "--locked",
+        "--",
+        "--ignored",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-15T15:59:32.615148+00:00",
+      "finished_at": "2026-10-15T16:04:44.607197+00:00",
+      "log": "browser-matrix.log",
+      "summary": {
+        "rust_result_groups": 2,
+        "rust_totals": {
+          "passed": 19,
+          "failed": 0,
+          "ignored": 0
+        },
+        "test_results": [
+          {
+            "name": "chain_framing_supersedes_animation_without_live_region_churn",
+            "result": "ok"
+          },
+          {
+            "name": "connecting_an_incomplete_pair_explains_and_focuses_the_missing_player",
+            "result": "ok"
+          },
+          {
+            "name": "dismissed_player_results_reopen_before_keyboard_selection",
+            "result": "ok"
+          },
+          {
+            "name": "explorer_pair_filters_drawer_history_and_mobile_are_reversible",
+            "result": "ok"
+          },
+          {
+            "name": "historical_network_renders_and_appearance_evidence_avoids_fabricated_dates",
+            "result": "ok"
+          },
+          {
+            "name": "pair_url_tracks_selection_clear_and_evidence_history",
+            "result": "ok"
+          },
+          {
+            "name": "picker_focus_departure_dismisses_results_without_losing_pointer_selection",
+            "result": "ok"
+          },
+          {
+            "name": "picker_keyboard_navigation_keeps_active_result_inside_the_list",
+            "result": "ok"
+          },
+          {
+            "name": "programmatic_pair_changes_clear_stale_feedback_and_pending_search",
+            "result": "ok"
+          },
+          {
+            "name": "shared_pair_link_frames_the_same_chain_as_an_explicit_request",
+            "result": "ok"
+          },
+          {
+            "name": "small_snapshots_keep_empty_isolated_and_game_proof_states_usable",
+            "result": "ok"
+          },
+          {
+            "name": "touch_pan_pinch_cancel_and_minimap_drag_keep_selection_stable",
+            "result": "ok"
+          }
+        ],
+        "python_result": null
+      },
+      "raw_sha256": "1fafcaf9fc671d35680adb6107b0b1ca2582b8c109922651fab90c58a210b958",
+      "published_sha256": "f92b143beab149fa023fd8453c617a8056d11da59220c3d7d443a574e382a5c3"
+    }
+  ],
+  "completed": true,
+  "expected_checks": [
+    "rust-workspace",
+    "python-tests",
+    "format",
+    "clippy-host",
+    "derived-snapshot",
+    "historical-audit",
+    "semantic-audit",
+    "wasm-build",
+    "clippy-wasm",
+    "browser-matrix"
+  ],
+  "finished_at": "2026-10-15T16:04:44.607945+00:00"
+}
