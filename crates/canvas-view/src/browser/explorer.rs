@@ -520,6 +520,8 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
             let _ = list.remove_attribute("hidden");
             let _ = input.set_attribute("aria-expanded", "true");
             let _ = input.remove_attribute("aria-activedescendant");
+            element(&view.borrow().document, &format!("{id}-search-status"))
+                .set_text_content(Some("Searching players…"));
             let mut q = input.value();
             let mut decade = era.value();
             let mut team = franchise.value();
@@ -629,6 +631,8 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
             let _ = input.set_attribute("data-selected-id", &pid);
             let _ = input.set_attribute("aria-expanded", "false");
             let _ = input.remove_attribute("aria-activedescendant");
+            element(&view.borrow().document, &format!("{id}-search-status"))
+                .set_text_content(Some(&format!("Selected: {name}.")));
             {
                 let mut v = view.borrow_mut();
                 let _ = element(&v.document, &format!("{id}-results")).set_attribute("hidden", "");
@@ -669,6 +673,8 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
                 if n == 0 {
                     return;
                 }
+                let _ = element(&document, &format!("{id}-results")).remove_attribute("hidden");
+                let _ = input_copy.set_attribute("aria-expanded", "true");
                 let i = match (s.active, e.key().as_str()) {
                     (Some(i), "ArrowDown") => (i + 1) % n,
                     (Some(i), _) => (i + n - 1) % n,
@@ -685,7 +691,12 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
             }
             "Enter" => {
                 e.prevent_default();
-                let index = state.borrow().active;
+                let index = if input_copy.get_attribute("aria-expanded").as_deref() == Some("true")
+                {
+                    state.borrow().active
+                } else {
+                    None
+                };
                 if let Some(i) = index {
                     choose(i);
                 }
@@ -693,6 +704,7 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
             "Escape" => {
                 e.prevent_default();
                 state.borrow_mut().generation += 1;
+                state.borrow_mut().active = None;
                 let _ = element(&document, &format!("{id}-results")).set_attribute("hidden", "");
                 let _ = input_copy.set_attribute("aria-expanded", "false");
                 let _ = input_copy.remove_attribute("aria-activedescendant");

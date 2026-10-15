@@ -1402,3 +1402,44 @@ async fn shared_pair_link_frames_the_same_chain_as_an_explicit_request() {
     );
     assert_eq!(b.call(json!({"op":"errors"})), json!([]));
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "actual Chromium/WASM dismissed combobox keyboard regression"]
+async fn dismissed_player_results_reopen_before_keyboard_selection() {
+    let server = Server::start(app_server::app_with_fixture_data()).await;
+    let mut b = Browser::start();
+    b.call(json!({"op":"launch"}));
+    b.call(json!({"op":"goto","url":server.url}));
+    b.ready();
+    for id in ["graph-player", "graph-target"] {
+        let selector = format!("#{id}");
+        b.call(json!({"op":"fill","selector":selector,"value":"Player"}));
+        b.call(json!({"op":"ready","selector":format!("#{id}-results [role=option] >> nth=0")}));
+        b.call(json!({"op":"key","key":"ArrowDown"}));
+        b.call(json!({"op":"key","key":"Escape"}));
+        b.call(json!({"op":"key","key":"Enter"}));
+        assert_eq!(
+            b.call(json!({"op":"attribute","selector":selector,"name":"data-selected-id"})),
+            ""
+        );
+        b.call(json!({"op":"key","key":"ArrowDown"}));
+        assert_eq!(
+            b.call(json!({"op":"attribute","selector":selector,"name":"aria-expanded"})),
+            "true"
+        );
+        assert_eq!(
+            b.call(json!({"op":"attribute","selector":format!("#{id}-results"),"name":"hidden"})),
+            serde_json::Value::Null
+        );
+        b.call(json!({"op":"key","key":"Enter"}));
+        assert_eq!(
+            b.call(json!({"op":"input-value","selector":selector})),
+            "Player A"
+        );
+        assert_eq!(
+            b.text(&format!("#{id}-search-status")),
+            "Selected: Player A."
+        );
+    }
+    assert_eq!(b.call(json!({"op":"errors"})), json!([]));
+}
