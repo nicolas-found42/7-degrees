@@ -1,5 +1,6 @@
 //! All application canvas rendering and interaction are Rust.
 use crate::GraphPayload;
+use crate::camera::{Camera, Viewport};
 use crate::layout::{LayoutMode, compute_layout};
 use crate::visual::{self, Curve, LabelCandidate, LabelPriority, Rect, ZoomTier};
 use std::{cell::RefCell, collections::HashMap, rc::Rc};
@@ -15,8 +16,23 @@ struct Transition {
     start: f64,
     from: Vec<(f64, f64)>,
     to: Vec<(f64, f64)>,
-    camera_from: (f64, f64, f64),
-    camera_to: (f64, f64, f64),
+    camera_from: Camera,
+    camera_to: Camera,
+}
+
+#[derive(Clone, Copy)]
+enum HitTarget {
+    Node(usize),
+    Edge(usize),
+}
+
+fn layout_signature(points: &[(f64, f64)]) -> String {
+    let signature = points.iter().fold(2166136261_u64, |hash, p| {
+        [p.0.to_bits(), p.1.to_bits()]
+            .iter()
+            .fold(hash, |hash, &bits| (hash ^ bits).wrapping_mul(16777619))
+    });
+    format!("{signature:016x}")
 }
 
 struct CanvasView {
@@ -31,12 +47,12 @@ struct CanvasView {
     adjacency: Vec<Vec<usize>>,
     indices: HashMap<String, usize>,
     spatial: HashMap<(i32, i32), Vec<usize>>,
-    scale: f64,
-    x: f64,
-    y: f64,
+    camera: Camera,
+    viewport: Viewport,
     selected: String,
     edge: Option<usize>,
     drag: Option<(f64, f64, f64, f64, bool)>,
+    press_target: Option<HitTarget>,
     frames: usize,
     status_text: Option<String>,
     /// Hop distance to the selected player (BFS capped at 2), recomputed on
@@ -65,6 +81,10 @@ struct CanvasView {
     trunks: HashMap<usize, Curve>,
     trunk_plan: visual::TrunkPlan,
     auto_focus: Option<String>,
+    sector_headers: Vec<(crate::layout::FranchiseSector, f64)>,
+    badge_targets: Vec<(usize, Rect)>,
+    layout_signature: String,
+    touch_input: bool,
 }
 impl CanvasView {
     fn fit(&mut self) {
@@ -81,55 +101,24 @@ impl CanvasView {
             .filter(|(n, _)| ids.contains(&n.id.as_str()))
             .map(|(_, p)| *p)
             .collect();
-        let lo = points.iter().map(|p| p.0).reduce(f64::min).unwrap_or(0.0);
-        let hi = points.iter().map(|p| p.0).reduce(f64::max).unwrap_or(0.0);
-        let ylo = points.iter().map(|p| p.1).reduce(f64::min).unwrap_or(0.0);
-        let yhi = points.iter().map(|p| p.1).reduce(f64::max).unwrap_or(0.0);
-        self.scale = (800.0 / (hi - lo + 200.0))
-            .min(400.0 / (yhi - ylo + 200.0))
-            .clamp(0.000001, 1.6);
-        self.x = 500.0 - (lo + hi) / 2.0 * self.scale;
-        self.y = 300.0 - (ylo + yhi) / 2.0 * self.scale;
+        self.frame_points(&points);
     }
     fn zoom(&mut self, factor: f64, anchor: (f64, f64)) {
-        let previous = self.scale;
-        self.scale = (self.scale * factor).clamp(0.000001, 4.0);
-        self.x = anchor.0 - (anchor.0 - self.x) * self.scale / previous;
-        self.y = anchor.1 - (anchor.1 - self.y) * self.scale / previous;
+        self.camera.zoom(factor, anchor);
     }
     fn at(&self, id: &str) -> (f64, f64) {
         self.points[self.indices[id]]
     }
     fn fit_network(&mut self) {
-        let lo = self
-            .points
-            .iter()
-            .map(|p| p.0)
-            .reduce(f64::min)
-            .unwrap_or(0.0);
-        let hi = self
-            .points
-            .iter()
-            .map(|p| p.0)
-            .reduce(f64::max)
-            .unwrap_or(0.0);
-        let bottom = self
-            .points
-            .iter()
-            .map(|p| p.1)
-            .reduce(f64::min)
-            .unwrap_or(0.0);
-        let top = self
-            .points
-            .iter()
-            .map(|p| p.1)
-            .reduce(f64::max)
-            .unwrap_or(0.0);
-        self.scale = (900.0 / (hi - lo + 100.0))
-            .min(500.0 / (top - bottom + 100.0))
-            .clamp(0.000001, 1.6);
-        self.x = 500.0 - (lo + hi) / 2.0 * self.scale;
-        self.y = 300.0 - (bottom + top) / 2.0 * self.scale;
+        let area = Rect {
+            left: self.viewport.width * 0.05,
+            right: self.viewport.width * 0.95,
+            top: self.viewport.height * 0.08,
+            bottom: self.viewport.height * 0.92,
+        };
+        if let Some(camera) = self.viewport.frame(&self.points, area) {
+            self.camera = camera;
+        }
     }
     /// Recompute node coordinates for a new layout mode, then rebuild the
     /// spatial index and fit the network. Concentric rings follow the current
@@ -162,6 +151,7 @@ impl CanvasView {
             self.graph.full_network,
             &self.hop,
         );
+        self.layout_signature = layout_signature(&self.points);
         self.rebuild_spatial();
         if self.graph.full_network {
             self.fit_network();
@@ -194,12 +184,14 @@ impl CanvasView {
             return;
         }
         let point = self.at(&self.selected);
-        self.scale = 1.0;
-        self.x = 500.0 - point.0;
-        self.y = 300.0 - point.1;
+        self.camera = self.viewport.centered(
+            point,
+            1.0,
+            (self.viewport.width / 2.0, self.viewport.height / 2.0),
+        );
     }
     fn screen(&self, p: (f64, f64)) -> (f64, f64) {
-        (p.0 * self.scale + self.x, p.1 * self.scale + self.y)
+        self.viewport.screen(p, self.camera)
     }
     fn pointer(&self, e: &PointerEvent) -> (f64, f64) {
         let r = self.canvas.get_bounding_client_rect();
@@ -209,6 +201,10 @@ impl CanvasView {
         )
     }
     fn select(&mut self, id: &str) {
+        let animate = self.layout == LayoutMode::Concentric
+            && self.selected != id
+            && !explorer::reduced_motion();
+        let old = animate.then(|| (self.points.clone(), self.camera));
         self.settle_layout();
         let Some(n) = self.graph.nodes.iter().find(|n| n.id == id).cloned() else {
             return;
@@ -228,8 +224,27 @@ impl CanvasView {
         self.recompute_hop();
         self.trunk_plan =
             visual::TrunkPlan::new(&self.graph.nodes, &self.graph.links, &self.selected);
+        self.ctx.set_font("bold 12px sans-serif");
+        self.sector_headers = crate::layout::concentric_sectors(&self.graph.links, &self.selected)
+            .into_iter()
+            .map(|sector| {
+                let name = if sector.franchise.is_empty() {
+                    "Unknown"
+                } else {
+                    &sector.franchise
+                };
+                let width = self
+                    .ctx
+                    .measure_text(name)
+                    .map(|m| m.width())
+                    .unwrap_or(90.0);
+                (sector, width)
+            })
+            .collect();
         if self.layout == LayoutMode::Concentric || self.pending_layout {
-            self.ego = true;
+            if changed || self.pending_layout {
+                self.ego = true;
+            }
             self.relayout(LayoutMode::Concentric);
         }
         if self.ego && self.layout == LayoutMode::Concentric {
@@ -246,6 +261,18 @@ impl CanvasView {
                 self.adjacency[self.indices[id]].len(),
             )));
             let _ = element.set_attribute("data-player", id);
+        }
+        if let Some((points, camera)) = old {
+            self.transition = Some(Transition {
+                start: js_sys::Date::now(),
+                from: points.clone(),
+                to: self.points.clone(),
+                camera_from: camera,
+                camera_to: self.camera,
+            });
+            self.points = points;
+            self.camera = camera;
+            self.rebuild_spatial();
         }
     }
     /// BFS from the selected player over the adjacency list, capped at depth 2.
@@ -306,13 +333,30 @@ impl CanvasView {
 
     /// Nearest node to a logical-space point within the pick radius, if any.
     /// Shared by click hit-testing and hover tracking.
+    fn badge_at(&self, p: (f64, f64)) -> Option<usize> {
+        self.badge_targets
+            .iter()
+            .rev()
+            .find(|(_, b)| {
+                p.0 >= b.left && p.0 <= b.right && p.1 >= b.top - 9.0 && p.1 <= b.bottom + 9.0
+            })
+            .map(|(i, _)| *i)
+    }
     fn nearest_node(&self, p: (f64, f64)) -> Option<usize> {
-        let radius = if self.graph.full_network { 9.0 } else { 22.0 };
+        let css = self.viewport.css(p);
+        if let Some(i) = self.badge_at(css) {
+            return Some(i);
+        }
+        let radius = if self.touch_input || !self.graph.full_network {
+            22.0
+        } else {
+            9.0
+        };
         let rect = self.canvas.get_bounding_client_rect();
         let css_x = 1000.0 / rect.width().max(1.0);
         let css_y = 600.0 / rect.height().max(1.0);
-        let world = ((p.0 - self.x) / self.scale, (p.1 - self.y) / self.scale);
-        let r = radius * css_x.max(css_y) / self.scale;
+        let world = self.viewport.world(p, self.camera);
+        let r = radius * css_x / self.camera.scale;
         // Extremely zoomed-out hit tests scan the finite node set instead of
         // iterating an unbounded rectangle of empty spatial cells.
         let candidates: Vec<usize> = if (r / 40.0 + 3.0).powi(2) > self.spatial.len() as f64 {
@@ -342,14 +386,40 @@ impl CanvasView {
             .min_by(|a, b| a.1.total_cmp(&b.1))
             .map(|(i, _)| i)
     }
-    fn hit(&mut self, p: (f64, f64)) {
-        if let Some(i) = self.nearest_node(p) {
-            let id = self.graph.nodes[i].id.clone();
-            self.select(&id);
-            return;
+    fn pick(&self, p: (f64, f64)) -> Option<HitTarget> {
+        let css = self.viewport.css(p);
+        if let Some(i) = self.badge_at(css) {
+            return Some(HitTarget::Node(i));
         }
-        if let Some(index) = self.nearest_edge(p) {
-            self.select_edge(index);
+        let node = self.nearest_node(p);
+        let edge = self.nearest_edge(p);
+        if self.touch_input
+            && let Some(i) = edge
+        {
+            let edge_distance = self
+                .edge_curve(i, true)
+                .map(|p| self.viewport.css(self.screen(p)))
+                .distance(css);
+            let node_distance = node
+                .map(|i| {
+                    let q = self.viewport.css(self.screen(self.points[i]));
+                    (q.0 - css.0).hypot(q.1 - css.1)
+                })
+                .unwrap_or(f64::INFINITY);
+            if edge_distance < node_distance && node_distance > 4.0 {
+                return Some(HitTarget::Edge(i));
+            }
+        }
+        node.map(HitTarget::Node)
+            .or_else(|| edge.map(HitTarget::Edge))
+    }
+    fn activate(&mut self, target: HitTarget) {
+        match target {
+            HitTarget::Node(i) => {
+                let id = self.graph.nodes[i].id.clone();
+                self.select(&id);
+            }
+            HitTarget::Edge(i) => self.select_edge(i),
         }
     }
     fn nearest_edge(&self, p: (f64, f64)) -> Option<usize> {
@@ -382,7 +452,7 @@ impl CanvasView {
                     (point.0 / css_x, point.1 / css_y)
                 });
                 let distance = curve.distance(p);
-                (distance < 8.0).then_some((i, distance))
+                (distance < if self.touch_input { 22.0 } else { 8.0 }).then_some((i, distance))
             })
             .min_by(|a, b| a.1.total_cmp(&b.1))
             .map(|(i, _)| i)
@@ -428,7 +498,7 @@ impl CanvasView {
             return *curve;
         }
         if curved {
-            visual::quadratic(self.points[a], self.points[b])
+            visual::unbundled_curve(e, self.points[a], self.points[b])
         } else {
             Curve::Line(self.points[a], self.points[b])
         }
@@ -438,7 +508,9 @@ impl CanvasView {
         if !self.visible(a) || !self.visible(b) {
             return false;
         }
-        let curve = self.edge_curve(index, curved).map(|p| self.screen(p));
+        let curve = self
+            .edge_curve(index, curved)
+            .map(|p| self.viewport.css(self.screen(p)));
         // Include spline control points in viewport culling, not only its chord.
         let points = match curve {
             Curve::Line(a, b) => [a, b, a, b],
@@ -447,9 +519,9 @@ impl CanvasView {
         };
         if !self.graph.links[index].on_path
             && (points.iter().all(|p| p.0 < 0.0)
-                || points.iter().all(|p| p.0 > 1000.0)
+                || points.iter().all(|p| p.0 > self.viewport.width)
                 || points.iter().all(|p| p.1 < 0.0)
-                || points.iter().all(|p| p.1 > 600.0))
+                || points.iter().all(|p| p.1 > self.viewport.height))
         {
             return false;
         }
@@ -464,21 +536,26 @@ impl CanvasView {
     }
     fn draw(&mut self) {
         let rect = self.canvas.get_bounding_client_rect();
+        self.viewport = Viewport::new(rect.width(), rect.height());
         let css_x = 1000.0 / rect.width().max(1.0);
         let css_y = 600.0 / rect.height().max(1.0);
-        let stroke_scale = (css_x * css_y).sqrt();
+
         let started = js_sys::Date::now();
-        let zoom_tier = ZoomTier::at(self.scale);
+        let zoom_tier = ZoomTier::at(self.camera.scale);
         let reduced = explorer::reduced_motion();
-        let micro_blend = visual::zoom_blend(self.scale, 0.75, reduced);
-        let meso_blend = visual::zoom_blend(self.scale, 0.25, reduced);
+        let micro_blend = visual::zoom_blend(self.camera.scale, 0.75, reduced);
+        let meso_blend = visual::zoom_blend(self.camera.scale, 0.25, reduced);
         self.trunks = if self.layout == LayoutMode::Concentric {
             HashMap::new()
         } else {
             self.trunk_plan
-                .curves(&self.graph.links, &self.points, |i| self.visible(i))
+                .curves(&self.graph.links, &self.points, |i| {
+                    let p = self.screen(self.points[i]);
+                    self.visible(i) && (0.0..=1000.0).contains(&p.0) && (0.0..=600.0).contains(&p.1)
+                })
         };
         let mut drawn_background = 0;
+        let mut drawn_non_backbone = 0;
         let mut drawn_focus = 0;
         let mut drawn_chain = 0;
         const COLORS: [&str; 8] = [
@@ -490,11 +567,11 @@ impl CanvasView {
         if self.layout == LayoutMode::EraLane {
             for (i, color) in COLORS.iter().enumerate() {
                 let year = 1940 + i * 10;
-                let x = (year as f64 - 1947.0) * 110.0 * self.scale + self.x;
+                let x = (year as f64 - 1947.0) * 110.0 * self.camera.scale + self.camera.x;
                 let end = if i == 7 {
                     1000.0
                 } else {
-                    x + 1100.0 * self.scale
+                    x + 1100.0 * self.camera.scale
                 };
                 self.ctx.set_global_alpha(0.045);
                 self.ctx.set_fill_style_str(color);
@@ -513,18 +590,25 @@ impl CanvasView {
             }
         }
         let active = !self.graph.path.is_empty();
+        self.ctx.save();
+        let _ = self.ctx.scale(css_x, css_y);
         // Overview iterates the cached backbone, rather than four full edge passes.
-        for local in [false, true] {
+        let passes: &[(bool, bool)] = if self.franchise.is_none() && self.eras.iter().all(|x| *x) {
+            &[(false, true), (true, true)]
+        } else {
+            &[(false, true), (false, false), (true, true), (true, false)]
+        };
+        for &(local, matching) in passes {
             if local && micro_blend == 0.0 {
                 continue;
             }
             self.ctx.set_stroke_style_str("#426d7a");
-            self.ctx.set_line_width(0.5 * stroke_scale);
+            self.ctx.set_line_width(0.5);
             self.ctx.begin_path();
             self.ctx.set_global_alpha(
                 (0.02 + 0.02 * meso_blend)
                     * if local { micro_blend } else { 1.0 }
-                    * if active { 0.05 } else { 1.0 },
+                    * if active || !matching { 0.05 } else { 1.0 },
             );
             let candidates: Box<dyn Iterator<Item = usize>> = if local {
                 Box::new(0..self.graph.links.len())
@@ -543,26 +627,58 @@ impl CanvasView {
                 if self.hop.contains_key(&e.from) && self.hop.contains_key(&e.to) {
                     continue;
                 }
+                let (a, b) = self.indexed_links[i];
+                if (self.emphasized(a) && self.emphasized(b)) != matching {
+                    continue;
+                }
                 if self.stroke_edge(i, false) {
                     drawn_background += 1;
+                    if local {
+                        drawn_non_backbone += 1;
+                    }
+                }
+            }
+            self.ctx.stroke();
+        }
+        // One context stroke prevents thousands of overlaps from accumulating
+        // opacity into a solid orange field. Every two-hop curve stays included.
+        for matching in [true, false] {
+            self.ctx.set_global_alpha(
+                (0.04 + 0.015 * micro_blend) * if active || !matching { 0.05 } else { 1.0 },
+            );
+            self.ctx.set_stroke_style_str("#b04f00");
+            self.ctx.set_line_width(0.5);
+            self.ctx.begin_path();
+            for &i in &self.foreground_edges {
+                let e = &self.graph.links[i];
+                let (a, b) = self.indexed_links[i];
+                if e.on_path
+                    || self.edge == Some(i)
+                    || self.hovered_edge == Some(i)
+                    || e.from == self.selected
+                    || e.to == self.selected
+                    || (self.emphasized(a) && self.emphasized(b)) != matching
+                {
+                    continue;
+                }
+                if self.stroke_edge(i, true) {
+                    drawn_focus += 1;
                 }
             }
             self.ctx.stroke();
         }
         for &i in &self.foreground_edges {
             let e = &self.graph.links[i];
-            if e.on_path || self.edge == Some(i) || self.hovered_edge == Some(i) {
+            let (a, b) = self.indexed_links[i];
+            if e.on_path
+                || self.edge == Some(i)
+                || self.hovered_edge == Some(i)
+                || (e.from != self.selected && e.to != self.selected)
+            {
                 continue;
             }
-            let (a, b) = self.indexed_links[i];
-            let direct = e.from == self.selected || e.to == self.selected;
-            let alpha = if direct {
-                0.18 + 0.10 * (e.weight.clamp(0.1, 1.0) - 0.1) / 0.9
-            } else {
-                0.055
-            };
             self.ctx.set_global_alpha(
-                alpha
+                (0.18 + 0.10 * (e.weight.clamp(0.1, 1.0) - 0.1) / 0.9)
                     * if active || !self.emphasized(a) || !self.emphasized(b) {
                         0.05
                     } else {
@@ -570,11 +686,7 @@ impl CanvasView {
                     },
             );
             self.ctx.set_stroke_style_str("#b04f00");
-            self.ctx.set_line_width(if direct {
-                (0.65 + 0.85 * e.weight) * stroke_scale
-            } else {
-                0.5 * stroke_scale
-            });
+            self.ctx.set_line_width(0.65 + 0.85 * e.weight);
             self.ctx.begin_path();
             if self.stroke_edge(i, true) {
                 drawn_focus += 1;
@@ -619,13 +731,14 @@ impl CanvasView {
             let e = &self.graph.links[i];
             self.ctx
                 .set_stroke_style_str(if e.on_path { "#176896" } else { "#b04f00" });
-            self.ctx.set_line_width(2.2 * stroke_scale);
+            self.ctx.set_line_width(2.2);
             self.ctx.begin_path();
             if self.stroke_edge(i, true) && e.on_path {
                 drawn_chain += 1;
             }
             self.ctx.stroke();
         }
+        self.ctx.restore();
         // Nodes and labels use CSS pixels even when the logical canvas is resized.
         self.ctx.save();
         let _ = self.ctx.scale(css_x, css_y);
@@ -666,11 +779,12 @@ impl CanvasView {
                 * (1.0 - micro_blend)
                 + micro_radius * micro_blend;
             let alpha = alpha
-                * if !important && !self.landmarks[i] {
+                * if alpha > 0.05 && !important && !self.landmarks[i] {
                     0.45 + 0.55 * meso_blend
                 } else {
                     1.0
                 };
+            let radius = radius * if rect.width() <= 640.0 { 0.6 } else { 1.0 };
             self.ctx.set_global_alpha(alpha);
             self.ctx
                 .set_fill_style_str(if self.graph.path.contains(&n.id) {
@@ -690,7 +804,12 @@ impl CanvasView {
         }
         self.ctx.set_global_alpha(1.0);
         let mut reserved = Vec::new();
-        for selector in [".camera-controls", "#graph-minimap", "#minimap-toggle"] {
+        for selector in [
+            ".camera-controls",
+            "#graph-minimap",
+            "#minimap-toggle",
+            "#edge-evidence-drawer[open]",
+        ] {
             if let Ok(Some(overlay)) = self.document.query_selector(selector) {
                 let bounds = overlay.get_bounding_client_rect();
                 if bounds.width() > 0.0 && bounds.height() > 0.0 {
@@ -703,33 +822,49 @@ impl CanvasView {
                 }
             }
         }
+        let mut sector_geometry = Vec::new();
         if self.layout == LayoutMode::Concentric {
-            self.ctx.set_font("bold 12px sans-serif");
-            self.ctx.set_fill_style_str("#334155");
-            for sector in crate::layout::concentric_sectors(&self.graph.links, &self.selected) {
+            let mut headers = Vec::new();
+            for (index, (sector, width)) in self.sector_headers.iter().enumerate() {
                 let angle = (sector.start + sector.end) / 2.0;
-                let p = self.screen((500.0 * angle.cos(), 500.0 * angle.sin()));
-                let (x, y) = (p.0 / css_x, p.1 / css_y);
-                if x < 0.0 || x > rect.width() || y < 25.0 || y > rect.height() - 25.0 {
+                let point = self
+                    .viewport
+                    .css(self.screen((500.0 * angle.cos(), 500.0 * angle.sin())));
+                if point.0 < 0.0
+                    || point.0 > rect.width()
+                    || point.1 < 25.0
+                    || point.1 > rect.height() - 25.0
+                {
                     continue;
                 }
-                let text = if sector.franchise.is_empty() {
-                    "Unknown"
-                } else {
-                    &sector.franchise
-                };
-                let w = self
-                    .ctx
-                    .measure_text(text)
-                    .map(|m| m.width())
-                    .unwrap_or(90.0);
-                reserved.push(Rect {
-                    left: x - w / 2.0,
-                    top: y - 14.0,
-                    right: x + w / 2.0,
-                    bottom: y + 4.0,
+                headers.push(LabelCandidate {
+                    index,
+                    id: if sector.franchise.is_empty() {
+                        "~"
+                    } else {
+                        &sector.franchise
+                    },
+                    priority: LabelPriority::Important,
+                    weight: 0.0,
+                    count: 0,
+                    matching: true,
+                    point,
+                    width: width + 14.0,
                 });
-                let _ = self.ctx.fill_text(text, x, y);
+                sector_geometry.push(point);
+            }
+            self.ctx.set_font("bold 12px sans-serif");
+            self.ctx.set_fill_style_str("#334155");
+            for label in
+                visual::place_labels(&mut headers, rect.width(), rect.height(), 0, &reserved)
+            {
+                let text = &self.sector_headers[label.index].0.franchise;
+                let _ = self.ctx.fill_text(
+                    if text.is_empty() { "Unknown" } else { text },
+                    label.x,
+                    label.y,
+                );
+                reserved.push(label.bounds);
             }
         }
         let mut candidates = Vec::new();
@@ -738,7 +873,7 @@ impl CanvasView {
                 continue;
             }
             let important = self.important(i);
-            if !important && (active || (zoom_tier == ZoomTier::Macro && !self.landmarks[i])) {
+            if !important && (zoom_tier == ZoomTier::Macro && !self.landmarks[i]) {
                 continue;
             }
             let logical = self.screen(self.points[i]);
@@ -771,24 +906,60 @@ impl CanvasView {
         let cap = zoom_tier.label_cap(rect.width());
         let labels =
             visual::place_labels(&mut candidates, rect.width(), rect.height(), cap, &reserved);
+        self.badge_targets = labels
+            .iter()
+            .filter(|l| {
+                l.priority == LabelPriority::Important
+                    || (zoom_tier == ZoomTier::Macro && self.landmarks[l.index])
+            })
+            .map(|l| (l.index, l.bounds))
+            .collect();
+        let mut ordinary_rank = 0;
+        let mut label_items = Vec::new();
         for label in &labels {
             let n = &self.graph.nodes[label.index];
             let important = label.priority == LabelPriority::Important;
-            self.ctx.set_global_alpha(
-                if important || label.priority == LabelPriority::DirectTeammate {
+            let tier_alpha = if important {
+                1.0
+            } else {
+                visual::label_zoom_alpha(
+                    self.camera.scale,
+                    ordinary_rank,
+                    self.landmarks[label.index],
+                    rect.width(),
+                    reduced,
+                )
+            };
+            let alpha = tier_alpha
+                * if important || label.priority == LabelPriority::DirectTeammate {
                     1.0
                 } else if self.emphasized(label.index) {
                     0.7
                 } else {
                     0.16
-                },
-            );
+                };
+            self.ctx.set_global_alpha(alpha);
+            label_items.push(serde_json::json!({"id":n.id,"priority":format!("{:?}",label.priority),"weight":self.focus_weights[label.index],"alpha":alpha,"bounds":label.bounds,"anchor":self.viewport.css(self.screen(self.points[label.index]))}));
+            if !important {
+                ordinary_rank += 1;
+            }
             self.ctx
                 .set_font(if label.priority <= LabelPriority::DirectTeammate {
                     "bold 15px sans-serif"
                 } else {
                     "15px sans-serif"
                 });
+            if important {
+                let node_point = self.viewport.css(self.screen(self.points[label.index]));
+                if (node_point.0 - label.x).hypot(node_point.1 - label.y) > 35.0 {
+                    self.ctx.set_stroke_style_str("#94a3b8");
+                    self.ctx.set_line_width(1.0);
+                    self.ctx.begin_path();
+                    self.ctx.move_to(node_point.0, node_point.1);
+                    self.ctx.line_to(label.x, label.y - 6.0);
+                    self.ctx.stroke();
+                }
+            }
             if important || (zoom_tier == ZoomTier::Macro && self.landmarks[label.index]) {
                 self.ctx.set_fill_style_str("#172e41");
                 self.ctx.begin_path();
@@ -839,7 +1010,7 @@ impl CanvasView {
             "Canvas ready — {} players, {} relationships. Zoom {:.0}%.{}",
             self.graph.nodes.len(),
             self.graph.links.len(),
-            self.scale * 100.0,
+            self.camera.scale * 100.0,
             self.auto_focus
                 .as_ref()
                 .map(|name| format!(" Default focal player: {name}, chosen by teammate count."))
@@ -856,6 +1027,46 @@ impl CanvasView {
         self.report_hover();
         self.draw_minimap();
         for (key, value) in [
+            (
+                "data-sector-geometry",
+                serde_json::to_string(&sector_geometry).unwrap(),
+            ),
+            ("data-layout-signature", self.layout_signature.clone()),
+            (
+                "data-label-items",
+                serde_json::to_string(&label_items).unwrap(),
+            ),
+            (
+                "data-focus-point",
+                self.indices
+                    .get(&self.selected)
+                    .map(|&i| {
+                        serde_json::to_string(&self.viewport.css(self.screen(self.points[i])))
+                            .unwrap()
+                    })
+                    .unwrap_or_default(),
+            ),
+            (
+                "data-hovered-edge",
+                self.hovered_edge
+                    .map(|i| format!("{}|{}", self.graph.links[i].from, self.graph.links[i].to))
+                    .unwrap_or_default(),
+            ),
+            ("data-bundles", {
+                let mut curves: Vec<_> = self
+                    .trunks
+                    .iter()
+                    .map(|(&i, &curve)| {
+                        (
+                            &self.graph.links[i].from,
+                            &self.graph.links[i].to,
+                            curve.map(|p| self.viewport.css(self.screen(p))),
+                        )
+                    })
+                    .collect();
+                curves.sort_by(|a, b| (&a.0, &a.1).cmp(&(&b.0, &b.1)));
+                serde_json::to_string(&curves).unwrap()
+            }),
             ("data-tier", zoom_tier.name().into()),
             ("data-label-cap", cap.to_string()),
             (
@@ -874,6 +1085,7 @@ impl CanvasView {
                     .count()
                     .to_string(),
             ),
+            ("data-non-backbone-edges", drawn_non_backbone.to_string()),
             ("data-background-edges", drawn_background.to_string()),
             ("data-focus-edges", drawn_focus.to_string()),
             ("data-chain-edges", drawn_chain.to_string()),
@@ -883,9 +1095,9 @@ impl CanvasView {
                 format!("{:.2}", js_sys::Date::now() - started),
             ),
             ("data-ready", "true".into()),
-            ("data-zoom", format!("{:.6}", self.scale)),
-            ("data-pan-x", format!("{:.2}", self.x)),
-            ("data-pan-y", format!("{:.2}", self.y)),
+            ("data-zoom", format!("{:.6}", self.camera.scale)),
+            ("data-pan-x", format!("{:.2}", self.camera.x)),
+            ("data-pan-y", format!("{:.2}", self.camera.y)),
             ("data-frame", self.frames.to_string()),
             ("data-players", self.graph.nodes.len().to_string()),
             ("data-relationships", self.graph.links.len().to_string()),
@@ -937,6 +1149,19 @@ impl CanvasView {
     }
     /// Minimap (overview+detail): draw every node as a dot on the small
     /// overview canvas and frame the current viewport rectangle.
+    fn minimap_world(&self, fx: f64, fy: f64) -> (f64, f64) {
+        let first = self.points.first().copied().unwrap_or((0.0, 0.0));
+        let (lo, hi) = self.points.iter().fold((first, first), |(lo, hi), p| {
+            (
+                (lo.0.min(p.0), lo.1.min(p.1)),
+                (hi.0.max(p.0), hi.1.max(p.1)),
+            )
+        });
+        (
+            lo.0 + fx * (hi.0 - lo.0).max(1.0),
+            lo.1 + fy * (hi.1 - lo.1).max(1.0),
+        )
+    }
     fn draw_minimap(&self) {
         let Some(map) = self.document.get_element_by_id("graph-minimap") else {
             return;
@@ -974,6 +1199,10 @@ impl CanvasView {
         }
         let span_x = (hi_x - lo_x).max(1.0);
         let span_y = (hi_y - lo_y).max(1.0);
+        let _ = map.set_attribute(
+            "data-world-bounds",
+            &serde_json::to_string(&(lo_x, lo_y, hi_x, hi_y)).unwrap(),
+        );
         mctx.set_fill_style_str("#ffffff");
         mctx.fill_rect(0.0, 0.0, mw, mh);
         mctx.set_fill_style_str("#23405a");
@@ -1001,10 +1230,10 @@ impl CanvasView {
         }
         mctx.set_global_alpha(1.0);
         // Viewport rectangle: invert the main camera into world units.
-        let vx0 = (0.0 - self.x) / self.scale;
-        let vy0 = (0.0 - self.y) / self.scale;
-        let vx1 = (1000.0 - self.x) / self.scale;
-        let vy1 = (600.0 - self.y) / self.scale;
+        let vx0 = (0.0 - self.camera.x) / self.camera.scale;
+        let vy0 = self.viewport.world((0.0, 0.0), self.camera).1;
+        let vx1 = (1000.0 - self.camera.x) / self.camera.scale;
+        let vy1 = self.viewport.world((1000.0, 600.0), self.camera).1;
         mctx.set_stroke_style_str("#b04f00");
         mctx.set_line_width(1.5);
         mctx.stroke_rect(
@@ -1115,6 +1344,7 @@ pub fn start() -> Result<(), JsValue> {
         .filter_map(|(i, e)| e.in_visual_backbone.then_some(i))
         .collect();
     let focus_weights = vec![0.0; graph.nodes.len()];
+    let layout_signature = layout_signature(&points);
     let view = Rc::new(RefCell::new(CanvasView {
         document: document.clone(),
         canvas: canvas.clone(),
@@ -1126,12 +1356,19 @@ pub fn start() -> Result<(), JsValue> {
         adjacency,
         indices,
         spatial,
-        scale: 1.0,
-        x: 0.0,
-        y: 0.0,
+        camera: Camera {
+            scale: 1.0,
+            x: 0.0,
+            y: 0.0,
+        },
+        viewport: Viewport::new(
+            canvas.get_bounding_client_rect().width(),
+            canvas.get_bounding_client_rect().height(),
+        ),
         selected: selected.clone(),
         edge: None,
         drag: None,
+        press_target: None,
         frames: 0,
         status_text: None,
         hop: HashMap::new(),
@@ -1157,6 +1394,10 @@ pub fn start() -> Result<(), JsValue> {
         trunks: HashMap::new(),
         trunk_plan: visual::TrunkPlan::default(),
         auto_focus: None,
+        sector_headers: Vec::new(),
+        badge_targets: Vec::new(),
+        layout_signature,
+        touch_input: false,
     }));
     {
         let mut v = view.borrow_mut();
@@ -1196,8 +1437,8 @@ pub fn start() -> Result<(), JsValue> {
             move |_| {
                 let mut v = state.borrow_mut();
                 v.settle_layout();
-                v.x += dx;
-                v.y += dy;
+                v.camera.x += dx;
+                v.camera.y += dy;
                 v.zoom(factor, (500.0, 300.0));
                 v.request_redraw();
             },
@@ -1260,35 +1501,25 @@ pub fn start() -> Result<(), JsValue> {
             let e = e.dyn_into::<PointerEvent>().unwrap();
             let r = map.get_bounding_client_rect();
             let mut v = state.borrow_mut();
-            v.settle_layout();
             let _ = map.set_pointer_capture(e.pointer_id());
             let fx =
                 ((f64::from(e.client_x()) - r.left()) / r.width().max(1.0) * 200.0 - 2.0) / 196.0;
             let fy =
                 ((f64::from(e.client_y()) - r.top()) / r.height().max(1.0) * 120.0 - 2.0) / 116.0;
-            let (mut lo_x, mut hi_x, mut lo_y, mut hi_y) = (
-                f64::INFINITY,
-                f64::NEG_INFINITY,
-                f64::INFINITY,
-                f64::NEG_INFINITY,
-            );
-            for p in &v.points {
-                lo_x = lo_x.min(p.0);
-                hi_x = hi_x.max(p.0);
-                lo_y = lo_y.min(p.1);
-                hi_y = hi_y.max(p.1);
+            let (wx, wy) = v.minimap_world(fx, fy);
+            let center = v.viewport.world((500.0, 300.0), v.camera);
+            let inside = (wx - center.0).abs() <= 500.0 / v.camera.scale
+                && (wy - center.1).abs() <= 300.0 / (v.camera.scale * v.viewport.aspect_y());
+            v.settle_layout();
+            if !inside {
+                v.camera.x = 500.0 - wx * v.camera.scale;
+                v.camera.y = 300.0 - wy * v.camera.scale * v.viewport.aspect_y();
             }
-            let wx = lo_x + fx * (hi_x - lo_x).max(1.0);
-            let wy = lo_y + fy * (hi_y - lo_y).max(1.0);
-            let center = ((500.0 - v.x) / v.scale, (300.0 - v.y) / v.scale);
-            if (wx - center.0).abs() <= 500.0 / v.scale && (wy - center.1).abs() <= 300.0 / v.scale
-            {
-                v.minimap_drag = Some((wx - center.0, wy - center.1));
-            } else {
-                v.minimap_drag = Some((0.0, 0.0));
-                v.x = 500.0 - wx * v.scale;
-                v.y = 300.0 - wy * v.scale;
-            }
+            // The next move uses final bounds; zero pointer displacement must
+            // preserve the camera just established from the displayed press.
+            let press = v.minimap_world(fx, fy);
+            let center = v.viewport.world((500.0, 300.0), v.camera);
+            v.minimap_drag = Some((press.0 - center.0, press.1 - center.1));
             v.request_redraw();
         })?;
     }
@@ -1307,13 +1538,10 @@ pub fn start() -> Result<(), JsValue> {
             let mut v = state.borrow_mut();
             let fx = ((f64::from(e.client_x()) - r.left()) / r.width() * 200.0 - 2.0) / 196.0;
             let fy = ((f64::from(e.client_y()) - r.top()) / r.height() * 120.0 - 2.0) / 116.0;
-            let lo = v.points.iter().map(|p| p.0).reduce(f64::min).unwrap_or(0.0);
-            let hi = v.points.iter().map(|p| p.0).reduce(f64::max).unwrap_or(0.0);
-            let bottom = v.points.iter().map(|p| p.1).reduce(f64::min).unwrap_or(0.0);
-            let top = v.points.iter().map(|p| p.1).reduce(f64::max).unwrap_or(0.0);
+            let point = v.minimap_world(fx, fy);
             let offset = v.minimap_drag.unwrap_or((0.0, 0.0));
-            v.x = 500.0 - (lo + fx * (hi - lo).max(1.0) - offset.0) * v.scale;
-            v.y = 300.0 - (bottom + fy * (top - bottom).max(1.0) - offset.1) * v.scale;
+            v.camera.x = 500.0 - (point.0 - offset.0) * v.camera.scale;
+            v.camera.y = 300.0 - (point.1 - offset.1) * v.camera.scale * v.viewport.aspect_y();
             v.draw();
         })?;
     }
@@ -1325,23 +1553,31 @@ pub fn start() -> Result<(), JsValue> {
             return;
         }
         let mut v = state.borrow_mut();
-        v.settle_layout();
+        v.touch_input = e.pointer_type() == "touch";
         let p = v.pointer(&e);
         let fresh = v.pointers.is_empty();
+        if fresh {
+            // Resolve the displayed geometry before completing its transition.
+            // Even an empty tap must leave deterministic final node positions.
+            v.press_target = v.pick(p);
+        }
+        v.settle_layout();
         v.pointers.insert(e.pointer_id(), p);
         if fresh {
             v.gesture_moved = false;
-            v.drag = Some((p.0, p.1, v.x, v.y, false));
+            v.drag = Some((p.0, p.1, v.camera.x, v.camera.y, false));
         }
         if v.pointers.len() == 2 {
+            v.press_target = None;
             let ps: Vec<_> = v.pointers.values().copied().collect();
             let centroid = ((ps[0].0 + ps[1].0) / 2.0, (ps[0].1 + ps[1].1) / 2.0);
-            let distance = (ps[0].0 - ps[1].0).hypot(ps[0].1 - ps[1].1).max(1.0);
+            let distance = v.viewport.distance(ps[0], ps[1]).max(1.0);
             v.pinch = Some((centroid, distance));
             v.gesture_moved = true;
             v.drag = None;
         }
         let _ = v.canvas.set_pointer_capture(e.pointer_id());
+        v.draw();
     })?;
     let state = view.clone();
     listen(canvas.as_ref(), "pointermove", move |event| {
@@ -1354,11 +1590,11 @@ pub fn start() -> Result<(), JsValue> {
             if v.pointers.len() >= 2 {
                 let ps: Vec<_> = v.pointers.values().copied().collect();
                 let centroid = ((ps[0].0 + ps[1].0) / 2.0, (ps[0].1 + ps[1].1) / 2.0);
-                let distance = (ps[0].0 - ps[1].0).hypot(ps[0].1 - ps[1].1).max(1.0);
+                let distance = v.viewport.distance(ps[0], ps[1]).max(1.0);
                 if let Some((old, previous)) = v.pinch {
                     v.zoom(distance / previous, old);
-                    v.x += centroid.0 - old.0;
-                    v.y += centroid.1 - old.1;
+                    v.camera.x += centroid.0 - old.0;
+                    v.camera.y += centroid.1 - old.1;
                 }
                 v.pinch = Some((centroid, distance));
                 v.gesture_moved = true;
@@ -1366,13 +1602,14 @@ pub fn start() -> Result<(), JsValue> {
                 let moved = moved || (p.0 - sx).hypot(p.1 - sy) > 5.0;
                 v.drag = Some((sx, sy, ox, oy, moved));
                 if moved {
-                    v.x = ox + p.0 - sx;
-                    v.y = oy + p.1 - sy;
+                    v.camera.x = ox + p.0 - sx;
+                    v.camera.y = oy + p.1 - sy;
                     v.gesture_moved = true;
                 }
             }
             v.draw();
         } else if v.pointers.is_empty() {
+            v.touch_input = false;
             let hovered = v.nearest_node(p);
             let edge = if hovered.is_none() {
                 v.nearest_edge(p)
@@ -1396,10 +1633,13 @@ pub fn start() -> Result<(), JsValue> {
             }
             let old = v.selected.clone();
             if v.pointers.is_empty() {
-                if name == "pointerup" && !v.gesture_moved {
-                    let p = v.pointer(&e);
-                    v.hit(p);
+                if name == "pointerup"
+                    && !v.gesture_moved
+                    && let Some(target) = v.press_target.take()
+                {
+                    v.activate(target);
                 }
+                v.press_target = None;
                 v.drag = None;
                 v.pinch = None;
                 v.gesture_moved = false;
@@ -1407,7 +1647,7 @@ pub fn start() -> Result<(), JsValue> {
                 v.gesture_moved = true;
                 v.pinch = None;
                 let p = *v.pointers.values().next().unwrap();
-                v.drag = Some((p.0, p.1, v.x, v.y, true));
+                v.drag = Some((p.0, p.1, v.camera.x, v.camera.y, true));
             }
             let _ = v.canvas.release_pointer_capture(e.pointer_id());
             v.draw();
@@ -1415,6 +1655,7 @@ pub fn start() -> Result<(), JsValue> {
             drop(v);
             if changed {
                 explorer::request_chain(state.clone());
+                explorer::animate(state.clone());
             }
         })?;
     }
@@ -1432,6 +1673,7 @@ pub fn start() -> Result<(), JsValue> {
         let mut v = state.borrow_mut();
         let ids: Vec<_> = v.pointers.drain().map(|(id, _)| id).collect();
         v.drag = None;
+        v.press_target = None;
         v.pinch = None;
         v.gesture_moved = false;
         v.minimap_drag = None;
@@ -1468,13 +1710,19 @@ pub fn start() -> Result<(), JsValue> {
     let state = view.clone();
     listen(canvas.as_ref(), "keydown", move |e| {
         let e = e.dyn_into::<KeyboardEvent>().unwrap();
+        if !matches!(
+            e.key().as_str(),
+            "ArrowLeft" | "ArrowRight" | "ArrowUp" | "ArrowDown" | "+" | "=" | "-" | "f"
+        ) {
+            return;
+        }
         let mut v = state.borrow_mut();
         v.settle_layout();
         match e.key().as_str() {
-            "ArrowLeft" => v.x += 60.0,
-            "ArrowRight" => v.x -= 60.0,
-            "ArrowUp" => v.y += 60.0,
-            "ArrowDown" => v.y -= 60.0,
+            "ArrowLeft" => v.camera.x += 60.0,
+            "ArrowRight" => v.camera.x -= 60.0,
+            "ArrowUp" => v.camera.y += 60.0,
+            "ArrowDown" => v.camera.y -= 60.0,
             "+" | "=" => v.zoom(1.25, (500.0, 300.0)),
             "-" => v.zoom(0.8, (500.0, 300.0)),
             "f" => {

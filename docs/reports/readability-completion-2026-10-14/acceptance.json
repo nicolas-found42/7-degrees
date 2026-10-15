@@ -1,0 +1,2838 @@
+{
+  "source_commit": "55a28573a8f59e57096684ee45baab7aa635ef58",
+  "completion_ready": true,
+  "verification": "checks/manifest.json",
+  "source_bytes": "source-bytes.json",
+  "row_count": 81,
+  "covered": 80,
+  "superseded": [
+    "A08"
+  ],
+  "remaining_blockers": [],
+  "rows": [
+    {
+      "id": "S01",
+      "requirement": "Macro backbone overview",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 6,
+          "marker": "pub fn mark_backbone("
+        },
+        {
+          "path": "crates/app-server/src/graph_view.rs",
+          "line": 284,
+          "marker": "fn network("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 595,
+          "marker": "// Overview iterates"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 50,
+          "marker": "fn backbone_thins_a_clique"
+        },
+        {
+          "path": "crates/app-server/tests/graph_view.rs",
+          "line": 58,
+          "marker": "async fn whole_network_has_every_player"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 154,
+          "marker": "async fn whole_network_renders_desktop"
+        }
+      ],
+      "coverage_note": "The unfocused backbone overview and final focused Force captures are readable; the earlier dense-view issue is resolved."
+    },
+    {
+      "id": "S02",
+      "requirement": "Per-decade landmarks",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 125,
+          "marker": "pub fn landmarks("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 876,
+          "marker": "if !important && (zoom_tier"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 253,
+          "marker": "assert!(b.attr(\"data-ordinary-labels\")"
+        }
+      ],
+      "coverage_note": "Known debut decades contribute deterministic top-count landmarks under the Macro cap; unknown debut is not assigned a known era."
+    },
+    {
+      "id": "S03",
+      "requirement": "Logarithmic Meso node radius",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 92,
+          "marker": "pub fn radius("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 775,
+          "marker": "let macro_radius"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1160,
+          "marker": "async fn small_snapshots_keep_empty"
+        },
+        {
+          "path": "crates/app-server/tests/graph_view.rs",
+          "line": 58,
+          "marker": "async fn whole_network_has_every_player"
+        }
+      ],
+      "coverage_note": "Tier radii use the logarithmic teammate-count formula with a positive base and readable clamp; isolated-player behavior remains usable."
+    },
+    {
+      "id": "S04",
+      "requirement": "Micro edges and detailed labels smoothly fade",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 111,
+          "marker": "pub fn label_zoom_alpha("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 922,
+          "marker": "let tier_alpha"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 386,
+          "marker": "fn detailed_labels_fade_at_zoom_boundaries"
+        }
+      ],
+      "coverage_note": "Label opacity fades across both tier boundaries; important labels remain fully visible. Reduced motion uses final opacity immediately."
+    },
+    {
+      "id": "S05",
+      "requirement": "Focused franchise trunks",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 552,
+          "marker": ".curves(&self.graph.links, &self.points, |i| {"
+        },
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 450,
+          "marker": "pub fn curves("
+        },
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 401,
+          "marker": "pub fn unbundled_curve("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 255,
+          "marker": "fn bundled_curves_keep_exact_endpoints"
+        },
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 362,
+          "marker": "fn unbundled_undirected_curves"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 73,
+          "marker": "fn click_visible_bundle("
+        }
+      ],
+      "coverage_note": "Only teammates inside the viewport contribute to bundle size and weighted centroid. Canonical fallback curves and unbundled chain edges are preserved."
+    },
+    {
+      "id": "S06",
+      "requirement": "Proof-scaled focus width/alpha",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/app-server/src/graph_view.rs",
+          "line": 197,
+          "marker": "pub fn edge_visual_weight("
+        },
+        {
+          "path": "crates/app-server/src/graph_view.rs",
+          "line": 238,
+          "marker": "pub(crate) fn visual_links("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/visual_weights.rs",
+          "line": 36,
+          "marker": "fn all_admitted_proofs"
+        },
+        {
+          "path": "crates/app-server/tests/graph_view.rs",
+          "line": 32,
+          "marker": "async fn rendering_hints_are_additive"
+        }
+      ],
+      "coverage_note": "Alpha corrected to .18\u2013.28, stroke monotonic by weight."
+    },
+    {
+      "id": "S07",
+      "requirement": "Strong direct teammate Meso label priority",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 365,
+          "marker": "let mut candidates = Vec::new();"
+        },
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 223,
+          "marker": "pub fn place_labels("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 131,
+          "marker": "fn assert_ranked_direct_labels("
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 266,
+          "marker": "assert_ranked_direct_labels(&mut b);"
+        }
+      ],
+      "coverage_note": "Browser assertions verify that direct teammate labels precede context in descending proof weight at Meso, including with an active chain."
+    },
+    {
+      "id": "S08",
+      "requirement": "Every label has padding/non-overlap",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 263,
+          "marker": "if c.priority == LabelPriority::Important"
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 827,
+          "marker": "let mut headers = Vec::new();"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 327,
+          "marker": "fn important_badges_find_a_free_gap"
+        },
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 302,
+          "marker": "fn crowded_chain_badges_spread"
+        }
+      ],
+      "coverage_note": "Occupied-boundary placement resolves the reproduced free HUD gap. Sector headings share the collision index and reserve their accepted bounds."
+    },
+    {
+      "id": "S09",
+      "requirement": "Tier1 styling distinct from context",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 933,
+          "marker": "let alpha = tier_alpha"
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 948,
+          "marker": "bold 15px sans-serif"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 131,
+          "marker": "fn assert_ranked_direct_labels("
+        },
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 386,
+          "marker": "fn detailed_labels_fade_at_zoom_boundaries"
+        }
+      ],
+      "coverage_note": "Direct labels use bold full-contrast text and context uses regular lower-opacity text, with the completed tier fade applied separately."
+    },
+    {
+      "id": "S10",
+      "requirement": "Concentric ego default/readable rings",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/camera.rs",
+          "line": 33,
+          "marker": "pub fn screen("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 122,
+          "marker": "pub(super) fn frame_points("
+        },
+        {
+          "path": "crates/canvas-view/src/layout.rs",
+          "line": 87,
+          "marker": "fn compute_concentric_layout("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 5,
+          "marker": "fn camera_keeps_world_circles_round"
+        },
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 152,
+          "marker": "fn concentric_sectors_separate"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 358,
+          "marker": "\"phone rings must project uniformly\""
+        }
+      ],
+      "coverage_note": "Uniform CSS projection keeps annuli round. The phone capture has separated bands, readable headings, and an unobstructed focal badge."
+    },
+    {
+      "id": "S11",
+      "requirement": "Restore distant outer context",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 782,
+          "marker": "if alpha > 0.05"
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 949,
+          "marker": "\"ego-toggle\" =>"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 828,
+          "marker": "async fn explorer_pair_filters_drawer"
+        }
+      ],
+      "coverage_note": "Explicitly dimmed nodes retain alpha 0.05 at Macro. The ego toggle restores distant context."
+    },
+    {
+      "id": "S12",
+      "requirement": "Labeled franchise sectors legible",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/layout.rs",
+          "line": 254,
+          "marker": "pub fn concentric_sectors("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 827,
+          "marker": "let mut headers = Vec::new();"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 293,
+          "marker": "fn unknown_franchise_sectors_follow"
+        },
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 396,
+          "marker": "fn tied_proofs_spread_direct"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 358,
+          "marker": "\"phone rings must project uniformly\""
+        }
+      ],
+      "coverage_note": "Unknown franchises sort last; headings are measured once and collision-placed. Native radius and browser reload assertions preserve meaning and determinism."
+    },
+    {
+      "id": "S13",
+      "requirement": "Stronger overlap nearer inner one-hop band",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/layout.rs",
+          "line": 130,
+          "marker": "let ranks: HashMap"
+        },
+        {
+          "path": "crates/canvas-view/src/layout.rs",
+          "line": 172,
+          "marker": "inner + fraction * (outer - inner)"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 152,
+          "marker": "fn concentric_sectors_separate"
+        },
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 396,
+          "marker": "fn tied_proofs_spread_direct"
+        }
+      ],
+      "coverage_note": "One-hop radii follow descending proof-strength rank, with stable ID ties spread across the band; stronger proofs stay nearer the inner edge."
+    },
+    {
+      "id": "S14",
+      "requirement": "Default highest teammate count + announcement",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 265,
+          "marker": "pub(super) fn change_layout("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 287,
+          "marker": "v.auto_focus = Some(name);"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 828,
+          "marker": "async fn explorer_pair_filters_drawer"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 842,
+          "marker": "Default focal player: Player B"
+        }
+      ],
+      "coverage_note": "The browser journey sets B before choosing Concentric and verifies default A selection, chain recomputation, announcement, and ego behavior."
+    },
+    {
+      "id": "S15",
+      "requirement": "Force roster islands with whitespace",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/layout/force.rs",
+          "line": 104,
+          "marker": "pub(super) fn compute("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 643,
+          "marker": "// One context stroke"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 204,
+          "marker": "fn force_separates_heavy_roster_cliques"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 154,
+          "marker": "async fn whole_network_renders_desktop"
+        }
+      ],
+      "coverage_note": "Fresh captures pass: distinct Force pockets and white gaps, discernible nodes, and separated labels at inspection zoom. The independent roster-clique fixture verifies separation."
+    },
+    {
+      "id": "S16",
+      "requirement": "All active-chain items bypass visual culls",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 471,
+          "marker": "fn visible("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 474,
+          "marker": "fn important("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 376,
+          "marker": "// A six-hop real chain"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 390,
+          "marker": "assert_eq!(b.attr(\"data-chain-edges\"), \"6\")"
+        }
+      ],
+      "coverage_note": "A real six-hop chain verifies all six edges and seven badges at Macro with ego enabled and every era disabled."
+    },
+    {
+      "id": "S17",
+      "requirement": "Exact bundled curve pointer behavior",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 344,
+          "marker": "pub fn distance(self, p: Point)"
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 425,
+          "marker": "fn nearest_edge("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 373,
+          "marker": "fn curve_picking_covers_the_full_spline"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 73,
+          "marker": "fn click_visible_bundle("
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 337,
+          "marker": "for button in [\"Era lanes layout\", \"Force-directed layout\"]"
+        }
+      ],
+      "coverage_note": "Adaptive curve subdivision has a dense native sweep. Browser journeys activate body/endpoints in desktop/mobile Era/Force and assert tooltip, proof card, and canonical URL."
+    },
+    {
+      "id": "S18",
+      "requirement": "Filters update emphasis and minimap",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 481,
+          "marker": "fn emphasized("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 595,
+          "marker": "// Overview iterates"
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 643,
+          "marker": "// One context stroke"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 828,
+          "marker": "async fn explorer_pair_filters_drawer"
+        }
+      ],
+      "coverage_note": "Background and foreground matching passes apply filter dimming consistently. Backbone and complete graph data remain fixed."
+    },
+    {
+      "id": "S19",
+      "requirement": "Reduced motion/motion transitions",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 203,
+          "marker": "fn select("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 265,
+          "marker": "pub(super) fn change_layout("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 325,
+          "marker": "pub(super) fn animate("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 1713,
+          "marker": "if !matches!("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 1152,
+          "marker": "fn minimap_world("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 386,
+          "marker": "fn detailed_labels_fade_at_zoom_boundaries"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1211,
+          "marker": "async fn chain_framing_supersedes_animation"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1261,
+          "marker": "\"focal changes animate\""
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1340,
+          "marker": "\"ego fit supersedes the pending camera transition\""
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1351,
+          "marker": "stationary minimap drag must not jump"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1353,
+          "marker": "assert_ne!(navigation[\"stationary\"], navigation[\"moved\"])"
+        }
+      ],
+      "coverage_note": "Concentric focal changes schedule a 250 ms transition from displayed positions. Assertions cover normal motion and reduced-motion settlement; full totals remain truthful. Minimap press preserves the displayed interpretation, then derives its drag offset from final bounds; stationary and small-move assertions cover continuity."
+    },
+    {
+      "id": "S20",
+      "requirement": "Truthful complete graph totals",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 1010,
+          "marker": "Canvas ready"
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 45,
+          "marker": "pub(super) fn report_filters("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/graph_view.rs",
+          "line": 58,
+          "marker": "async fn whole_network_has_every_player"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 154,
+          "marker": "async fn whole_network_renders_desktop"
+        }
+      ],
+      "coverage_note": "Rendering never changes payload totals; status/selection derive complete graph."
+    },
+    {
+      "id": "S21",
+      "requirement": "390px caps + badge/curve touch targets",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 336,
+          "marker": "fn badge_at("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 389,
+          "marker": "fn pick("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 909,
+          "marker": "self.badge_targets = labels"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 337,
+          "marker": "for button in [\"Era lanes layout\", \"Force-directed layout\"]"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 371,
+          "marker": "#graph-selection[data-player=goodrga01]"
+        }
+      ],
+      "coverage_note": "Mobile journeys tap bundled curves and displaced padded badges. Circular projection and HUD remain readable."
+    },
+    {
+      "id": "S22",
+      "requirement": "Across-reload determinism",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 29,
+          "marker": "fn layout_signature("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 389,
+          "marker": "fn pick("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 1562,
+          "marker": "v.press_target = v.pick(p);"
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 101,
+          "marker": "pub(super) fn settle_layout("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 1152,
+          "marker": "fn minimap_world("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 277,
+          "marker": "assert_eq!(signature, b.attr(\"data-layout-signature\"))"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 281,
+          "marker": "\"no idle physics frames\""
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1279,
+          "marker": "\"empty taps finish deterministic geometry\""
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1211,
+          "marker": "async fn chain_framing_supersedes_animation"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1351,
+          "marker": "stationary minimap drag must not jump"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1353,
+          "marker": "assert_ne!(navigation[\"stationary\"], navigation[\"moved\"])"
+        }
+      ],
+      "coverage_note": "Displayed targets are captured before final settlement; restored animation frames rebuild the spatial index. Reload signatures, labels, and idle-frame assertions cover deterministic output. Minimap press preserves the displayed interpretation, then derives its drag offset from final bounds; stationary and small-move assertions cover continuity."
+    },
+    {
+      "id": "B01",
+      "requirement": "Deterministic bounded proof weight",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/app-server/src/graph_view.rs",
+          "line": 197,
+          "marker": "pub fn edge_visual_weight("
+        },
+        {
+          "path": "crates/app-server/src/graph_view.rs",
+          "line": 238,
+          "marker": "pub(crate) fn visual_links("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/visual_weights.rs",
+          "line": 36,
+          "marker": "fn all_admitted_proofs"
+        },
+        {
+          "path": "crates/app-server/tests/graph_view.rs",
+          "line": 32,
+          "marker": "async fn rendering_hints_are_additive"
+        }
+      ],
+      "coverage_note": "Range/assertions and real N covered; saturation fixed."
+    },
+    {
+      "id": "B02",
+      "requirement": "Stable connected backbone/full payload",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 6,
+          "marker": "pub fn mark_backbone("
+        },
+        {
+          "path": "crates/app-server/src/graph_view.rs",
+          "line": 284,
+          "marker": "fn network("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 595,
+          "marker": "// Overview iterates"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 50,
+          "marker": "fn backbone_thins_a_clique"
+        },
+        {
+          "path": "crates/app-server/tests/graph_view.rs",
+          "line": 58,
+          "marker": "async fn whole_network_has_every_player"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 154,
+          "marker": "async fn whole_network_renders_desktop"
+        }
+      ],
+      "coverage_note": "Maximum spanning forest union top3 incident; input-order reversal tested."
+    },
+    {
+      "id": "B03",
+      "requirement": "Macro/Meso backbone; Micro local nonbackbone",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 595,
+          "marker": "// Overview iterates"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 182,
+          "marker": "assert_eq!(b.attr(\"data-non-backbone-edges\"), \"0\")"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 200,
+          "marker": "assert!(b.attr(\"data-non-backbone-edges\").parse::<usize>().unwrap() > 0)"
+        }
+      ],
+      "coverage_note": "Assertions require zero non-backbone edges at Macro/Meso and a positive count at Micro."
+    },
+    {
+      "id": "B04",
+      "requirement": "Full graph semantic operations unchanged",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/app-server/src/graph_view.rs",
+          "line": 284,
+          "marker": "fn network("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 281,
+          "marker": "fn recompute_hop("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 159,
+          "marker": "pub(super) fn request_chain("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/graph_view.rs",
+          "line": 32,
+          "marker": "async fn rendering_hints_are_additive"
+        },
+        {
+          "path": "crates/app-server/tests/graph_view.rs",
+          "line": 58,
+          "marker": "async fn whole_network_has_every_player"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 154,
+          "marker": "async fn whole_network_renders_desktop"
+        }
+      ],
+      "coverage_note": "Rendering fields only; no evidence/shortest path change."
+    },
+    {
+      "id": "B05",
+      "requirement": "Chain nodes/edges/badges never culled",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 471,
+          "marker": "fn visible("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 474,
+          "marker": "fn important("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 376,
+          "marker": "// A six-hop real chain"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 390,
+          "marker": "assert_eq!(b.attr(\"data-chain-edges\"), \"6\")"
+        }
+      ],
+      "coverage_note": "A real six-hop chain verifies all six edges and seven badges at Macro with ego enabled and every era disabled."
+    },
+    {
+      "id": "B06",
+      "requirement": "Deterministic padded labels/caps",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 263,
+          "marker": "if c.priority == LabelPriority::Important"
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 827,
+          "marker": "let mut headers = Vec::new();"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 327,
+          "marker": "fn important_badges_find_a_free_gap"
+        },
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 302,
+          "marker": "fn crowded_chain_badges_spread"
+        }
+      ],
+      "coverage_note": "Occupied-boundary placement resolves the reproduced free HUD gap. Sector headings share the collision index and reserve their accepted bounds."
+    },
+    {
+      "id": "B07",
+      "requirement": "Meso strongest direct teammate first",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 365,
+          "marker": "let mut candidates = Vec::new();"
+        },
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 223,
+          "marker": "pub fn place_labels("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 131,
+          "marker": "fn assert_ranked_direct_labels("
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 266,
+          "marker": "assert_ranked_direct_labels(&mut b);"
+        }
+      ],
+      "coverage_note": "Browser assertions verify that direct teammate labels precede context in descending proof weight at Meso, including with an active chain."
+    },
+    {
+      "id": "B08",
+      "requirement": "Visible group bundling, ungrouped/chain fallback",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 552,
+          "marker": ".curves(&self.graph.links, &self.points, |i| {"
+        },
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 450,
+          "marker": "pub fn curves("
+        },
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 401,
+          "marker": "pub fn unbundled_curve("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 255,
+          "marker": "fn bundled_curves_keep_exact_endpoints"
+        },
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 362,
+          "marker": "fn unbundled_undirected_curves"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 73,
+          "marker": "fn click_visible_bundle("
+        }
+      ],
+      "coverage_note": "Only teammates inside the viewport contribute to bundle size and weighted centroid. Canonical fallback curves and unbundled chain edges are preserved."
+    },
+    {
+      "id": "B09",
+      "requirement": "Any bundled curve opens correct evidence",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 344,
+          "marker": "pub fn distance(self, p: Point)"
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 425,
+          "marker": "fn nearest_edge("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 373,
+          "marker": "fn curve_picking_covers_the_full_spline"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 73,
+          "marker": "fn click_visible_bundle("
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 337,
+          "marker": "for button in [\"Era lanes layout\", \"Force-directed layout\"]"
+        }
+      ],
+      "coverage_note": "Adaptive curve subdivision has a dense native sweep. Browser journeys activate body/endpoints in desktop/mobile Era/Force and assert tooltip, proof card, and canonical URL."
+    },
+    {
+      "id": "B10",
+      "requirement": "Readable sectors/weight radius/repeat selection",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/layout.rs",
+          "line": 254,
+          "marker": "pub fn concentric_sectors("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 827,
+          "marker": "let mut headers = Vec::new();"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 293,
+          "marker": "fn unknown_franchise_sectors_follow"
+        },
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 396,
+          "marker": "fn tied_proofs_spread_direct"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 358,
+          "marker": "\"phone rings must project uniformly\""
+        }
+      ],
+      "coverage_note": "Unknown franchises sort last; headings are measured once and collision-placed. Native radius and browser reload assertions preserve meaning and determinism."
+    },
+    {
+      "id": "B11",
+      "requirement": "Default focal/B-before-A/ego context restore",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 265,
+          "marker": "pub(super) fn change_layout("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 287,
+          "marker": "v.auto_focus = Some(name);"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 828,
+          "marker": "async fn explorer_pair_filters_drawer"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 842,
+          "marker": "Default focal player: Player B"
+        }
+      ],
+      "coverage_note": "The browser journey sets B before choosing Concentric and verifies default A selection, chain recomputation, announcement, and ego behavior."
+    },
+    {
+      "id": "B12",
+      "requirement": "Weight-sensitive reproducible readable Force",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 29,
+          "marker": "fn layout_signature("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 389,
+          "marker": "fn pick("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 1562,
+          "marker": "v.press_target = v.pick(p);"
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 101,
+          "marker": "pub(super) fn settle_layout("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 1152,
+          "marker": "fn minimap_world("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 277,
+          "marker": "assert_eq!(signature, b.attr(\"data-layout-signature\"))"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 281,
+          "marker": "\"no idle physics frames\""
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1279,
+          "marker": "\"empty taps finish deterministic geometry\""
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1211,
+          "marker": "async fn chain_framing_supersedes_animation"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1351,
+          "marker": "stationary minimap drag must not jump"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1353,
+          "marker": "assert_ne!(navigation[\"stationary\"], navigation[\"moved\"])"
+        }
+      ],
+      "coverage_note": "The weighted global relaxation is deterministic and terminates. Browser reload and idle-frame assertions cover settled output; input interruption now settles final geometry while preserving the displayed target. Minimap press preserves the displayed interpretation, then derives its drag offset from final bounds; stationary and small-move assertions cover continuity."
+    },
+    {
+      "id": "B13",
+      "requirement": "Full truth/reduced motion",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 203,
+          "marker": "fn select("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 265,
+          "marker": "pub(super) fn change_layout("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 325,
+          "marker": "pub(super) fn animate("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 1713,
+          "marker": "if !matches!("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 386,
+          "marker": "fn detailed_labels_fade_at_zoom_boundaries"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1211,
+          "marker": "async fn chain_framing_supersedes_animation"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1261,
+          "marker": "\"focal changes animate\""
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1340,
+          "marker": "\"ego fit supersedes the pending camera transition\""
+        }
+      ],
+      "coverage_note": "Concentric focal changes schedule a 250 ms transition from displayed positions. Assertions cover normal motion and reduced-motion settlement; full totals remain truthful."
+    },
+    {
+      "id": "B14",
+      "requirement": "Complete full graph journeys/frame cost/readability",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 154,
+          "marker": "async fn whole_network_renders_desktop"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1211,
+          "marker": "async fn chain_framing_supersedes_animation"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 154,
+          "marker": "async fn whole_network_renders_desktop"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1211,
+          "marker": "async fn chain_framing_supersedes_animation"
+        }
+      ],
+      "coverage_note": "Source, expanded assertions and fresh visuals satisfy the audit. The final full-profile receipt confirms execution with matching source bytes."
+    },
+    {
+      "id": "E01",
+      "requirement": "Server derives all proofs once/additive defaults",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/app-server/src/graph_view.rs",
+          "line": 197,
+          "marker": "pub fn edge_visual_weight("
+        },
+        {
+          "path": "crates/app-server/src/graph_view.rs",
+          "line": 238,
+          "marker": "pub(crate) fn visual_links("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/visual_weights.rs",
+          "line": 36,
+          "marker": "fn all_admitted_proofs"
+        },
+        {
+          "path": "crates/app-server/tests/graph_view.rs",
+          "line": 32,
+          "marker": "async fn rendering_hints_are_additive"
+        }
+      ],
+      "coverage_note": "No browser recomputation."
+    },
+    {
+      "id": "E02",
+      "requirement": "Pure Rust layout/zoom/occupancy/trunks/hit",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 223,
+          "marker": "pub fn place_labels("
+        },
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 344,
+          "marker": "pub fn distance(self, p: Point)"
+        },
+        {
+          "path": "crates/canvas-view/src/layout.rs",
+          "line": 45,
+          "marker": "pub fn compute_layout("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 113,
+          "marker": "fn labels_rank_proof_strength"
+        },
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 373,
+          "marker": "fn curve_picking_covers_the_full_spline"
+        }
+      ],
+      "coverage_note": "Drawing/UI integration in browser; no JS graph library/new dependencies."
+    },
+    {
+      "id": "E03",
+      "requirement": "Proof class maxima/log units/fixed saturation/primary franchise",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/app-server/src/graph_view.rs",
+          "line": 197,
+          "marker": "pub fn edge_visual_weight("
+        },
+        {
+          "path": "crates/app-server/src/graph_view.rs",
+          "line": 238,
+          "marker": "pub(crate) fn visual_links("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/visual_weights.rs",
+          "line": 36,
+          "marker": "fn all_admitted_proofs"
+        },
+        {
+          "path": "crates/app-server/tests/graph_view.rs",
+          "line": 32,
+          "marker": "async fn rendering_hints_are_additive"
+        }
+      ],
+      "coverage_note": "Sum days/game minima per class; maximum class mapping; sorted franchise tie."
+    },
+    {
+      "id": "E04",
+      "requirement": "Whole graph top3+MSF/no semantic loss",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 6,
+          "marker": "pub fn mark_backbone("
+        },
+        {
+          "path": "crates/app-server/src/graph_view.rs",
+          "line": 284,
+          "marker": "fn network("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 595,
+          "marker": "// Overview iterates"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 50,
+          "marker": "fn backbone_thins_a_clique"
+        },
+        {
+          "path": "crates/app-server/tests/graph_view.rs",
+          "line": 58,
+          "marker": "async fn whole_network_has_every_player"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 154,
+          "marker": "async fn whole_network_renders_desktop"
+        }
+      ],
+      "coverage_note": "Filters do not recompute backbone."
+    },
+    {
+      "id": "E05",
+      "requirement": "Semantic fade across both boundaries including labels",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 111,
+          "marker": "pub fn label_zoom_alpha("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 922,
+          "marker": "let tier_alpha"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 386,
+          "marker": "fn detailed_labels_fade_at_zoom_boundaries"
+        }
+      ],
+      "coverage_note": "Label opacity fades across both tier boundaries; important labels remain fully visible. Reduced motion uses final opacity immediately."
+    },
+    {
+      "id": "E06",
+      "requirement": "Padded priority occupancy incl important/reserved labels",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 263,
+          "marker": "if c.priority == LabelPriority::Important"
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 827,
+          "marker": "let mut headers = Vec::new();"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 327,
+          "marker": "fn important_badges_find_a_free_gap"
+        },
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 302,
+          "marker": "fn crowded_chain_badges_spread"
+        }
+      ],
+      "coverage_note": "Occupied-boundary placement resolves the reproduced free HUD gap. Sector headings share the collision index and reserve their accepted bounds."
+    },
+    {
+      "id": "E07",
+      "requirement": "Minimum visible bundling/shared centroid/chain bypass",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 552,
+          "marker": ".curves(&self.graph.links, &self.points, |i| {"
+        },
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 450,
+          "marker": "pub fn curves("
+        },
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 401,
+          "marker": "pub fn unbundled_curve("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 255,
+          "marker": "fn bundled_curves_keep_exact_endpoints"
+        },
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 362,
+          "marker": "fn unbundled_undirected_curves"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 73,
+          "marker": "fn click_visible_bundle("
+        }
+      ],
+      "coverage_note": "Only teammates inside the viewport contribute to bundle size and weighted centroid. Canonical fallback curves and unbundled chain edges are preserved."
+    },
+    {
+      "id": "E08",
+      "requirement": "Minimum legible sectors + clean ego framing",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/camera.rs",
+          "line": 33,
+          "marker": "pub fn screen("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 122,
+          "marker": "pub(super) fn frame_points("
+        },
+        {
+          "path": "crates/canvas-view/src/layout.rs",
+          "line": 87,
+          "marker": "fn compute_concentric_layout("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 5,
+          "marker": "fn camera_keeps_world_circles_round"
+        },
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 152,
+          "marker": "fn concentric_sectors_separate"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 358,
+          "marker": "\"phone rings must project uniformly\""
+        }
+      ],
+      "coverage_note": "Uniform CSS projection keeps annuli round. The phone capture has separated bands, readable headings, and an unobstructed focal badge."
+    },
+    {
+      "id": "E09",
+      "requirement": "Weighted/hub-dissuaded Force cluster visual check",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/layout/force.rs",
+          "line": 104,
+          "marker": "pub(super) fn compute("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 643,
+          "marker": "// One context stroke"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 204,
+          "marker": "fn force_separates_heavy_roster_cliques"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 154,
+          "marker": "async fn whole_network_renders_desktop"
+        }
+      ],
+      "coverage_note": "Fresh captures pass: distinct Force pockets and white gaps, discernible nodes, and separated labels at inspection zoom. The independent roster-clique fixture verifies separation."
+    },
+    {
+      "id": "E10",
+      "requirement": "Browser repeat-load determinism + full primary seams",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 154,
+          "marker": "async fn whole_network_renders_desktop"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 828,
+          "marker": "async fn explorer_pair_filters_drawer"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 73,
+          "marker": "fn click_visible_bundle("
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 131,
+          "marker": "fn assert_ranked_direct_labels("
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 277,
+          "marker": "assert_eq!(signature, b.attr(\"data-layout-signature\"))"
+        }
+      ],
+      "coverage_note": "Previously missing repeat-load, Meso ranking, B-before-A, beyond-two-hop chain and multi-layout mobile curve journeys now have explicit assertions."
+    },
+    {
+      "id": "A01",
+      "requirement": "Complete initial network + isolates",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 6,
+          "marker": "pub fn mark_backbone("
+        },
+        {
+          "path": "crates/app-server/src/graph_view.rs",
+          "line": 284,
+          "marker": "fn network("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 595,
+          "marker": "// Overview iterates"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 50,
+          "marker": "fn backbone_thins_a_clique"
+        },
+        {
+          "path": "crates/app-server/tests/graph_view.rs",
+          "line": 58,
+          "marker": "async fn whole_network_has_every_player"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 154,
+          "marker": "async fn whole_network_renders_desktop"
+        }
+      ],
+      "coverage_note": "Payload semantics unchanged."
+    },
+    {
+      "id": "A02",
+      "requirement": "Empty/isolated valid states",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/app-server/src/graph_view.rs",
+          "line": 327,
+          "marker": "pub async fn page("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 265,
+          "marker": "pub(super) fn change_layout("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1160,
+          "marker": "async fn small_snapshots_keep_empty"
+        }
+      ],
+      "coverage_note": "Concentric empty disabled; isolated focus fits."
+    },
+    {
+      "id": "A03",
+      "requirement": "Layout controls/state synchronized",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 165,
+          "marker": "fn report_layout("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 265,
+          "marker": "pub(super) fn change_layout("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 8,
+          "marker": "async fn the_graph_page_shows_every_fixture"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 828,
+          "marker": "async fn explorer_pair_filters_drawer"
+        }
+      ],
+      "coverage_note": "Button paths preserve data-layout and controls."
+    },
+    {
+      "id": "A04",
+      "requirement": "Readable focused hierarchy/curves",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/layout/force.rs",
+          "line": 104,
+          "marker": "pub(super) fn compute("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 643,
+          "marker": "// One context stroke"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 204,
+          "marker": "fn force_separates_heavy_roster_cliques"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 154,
+          "marker": "async fn whole_network_renders_desktop"
+        }
+      ],
+      "coverage_note": "Fresh captures pass: distinct Force pockets and white gaps, discernible nodes, and separated labels at inspection zoom. The independent roster-clique fixture verifies separation."
+    },
+    {
+      "id": "A05",
+      "requirement": "Pills + ordinary declutter",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 263,
+          "marker": "if c.priority == LabelPriority::Important"
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 827,
+          "marker": "let mut headers = Vec::new();"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 327,
+          "marker": "fn important_badges_find_a_free_gap"
+        },
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 302,
+          "marker": "fn crowded_chain_badges_spread"
+        }
+      ],
+      "coverage_note": "Occupied-boundary placement resolves the reproduced free HUD gap. Sector headings share the collision index and reserve their accepted bounds."
+    },
+    {
+      "id": "A06",
+      "requirement": "Positive degree-scaled isolates/full counts",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/visual.rs",
+          "line": 92,
+          "marker": "pub fn radius("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 775,
+          "marker": "let macro_radius"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1160,
+          "marker": "async fn small_snapshots_keep_empty"
+        },
+        {
+          "path": "crates/app-server/tests/graph_view.rs",
+          "line": 58,
+          "marker": "async fn whole_network_has_every_player"
+        }
+      ],
+      "coverage_note": "No known complete-graph count defect."
+    },
+    {
+      "id": "A07",
+      "requirement": "Aligned/pinned era guides",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 567,
+          "marker": "if self.layout == LayoutMode::EraLane"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 154,
+          "marker": "async fn whole_network_renders_desktop"
+        }
+      ],
+      "coverage_note": "Retained column formula and pinned header y."
+    },
+    {
+      "id": "A08",
+      "requirement": "Concentric no-A prompts instead of selecting",
+      "status": "superseded",
+      "source_references": [
+        {
+          "path": "docs/specs/nba-graph-readability-scaling.md",
+          "line": 150,
+          "marker": "**Default focal player.**"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 842,
+          "marker": "Default focal player: Player B"
+        }
+      ],
+      "coverage_note": "Explicitly superseded by highest-count auto-selection; do not restore old prompt rule."
+    },
+    {
+      "id": "A09",
+      "requirement": "Separated repeatable rings + isolate fit",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/camera.rs",
+          "line": 33,
+          "marker": "pub fn screen("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 122,
+          "marker": "pub(super) fn frame_points("
+        },
+        {
+          "path": "crates/canvas-view/src/layout.rs",
+          "line": 87,
+          "marker": "fn compute_concentric_layout("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 5,
+          "marker": "fn camera_keeps_world_circles_round"
+        },
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 152,
+          "marker": "fn concentric_sectors_separate"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 358,
+          "marker": "\"phone rings must project uniformly\""
+        }
+      ],
+      "coverage_note": "Uniform CSS projection keeps annuli round. The phone capture has separated bands, readable headings, and an unobstructed focal badge."
+    },
+    {
+      "id": "A10",
+      "requirement": "Complete ego and beyond2-hop chain override",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 471,
+          "marker": "fn visible("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 474,
+          "marker": "fn important("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 376,
+          "marker": "// A six-hop real chain"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 390,
+          "marker": "assert_eq!(b.attr(\"data-chain-edges\"), \"6\")"
+        }
+      ],
+      "coverage_note": "A real six-hop chain verifies all six edges and seven badges at Macro with ego enabled and every era disabled."
+    },
+    {
+      "id": "A11",
+      "requirement": "Transition settling/reduce/interruption",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 203,
+          "marker": "fn select("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 265,
+          "marker": "pub(super) fn change_layout("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 325,
+          "marker": "pub(super) fn animate("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 1713,
+          "marker": "if !matches!("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 1152,
+          "marker": "fn minimap_world("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/canvas-view/tests/readability.rs",
+          "line": 386,
+          "marker": "fn detailed_labels_fade_at_zoom_boundaries"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1211,
+          "marker": "async fn chain_framing_supersedes_animation"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1261,
+          "marker": "\"focal changes animate\""
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1340,
+          "marker": "\"ego fit supersedes the pending camera transition\""
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1351,
+          "marker": "stationary minimap drag must not jump"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1353,
+          "marker": "assert_ne!(navigation[\"stationary\"], navigation[\"moved\"])"
+        }
+      ],
+      "coverage_note": "Normal focal motion, reduced motion, first-frame spatial lookup, press-time node/empty picks, unrelated keys, ego-fit interruption, minimap input, drawer framing and breadcrumb centering have explicit regression assertions. Minimap press preserves the displayed interpretation, then derives its drag offset from final bounds; stationary and small-move assertions cover continuity."
+    },
+    {
+      "id": "A12",
+      "requirement": "Both accessible searchable context pickers",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 379,
+          "marker": "fn install_picker("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 996,
+          "marker": "async fn explorer_ignores_old_search_chain"
+        }
+      ],
+      "coverage_note": "Retained combobox IDs/roles/context parser."
+    },
+    {
+      "id": "A13",
+      "requirement": "Search totals/stale cancellation",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 379,
+          "marker": "fn install_picker("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 996,
+          "marker": "async fn explorer_ignores_old_search_chain"
+        }
+      ],
+      "coverage_note": "Existing generation checks/contract tests retained."
+    },
+    {
+      "id": "A14",
+      "requirement": "Exact shortest direct/indirect/diamond/self/disconnected",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 159,
+          "marker": "pub(super) fn request_chain("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 460,
+          "marker": "fn clear_highlight("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 591,
+          "marker": "async fn synthetic_diamond_renders"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 828,
+          "marker": "async fn explorer_pair_filters_drawer"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 996,
+          "marker": "async fn explorer_ignores_old_search_chain"
+        }
+      ],
+      "coverage_note": "Server exact unweighted paths unchanged."
+    },
+    {
+      "id": "A15",
+      "requirement": "Pair clears previous highlight/generation",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 159,
+          "marker": "pub(super) fn request_chain("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 460,
+          "marker": "fn clear_highlight("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 591,
+          "marker": "async fn synthetic_diamond_renders"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 828,
+          "marker": "async fn explorer_pair_filters_drawer"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 996,
+          "marker": "async fn explorer_ignores_old_search_chain"
+        }
+      ],
+      "coverage_note": "Existing delayed response lifecycle retained."
+    },
+    {
+      "id": "A16",
+      "requirement": "Blue chain/faint context/padded drawer-aware framing",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 122,
+          "marker": "pub(super) fn frame_points("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 811,
+          "marker": "\"#edge-evidence-drawer[open]\""
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1294,
+          "marker": "\"chain node {id} must frame beside the open drawer\""
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1298,
+          "marker": "\"chain badge {id} must avoid the drawer\""
+        }
+      ],
+      "coverage_note": "The open desktop drawer reduces chain-fit area and reserves label space. The delayed-response regression checks node anchors and badge bounds beside it."
+    },
+    {
+      "id": "A17",
+      "requirement": "Breadcrumb centers without endpoint changes",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 899,
+          "marker": "target.get_attribute(\"data-center-player\")"
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 903,
+          "marker": "let p = v.at(&id);"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1315,
+          "marker": "\"breadcrumb centers the settled player during interrupted motion\""
+        }
+      ],
+      "coverage_note": "Breadcrumb centering settles the layout before reading the target position and centers that settled player without changing connection endpoints."
+    },
+    {
+      "id": "A18",
+      "requirement": "No-chain/error distinguishes coverage gaps",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 159,
+          "marker": "pub(super) fn request_chain("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 460,
+          "marker": "fn clear_highlight("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 591,
+          "marker": "async fn synthetic_diamond_renders"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 828,
+          "marker": "async fn explorer_pair_filters_drawer"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 996,
+          "marker": "async fn explorer_ignores_old_search_chain"
+        }
+      ],
+      "coverage_note": "Coverage semantics unchanged."
+    },
+    {
+      "id": "A19",
+      "requirement": "Random distinct IDs/clear keeps settings",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 920,
+          "marker": "\"random-pair\" =>"
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 936,
+          "marker": "\"clear-chain\" =>"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 828,
+          "marker": "async fn explorer_pair_filters_drawer"
+        }
+      ],
+      "coverage_note": "No new randomness in layout; clear avoids camera reset."
+    },
+    {
+      "id": "A20",
+      "requirement": "Filter chip/AND/Reset emphasis",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 481,
+          "marker": "fn emphasized("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 595,
+          "marker": "// Overview iterates"
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 643,
+          "marker": "// One context stroke"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 828,
+          "marker": "async fn explorer_pair_filters_drawer"
+        }
+      ],
+      "coverage_note": "Background and foreground matching passes apply filter dimming consistently. Backbone and complete graph data remain fixed."
+    },
+    {
+      "id": "A21",
+      "requirement": "Filters never change chain distances/load",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/app-server/src/graph_view.rs",
+          "line": 284,
+          "marker": "fn network("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 281,
+          "marker": "fn recompute_hop("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 159,
+          "marker": "pub(super) fn request_chain("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/graph_view.rs",
+          "line": 32,
+          "marker": "async fn rendering_hints_are_additive"
+        },
+        {
+          "path": "crates/app-server/tests/graph_view.rs",
+          "line": 58,
+          "marker": "async fn whole_network_has_every_player"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 154,
+          "marker": "async fn whole_network_renders_desktop"
+        }
+      ],
+      "coverage_note": "Backbone remains rendering hint."
+    },
+    {
+      "id": "A22",
+      "requirement": "DPR/CSS camera/minimap/button transforms",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/camera.rs",
+          "line": 48,
+          "marker": "pub fn distance("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 1510,
+          "marker": "let center = v.viewport.world((500.0, 300.0), v.camera);"
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 1562,
+          "marker": "v.press_target = v.pick(p);"
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 1152,
+          "marker": "fn minimap_world("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1071,
+          "marker": "async fn touch_pan_pinch_cancel_and_minimap"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1373,
+          "marker": "\"minimap navigation interprets the displayed projection\""
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1351,
+          "marker": "stationary minimap drag must not jump"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1353,
+          "marker": "assert_ne!(navigation[\"stationary\"], navigation[\"moved\"])"
+        }
+      ],
+      "coverage_note": "Uniform CSS projection and its inverse normalize camera input. Pinch and minimap regressions verify displayed-coordinate interpretation across interrupted motion. Minimap press preserves the displayed interpretation, then derives its drag offset from final bounds; stationary and small-move assertions cover continuity."
+    },
+    {
+      "id": "A23",
+      "requirement": "Keyboard ownership + meaningful announcements",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 1713,
+          "marker": "if !matches!("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 379,
+          "marker": "fn install_picker("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1324,
+          "marker": "\"unrelated keys keep animation alive\""
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1211,
+          "marker": "async fn chain_framing_supersedes_animation"
+        }
+      ],
+      "coverage_note": "Existing atomic status equality checks retained."
+    },
+    {
+      "id": "A24",
+      "requirement": "390px usable controls/information/touch",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 336,
+          "marker": "fn badge_at("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 389,
+          "marker": "fn pick("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 909,
+          "marker": "self.badge_targets = labels"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 337,
+          "marker": "for button in [\"Era lanes layout\", \"Force-directed layout\"]"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 371,
+          "marker": "#graph-selection[data-player=goodrga01]"
+        }
+      ],
+      "coverage_note": "Mobile journeys tap bundled curves and displaced padded badges. Circular projection and HUD remain readable."
+    },
+    {
+      "id": "A25",
+      "requirement": "Touch pan/pinch/cancel stable",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/camera.rs",
+          "line": 48,
+          "marker": "pub fn distance("
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 1510,
+          "marker": "let center = v.viewport.world((500.0, 300.0), v.camera);"
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 1562,
+          "marker": "v.press_target = v.pick(p);"
+        },
+        {
+          "path": "crates/canvas-view/src/browser.rs",
+          "line": 1152,
+          "marker": "fn minimap_world("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1071,
+          "marker": "async fn touch_pan_pinch_cancel_and_minimap"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1373,
+          "marker": "\"minimap navigation interprets the displayed projection\""
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1351,
+          "marker": "stationary minimap drag must not jump"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1353,
+          "marker": "assert_ne!(navigation[\"stationary\"], navigation[\"moved\"])"
+        }
+      ],
+      "coverage_note": "Touch pan, pinch, cancellation and minimap navigation remain stable; additional curve and displaced-badge taps are covered separately by A24. Minimap press preserves the displayed interpretation, then derives its drag offset from final bounds; stationary and small-move assertions cover continuity."
+    },
+    {
+      "id": "A26",
+      "requirement": "Same-instance drawer/canonical URL/state",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 718,
+          "marker": "fn load_drawer("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 762,
+          "marker": "fn close_drawer("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 785,
+          "marker": "fn install_drawer("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 73,
+          "marker": "fn click_visible_bundle("
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 828,
+          "marker": "async fn explorer_pair_filters_drawer"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 996,
+          "marker": "async fn explorer_ignores_old_search_chain"
+        }
+      ],
+      "coverage_note": "Actual bundled curve body/end activation is exercised in desktop/mobile Era and Force, asserting the tooltip, proof drawer, canonical URL and preserved explorer state."
+    },
+    {
+      "id": "A27",
+      "requirement": "Drawer close/history focus restoration",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 718,
+          "marker": "fn load_drawer("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 762,
+          "marker": "fn close_drawer("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 785,
+          "marker": "fn install_drawer("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 73,
+          "marker": "fn click_visible_bundle("
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 828,
+          "marker": "async fn explorer_pair_filters_drawer"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 996,
+          "marker": "async fn explorer_ignores_old_search_chain"
+        }
+      ],
+      "coverage_note": "Existing native dialog/history controls retained."
+    },
+    {
+      "id": "A28",
+      "requirement": "Standalone/refresh/modified link fallback",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/app-server/src/provenance.rs",
+          "line": 198,
+          "marker": "pub async fn page("
+        },
+        {
+          "path": "crates/app-server/src/provenance.rs",
+          "line": 157,
+          "marker": "fn coverage("
+        },
+        {
+          "path": "crates/app-server/src/lib.rs",
+          "line": 155,
+          "marker": "pub(crate) fn edge_json("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 744,
+          "marker": "async fn real_slice_renders_every_player"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 803,
+          "marker": "async fn historical_network_renders"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1160,
+          "marker": "async fn small_snapshots_keep_empty"
+        }
+      ],
+      "coverage_note": "No route architecture change."
+    },
+    {
+      "id": "A29",
+      "requirement": "Drawer loading/failure/late cancellation",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 718,
+          "marker": "fn load_drawer("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 762,
+          "marker": "fn close_drawer("
+        },
+        {
+          "path": "crates/canvas-view/src/browser/explorer.rs",
+          "line": 785,
+          "marker": "fn install_drawer("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 73,
+          "marker": "fn click_visible_bundle("
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 828,
+          "marker": "async fn explorer_pair_filters_drawer"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 996,
+          "marker": "async fn explorer_ignores_old_search_chain"
+        }
+      ],
+      "coverage_note": "Generation+pair/dialog-open checks retained."
+    },
+    {
+      "id": "A30",
+      "requirement": "ActualN arithmetic/no fake dates",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/app-server/src/provenance.rs",
+          "line": 198,
+          "marker": "pub async fn page("
+        },
+        {
+          "path": "crates/app-server/src/provenance.rs",
+          "line": 157,
+          "marker": "fn coverage("
+        },
+        {
+          "path": "crates/app-server/src/lib.rs",
+          "line": 155,
+          "marker": "pub(crate) fn edge_json("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 744,
+          "marker": "async fn real_slice_renders_every_player"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 803,
+          "marker": "async fn historical_network_renders"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1160,
+          "marker": "async fn small_snapshots_keep_empty"
+        }
+      ],
+      "coverage_note": "Weight never converts appearance counts to dates."
+    },
+    {
+      "id": "A31",
+      "requirement": "Half-open dated/game proof truthful",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/app-server/src/provenance.rs",
+          "line": 198,
+          "marker": "pub async fn page("
+        },
+        {
+          "path": "crates/app-server/src/provenance.rs",
+          "line": 157,
+          "marker": "fn coverage("
+        },
+        {
+          "path": "crates/app-server/src/lib.rs",
+          "line": 155,
+          "marker": "pub(crate) fn edge_json("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 744,
+          "marker": "async fn real_slice_renders_every_player"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 803,
+          "marker": "async fn historical_network_renders"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1160,
+          "marker": "async fn small_snapshots_keep_empty"
+        }
+      ],
+      "coverage_note": "Evidence semantics unchanged."
+    },
+    {
+      "id": "A32",
+      "requirement": "Traceable original records/exclusions",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/app-server/src/provenance.rs",
+          "line": 198,
+          "marker": "pub async fn page("
+        },
+        {
+          "path": "crates/app-server/src/provenance.rs",
+          "line": 157,
+          "marker": "fn coverage("
+        },
+        {
+          "path": "crates/app-server/src/lib.rs",
+          "line": 155,
+          "marker": "pub(crate) fn edge_json("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 744,
+          "marker": "async fn real_slice_renders_every_player"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 803,
+          "marker": "async fn historical_network_renders"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1160,
+          "marker": "async fn small_snapshots_keep_empty"
+        }
+      ],
+      "coverage_note": "No source ingestion or provenance changes."
+    },
+    {
+      "id": "A33",
+      "requirement": "Visible incomplete coverage caveat",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/app-server/src/provenance.rs",
+          "line": 198,
+          "marker": "pub async fn page("
+        },
+        {
+          "path": "crates/app-server/src/provenance.rs",
+          "line": 157,
+          "marker": "fn coverage("
+        },
+        {
+          "path": "crates/app-server/src/lib.rs",
+          "line": 155,
+          "marker": "pub(crate) fn edge_json("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 744,
+          "marker": "async fn real_slice_renders_every_player"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 803,
+          "marker": "async fn historical_network_renders"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1160,
+          "marker": "async fn small_snapshots_keep_empty"
+        }
+      ],
+      "coverage_note": "No coverage certification implied by weights."
+    },
+    {
+      "id": "A34",
+      "requirement": "Unenhanced GET/no semantic credentials",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/app-server/src/graph_view.rs",
+          "line": 327,
+          "marker": "pub async fn page("
+        },
+        {
+          "path": "crates/app-server/src/lib.rs",
+          "line": 315,
+          "marker": "fn connection_response("
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/graph_view.rs",
+          "line": 369,
+          "marker": "async fn pair_get_form_returns_exact_chain"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 8,
+          "marker": "async fn the_graph_page_shows_every_fixture"
+        }
+      ],
+      "coverage_note": "Existing exact graph functionality independent of Jev."
+    },
+    {
+      "id": "A35",
+      "requirement": "Full graph error-free evidence+visual review",
+      "status": "covered",
+      "source_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 154,
+          "marker": "async fn whole_network_renders_desktop"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1211,
+          "marker": "async fn chain_framing_supersedes_animation"
+        }
+      ],
+      "assertion_references": [
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 154,
+          "marker": "async fn whole_network_renders_desktop"
+        },
+        {
+          "path": "crates/app-server/tests/browser_e2e.rs",
+          "line": 1211,
+          "marker": "async fn chain_framing_supersedes_animation"
+        }
+      ],
+      "coverage_note": "Repeated full graph interaction, expanded interruption regressions and final visual review are covered. The final full profile passes with matching source bytes."
+    }
+  ],
+  "snapshot": {
+    "audited_at_utc": "2026-10-15T01:16:09.011015+00:00",
+    "source_sha256": {
+      "crates/app-server/src/graph_view.rs": "00332e2e0fa9242069241bec6c175c16257be697c115d320351f354ef4eb47cb",
+      "crates/app-server/src/lib.rs": "a93f0c09880ab61f20392f000e6abeec42fbf0f0b6e551f2ac9ef77d61bac97b",
+      "crates/app-server/src/provenance.rs": "b30c5a111cb3ef5b77d872387cf460e0716e349535521b1193a2a2ff16581027",
+      "crates/app-server/tests/browser_e2e.rs": "444f2085649d2e32f47eab86ba888054bb909340e091074dad2e7778d15b9b8c",
+      "crates/app-server/tests/graph_view.rs": "414d5a1b0262972d00f87eaf9f943ceadc36909633a508c245a1f50d1b963432",
+      "crates/app-server/tests/visual_weights.rs": "41a4715c3719d94d12dc15adab5face67d7b2759742839e0fde6ff5cdc0d85ca",
+      "crates/canvas-view/src/browser.rs": "f1056819dade6e6ad116e714a716e59b2b76b70c12433af531d81d5321831e62",
+      "crates/canvas-view/src/browser/explorer.rs": "1dccbab5d0379e6d0274c991989abfe699e3c77aaee61d25bbeac7569aa6e792",
+      "crates/canvas-view/src/camera.rs": "ecd52f57ec89d5fc6044900c1c0b7e06e81c9e81bd14c333d249a273045bc101",
+      "crates/canvas-view/src/layout.rs": "0988188f89e2a02dac8e4615f060038ec151e060f3351a972213f58a15b89a7e",
+      "crates/canvas-view/src/layout/force.rs": "9ae8aa9f516af4b8a09e3c122f893703667252c443ed2e4c64ee03f58fd9f188",
+      "crates/canvas-view/src/visual.rs": "1513e8eb03a37415ebf8f177092363d7de8b65cef09e790cd5b014f8523addd6",
+      "crates/canvas-view/tests/readability.rs": "337de565e3e239a7e5a11615c72c0e0017691a68f3ed237eb4eb833dbadb2df3",
+      "docs/specs/nba-graph-readability-scaling.md": "e03f20e6091c77182ecfdc50384aa47d7d0cafe10e075591eced943c3abe8f1e"
+    }
+  }
+}

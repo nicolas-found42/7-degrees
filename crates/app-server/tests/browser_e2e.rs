@@ -71,117 +71,82 @@ async fn the_graph_page_shows_every_fixture_player_and_relationship_and_supports
 
 // Actual pointer dispatch verifies that the renderer and hit-test share the spline.
 fn click_visible_bundle(b: &mut Browser, payload: &canvas_view::GraphPayload, focus: &str) {
-    use canvas_view::{
-        layout::compute_layout,
-        visual::{franchise_trunks, quadratic},
-    };
-    let points = compute_layout(
-        &payload.nodes,
-        &payload.links,
-        canvas_view::LayoutMode::EraLane,
-        focus,
-        &[],
-        true,
-        &std::collections::HashMap::new(),
-    );
-    let curves = franchise_trunks(
-        &payload.nodes,
-        &payload.links,
-        &points,
-        focus,
-        &vec![true; points.len()],
-        false,
-    );
-    assert!(b.attr("data-bundled-edges").parse::<usize>().unwrap() > 0);
+    let curves: Vec<(String, String, canvas_view::visual::Curve)> =
+        serde_json::from_str(&b.attr("data-bundles")).unwrap();
+    assert!(!curves.is_empty(), "visible franchise group must bundle");
     b.call(json!({"op":"focus","selector":"#graph-canvas"}));
     let bounds = b.call(json!({"op":"box","selector":"#graph-canvas"}));
     let (w, h) = (
         bounds["width"].as_f64().unwrap(),
         bounds["height"].as_f64().unwrap(),
     );
-    let (scale, x, y) = (
-        b.attr("data-zoom").parse::<f64>().unwrap(),
-        b.attr("data-pan-x").parse::<f64>().unwrap(),
-        b.attr("data-pan-y").parse::<f64>().unwrap(),
-    );
-    let screen = |p: (f64, f64)| {
-        (
-            (p.0 * scale + x) * w / 1000.0,
-            (p.1 * scale + y) * h / 600.0,
-        )
-    };
-    let indices: std::collections::HashMap<_, _> = payload
-        .nodes
-        .iter()
-        .enumerate()
-        .map(|(i, n)| (n.id.as_str(), i))
-        .collect();
-    let direct: Vec<_> = payload
-        .links
-        .iter()
-        .enumerate()
-        .filter(|(_, e)| e.from == focus || e.to == focus)
-        .map(|(i, e)| {
-            let curve = curves.get(&i).copied().unwrap_or_else(|| {
-                quadratic(
-                    points[indices[e.from.as_str()]],
-                    points[indices[e.to.as_str()]],
-                )
-            });
-            (i, curve.map(screen))
-        })
-        .collect();
-    let mut chosen = None;
-    for &(i, curve) in &direct {
-        if !curves.contains_key(&i) {
-            continue;
+    for samples in [[0.45, 0.55, 0.7], [0.85, 0.93, 0.97]] {
+        let mut chosen = None;
+        'pick: for (from, to, curve) in &curves {
+            for t in samples {
+                let p = curve.point(t);
+                if p.0 < 20.0 || p.0 > w - 20.0 || p.1 < 40.0 || p.1 > h - 110.0 {
+                    continue;
+                }
+                let (px, py) = (
+                    bounds["x"].as_f64().unwrap() + p.0,
+                    bounds["y"].as_f64().unwrap() + p.1,
+                );
+                b.call(json!({"op":"mouse","action":"move","x":px,"y":py}));
+                if b.attr("data-hovered-edge") == format!("{from}|{to}") {
+                    chosen = Some((from, to, px, py));
+                    break 'pick;
+                }
+            }
         }
-        for t in [0.55, 0.7, 0.85, 0.93] {
-            let p = curve.point(t);
-            if p.0 < 20.0 || p.0 > w - 20.0 || p.1 < 40.0 || p.1 > h - 100.0 {
-                continue;
-            }
-            if points.iter().any(|&q| {
-                let q = screen(q);
-                (q.0 - p.0).hypot(q.1 - p.1) < 12.0
-            }) {
-                continue;
-            }
-            if direct
-                .iter()
-                .any(|&(other, c)| other != i && c.distance(p) < 1.0)
-            {
-                continue;
-            }
-            chosen = Some((i, p));
-            break;
+        let (from, to, px, py) =
+            chosen.expect("actual bundled curve has a distinct pointer target");
+        let other = if from == focus { to } else { from };
+        assert_eq!(
+            b.call(json!({"op":"attribute","selector":"#graph-tooltip","name":"data-player"})),
+            *other
+        );
+        assert!(
+            b.text("#graph-tooltip")
+                .contains(&payload.nodes.iter().find(|n| n.id == *other).unwrap().name)
+        );
+        if w <= 640.0 {
+            b.call(json!({"op":"touch","type":"touchStart","points":[{"x":px,"y":py}]}));
+            b.call(json!({"op":"touch","type":"touchEnd"}));
+        } else {
+            b.call(json!({"op":"mouse","action":"click","x":px,"y":py}));
         }
-        if chosen.is_some() {
-            break;
+        b.call(json!({"op":"ready","selector":"#drawer-content .proof-card >> nth=0"}));
+        assert!(
+            b.call(json!({"op":"url"}))
+                .as_str()
+                .unwrap()
+                .ends_with(&format!("/edge?from={from}&to={to}"))
+        );
+        screenshot(b, "maravich-bundled-evidence.png", None);
+        b.click("Close evidence");
+    }
+}
+
+fn assert_ranked_direct_labels(b: &mut Browser) {
+    let labels: Vec<serde_json::Value> = serde_json::from_str(&b.attr("data-label-items")).unwrap();
+    let mut weights = Vec::new();
+    let mut saw_context = false;
+    for label in labels {
+        match label["priority"].as_str().unwrap() {
+            "DirectTeammate" => {
+                assert!(!saw_context, "direct labels must precede context");
+                weights.push(label["weight"].as_f64().unwrap());
+            }
+            "Context" => saw_context = true,
+            _ => {}
         }
     }
-    let (i, p) = chosen.expect("visible distinct bundled spline point");
-    let e = &payload.links[i];
-    let (px, py) = (
-        bounds["x"].as_f64().unwrap() + p.0,
-        bounds["y"].as_f64().unwrap() + p.1,
-    );
-    b.call(json!({"op":"mouse","action":"move","x":px,"y":py}));
-    let other = if e.from == focus { &e.to } else { &e.from };
     assert!(
-        b.text("#graph-tooltip")
-            .contains(&payload.nodes[indices[other.as_str()]].name)
+        !weights.is_empty(),
+        "focused Meso must retain direct-teammate labels"
     );
-    b.call(json!({"op":"mouse","action":"click","x":px,"y":py}));
-    b.call(json!({"op":"ready","selector":"#drawer-content .proof-card >> nth=0"}));
-    assert!(
-        b.call(json!({"op":"url"}))
-            .as_str()
-            .unwrap()
-            .ends_with(&format!("/edge?from={}&to={}", e.from, e.to))
-    );
-    screenshot(b, "maravich-bundled-evidence.png", None);
-    b.click("Close evidence");
+    assert!(weights.windows(2).all(|p| p[0] >= p[1]));
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
@@ -193,7 +158,7 @@ async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer(
     )
     .await;
     let mut b = Browser::start();
-    b.call(json!({"op":"launch"}));
+    b.call(json!({"op":"launch","touch":true}));
     b.call(json!({"op":"goto","url":server.url}));
     b.ready();
     assert_eq!(b.attr("data-players"), "5106");
@@ -214,6 +179,7 @@ async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer(
         .count();
     assert!(backbone < payload.links.len() / 4);
     assert_eq!(b.attr("data-tier"), "macro");
+    assert_eq!(b.attr("data-non-backbone-edges"), "0");
     assert!(b.attr("data-background-edges").parse::<usize>().unwrap() <= backbone);
     let overview_ms = b.attr("data-draw-ms");
     println!(
@@ -226,17 +192,27 @@ async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer(
         b.click("Zoom in");
     }
     assert_eq!(b.attr("data-tier"), "meso");
+    assert_eq!(b.attr("data-non-backbone-edges"), "0");
     assert!(b.attr("data-background-edges").parse::<usize>().unwrap() <= backbone);
     while b.attr("data-tier") != "micro" {
         b.click("Zoom in");
     }
-    assert!(b.attr("data-background-edges").parse::<usize>().unwrap() > 0);
+    assert!(b.attr("data-non-backbone-edges").parse::<usize>().unwrap() > 0);
     println!(
         "Micro: {} local drawn background edges; {} ms",
         b.attr("data-background-edges"),
         b.attr("data-draw-ms")
     );
     b.click("Fit whole network");
+    b.click("Force-directed layout");
+    b.call(json!({"op":"settled"}));
+    screenshot(
+        &mut b,
+        "all-player-force-network.png",
+        Some("#graph-canvas"),
+    );
+    b.click("Era lanes layout");
+    b.call(json!({"op":"settled"}));
     // The picker keeps every player selectable; a choice reports the selection.
     assert!(b.text("#graph-payload").contains("Pete Maravich"));
     b.call(json!({"op":"select","selector":"#graph-player","value":"maravpe01"}));
@@ -248,7 +224,18 @@ async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer(
         ("Concentric rings layout", "concentric"),
         ("Force-directed layout", "force"),
     ] {
-        b.click(button);
+        if mode == "concentric" {
+            let tap = b
+                .call(json!({"op":"pointer-at-label","player":"*","control":"#layout-concentric"}));
+            assert_eq!(
+                tap["selected"], tap["id"],
+                "first-frame spatial picking must follow displayed points"
+            );
+            b.call(json!({"op":"settled"}));
+            b.call(json!({"op":"select","selector":"#graph-player","value":"maravpe01"}));
+        } else {
+            b.click(button);
+        }
         b.call(json!({"op":"settled"}));
         if mode == "concentric" {
             assert_eq!(
@@ -270,6 +257,28 @@ async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer(
             Some("#graph-canvas"),
         );
         b.click("Zoom to selected player");
+        if mode == "force" {
+            click_visible_bundle(&mut b, &payload, "maravpe01");
+        }
+        b.click("Zoom out");
+        b.click("Zoom out");
+        assert_eq!(b.attr("data-tier"), "meso");
+        assert_ranked_direct_labels(&mut b);
+        b.click("Zoom to selected player");
+        let signature = b.attr("data-layout-signature");
+        assert_eq!(signature.len(), 16);
+        let labels = b.attr("data-labels");
+        b.call(json!({"op":"goto","url":format!("{}/?from=maravpe01",server.url)}));
+        b.ready();
+        b.click(button);
+        b.call(json!({"op":"settled"}));
+        b.click("Fit whole network");
+        b.click("Zoom to selected player");
+        assert_eq!(signature, b.attr("data-layout-signature"));
+        assert_eq!(labels, b.attr("data-labels"));
+        let frame = b.attr("data-frame");
+        b.call(json!({"op":"network-idle"}));
+        assert_eq!(frame, b.attr("data-frame"), "no idle physics frames");
         screenshot(
             &mut b,
             &format!("maravich-{mode}-labels.png"),
@@ -279,6 +288,10 @@ async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer(
     b.call(json!({"op":"select","selector":"#graph-target","value":"goodrga01"}));
     b.call(json!({"op":"ready","selector":"#graph-chain[data-state=connected]"}));
     assert!(b.text("#graph-chain").contains("degree 1"));
+    b.click("Zoom to selected player");
+    b.click("Zoom out");
+    b.click("Zoom out");
+    assert_ranked_direct_labels(&mut b);
     b.click("Fit whole network");
     b.click("Show ego network only (1–2 hops)");
     while b.attr("data-tier") != "macro" {
@@ -321,9 +334,68 @@ async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer(
     assert_eq!(b.attr("data-tier"), "meso");
     assert_eq!(b.attr("data-label-cap"), "12");
     assert!(b.attr("data-ordinary-labels").parse::<usize>().unwrap() <= 12);
+    for button in ["Era lanes layout", "Force-directed layout"] {
+        b.click(button);
+        b.call(json!({"op":"settled"}));
+        b.click("Fit whole network");
+        b.click("Zoom to selected player");
+        click_visible_bundle(&mut b, &payload, "maravpe01");
+    }
     b.click("Concentric rings layout");
     assert_eq!(b.attr("data-transition"), "settled");
     screenshot(&mut b, "maravich-phone-sectors.png", Some("#graph-canvas"));
+    let center: Vec<f64> = serde_json::from_str(&b.attr("data-focus-point")).unwrap();
+    let sectors: Vec<(f64, f64)> = serde_json::from_str(&b.attr("data-sector-geometry")).unwrap();
+    assert_eq!(sectors.len(), 3);
+    let radii: Vec<_> = sectors
+        .iter()
+        .map(|p| (p.0 - center[0]).hypot(p.1 - center[1]))
+        .collect();
+    assert!(
+        radii.iter().copied().fold(0.0, f64::max)
+            - radii.iter().copied().fold(f64::INFINITY, f64::min)
+            < 0.1,
+        "phone rings must project uniformly"
+    );
+    b.call(json!({"op":"select","selector":"#graph-target","value":"goodrga01"}));
+    b.call(json!({"op":"ready","selector":"#graph-chain[data-state=connected]"}));
+    let labels: Vec<serde_json::Value> = serde_json::from_str(&b.attr("data-label-items")).unwrap();
+    let badge = labels.iter().find(|l| l["id"] == "goodrga01").unwrap();
+    let rect = &badge["bounds"];
+    b.call(json!({"op":"focus","selector":"#graph-canvas"}));
+    let canvas = b.call(json!({"op":"box","selector":"#graph-canvas"}));
+    let x = canvas["x"].as_f64().unwrap() + rect["left"].as_f64().unwrap() + 8.0;
+    let y = canvas["y"].as_f64().unwrap() + rect["bottom"].as_f64().unwrap() + 8.0;
+    b.call(json!({"op":"touch","type":"touchStart","points":[{"x":x,"y":y}]}));
+    b.call(json!({"op":"touch","type":"touchEnd"}));
+    b.call(json!({"op":"ready","selector":"#graph-selection[data-player=goodrga01]"}));
+    assert_eq!(
+        b.call(json!({"op":"attribute","selector":"#graph-player","name":"data-selected-id"})),
+        "goodrga01"
+    );
+    // A six-hop real chain includes four nodes beyond the ordinary ego cutoff.
+    b.call(json!({"op":"viewport","width":1200,"height":1000}));
+    b.call(json!({"op":"goto","url":format!("{}/?from=russebi01&to=edwaran01",server.url)}));
+    b.ready();
+    let chain: canvas_view::GraphPayload = serde_json::from_str(&b.text("#graph-payload")).unwrap();
+    assert_eq!(chain.path.len(), 7);
+    b.click("Concentric rings layout");
+    b.call(json!({"op":"settled"}));
+    while b.attr("data-tier") != "macro" {
+        b.click("Zoom out");
+    }
+    for i in 0..8 {
+        b.call(json!({"op":"click","selector":format!("#era-{i}")}));
+    }
+    assert_eq!(b.attr("data-chain-edges"), "6");
+    let labels = b.attr("data-labels");
+    assert!(
+        chain
+            .path
+            .iter()
+            .all(|id| labels.split(',').any(|label| label == id))
+    );
+    screenshot(&mut b, "six-hop-macro-ego-chain.png", Some("#graph-canvas"));
     assert_eq!(b.call(json!({"op":"errors"})), json!([]));
 }
 
@@ -759,8 +831,11 @@ async fn explorer_pair_filters_drawer_history_and_mobile_are_reversible() {
     b.call(json!({"op":"launch"}));
     b.call(json!({"op":"goto","url":server.url}));
     b.ready();
+    b.call(json!({"op":"select","selector":"#graph-target","value":"C"}));
     b.click("Concentric rings layout");
     b.call(json!({"op":"settled"}));
+    b.call(json!({"op":"ready","selector":"#graph-chain[data-state=connected]"}));
+    assert!(b.text("#graph-chain").contains("degree 1"));
     assert_eq!(b.attr("data-layout"), "concentric");
     assert!(
         b.text("#canvas-status")
@@ -1010,6 +1085,13 @@ async fn touch_pan_pinch_cancel_and_minimap_drag_keep_selection_stable() {
     b.call(json!({"op":"touch","type":"touchMove","points":[{"id":1,"x":x,"y":y+20.0}]}));
     assert_ne!(b.attr("data-pan-x"), pan);
     b.call(json!({"op":"touch","type":"touchStart","points":[{"id":1,"x":x,"y":y+20.0},{"id":2,"x":x+40.0,"y":y+20.0}]}));
+    let before_rotation = b.attr("data-zoom").parse::<f64>().unwrap();
+    b.call(json!({"op":"touch","type":"touchMove","points":[{"id":1,"x":x+20.0,"y":y},{"id":2,"x":x+20.0,"y":y+40.0}]}));
+    assert!(
+        (b.attr("data-zoom").parse::<f64>().unwrap() - before_rotation).abs() < 0.001,
+        "rotating a fixed CSS separation must not zoom"
+    );
+    b.call(json!({"op":"touch","type":"touchMove","points":[{"id":1,"x":x,"y":y+20.0},{"id":2,"x":x+40.0,"y":y+20.0}]}));
     b.call(json!({"op":"touch","type":"touchMove","points":[{"id":1,"x":x-30.0,"y":y+20.0},{"id":2,"x":x+70.0,"y":y+20.0}]}));
     b.call(json!({"op":"ready","selector":format!("#canvas-status:not([data-zoom=\"{zoom}\"])")}));
     assert_ne!(b.attr("data-zoom"), zoom);
@@ -1160,6 +1242,137 @@ async fn chain_framing_supersedes_animation_without_live_region_churn() {
     );
     assert_eq!(b.attr("data-layout"), "concentric");
     assert_eq!(b.attr("data-transition"), "settled");
+    b.call(json!({"op":"goto","url":format!("{}/graph?from=A",server.url)}));
+    b.ready();
+    b.click("Force-directed layout");
+    b.call(json!({"op":"settled"}));
+    b.click("Concentric rings layout");
+    let tap = b.call(json!({"op":"pointer-at-label","player":"B"}));
+    assert_eq!(tap["transition"], "running");
+    assert_eq!(
+        tap["selected"], "B",
+        "tap must use the displayed node position"
+    );
+    b.call(json!({"op":"settled"}));
+    b.call(json!({"op":"select","selector":"#graph-player","value":"A"}));
+    assert_eq!(
+        b.attr("data-transition"),
+        "running",
+        "focal changes animate"
+    );
+    b.call(json!({"op":"settled"}));
+    let final_labels = b.attr("data-label-items");
+    b.click("Force-directed layout");
+    b.call(json!({"op":"settled"}));
+    b.click("Concentric rings layout");
+    let canvas = b.call(json!({"op":"box","selector":"#graph-canvas"}));
+    let x = canvas["x"].as_f64().unwrap() + canvas["width"].as_f64().unwrap() - 5.0;
+    let y = canvas["y"].as_f64().unwrap() + 5.0;
+    for event in ["pointerdown", "pointerup"] {
+        b.call(
+            json!({"op":"pointer","event":event,"selector":"#graph-canvas","id":20,"x":x,"y":y}),
+        );
+    }
+    assert_eq!(
+        b.attr("data-label-items"),
+        final_labels,
+        "empty taps finish deterministic geometry"
+    );
+    b.call(json!({"op":"intercept","pattern":"**/api/connection?*","delay":1500}));
+    b.call(json!({"op":"select","selector":"#graph-target","value":"C"}));
+    b.call(json!({"op":"custom-event","name":"explorer-evidence","detail":"/edge?from=A&to=B"}));
+    b.call(json!({"op":"ready","selector":"#drawer-content .proof-card >> nth=0"}));
+    b.call(json!({"op":"ready","selector":"#graph-chain[data-state=connected]"}));
+    let canvas = b.call(json!({"op":"box","selector":"#graph-canvas"}));
+    let drawer = b.call(json!({"op":"box","selector":"#edge-evidence-drawer"}));
+    let right = drawer["x"].as_f64().unwrap() - canvas["x"].as_f64().unwrap();
+    let labels: Vec<serde_json::Value> = serde_json::from_str(&b.attr("data-label-items")).unwrap();
+    for id in ["A", "B", "C"] {
+        let label = labels.iter().find(|l| l["id"] == id).unwrap();
+        assert!(
+            label["anchor"][0].as_f64().unwrap() < right - 24.0,
+            "chain node {id} must frame beside the open drawer"
+        );
+        assert!(
+            label["bounds"]["right"].as_f64().unwrap() < right,
+            "chain badge {id} must avoid the drawer"
+        );
+    }
+    screenshot(&mut b, "chain-beside-open-drawer.png", None);
+    b.click("Close evidence");
+    b.call(json!({"op":"sequence","selectors":["#layout-force","[data-center-player='B']"]}));
+    let labels: Vec<serde_json::Value> = serde_json::from_str(&b.attr("data-label-items")).unwrap();
+    let b_label = labels.iter().find(|l| l["id"] == "B").unwrap();
+    assert!(
+        (b_label["anchor"][0].as_f64().unwrap() - canvas["width"].as_f64().unwrap() * 0.5).abs()
+            < 0.1
+    );
+    assert!(
+        (b_label["anchor"][1].as_f64().unwrap()
+            - canvas["height"].as_f64().unwrap() * 265.0 / 600.0)
+            .abs()
+            < 0.1,
+        "breadcrumb centers the settled player during interrupted motion"
+    );
+    b.click("Era lanes layout");
+    b.call(json!({"op":"focus","selector":"#graph-canvas"}));
+    b.call(json!({"op":"key","key":"Shift"}));
+    b.call(json!({"op":"settled"}));
+    assert_eq!(
+        b.attr("data-transition"),
+        "settled",
+        "unrelated keys keep animation alive"
+    );
+    b.call(json!({"op":"sequence","selectors":["#layout-concentric","#ego-toggle"]}));
+    let toggled_camera = (
+        b.attr("data-pan-x"),
+        b.attr("data-pan-y"),
+        b.attr("data-zoom"),
+    );
+    b.call(json!({"op":"settled"}));
+    assert_eq!(
+        (
+            b.attr("data-pan-x"),
+            b.attr("data-pan-y"),
+            b.attr("data-zoom")
+        ),
+        toggled_camera,
+        "ego fit supersedes the pending camera transition"
+    );
+    b.click("Era lanes layout");
+    b.call(json!({"op":"settled"}));
+    for _ in 0..15 {
+        b.click("Zoom in");
+    }
+    let navigation =
+        b.call(json!({"op":"minimap-press","control":"#layout-force","fx":0.95,"fy":0.95}));
+    assert_eq!(
+        navigation["pressed"], navigation["stationary"],
+        "stationary minimap drag must not jump after settlement"
+    );
+    assert_ne!(navigation["stationary"], navigation["moved"]);
+    let world = &navigation["world"];
+    let scale = navigation["pressed"][2]
+        .as_str()
+        .unwrap()
+        .parse::<f64>()
+        .unwrap();
+    let pan_x = navigation["pressed"][0]
+        .as_str()
+        .unwrap()
+        .parse::<f64>()
+        .unwrap();
+    let pan_y = navigation["pressed"][1]
+        .as_str()
+        .unwrap()
+        .parse::<f64>()
+        .unwrap();
+    let aspect = 0.6 * canvas["width"].as_f64().unwrap() / canvas["height"].as_f64().unwrap();
+    assert!(
+        (pan_x - (500.0 - world[0].as_f64().unwrap() * scale)).abs() < 0.02,
+        "minimap navigation interprets the displayed projection"
+    );
+    assert!((pan_y - (300.0 - world[1].as_f64().unwrap() * scale * aspect)).abs() < 0.02);
     assert_eq!(b.call(json!({"op":"errors"})), json!([]));
 }
 

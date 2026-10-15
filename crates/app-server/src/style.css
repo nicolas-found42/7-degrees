@@ -144,7 +144,7 @@ button:disabled { opacity: .5; cursor: default; }
     .graph-view { padding: .5rem; }
     #pair-form { flex-direction: column; align-items: stretch; }
     .picker { flex: 0 0 auto; width: 100%; }
-    .camera-controls { max-width: 155px; padding: 2px; }
+    .camera-controls { display: grid; grid-template-columns: repeat(4, 44px); max-width: none; padding: 2px; }
     .camera-controls button { min-width: 44px; font-size: 0; padding: .2rem; }
     .camera-controls button::before { font-size: 16px; }
     #zoom-in::before { content: '+'; } #zoom-out::before { content: '−'; }

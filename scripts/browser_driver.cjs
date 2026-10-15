@@ -92,6 +92,39 @@ async function command(c) {
     case 'settled': await page.waitForFunction(()=>document.querySelector('#canvas-status')?.dataset.transition!=='running'); return true;
     case 'touch': if(!cdp) cdp=await page.context().newCDPSession(page); await cdp.send('Input.dispatchTouchEvent',{type:c.type,touchPoints:c.points||[]}); return true;
     case 'pointer': await target().dispatchEvent(c.event,{pointerId:c.id,clientX:c.x,clientY:c.y,pointerType:'touch',button:0,buttons:1}); return true;
+    case 'pointer-at-label': return page.evaluate(({player:id,control})=>{
+      if(control) document.querySelector(control).click();
+      const status=document.querySelector('#canvas-status');
+      const canvas=document.querySelector('#graph-canvas');
+      const label=JSON.parse(status.dataset.labelItems).find(l=>id==='*' ? l.priority!=='Important' && l.alpha>0 : l.id===id);
+      if(!label) throw new Error('No displayed label for '+id);
+      const box=canvas.getBoundingClientRect();
+      const transition=status.dataset.transition;
+      const camera=[status.dataset.panX,status.dataset.panY,status.dataset.zoom];
+      const pointer={pointerId:19,clientX:box.left+label.anchor[0],clientY:box.top+label.anchor[1],pointerType:'mouse',button:0};
+      canvas.dispatchEvent(new PointerEvent('pointerdown',pointer));
+      canvas.dispatchEvent(new PointerEvent('pointerup',pointer));
+      return {transition,camera,id:label.id,selected:document.querySelector('#graph-player').dataset.selectedId};
+    },c);
+    case 'minimap-press': return page.evaluate(({control,fx,fy})=>{
+      if(control) document.querySelector(control).click();
+      const map=document.querySelector('#graph-minimap'),box=map.getBoundingClientRect();
+      const bounds=JSON.parse(map.dataset.worldBounds);
+      const pointer={pointerId:21,clientX:Math.round(box.left+(2+fx*196)/200*box.width),clientY:Math.round(box.top+(2+fy*116)/120*box.height),pointerType:'mouse',button:0};
+      const actualX=((pointer.clientX-box.left)/box.width*200-2)/196;
+      const actualY=((pointer.clientY-box.top)/box.height*120-2)/116;
+      const world=[bounds[0]+actualX*Math.max(1,bounds[2]-bounds[0]),bounds[1]+actualY*Math.max(1,bounds[3]-bounds[1])];
+      const status=document.querySelector('#canvas-status');
+      const camera=()=>[status.dataset.panX,status.dataset.panY,status.dataset.zoom];
+      map.dispatchEvent(new PointerEvent('pointerdown',pointer));
+      const pressed=camera();
+      map.dispatchEvent(new PointerEvent('pointermove',{...pointer,buttons:1}));
+      const stationary=camera();
+      map.dispatchEvent(new PointerEvent('pointermove',{...pointer,clientX:pointer.clientX+3,clientY:pointer.clientY+2,buttons:1}));
+      const moved=camera();
+      map.dispatchEvent(new PointerEvent('pointerup',pointer));
+      return {world,pressed,stationary,moved};
+    },c);
     case 'intercept': {
       await page.route(c.pattern,async route=>{
         if(c.delay) await new Promise(resolve=>setTimeout(resolve,c.delay));
@@ -119,6 +152,7 @@ async function command(c) {
     case 'canvas': return target().evaluate(canvas=>canvas.toDataURL());
     case 'screenshot': if(c.selector) await target().screenshot({path:c.path}); else await page.screenshot({path:c.path,fullPage:true}); return true;
     case 'event-start': await page.evaluate(name => { window.browserEvents = []; document.addEventListener(name, event => window.browserEvents.push(event.detail)); }, c.name); return true;
+    case 'custom-event': await page.evaluate(({name,detail})=>document.dispatchEvent(new CustomEvent(name,{detail})),c); return true;
     case 'events': return page.evaluate(() => window.browserEvents);
     case 'response-contains':
       if (!captureResponses) throw new Error('Launch with captureResponses:true before testing response contents');

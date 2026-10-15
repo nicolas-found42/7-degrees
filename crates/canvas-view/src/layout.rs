@@ -5,6 +5,7 @@
 
 use crate::{GraphLink, GraphNode};
 use std::collections::{BTreeMap, HashMap};
+mod force;
 
 /// Layout mode selection matching G6-style layouts.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
@@ -116,6 +117,26 @@ fn compute_concentric_layout(
 
     let (groups, weights) = focus_groups(nodes, links, focus, hop_distances);
     let sectors = concentric_sectors(links, focus);
+    let mut weighted = rings.get(&1).cloned().unwrap_or_default();
+    weighted.sort_by(|&a, &b| {
+        weights
+            .get(nodes[b].id.as_str())
+            .copied()
+            .unwrap_or(0.1)
+            .total_cmp(&weights.get(nodes[a].id.as_str()).copied().unwrap_or(0.1))
+            .then_with(|| nodes[a].debut_season.cmp(&nodes[b].debut_season))
+            .then_with(|| nodes[a].id.cmp(&nodes[b].id))
+    });
+    let ranks: HashMap<_, _> = weighted
+        .iter()
+        .enumerate()
+        .map(|(rank, &i)| {
+            (
+                i,
+                rank as f64 / weighted.len().saturating_sub(1).max(1) as f64,
+            )
+        })
+        .collect();
     for (dist, indices) in &mut rings {
         if *dist == 0 {
             continue;
@@ -143,7 +164,7 @@ fn compute_concentric_layout(
         for (team, members) in grouped {
             for (k, &i) in members.iter().enumerate() {
                 let fraction = if *dist == 1 {
-                    1.0 - (weights.get(nodes[i].id.as_str()).copied().unwrap_or(0.1) - 0.1) / 0.9
+                    ranks[&i]
                 } else {
                     (k as f64 * 0.618033988749895).fract()
                 };
@@ -276,85 +297,7 @@ fn compute_force_layout(
         return compute_path_neighborhood_layout(nodes, focus, path);
     }
 
-    // Start with era-lane coordinates as initial positions
-    let mut coords = compute_era_lane_layout(nodes);
-
-    let id_to_index: HashMap<&str, usize> = nodes
-        .iter()
-        .enumerate()
-        .map(|(i, n)| (n.id.as_str(), i))
-        .collect();
-
-    let mut indexed_links: Vec<_> = links
-        .iter()
-        .filter_map(|l| {
-            let (a, b) = (
-                *id_to_index.get(l.from.as_str())?,
-                *id_to_index.get(l.to.as_str())?,
-            );
-            (a != b).then_some((a, b, l.weight.clamp(0.1, 1.0)))
-        })
-        .collect();
-    indexed_links.sort_by_key(|&(a, b, _)| (nodes[a].id.as_str(), nodes[b].id.as_str()));
-    let mut counts = vec![0; nodes.len()];
-    for &(a, b, _) in &indexed_links {
-        counts[a] += 1;
-        counts[b] += 1;
-    }
-    for p in &mut coords {
-        p.0 *= 0.4;
-        p.1 *= 0.4;
-    }
-    // Bounded weighted relaxation. Local repulsion uses a grid, not all node pairs.
-    for _ in 0..240 {
-        let mut deltas = vec![(0.0_f64, 0.0_f64); nodes.len()];
-        for &(a, b, weight) in &indexed_links {
-            let (dx, dy) = (coords[b].0 - coords[a].0, coords[b].1 - coords[a].1);
-            let distance = dx.hypot(dy).max(1.0);
-            let force = (distance - (45.0 + 100.0 * (1.0 - weight))) * 1.2 * weight.powi(3);
-            let (fx, fy) = (dx / distance * force, dy / distance * force);
-            deltas[a].0 += fx / (counts[a] + 1) as f64;
-            deltas[a].1 += fy / (counts[a] + 1) as f64;
-            deltas[b].0 -= fx / (counts[b] + 1) as f64;
-            deltas[b].1 -= fy / (counts[b] + 1) as f64;
-        }
-        let mut grid: HashMap<(i32, i32), Vec<usize>> = HashMap::new();
-        for (i, p) in coords.iter().enumerate() {
-            grid.entry(((p.0 / 120.0).floor() as i32, (p.1 / 120.0).floor() as i32))
-                .or_default()
-                .push(i);
-        }
-        for (i, &p) in coords.iter().enumerate() {
-            let (cx, cy) = ((p.0 / 120.0).floor() as i32, (p.1 / 120.0).floor() as i32);
-            for x in cx - 1..=cx + 1 {
-                for y in cy - 1..=cy + 1 {
-                    if let Some(others) = grid.get(&(x, y)) {
-                        for &j in others {
-                            if j <= i {
-                                continue;
-                            }
-                            let (dx, dy) = (p.0 - coords[j].0, p.1 - coords[j].1);
-                            let dist = dx.hypot(dy).max(1.0);
-                            if dist > 150.0 {
-                                continue;
-                            }
-                            let force = 32000.0 / (dist * dist + 100.0);
-                            let (fx, fy) = (dx / dist * force, dy / dist * force);
-                            deltas[i].0 += fx;
-                            deltas[i].1 += fy;
-                            deltas[j].0 -= fx;
-                            deltas[j].1 -= fy;
-                        }
-                    }
-                }
-            }
-        }
-        for (i, d) in deltas.into_iter().enumerate() {
-            coords[i].0 += d.0.clamp(-20.0, 20.0);
-            coords[i].1 += d.1.clamp(-20.0, 20.0);
-        }
-    }
-    coords
+    force::compute(nodes, links, compute_era_lane_layout(nodes))
 }
 
 /// Fallback / focused path layout for neighborhood or shortest-chain views.
@@ -497,6 +440,6 @@ mod tests {
         assert_eq!(coords.len(), 2);
         assert_eq!(coords[0], (0.0, 0.0));
         let r_b = coords[1].0.hypot(coords[1].1);
-        assert!((220.0..=460.0).contains(&r_b));
+        assert!((220.0 - 1e-9..=460.0 + 1e-9).contains(&r_b));
     }
 }

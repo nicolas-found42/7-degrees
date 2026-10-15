@@ -107,6 +107,20 @@ pub fn zoom_blend(scale: f64, boundary: f64, reduced: bool) -> f64 {
     let t = ((scale - boundary) / 0.08).clamp(0.0, 1.0);
     t * t * (3.0 - 2.0 * t)
 }
+/// Newly admitted ordinary labels cross-fade; important badges bypass this.
+pub fn label_zoom_alpha(scale: f64, rank: usize, landmark: bool, width: f64, reduced: bool) -> f64 {
+    let meso = if landmark {
+        1.0
+    } else {
+        zoom_blend(scale, 0.25, reduced)
+    };
+    meso * if rank >= ZoomTier::Meso.label_cap(width) {
+        zoom_blend(scale, 0.75, reduced)
+    } else {
+        1.0
+    }
+}
+
 /// Known debut decades each contribute their top 3%, at least one landmark.
 pub fn landmarks(nodes: &[GraphNode]) -> Vec<bool> {
     let mut decades: BTreeMap<u32, Vec<usize>> = BTreeMap::new();
@@ -130,7 +144,7 @@ pub fn landmarks(nodes: &[GraphNode]) -> Vec<bool> {
     result
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, serde::Serialize)]
 pub struct Rect {
     pub left: f64,
     pub top: f64,
@@ -178,6 +192,7 @@ pub struct PlacedLabel {
 }
 #[derive(Default)]
 struct Occupancy {
+    occupied: Vec<Rect>,
     cells: HashMap<(i32, i32), Vec<Rect>>,
 }
 impl Occupancy {
@@ -191,6 +206,7 @@ impl Occupancy {
         (x0..=x1).flat_map(move |x| (y0..=y1).map(move |y| (x, y)))
     }
     fn insert(&mut self, b: Rect) {
+        self.occupied.push(b);
         for c in Self::cells(b) {
             self.cells.entry(c).or_default().push(b);
         }
@@ -245,21 +261,35 @@ pub fn place_labels(
             bottom: y + 6.0,
         };
         if c.priority == LabelPriority::Important {
-            // Try nearby rows first, then neighboring columns. Both searches
-            // are bounded by the screen size and share the padded occupancy grid.
-            'placement: for column in 0..=(width / (w + 28.0)).ceil() as usize {
-                for direction in [1.0, -1.0] {
-                    let candidate_x = clamp_x(c.point.0 + direction * column as f64 * (w + 28.0));
-                    for row in 0..=(height / 44.0).ceil() as usize {
-                        for direction in [1.0, -1.0] {
-                            let candidate_y =
-                                clamp_y(c.point.1 - 14.0 + direction * row as f64 * 44.0);
-                            if !occupancy.overlaps(bounds(candidate_x, candidate_y).padded()) {
-                                x = candidate_x;
-                                y = candidate_y;
-                                break 'placement;
-                            }
-                        }
+            let mut xs = vec![x, clamp_x(w / 2.0 + 4.0), clamp_x(width - w / 2.0 - 4.0)];
+            let mut ys = vec![y, 26.0, (height - 10.0).max(26.0)];
+            for r in &occupancy.occupied {
+                xs.extend([
+                    clamp_x(r.left - w / 2.0 - 14.0),
+                    clamp_x(r.right + w / 2.0 + 14.0),
+                ]);
+                ys.extend([clamp_y(r.top - 14.0), clamp_y(r.bottom + 28.0)]);
+            }
+            xs.sort_by(|a, b| {
+                (a - x)
+                    .abs()
+                    .total_cmp(&(b - x).abs())
+                    .then_with(|| a.total_cmp(b))
+            });
+            xs.dedup();
+            ys.sort_by(|a, b| {
+                (a - y)
+                    .abs()
+                    .total_cmp(&(b - y).abs())
+                    .then_with(|| a.total_cmp(b))
+            });
+            ys.dedup();
+            'placement: for &candidate_x in &xs {
+                for &candidate_y in &ys {
+                    if !occupancy.overlaps(bounds(candidate_x, candidate_y).padded()) {
+                        x = candidate_x;
+                        y = candidate_y;
+                        break 'placement;
                     }
                 }
             }
@@ -283,7 +313,7 @@ pub fn place_labels(
 }
 
 pub type Point = (f64, f64);
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, serde::Serialize, serde::Deserialize)]
 pub enum Curve {
     Line(Point, Point),
     Quadratic(Point, Point, Point),
@@ -312,22 +342,49 @@ impl Curve {
         }
     }
     pub fn distance(self, p: Point) -> f64 {
-        let mut best = f64::INFINITY;
-        let mut previous = self.point(0.0);
-        for i in 1..=96 {
-            let q = self.point(i as f64 / 96.0);
-            let v = (q.0 - previous.0, q.1 - previous.1);
-            let length = v.0 * v.0 + v.1 * v.1;
-            let t = if length == 0.0 {
+        fn midpoint(a: Point, b: Point) -> Point {
+            ((a.0 + b.0) / 2.0, (a.1 + b.1) / 2.0)
+        }
+        fn line_distance(p: Point, a: Point, b: Point) -> f64 {
+            let v = (b.0 - a.0, b.1 - a.1);
+            let squared = v.0 * v.0 + v.1 * v.1;
+            let t = if squared == 0.0 {
                 0.0
             } else {
-                ((p.0 - previous.0) * v.0 + (p.1 - previous.1) * v.1) / length
+                ((p.0 - a.0) * v.0 + (p.1 - a.1) * v.1) / squared
             }
             .clamp(0.0, 1.0);
-            best = best.min((p.0 - previous.0 - t * v.0).hypot(p.1 - previous.1 - t * v.1));
-            previous = q;
+            (p.0 - a.0 - t * v.0).hypot(p.1 - a.1 - t * v.1)
         }
-        best
+        fn visit(curve: Curve, p: Point, depth: usize, best: &mut f64) {
+            match curve {
+                Curve::Line(a, b) => *best = best.min(line_distance(p, a, b)),
+                Curve::Quadratic(a, c, b) => {
+                    if depth == 16 || line_distance(c, a, b) < 0.2 {
+                        *best = best.min(line_distance(p, a, b));
+                        return;
+                    }
+                    let (ac, cb) = (midpoint(a, c), midpoint(c, b));
+                    let m = midpoint(ac, cb);
+                    visit(Curve::Quadratic(a, ac, m), p, depth + 1, best);
+                    visit(Curve::Quadratic(m, cb, b), p, depth + 1, best);
+                }
+                Curve::Cubic(a, c, d, b) => {
+                    if depth == 16 || line_distance(c, a, b).max(line_distance(d, a, b)) < 0.2 {
+                        *best = best.min(line_distance(p, a, b));
+                        return;
+                    }
+                    let (ac, cd, db) = (midpoint(a, c), midpoint(c, d), midpoint(d, b));
+                    let (left, right) = (midpoint(ac, cd), midpoint(cd, db));
+                    let m = midpoint(left, right);
+                    visit(Curve::Cubic(a, ac, left, m), p, depth + 1, best);
+                    visit(Curve::Cubic(m, right, db, b), p, depth + 1, best);
+                }
+            }
+        }
+        let mut distance = f64::INFINITY;
+        visit(self, p, 0, &mut distance);
+        distance
     }
 }
 pub fn quadratic(a: Point, b: Point) -> Curve {
@@ -340,6 +397,15 @@ pub fn quadratic(a: Point, b: Point) -> Curve {
         b,
     )
 }
+/// Canonical endpoint IDs fix the bend of an undirected edge.
+pub fn unbundled_curve(edge: &GraphLink, a: Point, b: Point) -> Curve {
+    if edge.from <= edge.to {
+        quadratic(a, b)
+    } else {
+        quadratic(b, a)
+    }
+}
+
 /// A focus-dependent grouping; computed once per selection, not per frame.
 #[derive(Default)]
 pub struct TrunkPlan {

@@ -101,6 +101,7 @@ impl CanvasView {
     pub(super) fn settle_layout(&mut self) {
         if let Some(transition) = self.transition.take() {
             self.points = transition.to;
+            self.camera = transition.camera_to;
             self.rebuild_spatial();
         }
     }
@@ -119,18 +120,30 @@ impl CanvasView {
         self.frame_points(&points);
     }
     pub(super) fn frame_points(&mut self, points: &[(f64, f64)]) {
-        if points.is_empty() {
-            return;
+        let controls = element(&self.document, "zoom-in")
+            .parent_element()
+            .map(|e| e.get_bounding_client_rect().height())
+            .unwrap_or(100.0);
+        let mut area = Rect {
+            left: 24.0,
+            right: (self.viewport.width - 24.0).max(25.0),
+            top: 58.0,
+            bottom: (self.viewport.height - controls - 24.0).max(100.0),
+        };
+        // Drawer navigation itself preserves the camera. A newly loaded chain
+        // must fit in the part of the desktop canvas still visible beside it.
+        let drawer = element(&self.document, "edge-evidence-drawer");
+        if drawer.has_attribute("open") {
+            let right = drawer.get_bounding_client_rect().left()
+                - self.canvas.get_bounding_client_rect().left()
+                - 24.0;
+            if right > area.left + 100.0 {
+                area.right = area.right.min(right);
+            }
         }
-        let lo = points.iter().map(|p| p.0).reduce(f64::min).unwrap();
-        let hi = points.iter().map(|p| p.0).reduce(f64::max).unwrap();
-        let bottom = points.iter().map(|p| p.1).reduce(f64::min).unwrap();
-        let top = points.iter().map(|p| p.1).reduce(f64::max).unwrap();
-        self.scale = (700.0 / (hi - lo + 140.0))
-            .min(390.0 / (top - bottom + 140.0))
-            .clamp(0.000001, 1.6);
-        self.x = 500.0 - (lo + hi) / 2.0 * self.scale;
-        self.y = 265.0 - (bottom + top) / 2.0 * self.scale;
+        if let Some(camera) = self.viewport.frame(points, area) {
+            self.camera = camera;
+        }
     }
     pub(super) fn rebuild_spatial(&mut self) {
         self.spatial.clear();
@@ -254,7 +267,7 @@ pub(super) fn change_layout(view: View, mode: LayoutMode) {
     {
         let mut v = view.borrow_mut();
         let old = v.points.clone();
-        let camera = (v.scale, v.x, v.y);
+        let camera = v.camera;
         if mode == LayoutMode::Concentric {
             if v.selected.is_empty() {
                 let default = v
@@ -286,13 +299,14 @@ pub(super) fn change_layout(view: View, mode: LayoutMode) {
             v.fit_visible();
         } else if mode == LayoutMode::Concentric {
             v.focus_player();
-            v.scale = 0.55;
+            v.camera.scale = 0.55;
         }
         if !reduced_motion() {
             let target = v.points.clone();
-            let camera_to = (v.scale, v.x, v.y);
+            let camera_to = v.camera;
             v.points = old.clone();
-            (v.scale, v.x, v.y) = camera;
+            v.camera = camera;
+            v.rebuild_spatial();
             v.transition = Some(Transition {
                 start: js_sys::Date::now(),
                 from: old,
@@ -308,7 +322,7 @@ pub(super) fn change_layout(view: View, mode: LayoutMode) {
     }
     animate(view);
 }
-fn animate(view: View) {
+pub(super) fn animate(view: View) {
     {
         let mut v = view.borrow_mut();
         if v.transition.is_none() || v.animation_scheduled {
@@ -331,9 +345,10 @@ fn animate(view: View) {
                 .zip(&t.to)
                 .map(|(a, b)| (a.0 + (b.0 - a.0) * eased, a.1 + (b.1 - a.1) * eased))
                 .collect();
-            v.scale = t.camera_from.0 + (t.camera_to.0 - t.camera_from.0) * eased;
-            v.x = t.camera_from.1 + (t.camera_to.1 - t.camera_from.1) * eased;
-            v.y = t.camera_from.2 + (t.camera_to.2 - t.camera_from.2) * eased;
+            v.camera.scale =
+                t.camera_from.scale + (t.camera_to.scale - t.camera_from.scale) * eased;
+            v.camera.x = t.camera_from.x + (t.camera_to.x - t.camera_from.x) * eased;
+            v.camera.y = t.camera_from.y + (t.camera_to.y - t.camera_from.y) * eased;
             if p < 1.0 {
                 v.transition = Some(t);
             }
@@ -478,6 +493,7 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
                     v.selected.clear();
                     v.recompute_hop();
                     v.trunk_plan = visual::TrunkPlan::default();
+                    v.sector_headers.clear();
                     v.auto_focus = None;
                     v.franchise = None;
                     v.franchise_nodes.clear();
@@ -624,6 +640,7 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
                 v.draw();
             }
             request_chain(view.clone());
+            animate(view.clone());
         }
     };
     let choose = Rc::new(choose);
@@ -882,15 +899,16 @@ pub(super) fn install(view: View) -> Result<(), JsValue> {
             if let Some(id) = target.get_attribute("data-center-player") {
                 let mut v = state.borrow_mut();
                 if v.indices.contains_key(&id) {
-                    let p = v.at(&id);
                     v.settle_layout();
-                    v.scale = 1.0;
-                    v.x = 500.0 - p.0;
-                    v.y = 265.0 - p.1;
+                    let p = v.at(&id);
+                    v.camera.scale = 1.0;
+                    v.camera.x = 500.0 - p.0;
+                    v.camera.y = 265.0 - p.1 * v.viewport.aspect_y();
                     v.draw();
                 }
             } else if target.has_attribute("data-retry-chain") {
                 request_chain(state.clone());
+                animate(state.clone());
             }
         },
     )?;
@@ -932,6 +950,7 @@ pub(super) fn install(view: View) -> Result<(), JsValue> {
                     if v.selected.is_empty() {
                         return;
                     }
+                    v.settle_layout();
                     v.ego = !v.ego;
                     if v.ego {
                         v.fit_visible();
@@ -945,6 +964,7 @@ pub(super) fn install(view: View) -> Result<(), JsValue> {
             drop(v);
             if id == "random-pair" {
                 request_chain(state.clone());
+                animate(state.clone());
             }
         })?;
     }

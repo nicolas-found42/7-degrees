@@ -1,5 +1,26 @@
 use canvas_view::{GraphLink, GraphNode, LayoutMode, layout::compute_layout, visual::*};
 use std::collections::{HashMap, HashSet};
+
+#[test]
+fn camera_keeps_world_circles_round_and_inverts_input_on_phone_and_desktop() {
+    use canvas_view::camera::Viewport;
+    for (width, height) in [(355.0, 420.0), (1086.0, 652.0)] {
+        let viewport = Viewport::new(width, height);
+        let camera = canvas_view::camera::Camera {
+            scale: 0.5,
+            x: 500.0,
+            y: 300.0,
+        };
+        let center = viewport.screen((0.0, 0.0), camera);
+        let x = viewport.screen((100.0, 0.0), camera);
+        let y = viewport.screen((0.0, 100.0), camera);
+        let css_x = (x.0 - center.0) * width / 1000.0;
+        let css_y = (y.1 - center.1) * height / 600.0;
+        assert!((css_x - css_y).abs() < 1e-9);
+        let p = viewport.world(viewport.screen((27.0, -94.0), camera), camera);
+        assert!((p.0 - 27.0).abs() < 1e-9 && (p.1 + 94.0).abs() < 1e-9);
+    }
+}
 fn node(id: &str) -> GraphNode {
     GraphNode {
         id: id.into(),
@@ -178,6 +199,58 @@ fn force_layout_is_weight_sensitive_and_reproducible() {
     assert!(distance(&strong, 0, 1) < distance(&weak, 0, 1));
     assert!(distance(&strong, 0, 1) < distance(&strong, 1, 2));
 }
+
+#[test]
+fn force_separates_heavy_roster_cliques_joined_by_brief_bridge_edges() {
+    let nodes: Vec<_> = (0..30).map(|i| node(&format!("player{i:02}"))).collect();
+    let mut links = Vec::new();
+    for team in 0..3 {
+        for a in team * 10..team * 10 + 10 {
+            for b in a + 1..team * 10 + 10 {
+                links.push(link(
+                    &nodes[a].id,
+                    &nodes[b].id,
+                    0.95,
+                    &format!("TEAM{team}"),
+                ));
+            }
+        }
+    }
+    links.extend([
+        link(&nodes[0].id, &nodes[10].id, 0.15, "BRIDGE"),
+        link(&nodes[10].id, &nodes[20].id, 0.15, "BRIDGE"),
+    ]);
+    let points = compute_layout(
+        &nodes,
+        &links,
+        LayoutMode::Force,
+        "",
+        &[],
+        true,
+        &HashMap::new(),
+    );
+    let mut clusters = Vec::new();
+    for team in 0..3 {
+        let members = &points[team * 10..team * 10 + 10];
+        let center = (
+            members.iter().map(|p| p.0).sum::<f64>() / 10.0,
+            members.iter().map(|p| p.1).sum::<f64>() / 10.0,
+        );
+        let radius = members
+            .iter()
+            .map(|p| (p.0 - center.0).hypot(p.1 - center.1))
+            .fold(0.0, f64::max);
+        clusters.push((center, radius));
+    }
+    for (i, (a, ra)) in clusters.iter().enumerate() {
+        for (b, rb) in &clusters[i + 1..] {
+            assert!(
+                (a.0 - b.0).hypot(a.1 - b.1) > ra + rb + 20.0,
+                "roster islands overlap: {clusters:?}"
+            );
+        }
+    }
+}
 #[test]
 fn bundled_curves_keep_exact_endpoints_and_leave_chains_and_small_groups_unbundled() {
     let nodes = vec![node("a"), node("b"), node("c"), node("d"), node("e")];
@@ -248,4 +321,111 @@ fn crowded_chain_badges_spread_horizontally_before_overlapping() {
             assert!(!a.bounds.padded().overlaps(b.bounds.padded()));
         }
     }
+}
+
+#[test]
+fn important_badges_find_a_free_gap_between_reserved_hud_bands() {
+    let reserved = [
+        Rect {
+            left: 0.0,
+            top: 0.0,
+            right: 600.0,
+            bottom: 22.0,
+        },
+        Rect {
+            left: 0.0,
+            top: 90.0,
+            right: 600.0,
+            bottom: 100.0,
+        },
+    ];
+    let mut candidates = [LabelCandidate {
+        index: 0,
+        id: "a",
+        priority: LabelPriority::Important,
+        weight: 1.0,
+        count: 1,
+        matching: true,
+        point: (300.0, 60.0),
+        width: 60.0,
+    }];
+    let labels = place_labels(&mut candidates, 600.0, 100.0, 0, &reserved);
+    assert_eq!(labels.len(), 1);
+    assert!(
+        reserved
+            .iter()
+            .all(|b| !b.padded().overlaps(labels[0].bounds.padded()))
+    );
+}
+
+#[test]
+fn unbundled_undirected_curves_keep_the_same_bend_when_endpoints_reverse() {
+    let edge = link("a", "b", 0.1, "RED");
+    let reversed = link("b", "a", 0.1, "RED");
+    let curve = unbundled_curve(&edge, (0.0, 0.0), (100.0, 0.0));
+    let reversed = unbundled_curve(&reversed, (100.0, 0.0), (0.0, 0.0));
+    for t in [0.1, 0.5, 0.9] {
+        assert_eq!(curve.point(t), reversed.point(t));
+    }
+}
+
+#[test]
+fn curve_picking_covers_the_full_spline_in_screen_space_at_high_zoom() {
+    let curve = Curve::Cubic(
+        (0.0, 0.0),
+        (0.0, 30000.0),
+        (30000.0, -30000.0),
+        (30000.0, 0.0),
+    );
+    for t in [0.001, 0.023, 0.137, 0.245, 0.731, 0.997] {
+        assert!(curve.distance(curve.point(t)) < 0.3, "missed spline at {t}");
+    }
+}
+
+#[test]
+fn detailed_labels_fade_at_zoom_boundaries_and_settle_under_reduced_motion() {
+    assert_eq!(label_zoom_alpha(0.25, 0, false, 1086.0, false), 0.0);
+    assert!(label_zoom_alpha(0.27, 0, false, 1086.0, false) > 0.0);
+    assert!(label_zoom_alpha(0.27, 0, false, 1086.0, false) < 1.0);
+    assert_eq!(label_zoom_alpha(0.75, 24, false, 1086.0, false), 0.0);
+    assert!(label_zoom_alpha(0.79, 24, false, 1086.0, false) < 1.0);
+    assert_eq!(label_zoom_alpha(0.75, 24, false, 1086.0, true), 1.0);
+}
+
+#[test]
+fn tied_proofs_spread_direct_teammates_through_the_concentric_band() {
+    let nodes: Vec<_> = (0..20).map(|i| node(&format!("p{i:02}"))).collect();
+    let links: Vec<_> = (1..20)
+        .map(|i| link(&nodes[0].id, &nodes[i].id, 1.0, "RED"))
+        .collect();
+    let hop: HashMap<_, _> = nodes
+        .iter()
+        .enumerate()
+        .map(|(i, n)| (n.id.clone(), usize::from(i != 0)))
+        .collect();
+    let points = compute_layout(
+        &nodes,
+        &links,
+        LayoutMode::Concentric,
+        &nodes[0].id,
+        &[],
+        true,
+        &hop,
+    );
+    let radii: Vec<_> = points[1..].iter().map(|p| p.0.hypot(p.1)).collect();
+    assert!(
+        radii.iter().copied().fold(0.0, f64::max)
+            - radii.iter().copied().fold(f64::INFINITY, f64::min)
+            > 200.0
+    );
+}
+
+#[test]
+fn rotating_a_mobile_pinch_keeps_its_css_distance() {
+    let viewport = canvas_view::camera::Viewport::new(355.0, 420.0);
+    let center = viewport.logical((177.5, 210.0));
+    let horizontal = viewport.logical((277.5, 210.0));
+    let vertical = viewport.logical((177.5, 310.0));
+    assert!((viewport.distance(center, horizontal) - 100.0).abs() < 1e-9);
+    assert!((viewport.distance(center, vertical) - 100.0).abs() < 1e-9);
 }

@@ -1,0 +1,75 @@
+{
+  "tool": "jev_verify",
+  "model": "typesafe/jev-1.13-20260917",
+  "provider": "openrouter",
+  "auto_accept": 0.8,
+  "subject_at": 0.5,
+  "summary": {
+    "verified": 4,
+    "contradicted": 0,
+    "unsupported": 0,
+    "needs_review": 1
+  },
+  "results": [
+    {
+      "id": "claim0",
+      "claim": "The completion report's final run passed ten checks, with139 Rust tests,108 Python tests and13 serialized browser journeys; snapshot pins and historical/semantic audits passed.",
+      "verdict": "verified",
+      "probabilities": {
+        "supports": 0.99,
+        "contradicts": 0.01,
+        "says_nothing": 0
+      },
+      "confidence": 0.98,
+      "action": "auto",
+      "supporting_evidence": "receipt",
+      "same_subject": 0.95
+    },
+    {
+      "id": "claim1",
+      "claim": "The local isolated solver experiment recorded1195ms extended,3871ms fa2-base and4292ms fa2-hub. The application added no solver dependency, and actual solver code uses all links, deterministic Era seeds, weight-sensitive hub-dissuaded attraction, global Barnes-Hut repulsion and360steps.",
+      "verdict": "verified",
+      "probabilities": {
+        "supports": 0.87,
+        "contradicts": 0.12,
+        "says_nothing": 0.01
+      },
+      "confidence": 0.8,
+      "action": "auto",
+      "supporting_evidence": "local-trial",
+      "same_subject": 0.92
+    },
+    {
+      "id": "claim2",
+      "claim": "The expanded existing browser tests cover weightedMeso labels, repeatload determinism, desktop/mobile Era/Force curve body/end evidence activation, badge touch, a sixhop Macro/all-eras-dim chain, B-before-A default recomputation, and the repaired transition/drawer/minimap cases.",
+      "verdict": "verified",
+      "probabilities": {
+        "supports": 0.93,
+        "contradicts": 0.05,
+        "says_nothing": 0.02
+      },
+      "confidence": 0.89,
+      "action": "auto",
+      "supporting_evidence": "actual-tests",
+      "same_subject": 0.82
+    },
+    {
+      "id": "claim3",
+      "claim": "The final requirements index contains81items:22stories,14Bcriteria,10implementationseams and35inheritedAcriteria.80 are covered and A08's prior prompt rule is explicitly superseded by issue22's announced default focal selection.",
+      "verdict": "verified",
+      "probabilities": {
+        "supports": 0.53,
+        "contradicts": 0.2,
+        "says_nothing": 0.27
+      },
+      "confidence": 0.3,
+      "action": "review",
+      "supporting_evidence": "all-requirements",
+      "same_subject": 0.66
+    }
+  ],
+  "usage": {
+    "input_tokens": 57620,
+    "output_tokens": 549
+  }
+}
