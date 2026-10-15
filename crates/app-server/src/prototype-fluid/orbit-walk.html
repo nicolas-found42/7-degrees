@@ -1,11 +1,11 @@
 <!doctype html>
-<!-- THROWAWAY ROUND TWO: Three Orbit continuations on /graph?variant=D|E|F.
-Question: which layout best supports draggable, centered teammate exploration with an induced (no-shortcut) chain?
+<!-- THROWAWAY ROUND THREE: Three Team Compass continuations on /graph?variant=D|E|F.
+Question: which layout best explains draggable exploration that always preserves a globally shortest chain from its starting player?
 The live app snapshot is read-only; all exploration state is in memory. -->
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>7 Degrees · Orbit walk prototypes</title>
+<title>7 Degrees · Shortest chain prototypes</title>
 <style>
 * { box-sizing: border-box; }
 :root { color-scheme: dark; --bg:#0b101e; --panel:#151b29; --line:#35404e; --text:#e9eef6; --muted:#99a9bd; --accent:#f9ba74; }
@@ -25,6 +25,15 @@ header { flex:0 0 62px; padding:0 26px; display:flex; align-items:center; gap:20
 header a { color:var(--muted); font-size:11px; margin-left:auto; }
 #toolbar { flex:0 0 88px; display:flex; align-items:center; justify-content:space-between; gap:18px; padding:14px 26px; }
 h1 { margin:5px 0 0; font-size:21px; letter-spacing:-.5px; font-weight:600; }
+.study-meta { display:flex; gap:13px; align-items:center; flex-wrap:wrap; }
+#route-status { color:#9edaca; border:1px solid #345951; background:#192b2b; border-radius:20px; font-size:10px; padding:4px 8px; white-space:nowrap; }
+#excluded-info { font-size:10px; color:var(--muted); margin-top:9px; }
+#excluded-info summary { cursor:pointer; color:#d6ba94; padding:3px 0; }
+#excluded-list { max-height:145px; overflow:auto; line-height:1.5; }
+.excluded-player { padding:5px 0; border-bottom:1px solid #2c3542; }
+.excluded-player strong { display:block; font-weight:500; color:#b7c3d1; }
+.candidate .distance { color:#9edaca; margin-left:0; }
+.candidate small { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
 #start-form { display:flex; align-items:end; gap:8px; }#start-form label { display:grid; gap:5px; font-size:10px; color:var(--muted); }
 #start-player { width:205px; }#start-form button[type=submit] { background:var(--accent); border-color:var(--accent); color:#132130; font-weight:700; }
 #workspace { position:relative; flex:1; min-height:0; }
@@ -46,7 +55,7 @@ h1 { margin:5px 0 0; font-size:21px; letter-spacing:-.5px; font-weight:600; }
 .node.current::before { display:none; }.node.current .label { display:block; top:83px; width:170px; color:#fff; font-size:13px; font-weight:650; }
 .node.current .initials { font-size:21px; color:var(--accent); }.node.current .step { display:block; font-size:8px; color:var(--muted); letter-spacing:1px; margin-top:3px; }
 .node.past { width:32px; height:32px; margin:-16px; border:1px solid #a78c68; background:#222838; font-size:10px; color:#f9ba74; }
-.node.past::before { display:none; }.node.past .label { display:block; top:36px; color:#b0bbcb; width:95px; font-size:10px; }
+.node.past::before { display:none; }.node.past .label { display:block; top:36px; color:#b0bbcb; width:70px; font-size:10px; }
 .node.dragging { cursor:grabbing; z-index:12; }
 #stage-caption { position:absolute; left:24px; top:16px; pointer-events:none; z-index:3; }#stage-caption strong { display:block; font-size:12px; font-weight:550; }#stage-caption small { display:block; font-size:10px; color:var(--muted); margin-top:4px; }
 #drag-hint { position:absolute; left:24px; bottom:12px; font-size:10px; color:var(--muted); pointer-events:none; }
@@ -78,9 +87,9 @@ body[data-variant=E] #stage { background:radial-gradient(ellipse,#1c3037 0%,#101
 body[data-variant=E] #panel { position:static; width:auto; border:0; border-left:1px solid #303849; border-radius:0; background:#121a28; padding:20px 16px; }
 body[data-variant=E] #stage-tools { right:16px; top:auto; bottom:14px; }
 body[data-variant=E] #breadcrumbs { display:none; }
-body[data-variant=E] .node:not(.current):not(.past)::before { background:#8acbbd; box-shadow:none; }
+body[data-variant=E] .node:not(.current):not(.past)::before { box-shadow:none; }
 /* F: a franchise compass above a horizontal teammate directory, chain above the graph. */
-body[data-variant=F] #workspace { display:grid; grid-template-rows:minmax(0,1fr) 132px; }
+body[data-variant=F] #workspace { display:grid; grid-template-rows:minmax(0,1fr) 154px; }
 body[data-variant=F] #stage { background:radial-gradient(ellipse,#282739,#101625 72%); }
 body[data-variant=F] #panel { position:static; width:auto; border:0; border-top:1px solid #394050; border-radius:0; padding:12px 24px; background:#151b29; display:grid; grid-template-columns:205px 1fr; grid-template-rows:1fr; gap:22px; }
 body[data-variant=F] #panel-summary { grid-column:1; overflow:auto; }
@@ -95,14 +104,15 @@ body[data-variant=F] #toolbar { order:1; }body[data-variant=F] #workspace { orde
 @media(max-width:900px){header{padding:0 16px}#toolbar{padding:12px 16px}h1{font-size:17px}#start-player{width:155px}#start-form{gap:5px}#start-form button{font-size:11px;padding:8px}#panel{width:225px;right:10px;padding:13px}#stage-tools{right:250px}body[data-variant=E] #workspace{grid-template-columns:145px minmax(0,1fr) 215px}body[data-variant=E] #history{padding:15px 10px}body[data-variant=F] #panel{grid-template-columns:175px 1fr;gap:16px}body[data-variant=F] #candidates{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:600px){header{flex-basis:49px;gap:12px}.brand{font-size:19px}.badge{font-size:8px}header a{font-size:9px}#toolbar{flex-basis:118px;align-items:stretch;flex-direction:column;gap:8px;padding:10px 14px}h1{font-size:16px}#start-form{width:100%}#start-form label{flex:1}#start-player{width:100%;min-width:0}#start-form button{font-size:10px;padding:8px}#workspace{display:grid;grid-template-rows:minmax(0,1fr) 150px}#stage{height:auto;min-height:0}#panel{position:static;width:auto;padding:10px 14px;border:0;border-top:1px solid #393e4b;border-radius:0;display:grid;grid-template-columns:140px 1fr;gap:12px}#panel h2{font-size:13px;margin:0 0 3px}#stats{font-size:9px;margin:0 0 5px}#filter{font-size:10px;padding:7px}#sort,#rule,#notice{display:none}#candidates{margin:0}#stage-caption{top:10px;left:14px}#stage-caption strong{font-size:10px}#stage-caption small{display:none}#stage-tools{top:auto;bottom:7px;right:10px}#stage-tools button{font-size:9px;padding:5px}#drag-hint{display:none}#breadcrumbs{flex-basis:59px;padding:8px 14px}#trail button{font-size:10px}#switch-space{flex-basis:49px}#switcher{bottom:30px;max-width:96vw;white-space:nowrap}#variant-name{font-size:11px;min-width:180px}.node.current{width:56px;height:56px;margin:-28px}.node.current .label{top:60px;font-size:11px;width:140px}.node.current .initials{font-size:17px}.node .label{font-size:9px;width:90px}.node.named .label{display:none}.node.current .label,.node.past .label{display:block}body[data-variant=E] #workspace{display:grid;grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) 150px}body[data-variant=E] #history{display:none}body[data-variant=E] #panel{display:grid;grid-template-columns:140px 1fr;padding:10px 14px}body[data-variant=E] #breadcrumbs{display:block}body[data-variant=F] #workspace{grid-template-rows:minmax(0,1fr) 150px}body[data-variant=F] #panel{grid-template-columns:140px 1fr;padding:10px 14px;gap:12px}body[data-variant=F] #candidates{grid-template-columns:1fr}body[data-variant=F] #stage-tools{right:10px}body[data-variant=F] #breadcrumbs{flex-basis:59px}}
 @media(max-width:600px){.node:not(.current):not(.past){width:10px;height:10px;margin:-5px}.node:not(.current):not(.past)::before{width:6px;height:6px;left:2px;top:2px}}
+@media(max-width:600px){.study-meta{gap:6px}#route-status{font-size:8px;padding:3px 6px}.badge{letter-spacing:1px;font-size:7px}#excluded-info{font-size:9px;margin-top:4px}#next-bounce{max-width:240px}}
 </style>
 </head>
 <body data-variant="D"><div id="shell">
-<header><div class="brand">7<span>°</span> DEGREES</div><span class="badge">ORBIT / ROUND TWO</span><a href="/graph?variant=B">Original Orbit ↗</a></header>
-<section id="toolbar"><div><div class="eyebrow" id="study"></div><h1 id="heading"></h1></div><form id="start-form"><label>START A NEW CHAIN<input id="start-player" list="players" value="Michael Jordan" placeholder="Player name" autocomplete="off"></label><button type="submit">Start</button><button id="undo" type="button">Undo</button><button id="restart" type="button">Restart</button></form><datalist id="players"></datalist></section>
-<main id="workspace"><section id="history" aria-label="Chain history"></section><section id="stage" aria-label="Draggable teammate orbit"><div id="stage-caption"><strong>Pick a teammate. Grow the chain.</strong><small>Only the current player's eligible relationships are shown.</small></div><div id="graph"><svg id="guide" aria-hidden="true"></svg><svg id="edges" aria-hidden="true"></svg><div id="nodes"></div></div><div id="stage-tools"><button id="reset-layout">Reset positions</button><button id="motion" aria-pressed="true">Motion on</button></div><div id="drag-hint">Drag a node to place it · Click to extend · Click a previous step to go back</div></section><aside id="panel"><div id="panel-summary"><div class="eyebrow" id="next-label">NEXT MOVES</div><h2 id="current-name">Loading network…</h2><p id="stats"></p><input id="filter" aria-label="Filter eligible teammates" placeholder="Find a teammate…"><select id="sort" aria-label="Sort eligible teammates"><option value="name">Name A–Z</option><option value="degree">Most connected</option><option value="era">Debut season</option></select></div><div id="candidates" aria-label="Eligible teammates"></div><p id="notice" role="status"></p><p id="rule">No shortcuts: earlier players and their teammates are excluded. Only the current player's open connections remain. Return to a previous step to try another route.</p></aside></main>
-<section id="breadcrumbs" aria-label="Your chain"><div class="eyebrow">YOUR CHAIN / CLICK A STEP TO GO BACK</div><div id="trail"></div></section><div id="switch-space"></div><div id="state" role="status">Loading real app snapshot…</div></div>
-<div id="switcher" aria-label="Round two prototype switcher"><button id="prev" aria-label="Previous prototype">←</button><span id="variant-name"></span><button id="next" aria-label="Next prototype">→</button></div>
+<header><div class="brand">7<span>°</span> DEGREES</div><span class="badge">COMPASS / SHORTEST CHAINS</span><a href="/graph?variant=B">Original Orbit ↗</a></header>
+<section id="toolbar"><div><div class="study-meta"><span class="eyebrow" id="study"></span><span id="route-status" role="status">Shortest chain · 0 bounces</span></div><h1 id="heading"></h1></div><form id="start-form"><label>START A NEW CHAIN<input id="start-player" list="players" value="Michael Jordan" placeholder="Player name" autocomplete="off"></label><button type="submit">Start</button><button id="undo" type="button">Undo</button><button id="restart" type="button">Restart</button></form><datalist id="players"></datalist></section>
+<main id="workspace"><section id="history" aria-label="Chain history"></section><section id="stage" aria-label="Draggable teammate orbit"><div id="stage-caption"><strong id="next-bounce">Every move adds one bounce.</strong><small id="frontier-note">Players reachable in fewer bounces are unavailable.</small></div><div id="graph"><svg id="guide" aria-hidden="true"></svg><svg id="edges" aria-hidden="true"></svg><div id="nodes"></div></div><div id="stage-tools"><button id="reset-layout">Reset positions</button><button id="motion" aria-pressed="true">Motion on</button></div><div id="drag-hint">Drag a node to place it · Click to extend · Click a previous step to go back</div></section><aside id="panel"><div id="panel-summary"><div class="eyebrow" id="next-label">NEXT MOVES</div><h2 id="current-name">Loading network…</h2><p id="stats"></p><input id="filter" aria-label="Filter eligible teammates" placeholder="Find a teammate…"><select id="sort" aria-label="Sort eligible teammates"><option value="team">Shared franchise</option><option value="name">Name A–Z</option><option value="degree">Most connected</option><option value="era">Debut season</option></select><details id="excluded-info"><summary id="excluded-summary">Unavailable players</summary><div id="excluded-list"></div></details></div><div id="candidates" aria-label="Eligible teammates"></div><p id="notice" role="status"></p><p id="rule">Every choice stays one bounce farther from your starting player. Earlier players and their teammates remain unavailable. Rewind to explore another shortest chain.</p></aside></main>
+<section id="breadcrumbs" aria-label="Your chain"><div class="eyebrow">SHORTEST CHAIN / CLICK A PLAYER TO REWIND</div><div id="trail"></div></section><div id="switch-space"></div><div id="state" role="status">Loading real app snapshot…</div></div>
+<div id="switcher" aria-label="Shortest chain prototype switcher"><button id="prev" aria-label="Previous prototype">←</button><span id="variant-name"></span><button id="next" aria-label="Next prototype">→</button></div>
 <script>
 if (new URLSearchParams(location.search).get('preview') === 'phone') {
   const url = new URL(location.href); url.searchParams.delete('preview');
@@ -113,12 +123,12 @@ if (new URLSearchParams(location.search).get('preview') === 'phone') {
 const $ = id => document.getElementById(id);
 const variants = ['D','E','F'];
 const concepts = {
-  D: ['Free Orbit','One player at the center. A new direction at every step.'],
-  E: ['Chain Rail','Keep the journey in sight while you explore the next step.'],
-  F: ['Team Compass','Follow a teammate across teams, one circle at a time.']
+  D: ['Open Compass','Follow the next bounce. Keep the shortest chain.'],
+  E: ['Route Ledger','A clear history. No unnecessary bounces.'],
+  F: ['Team Compass','Explore by team. Every chain stays shortest.']
 };
 let variant = variants.includes(new URLSearchParams(location.search).get('variant')) ? new URLSearchParams(location.search).get('variant') : 'D';
-let nodes=[], adj=[], edgeTeams=new Map(), byId=new Map(), chain=[], eligible=[], blocked=new Set();
+let nodes=[], adj=[], edgeTeams=new Map(), byId=new Map(), chain=[], eligible=[], blocked=new Set(), rootDistances=new Int32Array(), unavailable=[];
 let positions=new Map(), destinations=new Map(), elements=new Map(), pins=new Map(), previous=new Map();
 let edgeElements=[], frame=0, started=0, dragging=null, dragCount=0, lastDrag='', focusId=null, ready=false;
 let motion = !matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -128,40 +138,55 @@ const initials = name => name.split(' ').map(s=>s[0]).slice(0,2).join('');
 const edgeKey = (a,b) => a<b ? `${a}|${b}` : `${b}|${a}`;
 const teamFor = i => (edgeTeams.get(edgeKey(chain.at(-1),i))||['Teammates'])[0];
 function colorFor(team) { let h=0; for(const c of team)h=(h*31+c.charCodeAt(0))>>>0;return palette[h%palette.length]; }
+function distancesFrom(root) {
+  // Traverse the entire loaded graph, including hidden players and relationships.
+  // Prior-neighbor exclusions alone produce induced paths, which can still be detours.
+  const distances=new Int32Array(nodes.length).fill(-1), queue=new Int32Array(nodes.length);
+  let head=0,tail=1;queue[0]=root;distances[root]=0;
+  while(head<tail){const current=queue[head++];for(const next of adj[current])if(distances[next]<0){distances[next]=distances[current]+1;queue[tail++]=next;}}
+  return distances;
+}
 function derive() {
-  // An induced path: no new vertex may touch any chain vertex except its immediate predecessor.
+  // Preserve the user's earlier-player exclusions and only extend into the next BFS layer.
+  // Each accepted prefix has length equal to its endpoint's global distance from the root.
   blocked=new Set(chain);
   for(const id of chain.slice(0,-1)) for(const neighbor of adj[id]) blocked.add(neighbor);
   const current=chain.at(-1);
-  eligible=current===undefined ? [] : adj[current].filter(id=>!blocked.has(id));
+  eligible=current===undefined ? [] : adj[current].filter(id=>!blocked.has(id)&&rootDistances[id]===chain.length);
   eligible.sort((a,b)=>nodes[a].name.localeCompare(nodes[b].name));
+  const allowed=new Set(eligible);
+  unavailable=current===undefined?[]:adj[current].filter(id=>!allowed.has(id)).sort((a,b)=>nodes[a].name.localeCompare(nodes[b].name));
 }
 function sortedCandidates() {
   const q=$('filter').value.trim().toLowerCase();
   const ids=eligible.filter(i=>nodes[i].name.toLowerCase().includes(q));
   const sort=$('sort').value;
-  return ids.sort((a,b)=>sort==='degree' ? adj[b].length-adj[a].length||nodes[a].name.localeCompare(nodes[b].name) : sort==='era' ? (nodes[a].debut_season||0)-(nodes[b].debut_season||0)||nodes[a].name.localeCompare(nodes[b].name) : nodes[a].name.localeCompare(nodes[b].name));
+  return ids.sort((a,b)=>sort==='team' ? teamFor(a).localeCompare(teamFor(b))||nodes[a].name.localeCompare(nodes[b].name) : sort==='degree' ? adj[b].length-adj[a].length||nodes[a].name.localeCompare(nodes[b].name) : sort==='era' ? (nodes[a].debut_season||0)-(nodes[b].debut_season||0)||nodes[a].name.localeCompare(nodes[b].name) : nodes[a].name.localeCompare(nodes[b].name));
 }
 function announce(message='') {
   const current=chain.at(-1);
   const hidden=current===undefined?0:adj[current].length-eligible.length;
-  $('state').textContent=`THROWAWAY ${variant} · chain: ${chain.map(i=>nodes[i].name).join(' → ')||'none'} · eligible: ${eligible.length} · excluded current teammates: ${hidden} · dragged: ${dragCount}${lastDrag?' / '+lastDrag:''} · motion: ${motion?'on':'off'}`;
+  const depth=Math.max(0,chain.length-1), shortest=current===undefined?0:rootDistances[current];
+  $('state').textContent=`THROWAWAY ${variant} · chain: ${chain.map(i=>nodes[i].name).join(' → ')||'none'} · bounces: ${depth} / shortest: ${shortest} · next distance: ${depth+1} · eligible: ${eligible.length} · unavailable: ${hidden} · dragged: ${dragCount}${lastDrag?' / '+lastDrag:''} · motion: ${motion?'on':'off'}`;
+  $('route-status').textContent=`Shortest chain · ${depth} ${depth===1?'bounce':'bounces'}`;
   if(message)$('notice').textContent=message;
   $('undo').disabled=chain.length<2;
   $('motion').textContent=`Motion ${motion?'on':'off'}`;
   $('motion').setAttribute('aria-pressed',String(motion));
   document.body.dataset.chain=chain.map(i=>nodes[i].id).join(',');
   document.body.dataset.eligible=String(eligible.length);
+  document.body.dataset.bounces=String(depth);
+  document.body.dataset.shortest=String(shortest);
 }
 function start(i) {
-  chain=[i]; pins.clear(); $('filter').value=''; $('start-player').value=nodes[i].name;
-  update('Started a new chain. Drag any visible player, or choose a teammate.');
+  chain=[i]; rootDistances=distancesFrom(i); pins.clear(); $('filter').value=''; $('start-player').value=nodes[i].name;
+  update('Choose a teammate to add the first bounce.');
 }
 function extend(i) {
   const prior=chain.indexOf(i);
   if(prior>=0) { if(prior<chain.length-1){chain=chain.slice(0,prior+1);pins.clear();$('filter').value='';update('Returned to this step. Other branches are available again.');} return; }
-  if(!eligible.includes(i))return;
-  chain.push(i);pins.clear();$('filter').value='';update('Previous relationships retired. These are the next eligible teammates.');
+  if(!eligible.includes(i)||rootDistances[i]!==chain.length)return;
+  chain.push(i);pins.clear();$('filter').value='';update('Shortest chain preserved. Only players one bounce farther are available.');
 }
 function undo(){ if(chain.length>1){chain.pop();pins.clear();$('filter').value='';update('One step back. Your previous options are restored.');} }
 function update(message) {
@@ -170,17 +195,31 @@ function update(message) {
 function renderDirectory() {
   const current=chain.at(-1); if(current===undefined)return;
   $('current-name').textContent=nodes[current].name;
-  $('next-label').textContent=`STEP ${String(chain.length).padStart(2,'0')} / NEXT MOVES`;
-  const excluded=adj[current].length-eligible.length;
-  $('stats').textContent=`${eligible.length} eligible · ${adj[current].length} total teammates · ${excluded} excluded`;
+  const nextDepth=chain.length, rootName=nodes[chain[0]].name;
+  $('next-label').textContent=`NEXT / BOUNCE ${nextDepth}`;
+  $('stats').textContent=`${eligible.length} available · ${unavailable.length} unavailable · ${adj[current].length} total teammates`;
+  $('next-bounce').textContent=`Next: ${nextDepth} ${nextDepth===1?'bounce':'bounces'} from ${rootName}`;
+  $('frontier-note').textContent='Players reachable in fewer bounces stay hidden.';
+  $('excluded-summary').textContent=`${unavailable.length} unavailable · why?`;
+  $('excluded-info').hidden=!unavailable.length;
+  const excludedFragment=document.createDocumentFragment();
+  for(const i of unavailable){
+    const item=document.createElement('div');item.className='excluded-player';
+    const name=document.createElement('strong');name.textContent=nodes[i].name;
+    const reason=document.createElement('span');const distance=rootDistances[i];
+    reason.textContent=chain.includes(i)?'Already in your chain.':`Reachable from ${rootName} in ${distance} ${distance===1?'bounce':'bounces'}; this move would take ${nextDepth}.`;
+    item.append(name,reason);excludedFragment.append(item);
+  }
+  $('excluded-list').replaceChildren(excludedFragment);
   const frag=document.createDocumentFragment(), ids=sortedCandidates();
-  if(!ids.length){const p=document.createElement('div');p.className='empty';p.textContent=eligible.length?'No name matches. Clear the filter to see all eligible teammates.':'No eligible teammates remain. Undo or return to an earlier step to take a different route.';frag.append(p);}
+  if(!ids.length){const p=document.createElement('div');p.className='empty';p.textContent=eligible.length?'No name matches. Clear the filter to see all available teammates.':`No shortest extension here. All ${adj[current].length} teammates are already reachable in ${nextDepth-1} or fewer bounces. Rewind to try another branch.`;frag.append(p);}
   for(const i of ids){
     const button=document.createElement('button');button.className='candidate';button.dataset.player=nodes[i].id;
     button.setAttribute('aria-label',`Choose ${nodes[i].name}`);
-    button.style.setProperty('--node-color',variant==='F'?colorFor(teamFor(i)):'var(--accent)');
+    button.style.setProperty('--node-color',colorFor(teamFor(i)));
     const name=document.createElement('span'),dot=document.createElement('span');dot.className='dot';name.append(dot,document.createTextNode(nodes[i].name));
-    const detail=document.createElement('small');detail.textContent=variant==='F'?teamFor(i):`${adj[i].length} direct`;
+    const detail=document.createElement('small');detail.textContent=teamFor(i);
+    const distance=document.createElement('span');distance.className='distance';distance.textContent=`${rootDistances[i]}${rootDistances[i]===1?' bounce':' bounces'}`;detail.append(distance);
     button.append(name,detail);button.onclick=()=>extend(i);
     button.onpointerenter=()=>highlight(i);button.onpointerleave=()=>highlight(null);button.onfocus=()=>highlight(i);button.onblur=()=>highlight(null);
     frag.append(button);
@@ -190,16 +229,16 @@ function renderDirectory() {
   for(const [i,button] of elements)button.classList.toggle('focused',!!$('filter').value&&ids.includes(i));
 }
 function renderHistory() {
-  const rail=$('history');rail.replaceChildren();const title=document.createElement('div');title.className='eyebrow';title.textContent='YOUR CHAIN';rail.append(title);
-  const tip=document.createElement('p');tip.textContent='Earlier steps stay here. Select one to rewind and branch again.';rail.append(tip);
+  const rail=$('history');rail.replaceChildren();const title=document.createElement('div');title.className='eyebrow';title.textContent='SHORTEST CHAIN';rail.append(title);
+  const tip=document.createElement('p');tip.textContent='Each move is the fewest bounces from your start. Select a player to rewind.';rail.append(tip);
   $('trail').replaceChildren();
   chain.forEach((i,k)=>{
     const railButton=document.createElement('button');railButton.className='history-step'+(k===chain.length-1?' current-step':'');
     railButton.setAttribute('aria-label',`Return to step ${k+1}: ${nodes[i].name}`);
-    const step=document.createElement('small');step.textContent=`${String(k+1).padStart(2,'0')} ${k===chain.length-1?'· CURRENT':'· REWIND'}`;
+    const step=document.createElement('small');step.textContent=`${k} ${k===1?'BOUNCE':'BOUNCES'} ${k===chain.length-1?'· CURRENT':'· REWIND'}`;
     const name=document.createElement('strong');name.textContent=nodes[i].name;railButton.append(step,name);railButton.onclick=()=>extend(i);rail.append(railButton);
     if(k){const arrow=document.createElement('span');arrow.textContent='→';$('trail').append(arrow);}
-    const crumb=document.createElement('button');crumb.textContent=`${k+1} · ${nodes[i].name}`;crumb.classList.toggle('current-step',k===chain.length-1);
+    const crumb=document.createElement('button');crumb.textContent=`${k} · ${nodes[i].name}`;crumb.classList.toggle('current-step',k===chain.length-1);
     crumb.setAttribute('aria-label',`Rewind to ${nodes[i].name}`);crumb.onclick=()=>extend(i);$('trail').append(crumb);
   });
 }
@@ -222,9 +261,8 @@ function layout() {
     else {const row=Math.floor(k/cols);next.set(i,{x:45+(k%cols)*75,y:h-90-row*52});}
   });
   let order=[...eligible];
-  if(variant==='F')order.sort((a,b)=>teamFor(a).localeCompare(teamFor(b))||nodes[a].name.localeCompare(nodes[b].name));
-  if(variant==='E')order.sort((a,b)=>(nodes[a].debut_season||0)-(nodes[b].debut_season||0)||a-b);
-  const rings=(variant==='E'||mobile)&&order.length>45?2:1;
+  order.sort((a,b)=>teamFor(a).localeCompare(teamFor(b))||nodes[a].name.localeCompare(nodes[b].name));
+  const rings=(((variant==='E'||mobile)&&order.length>45)||order.length>70)?2:1;
   order.forEach((i,k)=>{
     const ring=rings===2?k%2:0, count=rings===2?Math.ceil((order.length-ring)/2):order.length, slot=rings===2?Math.floor(k/2):k;
     const angle=-Math.PI/2+slot/Math.max(1,count)*Math.PI*2+(ring?.035:0);
@@ -235,12 +273,12 @@ function layout() {
   return next;
 }
 function renderGuide() {
-  const {center,radius,mobile}=geometry(), svg=$('guide');svg.replaceChildren();
+  const {center,radius,mobile,h}=geometry(), svg=$('guide');svg.replaceChildren();
   const circle=document.createElementNS(svgNS,'circle');circle.setAttribute('cx',center.x);circle.setAttribute('cy',center.y);circle.setAttribute('r',radius);svg.append(circle);
-  if((variant==='E'||mobile)&&eligible.length>45){const c=circle.cloneNode();c.setAttribute('r',radius*.73);svg.append(c);}
-  if(variant==='F'&&!mobile){
+  if(((variant==='E'||mobile)&&eligible.length>45)||eligible.length>70){const c=circle.cloneNode();c.setAttribute('r',radius*.73);svg.append(c);}
+  if(!mobile){
     const grouped=new Map();for(const i of eligible){const t=teamFor(i);if(!grouped.has(t))grouped.set(t,[]);grouped.get(t).push(i);}
-    let cursor=0;for(const [team,ids] of [...grouped].sort((a,b)=>a[0].localeCompare(b[0]))){const angle=-Math.PI/2+(cursor+ids.length/2)/Math.max(1,eligible.length)*Math.PI*2;cursor+=ids.length;const label=document.createElementNS(svgNS,'text');label.setAttribute('x',center.x+Math.cos(angle)*(radius+34));label.setAttribute('y',center.y+Math.sin(angle)*(radius+34));label.setAttribute('text-anchor',Math.cos(angle)>.25?'start':Math.cos(angle)<-.25?'end':'middle');label.style.fill=colorFor(team);label.textContent=team.replace(/_/g,' ')+' · '+ids.length;svg.append(label);}
+    let cursor=0;for(const [team,ids] of [...grouped].sort((a,b)=>a[0].localeCompare(b[0]))){const angle=-Math.PI/2+(cursor+ids.length/2)/Math.max(1,eligible.length)*Math.PI*2;cursor+=ids.length;const label=document.createElementNS(svgNS,'text');label.setAttribute('x',center.x+Math.cos(angle)*(radius+34));label.setAttribute('y',Math.max(66,Math.min(h-45,center.y+Math.sin(angle)*(radius+34))));label.setAttribute('text-anchor',Math.cos(angle)>.25?'start':Math.cos(angle)<-.25?'end':'middle');label.style.fill=colorFor(team);label.textContent=team.replace(/_/g,' ')+' · '+ids.length;svg.append(label);}
   }
 }
 function renderScene() {
@@ -259,10 +297,10 @@ function renderScene() {
     el.className='node'+(i===current?' current':historical?' past':'')+(named.has(i)?' named':'');
     el.setAttribute('aria-label',`${i===current?'Current player':historical?'Rewind to':'Extend to'} ${nodes[i].name}`);
     el.title=`${nodes[i].name} · ${adj[i].length} direct teammates · drag to move${historical?' · click to rewind':''}`;
-    el.style.setProperty('--node-color',variant==='F'&&eligible.includes(i)?colorFor(teamFor(i)):'var(--accent)');
+    el.style.setProperty('--node-color',eligible.includes(i)?colorFor(teamFor(i)):'var(--accent)');
     el.replaceChildren();
-    if(i===current){const initial=document.createElement('span');initial.className='initials';initial.textContent=initials(nodes[i].name);const step=document.createElement('span');step.className='step';step.textContent=`STEP ${chain.length}`;el.append(initial,step);}
-    else if(historical)el.append(document.createTextNode(String(chain.indexOf(i)+1)));
+    if(i===current){const initial=document.createElement('span');initial.className='initials';initial.textContent=initials(nodes[i].name);const step=document.createElement('span');step.className='step';step.textContent=`${chain.length-1} ${chain.length===2?'BOUNCE':'BOUNCES'}`;el.append(initial,step);}
+    else if(historical)el.append(document.createTextNode(String(chain.indexOf(i))));
     const label=document.createElement('span');label.className='label';label.textContent=nodes[i].name;
     if(eligible.includes(i)){const p=destinations.get(i),c=geometry().center,dx=p.x-c.x,dy=p.y-c.y;
       if(Math.abs(dx)>Math.abs(dy)*.5){label.style.top='0px';label.style.left=dx>0?'20px':'-8px';label.style.transform=dx>0?'none':'translateX(-100%)';label.style.textAlign=dx>0?'left':'right';}
