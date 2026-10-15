@@ -1,0 +1,344 @@
+<!doctype html>
+<!-- THROWAWAY ROUND TWO: Three Orbit continuations on /graph?variant=D|E|F.
+Question: which layout best supports draggable, centered teammate exploration with an induced (no-shortcut) chain?
+The live app snapshot is read-only; all exploration state is in memory. -->
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>7 Degrees · Orbit walk prototypes</title>
+<style>
+* { box-sizing: border-box; }
+:root { color-scheme: dark; --bg:#0b101e; --panel:#151b29; --line:#35404e; --text:#e9eef6; --muted:#99a9bd; --accent:#f9ba74; }
+body { margin:0; background:var(--bg); color:var(--text); font:13px system-ui,sans-serif; }
+button,input,select { font:inherit; }
+button { cursor:pointer; border:1px solid #3e4856; background:#202b3c; color:inherit; border-radius:7px; padding:8px 12px; }
+button:hover { border-color:var(--accent); background:#2d3542; }
+button:disabled { opacity:.4; cursor:default; }
+button:focus-visible,input:focus-visible,select:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+input,select { border:1px solid #3e4856; border-radius:7px; background:#101929; color:inherit; padding:9px 11px; }
+input[type=checkbox] { accent-color:var(--accent); }
+#shell { height:100dvh; display:flex; flex-direction:column; overflow:hidden; }
+header { flex:0 0 62px; padding:0 26px; display:flex; align-items:center; gap:20px; border-bottom:1px solid #2c3442; }
+.brand { font-size:22px; font-weight:800; letter-spacing:-1px; }.brand span { color:var(--accent); }
+.badge,.eyebrow { color:var(--accent); font-size:10px; font-weight:650; letter-spacing:1.7px; text-transform:uppercase; }
+.badge { border:1px solid #514537; border-radius:4px; padding:6px 9px; }
+header a { color:var(--muted); font-size:11px; margin-left:auto; }
+#toolbar { flex:0 0 88px; display:flex; align-items:center; justify-content:space-between; gap:18px; padding:14px 26px; }
+h1 { margin:5px 0 0; font-size:21px; letter-spacing:-.5px; font-weight:600; }
+#start-form { display:flex; align-items:end; gap:8px; }#start-form label { display:grid; gap:5px; font-size:10px; color:var(--muted); }
+#start-player { width:205px; }#start-form button[type=submit] { background:var(--accent); border-color:var(--accent); color:#132130; font-weight:700; }
+#workspace { position:relative; flex:1; min-height:0; }
+#stage { position:relative; height:100%; overflow:hidden; background:radial-gradient(ellipse at 40% 48%,#242838 0%,#101625 56%,#0b101e 85%); }
+#graph { position:absolute; inset:0; overflow:hidden; touch-action:none; }
+#edges,#guide { position:absolute; width:100%; height:100%; inset:0; pointer-events:none; }
+#edges line { stroke:#f9ba74; stroke-opacity:.19; stroke-width:1; }
+#edges line.past-edge { stroke:#f9ba74; stroke-opacity:.9; stroke-width:2.2; }
+#edges line.spot { stroke-opacity:.9; stroke-width:1.8; }
+#guide circle { fill:none; stroke:#e0b386; stroke-opacity:.13; stroke-dasharray:2 5; }
+#guide text { font:10px system-ui; fill:#a1acbb; letter-spacing:1px; }
+.node { position:absolute; width:12px; height:12px; left:0; top:0; margin:-6px; padding:0; border:none; background:transparent; border-radius:50%; user-select:none; touch-action:none; z-index:2; cursor:grab; }
+.node::before { content:''; position:absolute; width:9px; height:9px; top:1.5px; left:1.5px; border-radius:50%; background:var(--node-color,var(--accent)); box-shadow:0 0 9px #f9ba741f; }
+.node:hover,.node.focused { z-index:9; background:#f9ba741c; }
+.node:hover::before,.node.focused::before { box-shadow:0 0 0 4px #f9ba7433; }
+.node .label { position:absolute; top:29px; left:50%; transform:translateX(-50%); color:#cbd6e4; font-size:10px; width:115px; text-align:center; pointer-events:none; text-shadow:0 1px 5px #000; display:none; }
+.node.named .label { display:block; }.node:hover .label,.node.focused .label { display:block; background:#0b1322ef; padding:4px 6px; border:1px solid #594c3b; border-radius:4px; color:#fff; z-index:20; }
+.node.current { width:78px; height:78px; margin:-39px; background:#29303d; border:1px solid #f9ba74; box-shadow:0 0 0 7px #f9ba740a,0 0 70px #f9ba7414; font-weight:650; }
+.node.current::before { display:none; }.node.current .label { display:block; top:83px; width:170px; color:#fff; font-size:13px; font-weight:650; }
+.node.current .initials { font-size:21px; color:var(--accent); }.node.current .step { display:block; font-size:8px; color:var(--muted); letter-spacing:1px; margin-top:3px; }
+.node.past { width:32px; height:32px; margin:-16px; border:1px solid #a78c68; background:#222838; font-size:10px; color:#f9ba74; }
+.node.past::before { display:none; }.node.past .label { display:block; top:36px; color:#b0bbcb; width:95px; font-size:10px; }
+.node.dragging { cursor:grabbing; z-index:12; }
+#stage-caption { position:absolute; left:24px; top:16px; pointer-events:none; z-index:3; }#stage-caption strong { display:block; font-size:12px; font-weight:550; }#stage-caption small { display:block; font-size:10px; color:var(--muted); margin-top:4px; }
+#drag-hint { position:absolute; left:24px; bottom:12px; font-size:10px; color:var(--muted); pointer-events:none; }
+#stage-tools { position:absolute; top:13px; right:310px; display:flex; gap:5px; z-index:4; }#stage-tools button { font-size:10px; padding:6px 8px; background:#131c2bdd; }
+#panel { position:absolute; right:20px; top:14px; bottom:14px; width:265px; padding:18px; border:1px solid #514537; border-radius:12px; background:#151b29f2; display:flex; flex-direction:column; min-height:0; }
+#panel h2 { font-size:19px; margin:6px 0; font-weight:550; letter-spacing:-.3px; }
+#stats { font-size:11px; color:var(--muted); margin:0 0 11px; line-height:1.6; }
+#filter { width:100%; font-size:12px; }#sort { width:100%; margin-top:6px; padding:6px 8px; font-size:10px; color:#b4c0cf; }
+#candidates { flex:1; min-height:0; overflow:auto; margin-top:10px; padding-bottom:6px; }
+.candidate { width:100%; padding:9px 2px; display:flex; align-items:center; justify-content:space-between; text-align:left; gap:6px; background:transparent; border:0; border-bottom:1px solid #2c3542; border-radius:0; font-size:11px; }
+.candidate small { color:#94a5bb; font-size:9px; white-space:nowrap; }.candidate .dot { width:5px; height:5px; border-radius:50%; background:var(--node-color,var(--accent)); margin-right:7px; display:inline-block; }.candidate:hover { background:#2d3542; }
+#rule { font-size:10px; line-height:1.5; color:var(--muted); border-top:1px solid #2c3542; padding-top:10px; margin:8px 0 0; }
+#notice { margin:8px 0 0; font-size:10px; color:#f9ba74; line-height:1.4; }
+#history { display:none; }
+#breadcrumbs { padding:10px 26px; border-top:1px solid #2c3442; flex:0 0 67px; overflow:auto; background:#101725; }
+#breadcrumbs .eyebrow { font-size:9px; margin-bottom:7px; }#trail { display:flex; gap:8px; align-items:center; white-space:nowrap; }
+#trail button { font-size:11px; padding:5px 9px; background:#1b2637; }#trail button.current-step { color:#f9ba74; border-color:#9d7d52; }#trail span { color:#a28665; }
+#switch-space { flex:0 0 55px; }#switcher { position:fixed; z-index:30; left:50%; bottom:33px; transform:translateX(-50%); display:flex; align-items:center; gap:10px; background:#f0f4f8; color:#152133; padding:6px 10px; border-radius:40px; box-shadow:0 6px 25px #0006; }
+#switcher button { border:0; background:transparent; color:inherit; padding:4px 10px; }#variant-name { min-width:210px; text-align:center; font-size:12px; font-weight:700; }
+#state { flex:0 0 24px; padding:6px 14px; background:#0b1522; border-top:1px solid #273547; font:9px ui-monospace,monospace; color:#99a9bd; white-space:nowrap; overflow:auto; }
+.empty { padding:24px 3px; color:#a7b3c4; font-size:12px; line-height:1.7; }
+/* E: separate chain rail, centered compact instrument, persistent directory. */
+body[data-variant=E] #workspace { display:grid; grid-template-columns:190px minmax(0,1fr) 245px; border-top:1px solid #2c3442; }
+body[data-variant=E] #history { display:flex; flex-direction:column; padding:20px 16px; border-right:1px solid #303849; background:#121a28; overflow:auto; }
+body[data-variant=E] #history p { color:var(--muted); font-size:10px; line-height:1.5; }
+.history-step { display:block; text-align:left; width:100%; padding:12px 9px; margin-bottom:9px; border-left:2px solid #8b785e; background:#1b2535; }
+.history-step strong { display:block; font-size:11px; font-weight:550; }.history-step small { color:#8495aa; font-size:9px; }.history-step.current-step { border-left-color:var(--accent); background:#34302d; }
+body[data-variant=E] #stage { background:radial-gradient(ellipse,#1c3037 0%,#101827 68%); }
+body[data-variant=E] #panel { position:static; width:auto; border:0; border-left:1px solid #303849; border-radius:0; background:#121a28; padding:20px 16px; }
+body[data-variant=E] #stage-tools { right:16px; top:auto; bottom:14px; }
+body[data-variant=E] #breadcrumbs { display:none; }
+body[data-variant=E] .node:not(.current):not(.past)::before { background:#8acbbd; box-shadow:none; }
+/* F: a franchise compass above a horizontal teammate directory, chain above the graph. */
+body[data-variant=F] #workspace { display:grid; grid-template-rows:minmax(0,1fr) 132px; }
+body[data-variant=F] #stage { background:radial-gradient(ellipse,#282739,#101625 72%); }
+body[data-variant=F] #panel { position:static; width:auto; border:0; border-top:1px solid #394050; border-radius:0; padding:12px 24px; background:#151b29; display:grid; grid-template-columns:205px 1fr; grid-template-rows:1fr; gap:22px; }
+body[data-variant=F] #panel-summary { grid-column:1; overflow:auto; }
+body[data-variant=F] #panel h2 { font-size:14px; margin:0 0 5px; }body[data-variant=F] #stats { font-size:10px; margin:0 0 4px; }
+body[data-variant=F] #filter { padding:6px 8px; font-size:11px; }body[data-variant=F] #sort { display:none; }
+body[data-variant=F] #candidates { grid-column:2; grid-row:1; margin:0; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); align-content:start; gap:0 14px; }
+body[data-variant=F] #rule,body[data-variant=F] #notice { display:none; }
+body[data-variant=F] #stage-tools { right:20px; }
+body[data-variant=F] #breadcrumbs { order:2; border-bottom:1px solid #2c3442; border-top:0; flex-basis:64px; }
+body[data-variant=F] #toolbar { order:1; }body[data-variant=F] #workspace { order:3; }body[data-variant=F] #switch-space { order:4; }body[data-variant=F] #state { order:5; }
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+@media(max-width:900px){header{padding:0 16px}#toolbar{padding:12px 16px}h1{font-size:17px}#start-player{width:155px}#start-form{gap:5px}#start-form button{font-size:11px;padding:8px}#panel{width:225px;right:10px;padding:13px}#stage-tools{right:250px}body[data-variant=E] #workspace{grid-template-columns:145px minmax(0,1fr) 215px}body[data-variant=E] #history{padding:15px 10px}body[data-variant=F] #panel{grid-template-columns:175px 1fr;gap:16px}body[data-variant=F] #candidates{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){header{flex-basis:49px;gap:12px}.brand{font-size:19px}.badge{font-size:8px}header a{font-size:9px}#toolbar{flex-basis:118px;align-items:stretch;flex-direction:column;gap:8px;padding:10px 14px}h1{font-size:16px}#start-form{width:100%}#start-form label{flex:1}#start-player{width:100%;min-width:0}#start-form button{font-size:10px;padding:8px}#workspace{display:grid;grid-template-rows:minmax(0,1fr) 150px}#stage{height:auto;min-height:0}#panel{position:static;width:auto;padding:10px 14px;border:0;border-top:1px solid #393e4b;border-radius:0;display:grid;grid-template-columns:140px 1fr;gap:12px}#panel h2{font-size:13px;margin:0 0 3px}#stats{font-size:9px;margin:0 0 5px}#filter{font-size:10px;padding:7px}#sort,#rule,#notice{display:none}#candidates{margin:0}#stage-caption{top:10px;left:14px}#stage-caption strong{font-size:10px}#stage-caption small{display:none}#stage-tools{top:auto;bottom:7px;right:10px}#stage-tools button{font-size:9px;padding:5px}#drag-hint{display:none}#breadcrumbs{flex-basis:59px;padding:8px 14px}#trail button{font-size:10px}#switch-space{flex-basis:49px}#switcher{bottom:30px;max-width:96vw;white-space:nowrap}#variant-name{font-size:11px;min-width:180px}.node.current{width:56px;height:56px;margin:-28px}.node.current .label{top:60px;font-size:11px;width:140px}.node.current .initials{font-size:17px}.node .label{font-size:9px;width:90px}.node.named .label{display:none}.node.current .label,.node.past .label{display:block}body[data-variant=E] #workspace{display:grid;grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) 150px}body[data-variant=E] #history{display:none}body[data-variant=E] #panel{display:grid;grid-template-columns:140px 1fr;padding:10px 14px}body[data-variant=E] #breadcrumbs{display:block}body[data-variant=F] #workspace{grid-template-rows:minmax(0,1fr) 150px}body[data-variant=F] #panel{grid-template-columns:140px 1fr;padding:10px 14px;gap:12px}body[data-variant=F] #candidates{grid-template-columns:1fr}body[data-variant=F] #stage-tools{right:10px}body[data-variant=F] #breadcrumbs{flex-basis:59px}}
+@media(max-width:600px){.node:not(.current):not(.past){width:10px;height:10px;margin:-5px}.node:not(.current):not(.past)::before{width:6px;height:6px;left:2px;top:2px}}
+</style>
+</head>
+<body data-variant="D"><div id="shell">
+<header><div class="brand">7<span>°</span> DEGREES</div><span class="badge">ORBIT / ROUND TWO</span><a href="/graph?variant=B">Original Orbit ↗</a></header>
+<section id="toolbar"><div><div class="eyebrow" id="study"></div><h1 id="heading"></h1></div><form id="start-form"><label>START A NEW CHAIN<input id="start-player" list="players" value="Michael Jordan" placeholder="Player name" autocomplete="off"></label><button type="submit">Start</button><button id="undo" type="button">Undo</button><button id="restart" type="button">Restart</button></form><datalist id="players"></datalist></section>
+<main id="workspace"><section id="history" aria-label="Chain history"></section><section id="stage" aria-label="Draggable teammate orbit"><div id="stage-caption"><strong>Pick a teammate. Grow the chain.</strong><small>Only the current player's eligible relationships are shown.</small></div><div id="graph"><svg id="guide" aria-hidden="true"></svg><svg id="edges" aria-hidden="true"></svg><div id="nodes"></div></div><div id="stage-tools"><button id="reset-layout">Reset positions</button><button id="motion" aria-pressed="true">Motion on</button></div><div id="drag-hint">Drag a node to place it · Click to extend · Click a previous step to go back</div></section><aside id="panel"><div id="panel-summary"><div class="eyebrow" id="next-label">NEXT MOVES</div><h2 id="current-name">Loading network…</h2><p id="stats"></p><input id="filter" aria-label="Filter eligible teammates" placeholder="Find a teammate…"><select id="sort" aria-label="Sort eligible teammates"><option value="name">Name A–Z</option><option value="degree">Most connected</option><option value="era">Debut season</option></select></div><div id="candidates" aria-label="Eligible teammates"></div><p id="notice" role="status"></p><p id="rule">No shortcuts: earlier players and their teammates are excluded. Only the current player's open connections remain. Return to a previous step to try another route.</p></aside></main>
+<section id="breadcrumbs" aria-label="Your chain"><div class="eyebrow">YOUR CHAIN / CLICK A STEP TO GO BACK</div><div id="trail"></div></section><div id="switch-space"></div><div id="state" role="status">Loading real app snapshot…</div></div>
+<div id="switcher" aria-label="Round two prototype switcher"><button id="prev" aria-label="Previous prototype">←</button><span id="variant-name"></span><button id="next" aria-label="Next prototype">→</button></div>
+<script>
+if (new URLSearchParams(location.search).get('preview') === 'phone') {
+  const url = new URL(location.href); url.searchParams.delete('preview');
+  document.body.replaceChildren();
+  const iframe = document.createElement('iframe'); iframe.title='Phone prototype preview'; iframe.src=url.href;
+  iframe.style.cssText='display:block;width:390px;height:844px;border:1px solid #778;margin:10px auto;background:#0b101e'; document.body.append(iframe);
+} else {
+const $ = id => document.getElementById(id);
+const variants = ['D','E','F'];
+const concepts = {
+  D: ['Free Orbit','One player at the center. A new direction at every step.'],
+  E: ['Chain Rail','Keep the journey in sight while you explore the next step.'],
+  F: ['Team Compass','Follow a teammate across teams, one circle at a time.']
+};
+let variant = variants.includes(new URLSearchParams(location.search).get('variant')) ? new URLSearchParams(location.search).get('variant') : 'D';
+let nodes=[], adj=[], edgeTeams=new Map(), byId=new Map(), chain=[], eligible=[], blocked=new Set();
+let positions=new Map(), destinations=new Map(), elements=new Map(), pins=new Map(), previous=new Map();
+let edgeElements=[], frame=0, started=0, dragging=null, dragCount=0, lastDrag='', focusId=null, ready=false;
+let motion = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+const svgNS='http://www.w3.org/2000/svg';
+const palette=['#f9ba74','#8acbbd','#a3a5ea','#cf8eac','#90b6e5','#d4c77f','#c59371','#8dc3a1'];
+const initials = name => name.split(' ').map(s=>s[0]).slice(0,2).join('');
+const edgeKey = (a,b) => a<b ? `${a}|${b}` : `${b}|${a}`;
+const teamFor = i => (edgeTeams.get(edgeKey(chain.at(-1),i))||['Teammates'])[0];
+function colorFor(team) { let h=0; for(const c of team)h=(h*31+c.charCodeAt(0))>>>0;return palette[h%palette.length]; }
+function derive() {
+  // An induced path: no new vertex may touch any chain vertex except its immediate predecessor.
+  blocked=new Set(chain);
+  for(const id of chain.slice(0,-1)) for(const neighbor of adj[id]) blocked.add(neighbor);
+  const current=chain.at(-1);
+  eligible=current===undefined ? [] : adj[current].filter(id=>!blocked.has(id));
+  eligible.sort((a,b)=>nodes[a].name.localeCompare(nodes[b].name));
+}
+function sortedCandidates() {
+  const q=$('filter').value.trim().toLowerCase();
+  const ids=eligible.filter(i=>nodes[i].name.toLowerCase().includes(q));
+  const sort=$('sort').value;
+  return ids.sort((a,b)=>sort==='degree' ? adj[b].length-adj[a].length||nodes[a].name.localeCompare(nodes[b].name) : sort==='era' ? (nodes[a].debut_season||0)-(nodes[b].debut_season||0)||nodes[a].name.localeCompare(nodes[b].name) : nodes[a].name.localeCompare(nodes[b].name));
+}
+function announce(message='') {
+  const current=chain.at(-1);
+  const hidden=current===undefined?0:adj[current].length-eligible.length;
+  $('state').textContent=`THROWAWAY ${variant} · chain: ${chain.map(i=>nodes[i].name).join(' → ')||'none'} · eligible: ${eligible.length} · excluded current teammates: ${hidden} · dragged: ${dragCount}${lastDrag?' / '+lastDrag:''} · motion: ${motion?'on':'off'}`;
+  if(message)$('notice').textContent=message;
+  $('undo').disabled=chain.length<2;
+  $('motion').textContent=`Motion ${motion?'on':'off'}`;
+  $('motion').setAttribute('aria-pressed',String(motion));
+  document.body.dataset.chain=chain.map(i=>nodes[i].id).join(',');
+  document.body.dataset.eligible=String(eligible.length);
+}
+function start(i) {
+  chain=[i]; pins.clear(); $('filter').value=''; $('start-player').value=nodes[i].name;
+  update('Started a new chain. Drag any visible player, or choose a teammate.');
+}
+function extend(i) {
+  const prior=chain.indexOf(i);
+  if(prior>=0) { if(prior<chain.length-1){chain=chain.slice(0,prior+1);pins.clear();$('filter').value='';update('Returned to this step. Other branches are available again.');} return; }
+  if(!eligible.includes(i))return;
+  chain.push(i);pins.clear();$('filter').value='';update('Previous relationships retired. These are the next eligible teammates.');
+}
+function undo(){ if(chain.length>1){chain.pop();pins.clear();$('filter').value='';update('One step back. Your previous options are restored.');} }
+function update(message) {
+  derive(); renderDirectory(); renderHistory(); renderScene(); announce(message);
+}
+function renderDirectory() {
+  const current=chain.at(-1); if(current===undefined)return;
+  $('current-name').textContent=nodes[current].name;
+  $('next-label').textContent=`STEP ${String(chain.length).padStart(2,'0')} / NEXT MOVES`;
+  const excluded=adj[current].length-eligible.length;
+  $('stats').textContent=`${eligible.length} eligible · ${adj[current].length} total teammates · ${excluded} excluded`;
+  const frag=document.createDocumentFragment(), ids=sortedCandidates();
+  if(!ids.length){const p=document.createElement('div');p.className='empty';p.textContent=eligible.length?'No name matches. Clear the filter to see all eligible teammates.':'No eligible teammates remain. Undo or return to an earlier step to take a different route.';frag.append(p);}
+  for(const i of ids){
+    const button=document.createElement('button');button.className='candidate';button.dataset.player=nodes[i].id;
+    button.setAttribute('aria-label',`Choose ${nodes[i].name}`);
+    button.style.setProperty('--node-color',variant==='F'?colorFor(teamFor(i)):'var(--accent)');
+    const name=document.createElement('span'),dot=document.createElement('span');dot.className='dot';name.append(dot,document.createTextNode(nodes[i].name));
+    const detail=document.createElement('small');detail.textContent=variant==='F'?teamFor(i):`${adj[i].length} direct`;
+    button.append(name,detail);button.onclick=()=>extend(i);
+    button.onpointerenter=()=>highlight(i);button.onpointerleave=()=>highlight(null);button.onfocus=()=>highlight(i);button.onblur=()=>highlight(null);
+    frag.append(button);
+  }
+  $('candidates').replaceChildren(frag);
+  // Filtering locates a node without removing any eligible node from the circle.
+  for(const [i,button] of elements)button.classList.toggle('focused',!!$('filter').value&&ids.includes(i));
+}
+function renderHistory() {
+  const rail=$('history');rail.replaceChildren();const title=document.createElement('div');title.className='eyebrow';title.textContent='YOUR CHAIN';rail.append(title);
+  const tip=document.createElement('p');tip.textContent='Earlier steps stay here. Select one to rewind and branch again.';rail.append(tip);
+  $('trail').replaceChildren();
+  chain.forEach((i,k)=>{
+    const railButton=document.createElement('button');railButton.className='history-step'+(k===chain.length-1?' current-step':'');
+    railButton.setAttribute('aria-label',`Return to step ${k+1}: ${nodes[i].name}`);
+    const step=document.createElement('small');step.textContent=`${String(k+1).padStart(2,'0')} ${k===chain.length-1?'· CURRENT':'· REWIND'}`;
+    const name=document.createElement('strong');name.textContent=nodes[i].name;railButton.append(step,name);railButton.onclick=()=>extend(i);rail.append(railButton);
+    if(k){const arrow=document.createElement('span');arrow.textContent='→';$('trail').append(arrow);}
+    const crumb=document.createElement('button');crumb.textContent=`${k+1} · ${nodes[i].name}`;crumb.classList.toggle('current-step',k===chain.length-1);
+    crumb.setAttribute('aria-label',`Rewind to ${nodes[i].name}`);crumb.onclick=()=>extend(i);$('trail').append(crumb);
+  });
+}
+function geometry() {
+  const w=$('stage').clientWidth,h=$('stage').clientHeight, mobile=innerWidth<=600;
+  const reserve=variant==='D'&&!mobile?(innerWidth<=900?245:305):0;
+  const area=w-reserve;
+  const center={x:area*.5,y:h*.48};
+  const radius=Math.max(48,Math.min(area*.34,h*.37));
+  return {w,h,mobile,area,center,radius};
+}
+function layout() {
+  const {w,h,mobile,area,center,radius}=geometry();
+  const next=new Map();if(!chain.length)return next;
+  next.set(chain.at(-1),center);
+  // Historical players retain only the chain edge, never their old fan of relationships.
+  const past=chain.slice(0,-1), cols=Math.max(1,Math.floor((area-70)/75));
+  past.forEach((i,k)=>{
+    if(variant==='E'&&!mobile){const rows=Math.max(1,Math.floor((h-120)/62));next.set(i,{x:42+Math.floor(k/rows)*55,y:80+(k%rows)*62});}
+    else {const row=Math.floor(k/cols);next.set(i,{x:45+(k%cols)*75,y:h-90-row*52});}
+  });
+  let order=[...eligible];
+  if(variant==='F')order.sort((a,b)=>teamFor(a).localeCompare(teamFor(b))||nodes[a].name.localeCompare(nodes[b].name));
+  if(variant==='E')order.sort((a,b)=>(nodes[a].debut_season||0)-(nodes[b].debut_season||0)||a-b);
+  const rings=(variant==='E'||mobile)&&order.length>45?2:1;
+  order.forEach((i,k)=>{
+    const ring=rings===2?k%2:0, count=rings===2?Math.ceil((order.length-ring)/2):order.length, slot=rings===2?Math.floor(k/2):k;
+    const angle=-Math.PI/2+slot/Math.max(1,count)*Math.PI*2+(ring?.035:0);
+    const r=radius*(ring?.73:1);
+    next.set(i,{x:center.x+Math.cos(angle)*r,y:center.y+Math.sin(angle)*r});
+  });
+  for(const [i,p] of pins)if(next.has(i))next.set(i,p);
+  return next;
+}
+function renderGuide() {
+  const {center,radius,mobile}=geometry(), svg=$('guide');svg.replaceChildren();
+  const circle=document.createElementNS(svgNS,'circle');circle.setAttribute('cx',center.x);circle.setAttribute('cy',center.y);circle.setAttribute('r',radius);svg.append(circle);
+  if((variant==='E'||mobile)&&eligible.length>45){const c=circle.cloneNode();c.setAttribute('r',radius*.73);svg.append(c);}
+  if(variant==='F'&&!mobile){
+    const grouped=new Map();for(const i of eligible){const t=teamFor(i);if(!grouped.has(t))grouped.set(t,[]);grouped.get(t).push(i);}
+    let cursor=0;for(const [team,ids] of [...grouped].sort((a,b)=>a[0].localeCompare(b[0]))){const angle=-Math.PI/2+(cursor+ids.length/2)/Math.max(1,eligible.length)*Math.PI*2;cursor+=ids.length;const label=document.createElementNS(svgNS,'text');label.setAttribute('x',center.x+Math.cos(angle)*(radius+34));label.setAttribute('y',center.y+Math.sin(angle)*(radius+34));label.setAttribute('text-anchor',Math.cos(angle)>.25?'start':Math.cos(angle)<-.25?'end':'middle');label.style.fill=colorFor(team);label.textContent=team.replace(/_/g,' ')+' · '+ids.length;svg.append(label);}
+  }
+}
+function renderScene() {
+  if(!ready)return;
+  previous=new Map([...positions].map(([i,p])=>[i,{...p}]));
+  const current=chain.at(-1), visible=new Set([...chain,...eligible]);
+  for(const [i,el] of elements)if(!visible.has(i)){el.remove();elements.delete(i);positions.delete(i);}
+  destinations=layout();
+  const named=new Set(), count=geometry().mobile?0:8;
+  const preferred=[...eligible].sort((a,b)=>Number(['Scottie Pippen','Rasheed Wallace'].includes(nodes[b].name))-Number(['Scottie Pippen','Rasheed Wallace'].includes(nodes[a].name))||adj[b].length-adj[a].length);
+  for(const i of preferred){const p=destinations.get(i);if(named.size<count&&[...named].every(j=>{const q=destinations.get(j);return Math.hypot(p.x-q.x,p.y-q.y)>85;}))named.add(i);}
+  for(const i of visible){
+    let el=elements.get(i);
+    if(!el){el=document.createElement('button');el.dataset.player=nodes[i].id;el.dataset.node='true';el.tabIndex=-1;elements.set(i,el);$('nodes').append(el);wireDrag(el,i);}
+    const historical=chain.includes(i)&&i!==current;
+    el.className='node'+(i===current?' current':historical?' past':'')+(named.has(i)?' named':'');
+    el.setAttribute('aria-label',`${i===current?'Current player':historical?'Rewind to':'Extend to'} ${nodes[i].name}`);
+    el.title=`${nodes[i].name} · ${adj[i].length} direct teammates · drag to move${historical?' · click to rewind':''}`;
+    el.style.setProperty('--node-color',variant==='F'&&eligible.includes(i)?colorFor(teamFor(i)):'var(--accent)');
+    el.replaceChildren();
+    if(i===current){const initial=document.createElement('span');initial.className='initials';initial.textContent=initials(nodes[i].name);const step=document.createElement('span');step.className='step';step.textContent=`STEP ${chain.length}`;el.append(initial,step);}
+    else if(historical)el.append(document.createTextNode(String(chain.indexOf(i)+1)));
+    const label=document.createElement('span');label.className='label';label.textContent=nodes[i].name;
+    if(eligible.includes(i)){const p=destinations.get(i),c=geometry().center,dx=p.x-c.x,dy=p.y-c.y;
+      if(Math.abs(dx)>Math.abs(dy)*.5){label.style.top='0px';label.style.left=dx>0?'20px':'-8px';label.style.transform=dx>0?'none':'translateX(-100%)';label.style.textAlign=dx>0?'left':'right';}
+      else {label.style.top=dy>0?'20px':'-23px';}
+    }
+    el.append(label);
+    el.dataset.role=i===current?'current':historical?'past':'eligible';
+  }
+  destinations=layout();
+  for(const [i,p] of destinations)if(!positions.has(i))positions.set(i,previous.get(current)||{...p});
+  const lines=[];for(const i of eligible)lines.push({a:current,b:i,past:false});for(let k=1;k<chain.length;k++)lines.push({a:chain[k-1],b:chain[k],past:true});
+  $('edges').replaceChildren();edgeElements=lines.map(e=>{const line=document.createElementNS(svgNS,'line');line.classList.toggle('past-edge',e.past);line.dataset.from=nodes[e.a].id;line.dataset.to=nodes[e.b].id;$('edges').append(line);return {...e,el:line};});
+  renderGuide();beginMotion();
+}
+function beginMotion(){ previous=new Map([...positions].map(([i,p])=>[i,{...p}]));started=performance.now();if(!motion){positions=new Map([...destinations].map(([i,p])=>[i,{...p}]));started=0;}schedule(); }
+function schedule(){if(!frame)frame=requestAnimationFrame(paint);}
+function paint(now){
+  frame=0;const t=started?Math.min(1,(now-started)/650):1,e=1-Math.pow(1-t,3);
+  for(const [i,d] of destinations){if(dragging?.id===i)continue;const p=previous.get(i)||d;positions.set(i,{x:p.x+(d.x-p.x)*e,y:p.y+(d.y-p.y)*e});}
+  for(const [i,el] of elements){const p=positions.get(i);if(p)el.style.transform=`translate(${p.x}px,${p.y}px)`;}
+  for(const edge of edgeElements){const a=positions.get(edge.a),b=positions.get(edge.b);if(!a||!b)continue;edge.el.setAttribute('x1',a.x);edge.el.setAttribute('y1',a.y);edge.el.setAttribute('x2',b.x);edge.el.setAttribute('y2',b.y);}
+  if(t<1)schedule();else started=0;
+}
+function highlight(i){focusId=i;for(const [id,el] of elements)el.classList.toggle('focused',id===i);for(const edge of edgeElements)edge.el.classList.toggle('spot',edge.b===i&&!edge.past);}
+function wireDrag(el,i){
+  el.onpointerdown=e=>{
+    if(e.button!==0)return;e.preventDefault();
+    // Freeze the current interpolation so dragging during a transition remains under the pointer.
+    destinations=new Map([...positions].map(([id,p])=>[id,{...p}]));previous=new Map(destinations);started=0;
+    dragging={id:i,x:e.clientX,y:e.clientY,origin:{...positions.get(i)},moved:false};
+    el.setPointerCapture(e.pointerId);el.classList.add('dragging');
+  };
+  el.onpointermove=e=>{
+    if(!dragging||dragging.id!==i)return;
+    const dx=e.clientX-dragging.x,dy=e.clientY-dragging.y;
+    if(Math.hypot(dx,dy)>5)dragging.moved=true;
+    if(!dragging.moved)return;
+    const {w,h}=geometry(),margin=i===chain.at(-1)?42:18;
+    const p={x:Math.max(margin,Math.min(w-margin,dragging.origin.x+dx)),y:Math.max(margin,Math.min(h-margin,dragging.origin.y+dy))};
+    positions.set(i,p);destinations.set(i,p);pins.set(i,p);schedule();
+  };
+  el.onpointerup=e=>{
+    if(!dragging||dragging.id!==i)return;
+    const moved=dragging.moved;dragging=null;el.classList.remove('dragging');if(el.hasPointerCapture(e.pointerId))el.releasePointerCapture(e.pointerId);
+    if(moved){dragCount++;lastDrag=nodes[i].name;announce(`Moved ${nodes[i].name}. Dragging never adds a step.`);}
+    else extend(i);
+  };
+  el.onpointercancel=()=>{dragging=null;el.classList.remove('dragging');};
+  el.onmouseenter=()=>highlight(i);el.onmouseleave=()=>highlight(null);
+  // Pointer-up owns mouse selection, so the synthetic click after a drag cannot extend a chain.
+  el.onclick=e=>{if(e.detail===0)extend(i);};
+}
+function applyVariant(v){
+  variant=v;document.body.dataset.variant=v;
+  $('study').textContent=`STUDY ${v} / ${concepts[v][0]}`;$('heading').textContent=concepts[v][1];$('variant-name').textContent=`${v} · ${concepts[v][0]} (${variants.indexOf(v)+1}/3)`;
+  const url=new URL(location.href);url.searchParams.set('variant',v);history.replaceState(null,'',url);
+  pins.clear();if(ready){renderDirectory();renderHistory();requestAnimationFrame(()=>{renderScene();announce();});}
+}
+function cycle(delta){applyVariant(variants[(variants.indexOf(variant)+delta+variants.length)%variants.length]);}
+$('prev').onclick=()=>cycle(-1);$('next').onclick=()=>cycle(1);
+$('start-form').onsubmit=e=>{e.preventDefault();const q=$('start-player').value.trim().toLowerCase(),i=nodes.findIndex(n=>n.name.toLowerCase()===q);if(i<0){$('notice').textContent='Choose an exact player name from the suggestions.';return;}start(i);};
+$('undo').onclick=undo;$('restart').onclick=()=>{if(chain.length)start(chain[0]);};
+$('filter').oninput=()=>{renderDirectory();announce();};$('sort').onchange=renderDirectory;
+$('reset-layout').onclick=()=>{pins.clear();renderScene();announce('Node positions restored.');};
+$('motion').onclick=()=>{motion=!motion;if(!motion){started=0;positions=new Map([...destinations].map(([i,p])=>[i,{...p}]));schedule();}announce();};
+addEventListener('keydown',e=>{if(e.target.closest('input,textarea,select,[contenteditable]'))return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();cycle(e.key==='ArrowRight'?1:-1);}if(e.key==='Escape')undo();});
+addEventListener('popstate',()=>{const v=new URLSearchParams(location.search).get('variant');applyVariant(variants.includes(v)?v:'D');});
+new ResizeObserver(()=>{if(ready){pins.clear();renderScene();}}).observe($('stage'));
+fetch('/api/network').then(r=>r.json()).then(data=>{
+  nodes=data.nodes;nodes.forEach((n,i)=>byId.set(n.id,i));adj=nodes.map(()=>[]);
+  for(const link of data.links){const a=byId.get(link.from),b=byId.get(link.to);adj[a].push(b);adj[b].push(a);edgeTeams.set(edgeKey(a,b),[...(link.franchises?.length?link.franchises:[link.team])].sort());}
+  adj=adj.map(ids=>[...new Set(ids)]);
+  const frag=document.createDocumentFragment();[...nodes].sort((a,b)=>a.name.localeCompare(b.name)).forEach(n=>{const opt=document.createElement('option');opt.value=n.name;frag.append(opt);});$('players').append(frag);
+  ready=true;const jordan=nodes.findIndex(n=>n.name==='Michael Jordan');applyVariant(variant);start(jordan>=0?jordan:0);
+});
+applyVariant(variant);
+}
+</script>
+</body></html>

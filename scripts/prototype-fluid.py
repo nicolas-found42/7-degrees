@@ -6,6 +6,7 @@ from pathlib import Path
 import subprocess
 import time
 import urllib.request
+from urllib.parse import parse_qs, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 PORT = int(os.environ.get('PROTOTYPE_PORT', '4317'))
@@ -29,11 +30,14 @@ try:
 
     class Handler(http.server.BaseHTTPRequestHandler):
         def do_GET(self):
-            path = self.path.split('?')[0]
+            parsed = urlsplit(self.path)
+            path = parsed.path
+            variant = parse_qs(parsed.query).get('variant', ['A'])[0]
             if path == '/api/network':
                 body, mime = network, 'application/json'
             elif path in ('/', '/graph'):
-                body = (ROOT / 'crates/app-server/src/prototype-fluid/index.html').read_bytes()
+                filename = 'orbit-walk.html' if variant in ('D', 'E', 'F') else 'index.html'
+                body = (ROOT / 'crates/app-server/src/prototype-fluid' / filename).read_bytes()
                 mime = 'text/html; charset=utf-8'
             else:
                 self.send_error(404)
