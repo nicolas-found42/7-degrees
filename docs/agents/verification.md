@@ -15,7 +15,7 @@ The browser matrix runs one journey at a time (`--test-threads=1`). Simultaneous
 
 ## Receipts and review
 
-Each run writes `manifest.json` with the source commit, working-tree status and tracked-diff hash and untracked-file hashes, expected check list, actual argument vectors, start/end times, exit codes, log hashes and parsed test results. `review-summary.json` omits the full test-name lists and retains counts and log pointers. Supply that compact receipt once as model-review evidence; attach relevant raw excerpts for behavioral claims. Complete logs remain authoritative and accessible. Review the recorded working-tree state when relating a run to a later commit.
+Each run writes `manifest.json` with the source commit, working-tree status and tracked-diff hash and untracked-file hashes, expected check list, actual argument vectors, start/end times, exit codes, log hashes and parsed test results. `review-summary.json` omits the full test-name lists and retains counts and log pointers. Supply that compact receipt once as model-review evidence (the `evidence` of `jev_gate`); attach relevant raw excerpts for behavioral claims. Jev review runs from the agent session only; `scripts/check.py` and CI stay free of paid semantic providers. Complete logs remain authoritative and accessible. Review the recorded working-tree state when relating a run to a later commit.
 
 Publish a successful run with:
 
@@ -48,5 +48,7 @@ python3 scripts/pr-body.py --input target/pr-original.json
 python3 scripts/pr-body.py --input target/pr-original.json --replacement target/pr-description.md --output target/pr-composed.md
 gh pr edit 19 --body-file target/pr-composed.md
 ```
+
+Before `gh pr edit`, `jev_verify` the replacement body's claims against the run's receipts.
 
 The helper prints only the maintained prefix and preserves the recognized Qodo suffix byte for byte. An unrecognized Qodo boundary fails closed for inspection. Use the relevant PR number; the example refers to the existing explorer PR.

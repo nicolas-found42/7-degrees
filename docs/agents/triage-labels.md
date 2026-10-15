@@ -12,4 +12,6 @@ The skills speak in terms of five canonical triage roles. This file maps those r
 
 When a skill mentions a role (e.g. "apply the AFK-ready triage label"), use the corresponding label string from this table.
 
+To triage several issues, `jev_classify` them in one batch: one class per label, its Meaning as the description, plus `manual_review`. A `review` decision stays `needs-triage`.
+
 Edit the right-hand column to match whatever vocabulary you actually use.

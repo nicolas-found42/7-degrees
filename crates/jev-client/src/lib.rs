@@ -11,9 +11,8 @@
 
 /// The TypeSafe model used for every judgment.
 ///
-/// Verified against the live OpenRouter TypeSafe compatibility guide: IDs that
-/// already carry an author prefix (`typesafe/jev-1.13`) are routed as-is.
-pub const JEVC_MODEL: &str = "typesafe/jev-1.13";
+/// The OpenRouter model id, sent unchanged in each judgment request.
+pub const JEVC_MODEL: &str = "typesafe/jev-1.14";
 
 /// Where judgment calls go (verified live, 2026-10 session): OpenRouter routes
 /// the TypeSafe System One API at `https://openrouter.ai/api/v1/systemone`.
@@ -31,7 +30,7 @@ pub struct JevConfig {
     /// Request timeout, in seconds. One explicit retry follows a single
     /// timeout/transport failure; there are no unbounded hangs.
     pub timeout_secs: u64,
-    /// System One model id (`typesafe/jev-1.13` by default).
+    /// System One model id (`typesafe/jev-1.14` by default).
     pub model: String,
 }
 
