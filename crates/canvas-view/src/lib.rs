@@ -25,6 +25,32 @@ pub struct GraphLink {
     #[serde(default)]
     pub minimum_shared_games: Option<u32>,
     pub on_path: bool,
+    #[serde(default = "default_weight")]
+    pub weight: f64,
+    #[serde(default = "default_backbone")]
+    pub in_visual_backbone: bool,
+    #[serde(default)]
+    pub primary_franchise: String,
+}
+fn default_weight() -> f64 {
+    0.15
+}
+fn default_backbone() -> bool {
+    true
+}
+
+impl GraphLink {
+    pub fn primary_franchise(&self) -> &str {
+        if !self.primary_franchise.is_empty() {
+            &self.primary_franchise
+        } else {
+            self.franchises
+                .iter()
+                .min()
+                .map(String::as_str)
+                .unwrap_or(&self.team)
+        }
+    }
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct GraphPayload {
@@ -42,6 +68,7 @@ pub struct GraphPayload {
 }
 
 pub mod layout;
+pub mod visual;
 pub use layout::LayoutMode;
 
 #[cfg(target_arch = "wasm32")]

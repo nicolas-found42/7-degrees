@@ -46,6 +46,7 @@ pub struct AppState {
     jev: JevHandle,
     reports: Option<std::sync::Arc<report_data::ReportMetadata>>,
     canvas_assets: graph_view::CanvasAssets,
+    visual_links: std::sync::Arc<Vec<canvas_view::GraphLink>>,
 }
 
 /// The router with the fixture graph preloaded and Jev deterministically
@@ -68,8 +69,11 @@ pub fn app_with_jev_and_canvas_assets(
     jev: JevHandle,
     canvas_assets: graph_view::CanvasAssets,
 ) -> Router {
+    let graph = fixture_data::fixture_graph();
+    let visual_links = std::sync::Arc::new(graph_view::visual_links(&graph));
     let state = AppState {
-        graph: std::sync::Arc::new(fixture_data::fixture_graph()),
+        graph: std::sync::Arc::new(graph),
+        visual_links,
         jev,
         reports: None,
         canvas_assets,
@@ -138,7 +142,9 @@ pub fn app_with_report_data_and_canvas_assets(
     canvas_assets: graph_view::CanvasAssets,
 ) -> Result<Router, String> {
     let (graph, reports) = report_data::load(root.as_ref())?;
+    let visual_links = std::sync::Arc::new(graph_view::visual_links(&graph));
     Ok(app(AppState {
+        visual_links,
         graph: std::sync::Arc::new(graph),
         jev,
         reports: Some(std::sync::Arc::new(reports)),

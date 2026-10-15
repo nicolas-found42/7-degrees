@@ -108,7 +108,7 @@ impl CanvasView {
         let html=self.indices.get(&self.selected).map(|i|self.graph.nodes[*i].teams.iter().map(|team|format!("<button type=\"button\" data-franchise=\"{}\" aria-pressed=\"{}\">{}</button>",escape(team),self.franchise.as_ref()==Some(team),escape(team))).collect::<String>()).unwrap_or_default();
         element(&self.document, "franchise-filters").set_inner_html(&html);
     }
-    fn fit_visible(&mut self) {
+    pub(super) fn fit_visible(&mut self) {
         let points: Vec<_> = self
             .points
             .iter()
@@ -241,7 +241,7 @@ pub(super) fn request_chain(view: View) {
     });
 }
 
-fn reduced_motion() -> bool {
+pub(super) fn reduced_motion() -> bool {
     web_sys::window()
         .unwrap()
         .match_media("(prefers-reduced-motion: reduce)")
@@ -250,10 +250,33 @@ fn reduced_motion() -> bool {
         .is_some_and(|m| m.matches())
 }
 pub(super) fn change_layout(view: View, mode: LayoutMode) {
+    let mut recompute_chain = false;
     {
         let mut v = view.borrow_mut();
         let old = v.points.clone();
         let camera = (v.scale, v.x, v.y);
+        if mode == LayoutMode::Concentric {
+            if v.selected.is_empty() {
+                let default = v
+                    .graph
+                    .nodes
+                    .iter()
+                    .enumerate()
+                    .max_by(|(a, na), (b, nb)| {
+                        v.adjacency[*a]
+                            .len()
+                            .cmp(&v.adjacency[*b].len())
+                            .then_with(|| nb.id.cmp(&na.id))
+                    })
+                    .map(|(_, n)| (n.id.clone(), n.name.clone()));
+                if let Some((id, name)) = default {
+                    v.select(&id);
+                    v.auto_focus = Some(name);
+                    recompute_chain = !v.graph.target.is_empty();
+                }
+            }
+            v.ego = !v.selected.is_empty();
+        }
         v.relayout(mode);
         if v.pending_layout {
             v.draw();
@@ -279,6 +302,9 @@ pub(super) fn change_layout(view: View, mode: LayoutMode) {
             });
         }
         v.draw();
+    }
+    if recompute_chain {
+        request_chain(view.clone());
     }
     animate(view);
 }
@@ -450,7 +476,9 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
                 let _ = input.set_attribute("data-selected-id", "");
                 if id == "graph-player" {
                     v.selected.clear();
-                    v.hop.clear();
+                    v.recompute_hop();
+                    v.trunk_plan = visual::TrunkPlan::default();
+                    v.auto_focus = None;
                     v.franchise = None;
                     v.franchise_nodes.clear();
                     v.ego = false;

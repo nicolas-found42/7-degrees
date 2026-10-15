@@ -146,27 +146,15 @@ fn neighborhood(
             truncated = true;
             continue;
         }
-        let evidence = edge.strongest_evidence();
-        let (team, overlap_days, minimum_shared_games) = (
-            evidence.team.clone(),
-            evidence.overlap_days,
-            evidence.minimum_shared_games(),
-        );
-        links.push(GraphLink {
-            from: edge.a,
-            to: edge.b,
-            team,
-            franchises: edge
-                .evidence
-                .iter()
-                .map(|e| e.team.clone())
-                .collect::<BTreeSet<_>>()
-                .into_iter()
-                .collect(),
-            overlap_days,
-            minimum_shared_games,
-            on_path,
-        });
+        let index = state
+            .visual_links
+            .binary_search_by(|link| {
+                (link.from.as_str(), link.to.as_str()).cmp(&(edge.a.as_str(), edge.b.as_str()))
+            })
+            .expect("complete cached visual graph");
+        let mut link = state.visual_links[index].clone();
+        link.on_path = on_path;
+        links.push(link);
     }
     GraphPayload {
         full_network: false,
@@ -204,28 +192,60 @@ pub async fn api(
     Json(neighborhood(&state, &query.player, depth, limit, &[])).into_response()
 }
 
-fn network(state: &AppState, focus: &str, path: &[String]) -> GraphPayload {
-    let nodes = state
-        .graph
-        .roster
-        .players
-        .iter()
-        .map(|p| node(state, &p.id, None))
-        .collect();
-    let links = state
-        .graph
+/// Fixed saturation scales: five roster years or three full appearance seasons.
+/// Units remain separate visual mappings; neither mapping certifies duration.
+pub fn edge_visual_weight(edge: &graph_core::TeammateEdge) -> (f64, String) {
+    fn mapped(count: u64, saturation: f64) -> f64 {
+        if count == 0 {
+            0.1
+        } else {
+            (0.15 + 0.85 * (count as f64).ln_1p() / saturation.ln_1p()).clamp(0.1, 1.0)
+        }
+    }
+    let mut groups: BTreeMap<&str, (u64, u64, bool)> = BTreeMap::new();
+    for proof in &edge.evidence {
+        let group = groups.entry(&proof.team).or_default();
+        group.0 += u64::from(proof.overlap_days.unwrap_or(0));
+        if let Some(p) = &proof.appearance_proof {
+            // N is the admitted season's actual total, including shortened seasons.
+            group.1 += (u64::from(p.a_games) + u64::from(p.b_games))
+                .saturating_sub(u64::from(p.team_games));
+        }
+        group.2 |= proof.game_witness.is_some();
+    }
+    let strength = |days, games, witness| {
+        mapped(days, 1825.0)
+            .max(mapped(games, 246.0))
+            .max(if witness { 0.15 } else { 0.1 })
+    };
+    let mut primary = "";
+    let mut best = 0.0;
+    let (mut days, mut games, mut witness) = (0, 0, false);
+    for (team, (d, g, w)) in groups {
+        let weight = strength(d, g, w);
+        if weight > best {
+            best = weight;
+            primary = team;
+        }
+        days += d;
+        games += g;
+        witness |= w;
+    }
+    (strength(days, games, witness), primary.to_owned())
+}
+
+/// Derived once from the complete evidence, before any view or filter exists.
+pub(crate) fn visual_links(graph: &graph_core::TeammateGraph) -> Vec<GraphLink> {
+    let mut links: Vec<_> = graph
         .edges()
         .into_iter()
         .map(|edge| {
             let proof = edge.strongest_evidence();
-            let on_path = path
-                .windows(2)
-                .any(|p| (p[0] == edge.a && p[1] == edge.b) || (p[1] == edge.a && p[0] == edge.b));
+            let (weight, primary_franchise) = edge_visual_weight(&edge);
             GraphLink {
                 team: proof.team.clone(),
                 overlap_days: proof.overlap_days,
                 minimum_shared_games: proof.minimum_shared_games(),
-                on_path,
                 franchises: edge
                     .evidence
                     .iter()
@@ -235,9 +255,46 @@ fn network(state: &AppState, focus: &str, path: &[String]) -> GraphPayload {
                     .collect(),
                 from: edge.a,
                 to: edge.b,
+                on_path: false,
+                weight,
+                primary_franchise,
+                in_visual_backbone: false,
             }
         })
         .collect();
+    let nodes: Vec<_> = graph
+        .roster
+        .players
+        .iter()
+        .map(|p| GraphNode {
+            id: p.id.clone(),
+            name: p.name.clone(),
+            era: String::new(),
+            teams: Vec::new(),
+            distance: None,
+            debut_season: None,
+            degree: graph.neighbor_ids(&p.id).len(),
+        })
+        .collect();
+    canvas_view::visual::mark_backbone(&nodes, &mut links);
+    links.sort_by(|a, b| (&a.from, &a.to).cmp(&(&b.from, &b.to)));
+    links
+}
+
+fn network(state: &AppState, focus: &str, path: &[String]) -> GraphPayload {
+    let nodes = state
+        .graph
+        .roster
+        .players
+        .iter()
+        .map(|p| node(state, &p.id, None))
+        .collect();
+    let mut links = state.visual_links.as_ref().clone();
+    for link in &mut links {
+        link.on_path = path.windows(2).any(|p| {
+            (p[0] == link.from && p[1] == link.to) || (p[1] == link.from && p[0] == link.to)
+        });
+    }
     GraphPayload {
         full_network: true,
         nodes,
@@ -327,8 +384,9 @@ pub async fn page(State(state): State<AppState>, Query(query): Query<ExplorerQue
             })
             .collect()
     };
-    let button =
-        |id: &str, name: &str| format!("<button type=\"button\" id=\"{id}\">{name}</button>");
+    let button = |id: &str, name: &str| {
+        format!("<button type=\"button\" id=\"{id}\" aria-label=\"{name}\">{name}</button>")
+    };
     let camera: String = [
         ("zoom-in", "Zoom in"),
         ("zoom-out", "Zoom out"),

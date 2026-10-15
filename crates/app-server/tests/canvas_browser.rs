@@ -125,8 +125,13 @@ async fn rust_wasm_canvas_renders_the_whole_network_and_supports_pointer_and_key
     assert_eq!(browser.attr("data-pan-x"), initial_x);
     assert_eq!(browser.attr("data-zoom"), initial_zoom);
     browser.click("Concentric rings layout");
-    assert_eq!(browser.attr("data-layout"), "era");
-    assert!(browser.text("#graph-selection").contains("Select a player"));
+    browser.call(json!({"op":"settled"}));
+    assert_eq!(browser.attr("data-layout"), "concentric");
+    assert!(
+        browser
+            .text("#canvas-status")
+            .contains("Default focal player: Player B")
+    );
     browser.call(json!({"op":"select","selector":"#graph-player","value":"A"}));
     // The layout switcher rearranges the network through the shared Rust
     // layout engine and reports the active mode for assistive technology.

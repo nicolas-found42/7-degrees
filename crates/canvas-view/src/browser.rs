@@ -1,6 +1,7 @@
 //! All application canvas rendering and interaction are Rust.
 use crate::GraphPayload;
 use crate::layout::{LayoutMode, compute_layout};
+use crate::visual::{self, Curve, LabelCandidate, LabelPriority, Rect, ZoomTier};
 use std::{cell::RefCell, collections::HashMap, rc::Rc};
 use wasm_bindgen::{JsCast, prelude::*};
 use web_sys::{
@@ -57,6 +58,13 @@ struct CanvasView {
     pinch: Option<((f64, f64), f64)>,
     gesture_moved: bool,
     label_widths: Vec<f64>,
+    landmarks: Vec<bool>,
+    backbone_edges: Vec<usize>,
+    foreground_edges: Vec<usize>,
+    focus_weights: Vec<f64>,
+    trunks: HashMap<usize, Curve>,
+    trunk_plan: visual::TrunkPlan,
+    auto_focus: Option<String>,
 }
 impl CanvasView {
     fn fit(&mut self) {
@@ -207,6 +215,7 @@ impl CanvasView {
         };
         let changed = self.selected != id;
         self.selected = id.into();
+        self.auto_focus = None;
         if changed {
             self.franchise = None;
             self.franchise_nodes.clear();
@@ -217,10 +226,17 @@ impl CanvasView {
         self.render_franchises();
         self.edge = None;
         self.recompute_hop();
+        self.trunk_plan =
+            visual::TrunkPlan::new(&self.graph.nodes, &self.graph.links, &self.selected);
         if self.layout == LayoutMode::Concentric || self.pending_layout {
+            self.ego = true;
             self.relayout(LayoutMode::Concentric);
         }
-        self.focus_player();
+        if self.ego && self.layout == LayoutMode::Concentric {
+            self.fit_visible();
+        } else {
+            self.focus_player();
+        }
         if let Some(element) = self.document.get_element_by_id("graph-selection") {
             element.set_text_content(Some(&format!(
                 "Selected player: {} — {}; teams: {}; {} teammate connections",
@@ -237,6 +253,8 @@ impl CanvasView {
     /// 2014: feedback under ~100 ms keeps exploration fluid).
     fn recompute_hop(&mut self) {
         self.hop.clear();
+        self.foreground_edges.clear();
+        self.focus_weights.fill(0.0);
         let Some(&start) = self.indices.get(&self.selected) else {
             return;
         };
@@ -254,7 +272,27 @@ impl CanvasView {
                 }
             }
         }
+        self.foreground_edges = self
+            .graph
+            .links
+            .iter()
+            .enumerate()
+            .filter_map(|(i, e)| {
+                let direct = e.from == self.selected || e.to == self.selected;
+                if direct {
+                    let other = if e.from == self.selected {
+                        &e.to
+                    } else {
+                        &e.from
+                    };
+                    self.focus_weights[self.indices[other]] = e.weight;
+                }
+                let nearby = self.hop.contains_key(&e.from) && self.hop.contains_key(&e.to);
+                (direct || nearby).then_some(i)
+            })
+            .collect();
     }
+
     fn select_edge(&mut self, index: usize) {
         self.edge = Some(index);
         let e = &self.graph.links[index];
@@ -336,35 +374,14 @@ impl CanvasView {
                     || self.hovered_edge == Some(*i)
             })
             .filter_map(|(i, e)| {
-                let a = self.screen(self.at(&e.from));
-                let b = self.screen(self.at(&e.to));
                 if !self.visible(self.indices[&e.from]) || !self.visible(self.indices[&e.to]) {
                     return None;
                 }
-                let c = self.edge_control(i, a, b);
-                let a = (a.0 / css_x, a.1 / css_y);
-                let b = (b.0 / css_x, b.1 / css_y);
-                let c = (c.0 / css_x, c.1 / css_y);
-                let mut distance = f64::INFINITY;
-                let mut previous = a;
-                for segment in 1..=24 {
-                    let t = segment as f64 / 24.0;
-                    let q = (
-                        (1.0 - t).powi(2) * a.0 + 2.0 * (1.0 - t) * t * c.0 + t * t * b.0,
-                        (1.0 - t).powi(2) * a.1 + 2.0 * (1.0 - t) * t * c.1 + t * t * b.1,
-                    );
-                    let (vx, vy) = (q.0 - previous.0, q.1 - previous.1);
-                    let length = vx * vx + vy * vy;
-                    let u = if length == 0.0 {
-                        0.0
-                    } else {
-                        (((p.0 - previous.0) * vx + (p.1 - previous.1) * vy) / length)
-                            .clamp(0.0, 1.0)
-                    };
-                    distance =
-                        distance.min((p.0 - previous.0 - u * vx).hypot(p.1 - previous.1 - u * vy));
-                    previous = q;
-                }
+                let curve = self.edge_curve(i, true).map(|point| {
+                    let point = self.screen(point);
+                    (point.0 / css_x, point.1 / css_y)
+                });
+                let distance = curve.distance(p);
                 (distance < 8.0).then_some((i, distance))
             })
             .min_by(|a, b| a.1.total_cmp(&b.1))
@@ -401,41 +418,69 @@ impl CanvasView {
             || self.franchise_nodes.contains(&index)
             || n.id == self.selected)
     }
-    fn edge_control(&self, index: usize, a: (f64, f64), b: (f64, f64)) -> (f64, f64) {
+    fn edge_curve(&self, index: usize, curved: bool) -> Curve {
         let e = &self.graph.links[index];
-        let sign = if e.from < e.to { 1.0 } else { -1.0 };
-        (
-            (a.0 + b.0) / 2.0 - (b.1 - a.1) * 0.075 * sign,
-            (a.1 + b.1) / 2.0 + (b.0 - a.0) * 0.075 * sign,
-        )
+        let (a, b) = self.indexed_links[index];
+        if !e.on_path
+            && curved
+            && let Some(curve) = self.trunks.get(&index)
+        {
+            return *curve;
+        }
+        if curved {
+            visual::quadratic(self.points[a], self.points[b])
+        } else {
+            Curve::Line(self.points[a], self.points[b])
+        }
     }
-    fn stroke_edge(&self, index: usize, curved: bool) {
+    fn stroke_edge(&self, index: usize, curved: bool) -> bool {
         let (a, b) = self.indexed_links[index];
         if !self.visible(a) || !self.visible(b) {
-            return;
+            return false;
         }
-        let a = self.screen(self.points[a]);
-        let b = self.screen(self.points[b]);
-        if (a.0 < 0.0 && b.0 < 0.0)
-            || (a.0 > 1000.0 && b.0 > 1000.0)
-            || (a.1 < 0.0 && b.1 < 0.0)
-            || (a.1 > 600.0 && b.1 > 600.0)
+        let curve = self.edge_curve(index, curved).map(|p| self.screen(p));
+        // Include spline control points in viewport culling, not only its chord.
+        let points = match curve {
+            Curve::Line(a, b) => [a, b, a, b],
+            Curve::Quadratic(a, c, b) => [a, c, b, b],
+            Curve::Cubic(a, c, d, b) => [a, c, d, b],
+        };
+        if !self.graph.links[index].on_path
+            && (points.iter().all(|p| p.0 < 0.0)
+                || points.iter().all(|p| p.0 > 1000.0)
+                || points.iter().all(|p| p.1 < 0.0)
+                || points.iter().all(|p| p.1 > 600.0))
         {
-            return;
+            return false;
         }
+        let a = curve.point(0.0);
         self.ctx.move_to(a.0, a.1);
-        if curved {
-            let c = self.edge_control(index, a, b);
-            self.ctx.quadratic_curve_to(c.0, c.1, b.0, b.1);
-        } else {
-            self.ctx.line_to(b.0, b.1);
+        match curve {
+            Curve::Line(_, b) => self.ctx.line_to(b.0, b.1),
+            Curve::Quadratic(_, c, b) => self.ctx.quadratic_curve_to(c.0, c.1, b.0, b.1),
+            Curve::Cubic(_, c, d, b) => self.ctx.bezier_curve_to(c.0, c.1, d.0, d.1, b.0, b.1),
         }
+        true
     }
     fn draw(&mut self) {
         let rect = self.canvas.get_bounding_client_rect();
         let css_x = 1000.0 / rect.width().max(1.0);
         let css_y = 600.0 / rect.height().max(1.0);
         let stroke_scale = (css_x * css_y).sqrt();
+        let started = js_sys::Date::now();
+        let zoom_tier = ZoomTier::at(self.scale);
+        let reduced = explorer::reduced_motion();
+        let micro_blend = visual::zoom_blend(self.scale, 0.75, reduced);
+        let meso_blend = visual::zoom_blend(self.scale, 0.25, reduced);
+        self.trunks = if self.layout == LayoutMode::Concentric {
+            HashMap::new()
+        } else {
+            self.trunk_plan
+                .curves(&self.graph.links, &self.points, |i| self.visible(i))
+        };
+        let mut drawn_background = 0;
+        let mut drawn_focus = 0;
+        let mut drawn_chain = 0;
         const COLORS: [&str; 8] = [
             "#1b9e77", "#d95f02", "#7570b3", "#e7298a", "#65a41e", "#bb8b02", "#a6761d", "#666666",
         ];
@@ -468,56 +513,117 @@ impl CanvasView {
             }
         }
         let active = !self.graph.path.is_empty();
-        // Three batched passes preserve the alpha hierarchy without 100k strokes.
-        for tier in 0..4 {
-            self.ctx.set_stroke_style_str(match tier {
-                0 => "rgba(66,109,122,0.03)",
-                1 => "rgba(176,79,0,0.055)",
-                2 => "rgba(176,79,0,0.23)",
-                _ => "rgba(66,109,122,0.03)",
-            });
-            self.ctx.set_line_width(if tier == 2 {
-                0.85 * stroke_scale
-            } else {
-                0.5 * stroke_scale
-            });
-            self.ctx
-                .set_global_alpha(if active || tier == 3 { 0.05 } else { 1.0 });
+        // Overview iterates the cached backbone, rather than four full edge passes.
+        for local in [false, true] {
+            if local && micro_blend == 0.0 {
+                continue;
+            }
+            self.ctx.set_stroke_style_str("#426d7a");
+            self.ctx.set_line_width(0.5 * stroke_scale);
             self.ctx.begin_path();
-            for (i, e) in self.graph.links.iter().enumerate() {
-                if e.on_path || self.edge == Some(i) || self.hovered_edge == Some(i) {
+            self.ctx.set_global_alpha(
+                (0.02 + 0.02 * meso_blend)
+                    * if local { micro_blend } else { 1.0 }
+                    * if active { 0.05 } else { 1.0 },
+            );
+            let candidates: Box<dyn Iterator<Item = usize>> = if local {
+                Box::new(0..self.graph.links.len())
+            } else {
+                Box::new(self.backbone_edges.iter().copied())
+            };
+            for i in candidates {
+                let e = &self.graph.links[i];
+                if e.on_path
+                    || self.edge == Some(i)
+                    || self.hovered_edge == Some(i)
+                    || (local && e.in_visual_backbone)
+                {
                     continue;
                 }
-                let direct = e.from == self.selected || e.to == self.selected;
-                let nearby = self.hop.get(&e.from).is_some_and(|d| *d <= 2)
-                    && self.hop.get(&e.to).is_some_and(|d| *d <= 2);
-                let (a, b) = self.indexed_links[i];
-                let category = if !self.emphasized(a) || !self.emphasized(b) {
-                    3
-                } else if direct {
-                    2
-                } else if nearby {
-                    1
-                } else {
-                    0
-                };
-                if category != tier {
+                if self.hop.contains_key(&e.from) && self.hop.contains_key(&e.to) {
                     continue;
                 }
-                self.stroke_edge(i, direct || nearby);
+                if self.stroke_edge(i, false) {
+                    drawn_background += 1;
+                }
             }
             self.ctx.stroke();
         }
-        self.ctx.set_global_alpha(1.0);
-        for (i, e) in self.graph.links.iter().enumerate() {
-            if !e.on_path && self.edge != Some(i) && self.hovered_edge != Some(i) {
+        for &i in &self.foreground_edges {
+            let e = &self.graph.links[i];
+            if e.on_path || self.edge == Some(i) || self.hovered_edge == Some(i) {
                 continue;
             }
+            let (a, b) = self.indexed_links[i];
+            let direct = e.from == self.selected || e.to == self.selected;
+            let alpha = if direct {
+                0.18 + 0.10 * (e.weight.clamp(0.1, 1.0) - 0.1) / 0.9
+            } else {
+                0.055
+            };
+            self.ctx.set_global_alpha(
+                alpha
+                    * if active || !self.emphasized(a) || !self.emphasized(b) {
+                        0.05
+                    } else {
+                        1.0
+                    },
+            );
+            self.ctx.set_stroke_style_str("#b04f00");
+            self.ctx.set_line_width(if direct {
+                (0.65 + 0.85 * e.weight) * stroke_scale
+            } else {
+                0.5 * stroke_scale
+            });
+            self.ctx.begin_path();
+            if self.stroke_edge(i, true) {
+                drawn_focus += 1;
+            }
+            self.ctx.stroke();
+        }
+        // Chain and inspection always bypass backbone, filters and semantic zoom.
+        let mut highlighted: Vec<_> = self
+            .graph
+            .path
+            .windows(2)
+            .filter_map(|p| {
+                self.graph
+                    .links
+                    .binary_search_by(|e| {
+                        let pair = if p[0] < p[1] {
+                            (&p[0], &p[1])
+                        } else {
+                            (&p[1], &p[0])
+                        };
+                        (&e.from, &e.to).cmp(&pair)
+                    })
+                    .ok()
+            })
+            .collect();
+        // Custom/fixture payloads need not arrive in pair order.
+        if highlighted.len() != self.graph.path.len().saturating_sub(1) {
+            highlighted = self
+                .graph
+                .links
+                .iter()
+                .enumerate()
+                .filter_map(|(i, e)| e.on_path.then_some(i))
+                .collect();
+        }
+        highlighted.extend(self.edge);
+        highlighted.extend(self.hovered_edge);
+        highlighted.sort_unstable();
+        highlighted.dedup();
+        self.ctx.set_global_alpha(1.0);
+        for i in highlighted {
+            let e = &self.graph.links[i];
             self.ctx
                 .set_stroke_style_str(if e.on_path { "#176896" } else { "#b04f00" });
             self.ctx.set_line_width(2.2 * stroke_scale);
             self.ctx.begin_path();
-            self.stroke_edge(i, true);
+            if self.stroke_edge(i, true) && e.on_path {
+                drawn_chain += 1;
+            }
             self.ctx.stroke();
         }
         // Nodes and labels use CSS pixels even when the logical canvas is resized.
@@ -552,8 +658,19 @@ impl CanvasView {
                     _ => 1.0,
                 }
             };
-            let radius = (2.0 + (self.adjacency[i].len() as f64 + 1.0).ln() * 0.65)
-                * (self.scale.sqrt().clamp(0.6, 1.5));
+            let landmark = self.landmarks[i] || important;
+            let macro_radius = ZoomTier::Macro.radius(self.adjacency[i].len(), landmark);
+            let meso_radius = ZoomTier::Meso.radius(self.adjacency[i].len(), landmark);
+            let micro_radius = ZoomTier::Micro.radius(self.adjacency[i].len(), landmark);
+            let radius = (macro_radius * (1.0 - meso_blend) + meso_radius * meso_blend)
+                * (1.0 - micro_blend)
+                + micro_radius * micro_blend;
+            let alpha = alpha
+                * if !important && !self.landmarks[i] {
+                    0.45 + 0.55 * meso_blend
+                } else {
+                    1.0
+                };
             self.ctx.set_global_alpha(alpha);
             self.ctx
                 .set_fill_style_str(if self.graph.path.contains(&n.id) {
@@ -572,95 +689,135 @@ impl CanvasView {
             self.ctx.fill();
         }
         self.ctx.set_global_alpha(1.0);
-        let mut boxes: Vec<(f64, f64, f64, f64)> = Vec::new();
-        // Reserve the actual docked overlays in CSS space before any labels.
+        let mut reserved = Vec::new();
         for selector in [".camera-controls", "#graph-minimap", "#minimap-toggle"] {
             if let Ok(Some(overlay)) = self.document.query_selector(selector) {
                 let bounds = overlay.get_bounding_client_rect();
                 if bounds.width() > 0.0 && bounds.height() > 0.0 {
-                    boxes.push((
-                        bounds.left() - rect.left() - 4.0,
-                        bounds.top() - rect.top() - 4.0,
-                        bounds.right() - rect.left() + 4.0,
-                        bounds.bottom() - rect.top() + 4.0,
-                    ));
+                    reserved.push(Rect {
+                        left: bounds.left() - rect.left(),
+                        top: bounds.top() - rect.top(),
+                        right: bounds.right() - rect.left(),
+                        bottom: bounds.bottom() - rect.top(),
+                    });
                 }
             }
         }
-
-        // Important badges reserve bounds before ordinary labels are admitted.
-        for important in [true, false] {
-            self.ctx.set_font(if important {
-                "bold 15px sans-serif"
-            } else {
-                "15px sans-serif"
-            });
-            let mut ordinary = 0;
-            for (i, n) in self.graph.nodes.iter().enumerate() {
-                if self.important(i) != important || !self.visible(i) {
+        if self.layout == LayoutMode::Concentric {
+            self.ctx.set_font("bold 12px sans-serif");
+            self.ctx.set_fill_style_str("#334155");
+            for sector in crate::layout::concentric_sectors(&self.graph.links, &self.selected) {
+                let angle = (sector.start + sector.end) / 2.0;
+                let p = self.screen((500.0 * angle.cos(), 500.0 * angle.sin()));
+                let (x, y) = (p.0 / css_x, p.1 / css_y);
+                if x < 0.0 || x > rect.width() || y < 25.0 || y > rect.height() - 25.0 {
                     continue;
                 }
-                if !important
-                    && (self.scale < 0.25 || active || !self.emphasized(i) || ordinary >= 180)
-                {
-                    continue;
-                }
-                let logical = self.screen(self.points[i]);
-                let p = (logical.0 / css_x, logical.1 / css_y);
-                if p.0 < 0.0 || p.0 > rect.width() || p.1 < 35.0 || p.1 > rect.height() - 30.0 {
-                    continue;
-                }
-                let width = (self.label_widths[i] + 14.0).min(rect.width().max(30.0) - 8.0);
-                let x = p.0.clamp(width / 2.0, rect.width() - width / 2.0);
-                let mut y = p.1 - 14.0;
-                let overlaps = |y: f64, boxes: &Vec<(f64, f64, f64, f64)>| {
-                    boxes.iter().any(|b| {
-                        x - width / 2.0 < b.2
-                            && x + width / 2.0 > b.0
-                            && y - 20.0 < b.3
-                            && y + 5.0 > b.1
-                    })
-                };
-                if important {
-                    while overlaps(y, &boxes) && y > 30.0 {
-                        y -= 26.0;
-                    }
-                    if overlaps(y, &boxes) {
-                        y = p.1 + 30.0;
-                        while overlaps(y, &boxes) && y < rect.height() - 30.0 {
-                            y += 26.0;
-                        }
-                    }
-                } else if overlaps(y, &boxes) {
-                    continue;
-                }
-                boxes.push((x - width / 2.0, y - 20.0, x + width / 2.0, y + 5.0));
-                if important {
-                    self.ctx.set_fill_style_str("#172e41");
-                    self.ctx.begin_path();
-                    let _ =
-                        self.ctx
-                            .round_rect_with_f64(x - width / 2.0, y - 20.0, width, 26.0, 6.0);
-                    self.ctx.fill();
-                    self.ctx.set_stroke_style_str(
-                        n.debut_season
-                            .map(|v| COLORS[(v.saturating_sub(1940) / 10).min(7) as usize])
-                            .unwrap_or("#94a3b8"),
-                    );
-                    self.ctx.set_line_width(1.5);
-                    self.ctx.stroke();
-                    self.ctx.set_fill_style_str("#ffffff");
+                let text = if sector.franchise.is_empty() {
+                    "Unknown"
                 } else {
-                    ordinary += 1;
-                    self.ctx.set_stroke_style_str("#ffffff");
-                    self.ctx.set_line_width(3.0);
-                    self.ctx.set_line_join("round");
-                    let _ = self.ctx.stroke_text(&n.name, x, y);
-                    self.ctx.set_fill_style_str("#0f172a");
-                }
-                let _ = self.ctx.fill_text(&n.name, x, y);
+                    &sector.franchise
+                };
+                let w = self
+                    .ctx
+                    .measure_text(text)
+                    .map(|m| m.width())
+                    .unwrap_or(90.0);
+                reserved.push(Rect {
+                    left: x - w / 2.0,
+                    top: y - 14.0,
+                    right: x + w / 2.0,
+                    bottom: y + 4.0,
+                });
+                let _ = self.ctx.fill_text(text, x, y);
             }
         }
+        let mut candidates = Vec::new();
+        for (i, n) in self.graph.nodes.iter().enumerate() {
+            if !self.visible(i) {
+                continue;
+            }
+            let important = self.important(i);
+            if !important && (active || (zoom_tier == ZoomTier::Macro && !self.landmarks[i])) {
+                continue;
+            }
+            let logical = self.screen(self.points[i]);
+            let point = (logical.0 / css_x, logical.1 / css_y);
+            if !important
+                && (point.0 < 0.0
+                    || point.0 > rect.width()
+                    || point.1 < 35.0
+                    || point.1 > rect.height() - 30.0)
+            {
+                continue;
+            }
+            candidates.push(LabelCandidate {
+                index: i,
+                id: &n.id,
+                priority: if important {
+                    LabelPriority::Important
+                } else if self.hop.get(&n.id) == Some(&1) {
+                    LabelPriority::DirectTeammate
+                } else {
+                    LabelPriority::Context
+                },
+                weight: self.focus_weights[i],
+                count: self.adjacency[i].len(),
+                matching: self.emphasized(i),
+                point,
+                width: self.label_widths[i] + 14.0,
+            });
+        }
+        let cap = zoom_tier.label_cap(rect.width());
+        let labels =
+            visual::place_labels(&mut candidates, rect.width(), rect.height(), cap, &reserved);
+        for label in &labels {
+            let n = &self.graph.nodes[label.index];
+            let important = label.priority == LabelPriority::Important;
+            self.ctx.set_global_alpha(
+                if important || label.priority == LabelPriority::DirectTeammate {
+                    1.0
+                } else if self.emphasized(label.index) {
+                    0.7
+                } else {
+                    0.16
+                },
+            );
+            self.ctx
+                .set_font(if label.priority <= LabelPriority::DirectTeammate {
+                    "bold 15px sans-serif"
+                } else {
+                    "15px sans-serif"
+                });
+            if important || (zoom_tier == ZoomTier::Macro && self.landmarks[label.index]) {
+                self.ctx.set_fill_style_str("#172e41");
+                self.ctx.begin_path();
+                let _ = self.ctx.round_rect_with_f64(
+                    label.bounds.left,
+                    label.bounds.top,
+                    label.bounds.right - label.bounds.left,
+                    26.0,
+                    6.0,
+                );
+                self.ctx.fill();
+                self.ctx.set_stroke_style_str(
+                    n.debut_season
+                        .map(|v| COLORS[(v.saturating_sub(1940) / 10).min(7) as usize])
+                        .unwrap_or("#94a3b8"),
+                );
+                self.ctx.set_line_width(1.5);
+                self.ctx.stroke();
+                self.ctx.set_fill_style_str("#ffffff");
+            } else {
+                self.ctx.set_stroke_style_str("#ffffff");
+                self.ctx.set_line_width(3.0);
+                self.ctx.set_line_join("round");
+                let _ = self.ctx.stroke_text(&n.name, label.x, label.y);
+                self.ctx.set_fill_style_str("#0f172a");
+            }
+            let _ = self.ctx.fill_text(&n.name, label.x, label.y);
+        }
+        self.ctx.set_global_alpha(1.0);
         self.ctx.restore();
         let _ = self
             .document
@@ -679,10 +836,14 @@ impl CanvasView {
         // role="status" is an atomic live region: rewriting identical text on every
         // frame floods screen readers during a drag, so only changed content is set.
         let text = format!(
-            "Canvas ready — {} players, {} relationships. Zoom {:.0}%.",
+            "Canvas ready — {} players, {} relationships. Zoom {:.0}%.{}",
             self.graph.nodes.len(),
             self.graph.links.len(),
-            self.scale * 100.0
+            self.scale * 100.0,
+            self.auto_focus
+                .as_ref()
+                .map(|name| format!(" Default focal player: {name}, chosen by teammate count."))
+                .unwrap_or_default()
         );
         if self.transition.is_none()
             && self.pointers.is_empty()
@@ -695,6 +856,32 @@ impl CanvasView {
         self.report_hover();
         self.draw_minimap();
         for (key, value) in [
+            ("data-tier", zoom_tier.name().into()),
+            ("data-label-cap", cap.to_string()),
+            (
+                "data-labels",
+                labels
+                    .iter()
+                    .map(|l| self.graph.nodes[l.index].id.as_str())
+                    .collect::<Vec<_>>()
+                    .join(","),
+            ),
+            (
+                "data-ordinary-labels",
+                labels
+                    .iter()
+                    .filter(|l| l.priority != LabelPriority::Important)
+                    .count()
+                    .to_string(),
+            ),
+            ("data-background-edges", drawn_background.to_string()),
+            ("data-focus-edges", drawn_focus.to_string()),
+            ("data-chain-edges", drawn_chain.to_string()),
+            ("data-bundled-edges", self.trunks.len().to_string()),
+            (
+                "data-draw-ms",
+                format!("{:.2}", js_sys::Date::now() - started),
+            ),
             ("data-ready", "true".into()),
             ("data-zoom", format!("{:.6}", self.scale)),
             ("data-pan-x", format!("{:.2}", self.x)),
@@ -717,7 +904,17 @@ impl CanvasView {
         let Some(tip) = self.document.get_element_by_id("graph-tooltip") else {
             return;
         };
-        let Some(index) = self.hovered else {
+        let hovered = self.hovered.or_else(|| {
+            self.hovered_edge.map(|i| {
+                let e = &self.graph.links[i];
+                self.indices[if e.from == self.selected {
+                    &e.to
+                } else {
+                    &e.from
+                }]
+            })
+        });
+        let Some(index) = hovered else {
             tip.set_text_content(None);
             let _ = tip.set_attribute("hidden", "");
             let _ = tip.remove_attribute("data-player");
@@ -781,7 +978,13 @@ impl CanvasView {
         mctx.fill_rect(0.0, 0.0, mw, mh);
         mctx.set_fill_style_str("#23405a");
         for (i, p) in self.points.iter().enumerate() {
-            mctx.set_global_alpha(if self.important(i) { 1.0 } else { 0.15 });
+            mctx.set_global_alpha(if self.important(i) {
+                1.0
+            } else if !self.visible(i) || !self.emphasized(i) {
+                0.03
+            } else {
+                0.15
+            });
             mctx.set_fill_style_str(if self.graph.path.contains(&self.graph.nodes[i].id) {
                 "#176896"
             } else if self.graph.nodes[i].id == self.selected {
@@ -904,6 +1107,14 @@ pub fn start() -> Result<(), JsValue> {
                 .unwrap_or(100.0)
         })
         .collect();
+    let landmarks = visual::landmarks(&graph.nodes);
+    let backbone_edges = graph
+        .links
+        .iter()
+        .enumerate()
+        .filter_map(|(i, e)| e.in_visual_backbone.then_some(i))
+        .collect();
+    let focus_weights = vec![0.0; graph.nodes.len()];
     let view = Rc::new(RefCell::new(CanvasView {
         document: document.clone(),
         canvas: canvas.clone(),
@@ -939,6 +1150,13 @@ pub fn start() -> Result<(), JsValue> {
         pinch: None,
         gesture_moved: false,
         label_widths,
+        landmarks,
+        backbone_edges,
+        focus_weights,
+        foreground_edges: Vec::new(),
+        trunks: HashMap::new(),
+        trunk_plan: visual::TrunkPlan::default(),
+        auto_focus: None,
     }));
     {
         let mut v = view.borrow_mut();

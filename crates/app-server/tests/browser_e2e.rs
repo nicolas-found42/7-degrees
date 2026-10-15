@@ -69,6 +69,121 @@ async fn the_graph_page_shows_every_fixture_player_and_relationship_and_supports
     assert_eq!(b.call(json!({"op":"errors"})), json!([]));
 }
 
+// Actual pointer dispatch verifies that the renderer and hit-test share the spline.
+fn click_visible_bundle(b: &mut Browser, payload: &canvas_view::GraphPayload, focus: &str) {
+    use canvas_view::{
+        layout::compute_layout,
+        visual::{franchise_trunks, quadratic},
+    };
+    let points = compute_layout(
+        &payload.nodes,
+        &payload.links,
+        canvas_view::LayoutMode::EraLane,
+        focus,
+        &[],
+        true,
+        &std::collections::HashMap::new(),
+    );
+    let curves = franchise_trunks(
+        &payload.nodes,
+        &payload.links,
+        &points,
+        focus,
+        &vec![true; points.len()],
+        false,
+    );
+    assert!(b.attr("data-bundled-edges").parse::<usize>().unwrap() > 0);
+    b.call(json!({"op":"focus","selector":"#graph-canvas"}));
+    let bounds = b.call(json!({"op":"box","selector":"#graph-canvas"}));
+    let (w, h) = (
+        bounds["width"].as_f64().unwrap(),
+        bounds["height"].as_f64().unwrap(),
+    );
+    let (scale, x, y) = (
+        b.attr("data-zoom").parse::<f64>().unwrap(),
+        b.attr("data-pan-x").parse::<f64>().unwrap(),
+        b.attr("data-pan-y").parse::<f64>().unwrap(),
+    );
+    let screen = |p: (f64, f64)| {
+        (
+            (p.0 * scale + x) * w / 1000.0,
+            (p.1 * scale + y) * h / 600.0,
+        )
+    };
+    let indices: std::collections::HashMap<_, _> = payload
+        .nodes
+        .iter()
+        .enumerate()
+        .map(|(i, n)| (n.id.as_str(), i))
+        .collect();
+    let direct: Vec<_> = payload
+        .links
+        .iter()
+        .enumerate()
+        .filter(|(_, e)| e.from == focus || e.to == focus)
+        .map(|(i, e)| {
+            let curve = curves.get(&i).copied().unwrap_or_else(|| {
+                quadratic(
+                    points[indices[e.from.as_str()]],
+                    points[indices[e.to.as_str()]],
+                )
+            });
+            (i, curve.map(screen))
+        })
+        .collect();
+    let mut chosen = None;
+    for &(i, curve) in &direct {
+        if !curves.contains_key(&i) {
+            continue;
+        }
+        for t in [0.55, 0.7, 0.85, 0.93] {
+            let p = curve.point(t);
+            if p.0 < 20.0 || p.0 > w - 20.0 || p.1 < 40.0 || p.1 > h - 100.0 {
+                continue;
+            }
+            if points.iter().any(|&q| {
+                let q = screen(q);
+                (q.0 - p.0).hypot(q.1 - p.1) < 12.0
+            }) {
+                continue;
+            }
+            if direct
+                .iter()
+                .any(|&(other, c)| other != i && c.distance(p) < 1.0)
+            {
+                continue;
+            }
+            chosen = Some((i, p));
+            break;
+        }
+        if chosen.is_some() {
+            break;
+        }
+    }
+    let (i, p) = chosen.expect("visible distinct bundled spline point");
+    let e = &payload.links[i];
+    let (px, py) = (
+        bounds["x"].as_f64().unwrap() + p.0,
+        bounds["y"].as_f64().unwrap() + p.1,
+    );
+    b.call(json!({"op":"mouse","action":"move","x":px,"y":py}));
+    let other = if e.from == focus { &e.to } else { &e.from };
+    assert!(
+        b.text("#graph-tooltip")
+            .contains(&payload.nodes[indices[other.as_str()]].name)
+    );
+    b.call(json!({"op":"mouse","action":"click","x":px,"y":py}));
+    b.call(json!({"op":"ready","selector":"#drawer-content .proof-card >> nth=0"}));
+    assert!(
+        b.call(json!({"op":"url"}))
+            .as_str()
+            .unwrap()
+            .ends_with(&format!("/edge?from={}&to={}", e.from, e.to))
+    );
+    screenshot(b, "maravich-bundled-evidence.png", None);
+    b.click("Close evidence");
+}
+
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 #[ignore = "actual Chromium over the whole committed report network"]
 async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer() {
@@ -90,11 +205,44 @@ async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer(
     assert_eq!(counts["path"], json!([]));
     assert_eq!(counts["highlighted"], 0);
     screenshot(&mut b, "all-player-network.png", Some("#graph-canvas"));
+    let payload: canvas_view::GraphPayload =
+        serde_json::from_str(&b.text("#graph-payload")).unwrap();
+    let backbone = payload
+        .links
+        .iter()
+        .filter(|e| e.in_visual_backbone)
+        .count();
+    assert!(backbone < payload.links.len() / 4);
+    assert_eq!(b.attr("data-tier"), "macro");
+    assert!(b.attr("data-background-edges").parse::<usize>().unwrap() <= backbone);
+    let overview_ms = b.attr("data-draw-ms");
+    println!(
+        "Macro: {} drawn background edges / {backbone} backbone / {} loaded; {overview_ms} ms",
+        b.attr("data-background-edges"),
+        payload.links.len()
+    );
+    b.click("Zoom in");
+    while b.attr("data-tier") == "macro" {
+        b.click("Zoom in");
+    }
+    assert_eq!(b.attr("data-tier"), "meso");
+    assert!(b.attr("data-background-edges").parse::<usize>().unwrap() <= backbone);
+    while b.attr("data-tier") != "micro" {
+        b.click("Zoom in");
+    }
+    assert!(b.attr("data-background-edges").parse::<usize>().unwrap() > 0);
+    println!(
+        "Micro: {} local drawn background edges; {} ms",
+        b.attr("data-background-edges"),
+        b.attr("data-draw-ms")
+    );
+    b.click("Fit whole network");
     // The picker keeps every player selectable; a choice reports the selection.
     assert!(b.text("#graph-payload").contains("Pete Maravich"));
     b.call(json!({"op":"select","selector":"#graph-player","value":"maravpe01"}));
     assert!(b.text("#graph-selection").contains("Pete Maravich"));
     assert!(b.text("#graph-selection").contains("teams:"));
+    click_visible_bundle(&mut b, &payload, "maravpe01");
     for (button, mode) in [
         ("Era lanes layout", "era"),
         ("Concentric rings layout", "concentric"),
@@ -102,7 +250,20 @@ async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer(
     ] {
         b.click(button);
         b.call(json!({"op":"settled"}));
+        if mode == "concentric" {
+            assert_eq!(
+                b.call(json!({"op":"attribute","selector":"#ego-toggle","name":"aria-pressed"})),
+                "true"
+            );
+            screenshot(
+                &mut b,
+                "maravich-concentric-sectors.png",
+                Some("#graph-canvas"),
+            );
+        }
         b.click("Fit whole network");
+        assert_eq!(b.attr("data-tier"), "macro");
+        assert!(b.attr("data-ordinary-labels").parse::<usize>().unwrap() <= 10);
         screenshot(
             &mut b,
             &format!("maravich-{mode}-overview.png"),
@@ -118,6 +279,20 @@ async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer(
     b.call(json!({"op":"select","selector":"#graph-target","value":"goodrga01"}));
     b.call(json!({"op":"ready","selector":"#graph-chain[data-state=connected]"}));
     assert!(b.text("#graph-chain").contains("degree 1"));
+    b.click("Fit whole network");
+    b.click("Show ego network only (1–2 hops)");
+    while b.attr("data-tier") != "macro" {
+        b.click("Zoom out");
+    }
+    for i in 0..8 {
+        b.call(json!({"op":"click","selector":format!("#era-{i}")}));
+    }
+    assert_eq!(b.attr("data-chain-edges"), "1");
+    let labels = b.attr("data-labels");
+    assert!(labels.split(',').any(|id| id == "maravpe01"));
+    assert!(labels.split(',').any(|id| id == "goodrga01"));
+    assert_eq!(b.attr("data-players"), "5106");
+    assert_eq!(b.attr("data-relationships"), "101395");
     screenshot(&mut b, "maravich-chain.png", None);
     b.call(json!({"op":"click","selector":"#graph-chain a[data-evidence]"}));
     b.call(json!({"op":"ready","selector":"#drawer-content .proof-card >> nth=0"}));
@@ -139,6 +314,16 @@ async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer(
     assert!(canvas["width"].as_f64().unwrap() <= 390.0);
     assert!(b.text("#graph-payload").contains("Pete Maravich"));
     screenshot(&mut b, "all-player-network-phone.png", None);
+    b.call(json!({"op":"motion","value":"reduce"}));
+    b.call(json!({"op":"select","selector":"#graph-player","value":"maravpe01"}));
+    b.click("Zoom out");
+    b.click("Zoom out");
+    assert_eq!(b.attr("data-tier"), "meso");
+    assert_eq!(b.attr("data-label-cap"), "12");
+    assert!(b.attr("data-ordinary-labels").parse::<usize>().unwrap() <= 12);
+    b.click("Concentric rings layout");
+    assert_eq!(b.attr("data-transition"), "settled");
+    screenshot(&mut b, "maravich-phone-sectors.png", Some("#graph-canvas"));
     assert_eq!(b.call(json!({"op":"errors"})), json!([]));
 }
 
@@ -575,8 +760,22 @@ async fn explorer_pair_filters_drawer_history_and_mobile_are_reversible() {
     b.call(json!({"op":"goto","url":server.url}));
     b.ready();
     b.click("Concentric rings layout");
-    assert_eq!(b.attr("data-layout"), "era");
-    assert!(b.text("#graph-selection").contains("Select a player"));
+    b.call(json!({"op":"settled"}));
+    assert_eq!(b.attr("data-layout"), "concentric");
+    assert!(
+        b.text("#canvas-status")
+            .contains("Default focal player: Player B")
+    );
+    assert_eq!(
+        b.call(json!({"op":"attribute","selector":"#ego-toggle","name":"aria-pressed"})),
+        "true"
+    );
+    b.click("Show ego network only (1–2 hops)");
+    assert_eq!(
+        b.call(json!({"op":"attribute","selector":"#filter-status","name":"data-visible"})),
+        "6"
+    );
+    b.click("Show ego network only (1–2 hops)");
     b.call(json!({"op":"fill","selector":"#graph-player","value":"Player A"}));
     b.call(json!({"op":"ready","selector":"#graph-player-results [role=option]"}));
     let pan = b.attr("data-pan-x");
@@ -600,7 +799,6 @@ async fn explorer_pair_filters_drawer_history_and_mobile_are_reversible() {
         b.call(json!({"op":"attribute","selector":"#graph-player","name":"data-selected-id"})),
         selected
     );
-    b.click("Show ego network only (1–2 hops)");
     assert_eq!(
         b.call(json!({"op":"attribute","selector":"#filter-status","name":"data-visible"})),
         "5"

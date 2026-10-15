@@ -4,7 +4,7 @@
 //! and compute (x, y) 2D coordinates for nodes.
 
 use crate::{GraphLink, GraphNode};
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 
 /// Layout mode selection matching G6-style layouts.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
@@ -114,26 +114,8 @@ fn compute_concentric_layout(
         coords[idx] = (0.0, 0.0);
     }
 
-    let groups: HashMap<&str, &str> = links
-        .iter()
-        .filter_map(|e| {
-            let other = if e.from == focus {
-                e.to.as_str()
-            } else if e.to == focus {
-                e.from.as_str()
-            } else {
-                return None;
-            };
-            Some((
-                other,
-                e.franchises
-                    .iter()
-                    .map(String::as_str)
-                    .min()
-                    .unwrap_or(&e.team),
-            ))
-        })
-        .collect();
+    let (groups, weights) = focus_groups(nodes, links, focus, hop_distances);
+    let sectors = concentric_sectors(links, focus);
     for (dist, indices) in &mut rings {
         if *dist == 0 {
             continue;
@@ -150,17 +132,135 @@ fn compute_concentric_layout(
             2 => (620.0_f64, 1020.0_f64),
             _ => (1300.0_f64, 1900.0_f64),
         };
-        let n = indices.len();
-        for (k, &idx) in indices.iter().enumerate() {
-            // Equal-area radial spread and a golden-angle increment avoid thin rings.
-            let fraction = (k as f64 * 0.618033988749895).fract();
-            let radius = (inner * inner + fraction * (outer * outer - inner * inner)).sqrt();
-            let angle = std::f64::consts::TAU * k as f64 / n as f64;
-            coords[idx] = (radius * angle.cos(), radius * angle.sin());
+        let mut grouped: BTreeMap<&str, Vec<usize>> = BTreeMap::new();
+        for &i in indices.iter() {
+            grouped
+                .entry(groups.get(nodes[i].id.as_str()).copied().unwrap_or("~"))
+                .or_default()
+                .push(i);
+        }
+        let mut offset = 0;
+        for (team, members) in grouped {
+            for (k, &i) in members.iter().enumerate() {
+                let fraction = if *dist == 1 {
+                    1.0 - (weights.get(nodes[i].id.as_str()).copied().unwrap_or(0.1) - 0.1) / 0.9
+                } else {
+                    (k as f64 * 0.618033988749895).fract()
+                };
+                let radius = if *dist == 1 {
+                    inner + fraction * (outer - inner)
+                } else {
+                    (inner * inner + fraction * (outer * outer - inner * inner)).sqrt()
+                };
+                let angle = if *dist <= 2 {
+                    sectors
+                        .iter()
+                        .find(|sector| franchise_key(&sector.franchise) == team)
+                        .map(|sector| {
+                            sector.start
+                                + (sector.end - sector.start) * (k as f64 + 0.5)
+                                    / members.len() as f64
+                        })
+                        .unwrap_or(
+                            std::f64::consts::TAU * (offset + k) as f64 / indices.len() as f64,
+                        )
+                } else {
+                    std::f64::consts::TAU * (offset + k) as f64 / indices.len() as f64
+                };
+                coords[i] = (radius * angle.cos(), radius * angle.sin());
+            }
+            offset += members.len();
         }
     }
-
     coords
+}
+
+#[derive(Clone, Debug)]
+pub struct FranchiseSector {
+    pub franchise: String,
+    pub start: f64,
+    pub end: f64,
+}
+
+fn franchise_key(team: &str) -> &str {
+    if team.is_empty() { "~" } else { team }
+}
+
+type FocusGroups<'a> = (HashMap<&'a str, &'a str>, HashMap<&'a str, f64>);
+fn focus_groups<'a>(
+    nodes: &'a [GraphNode],
+    links: &'a [GraphLink],
+    focus: &str,
+    hop: &HashMap<String, usize>,
+) -> FocusGroups<'a> {
+    let mut groups = HashMap::new();
+    let mut weights = HashMap::new();
+    for e in links {
+        let other = if e.from == focus {
+            e.to.as_str()
+        } else if e.to == focus {
+            e.from.as_str()
+        } else {
+            continue;
+        };
+        groups.insert(other, franchise_key(e.primary_franchise()));
+        weights.insert(other, e.weight.clamp(0.1, 1.0));
+    }
+    // Assign two-hop players through the first evidenced predecessor in stable ID order.
+    let mut direct: Vec<_> = nodes
+        .iter()
+        .filter(|n| hop.get(&n.id) == Some(&1))
+        .collect();
+    direct.sort_by_key(|n| &n.id);
+    for n in direct {
+        let team = groups.get(n.id.as_str()).copied().unwrap_or("~");
+        for e in links {
+            let other = if e.from == n.id {
+                e.to.as_str()
+            } else if e.to == n.id {
+                e.from.as_str()
+            } else {
+                continue;
+            };
+            if hop.get(other) == Some(&2) {
+                groups.entry(other).or_insert(team);
+            }
+        }
+    }
+    (groups, weights)
+}
+/// Labeled angular intervals shared by placement and rendering.
+pub fn concentric_sectors(links: &[GraphLink], focus: &str) -> Vec<FranchiseSector> {
+    let mut counts: BTreeMap<&str, usize> = BTreeMap::new();
+    for e in links {
+        if e.from == focus || e.to == focus {
+            *counts.entry(e.primary_franchise()).or_default() += 1;
+        }
+    }
+    let n = counts.len();
+    if n == 0 {
+        return Vec::new();
+    }
+    let gap = 0.055_f64.min(1.0 / n as f64);
+    let available = std::f64::consts::TAU - gap * n as f64;
+    let minimum = 0.18_f64.min(available / (2.0 * n as f64));
+    let total = counts.values().sum::<usize>() as f64;
+    let mut start = -std::f64::consts::FRAC_PI_2;
+    let mut ordered: Vec<_> = counts.into_iter().collect();
+    ordered.sort_by_key(|(team, _)| (team.is_empty(), *team));
+    ordered
+        .into_iter()
+        .map(|(team, count)| {
+            let end = start + minimum + (available - minimum * n as f64) * count as f64 / total;
+            let sector = FranchiseSector {
+                franchise: team.into(),
+                start,
+                end,
+            };
+            start = end + gap;
+            sector
+        })
+        .collect()
 }
 
 /// Force-directed layout: iterative spring-embedder layout that pulls connected
@@ -185,49 +285,75 @@ fn compute_force_layout(
         .map(|(i, n)| (n.id.as_str(), i))
         .collect();
 
-    // Map links to index pairs
-    let indexed_links: Vec<(usize, usize)> = links
+    let mut indexed_links: Vec<_> = links
         .iter()
         .filter_map(|l| {
-            let a = id_to_index.get(l.from.as_str())?;
-            let b = id_to_index.get(l.to.as_str())?;
-            Some((*a, *b))
+            let (a, b) = (
+                *id_to_index.get(l.from.as_str())?,
+                *id_to_index.get(l.to.as_str())?,
+            );
+            (a != b).then_some((a, b, l.weight.clamp(0.1, 1.0)))
         })
         .collect();
-
-    // Run a bounded, deterministic relaxation (e.g. 15 iterations)
-    // to give organic clustering without freezing the thread
-    let k_spring = 0.05;
-    let ideal_length = 60.0;
-    let iterations = 15;
-
-    for _ in 0..iterations {
-        let mut deltas = vec![(0.0f64, 0.0f64); nodes.len()];
-
-        // Spring attractive forces along edges
-        for &(a, b) in &indexed_links {
-            let p1 = coords[a];
-            let p2 = coords[b];
-            let dx = p2.0 - p1.0;
-            let dy = p2.1 - p1.1;
-            let dist = dx.hypot(dy).max(1.0);
-            let force = (dist - ideal_length) * k_spring;
-            let fx = (dx / dist) * force;
-            let fy = (dy / dist) * force;
-
-            deltas[a].0 += fx;
-            deltas[a].1 += fy;
-            deltas[b].0 -= fx;
-            deltas[b].1 -= fy;
+    indexed_links.sort_by_key(|&(a, b, _)| (nodes[a].id.as_str(), nodes[b].id.as_str()));
+    let mut counts = vec![0; nodes.len()];
+    for &(a, b, _) in &indexed_links {
+        counts[a] += 1;
+        counts[b] += 1;
+    }
+    for p in &mut coords {
+        p.0 *= 0.4;
+        p.1 *= 0.4;
+    }
+    // Bounded weighted relaxation. Local repulsion uses a grid, not all node pairs.
+    for _ in 0..240 {
+        let mut deltas = vec![(0.0_f64, 0.0_f64); nodes.len()];
+        for &(a, b, weight) in &indexed_links {
+            let (dx, dy) = (coords[b].0 - coords[a].0, coords[b].1 - coords[a].1);
+            let distance = dx.hypot(dy).max(1.0);
+            let force = (distance - (45.0 + 100.0 * (1.0 - weight))) * 1.2 * weight.powi(3);
+            let (fx, fy) = (dx / distance * force, dy / distance * force);
+            deltas[a].0 += fx / (counts[a] + 1) as f64;
+            deltas[a].1 += fy / (counts[a] + 1) as f64;
+            deltas[b].0 -= fx / (counts[b] + 1) as f64;
+            deltas[b].1 -= fy / (counts[b] + 1) as f64;
         }
-
-        // Apply clamped displacements
+        let mut grid: HashMap<(i32, i32), Vec<usize>> = HashMap::new();
+        for (i, p) in coords.iter().enumerate() {
+            grid.entry(((p.0 / 120.0).floor() as i32, (p.1 / 120.0).floor() as i32))
+                .or_default()
+                .push(i);
+        }
+        for (i, &p) in coords.iter().enumerate() {
+            let (cx, cy) = ((p.0 / 120.0).floor() as i32, (p.1 / 120.0).floor() as i32);
+            for x in cx - 1..=cx + 1 {
+                for y in cy - 1..=cy + 1 {
+                    if let Some(others) = grid.get(&(x, y)) {
+                        for &j in others {
+                            if j <= i {
+                                continue;
+                            }
+                            let (dx, dy) = (p.0 - coords[j].0, p.1 - coords[j].1);
+                            let dist = dx.hypot(dy).max(1.0);
+                            if dist > 150.0 {
+                                continue;
+                            }
+                            let force = 32000.0 / (dist * dist + 100.0);
+                            let (fx, fy) = (dx / dist * force, dy / dist * force);
+                            deltas[i].0 += fx;
+                            deltas[i].1 += fy;
+                            deltas[j].0 -= fx;
+                            deltas[j].1 -= fy;
+                        }
+                    }
+                }
+            }
+        }
         for (i, d) in deltas.into_iter().enumerate() {
-            coords[i].0 += d.0.clamp(-25.0, 25.0);
-            coords[i].1 += d.1.clamp(-25.0, 25.0);
+            coords[i].0 += d.0.clamp(-20.0, 20.0);
+            coords[i].1 += d.1.clamp(-20.0, 20.0);
         }
     }
-
     coords
 }
 
@@ -312,6 +438,9 @@ mod tests {
             overlap_days: Some(300),
             minimum_shared_games: Some(50),
             on_path: true,
+            weight: 0.8,
+            in_visual_backbone: true,
+            primary_franchise: "LAL".into(),
         }];
         let hop: HashMap<String, usize> = HashMap::from([("A".into(), 0), ("B".into(), 1)]);
         let era_coords = compute_layout(&nodes, &links, LayoutMode::EraLane, "A", &[], true, &hop);
@@ -359,6 +488,9 @@ mod tests {
             overlap_days: Some(300),
             minimum_shared_games: Some(50),
             on_path: true,
+            weight: 0.8,
+            in_visual_backbone: true,
+            primary_franchise: "LAL".into(),
         }];
         let hop: HashMap<String, usize> = HashMap::from([("A".into(), 0), ("B".into(), 1)]);
         let coords = compute_layout(&nodes, &links, LayoutMode::Concentric, "A", &[], true, &hop);

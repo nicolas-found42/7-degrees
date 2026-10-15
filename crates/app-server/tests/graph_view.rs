@@ -29,6 +29,32 @@ async fn get(uri: &str) -> (u16, String) {
 }
 
 #[tokio::test]
+async fn rendering_hints_are_additive_stable_and_do_not_remove_relationships() {
+    let (_, first) = get("/api/network").await;
+    let (_, second) = get("/api/network").await;
+    assert_eq!(first, second);
+    let payload: Value = serde_json::from_str(&first).unwrap();
+    assert_eq!(payload["links"].as_array().unwrap().len(), 5);
+    for edge in payload["links"].as_array().unwrap() {
+        assert!((0.1..=1.0).contains(&edge["weight"].as_f64().expect("edge weight")));
+        assert!(edge["in_visual_backbone"].is_boolean());
+        assert!(edge["primary_franchise"].is_string());
+    }
+    let (_, nearby) = get("/api/neighborhood?player=A&depth=2").await;
+    let nearby: Value = serde_json::from_str(&nearby).unwrap();
+    for edge in nearby["links"].as_array().unwrap() {
+        let full = payload["links"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|full| full["from"] == edge["from"] && full["to"] == edge["to"])
+            .unwrap();
+        assert_eq!(edge["weight"], full["weight"]);
+        assert_eq!(edge["in_visual_backbone"], full["in_visual_backbone"]);
+    }
+}
+
+#[tokio::test]
 async fn whole_network_has_every_player_and_edge_including_isolates_without_caps() {
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../docs/reports");
     let app =
