@@ -36,7 +36,8 @@ try:
             if path == '/api/network':
                 body, mime = network, 'application/json'
             elif path in ('/', '/graph'):
-                filename = ('destination-compass.html' if variant in ('G', 'H', 'I')
+                filename = ('visual-directions.html' if variant in ('J', 'K', 'L')
+                            else 'destination-compass.html' if variant in ('G', 'H', 'I')
                             else 'orbit-walk.html' if variant in ('D', 'E', 'F') else 'index.html')
                 body = (ROOT / 'crates/app-server/src/prototype-fluid' / filename).read_bytes()
                 mime = 'text/html; charset=utf-8'

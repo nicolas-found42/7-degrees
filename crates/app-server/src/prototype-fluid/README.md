@@ -18,7 +18,7 @@ Use the bottom arrows or left/right keys to switch. The URL preserves the varian
 
 Data is fetched from the real app's `/api/network`. All player nodes and all relationship edges are retained. An in-memory Web Worker computes exact BFS distances for every source; unreachable pairs are excluded. The ten pairs with greatest finite shortest distances are shown, with ties resolved by player ID order. Direct teammate counts use adjacency cardinality. These are rankings of the loaded app snapshot, not claims of complete historical coverage. Geometry is a prototype spatial arrangement, not a production force simulation. Background edges can be toggled; they remain on by default. Motion settles after each interaction and honors reduced-motion preferences. No persistence, backend mutation, telemetry or deployment.
 
-Prototype code is isolated from the production Rust routes and build. The switcher is available only through this separate local runner. The user preferred B / Orbit in round one and F / Team Compass in round two. D–F explore shortest-chain navigation based on F; the newest G–I restore destination queries and add feature experiments. Nothing has been promoted to production. After critique, record the verdict on the implementation issue and preserve these artifacts on a throwaway branch before implementing the chosen direction.
+Prototype code is isolated from the production Rust routes and build. The switcher is available only through this separate local runner. The user preferred B / Orbit in round one and F / Team Compass in round two. D–F explore shortest-chain navigation based on F; G–I restore destination queries and add feature experiments. After those features were rejected, J–L explore different visual structures with only the core controls. Nothing has been promoted to production. After critique, record the verdict on the implementation issue and preserve these artifacts on a throwaway branch before implementing the chosen direction.
 
 
 ## D–F: shortest-chain Team Compass prototypes
@@ -44,7 +44,7 @@ The bounce badge, current-node label, history and next-player directory use the 
 Browser checks covered Jordan → Pippen → Wallace → Rondo, shortest-distance exclusions and their explanation, stopping when a shortest chain cannot extend, changing the starting player, rewinding and preserving state across variants. The state bar exposes chain names, actual/shortest bounce counts, next distance, available/unavailable counts, drag count and motion state. These are throwaway design studies; no production regression suite was run or test files added.
 
 
-## Newest round G–I: destinations and a fluid trail
+## G–I: destinations and a fluid trail
 
 Use the same local runner. Open `/graph?variant=G`, H or I. A–F remain unchanged. All three new prototypes retain the Team Compass visual language, editable **Start** and **End** player pickers, swap, shortest routes, drag placement, rewind and reduced motion.
 
@@ -59,3 +59,18 @@ Two full-graph breadth-first traversals compute distances from the start and end
 Earlier chain players have curved spiral targets around the current player, rather than a bottom row. A damped spring animation with gentle separation settles after about 1.6 seconds; edges bend with the nodes. Dragging pins a player's position across subsequent steps and rewinds. Selecting that player as the new current player releases its pin so it can center. **Release positions** clears manual placements; new endpoint queries and variant switches reset placements. These are geometry experiments, not a production physics engine.
 
 Browser checks covered alternative route selection, desktop preview without chain mutation, bridge selection, changing and swapping endpoints, actual pointer dragging with a pin retained through rewind and reveal, disconnected and same-player results, and phone layouts. The phone Peek interaction was visually inspected. Syntax checks pass. No test files or production regression suite were added for this throwaway prototype round.
+
+
+## Newest J–L: three visual directions, core interactions only
+
+Open `/graph?variant=J`, K or L using the same runner. All previous variants remain available. This round removes the route-comparison, next-step-preview and bridge-lens experiments from the new screens; the focus is visual structure rather than new features.
+
+- **J / Ribbon:** cream paper, large serif typography and a left query rail. Named player capsules follow a broad flowing river, with horizontal Bézier connections. Next teammates form scattered tributaries ahead of the active player.
+- **K / Afterglow:** a dark immersive field, luminous nodes with depth variation, a floating command deck below the graph and a compact teammate panel. A curved diagonal connection sits in a loose cloud rather than on a radial ring. Stars and tilted background sweeps are decorative.
+- **L / Archipelago:** a landscape palette, compact top search, rectangular player markers and a map inset for next teammates. Soft islands group visible relationship franchises, with contour lines and dashed crossing routes. These are relationship-based spatial shapes, not geographic locations.
+
+Start/end selection, finding a complete shortest chain, Explore, Full chain, Undo, teammate filtering, dragging and reduced-motion preferences remain. Two full-graph BFS traversals constrain every next teammate to be one bounce farther from the start and one closer to the destination, with earlier-player teammate exclusions retained. Full chain preserves the selected prefix. The default example uses Jordan → Pippen → Jermaine O'Neal → Curry; Pippen is preferred as the example's first move only when it is on an equally short valid route.
+
+Each direction has a separate layout function as well as a different page structure, typography and node treatment. Damped motion settles after roughly 1.5 seconds. Dragged positions stay across exploration steps until that player becomes current, the user releases placements, changes endpoints, or switches directions. Node coordinates are reinitialized even when DOM elements are reused after an endpoint change. The background textures do not imply extra players or edges; foreground nodes are the actual chain, destination and eligible shortest-route continuations.
+
+Desktop and 390px phone layouts were visually inspected for all three directions. Browser checks covered switching K/L while preserving the chain, choosing Pippen in the map, actual pointer dragging, retained placement through rewind and reveal, and an endpoint change from Curry to LeBron with the graph visibly redrawn. Python/JS syntax and whitespace checks were run. No production regression suite or test files were added for these throwaway visual studies.
