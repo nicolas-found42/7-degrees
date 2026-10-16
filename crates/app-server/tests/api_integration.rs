@@ -325,7 +325,7 @@ async fn graph_page_is_the_only_page_and_shows_every_player() {
     assert!(html.contains("Graph exploration"), "graph page renders");
     assert!(html.contains(r#"data-full-network="true""#));
     assert!(
-        html.contains("All players · all teammate connections"),
+        html.contains("A league of connections."),
         "the whole network is the page: {html}"
     );
     // Every fixture player is present on the canvas and in the picker.
@@ -380,7 +380,7 @@ async fn graph_page_is_the_only_page_and_shows_every_player() {
     // Query parameters are ignored: the page is always the whole network.
     let (status, focused) = get_html("/?from=A&to=C&player=B").await;
     assert_eq!(status, StatusCode::OK);
-    assert!(focused.contains("All players · all teammate connections"));
+    assert!(focused.contains("A league of connections."));
     assert_eq!(focused.matches("<option value=").count(), 14);
     // Every former page is gone.
     for removed in [
@@ -701,7 +701,7 @@ async fn unreachable_provider_fails_soft_and_features_keep_working() {
         "degraded state is surfaced: {html}"
     );
     assert!(
-        html.contains("All players · all teammate connections"),
+        html.contains("A league of connections."),
         "the whole network still renders: {html}"
     );
 

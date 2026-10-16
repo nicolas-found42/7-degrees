@@ -10,7 +10,7 @@ async fn the_graph_page_shows_every_fixture_player_and_relationship_and_supports
     let mut b = Browser::start();
     println!("Chromium {}", b.call(json!({"op":"launch"})));
     b.call(json!({"op":"goto","url":server.url}));
-    assert!(b.text("main").contains("Graph exploration"));
+    assert!(b.text("main").contains("A league of connections."));
     b.ready();
     // The whole fixture network is the page: every player and every edge.
     assert_eq!(b.attr("data-players"), "6");
@@ -45,7 +45,7 @@ async fn the_graph_page_shows_every_fixture_player_and_relationship_and_supports
     assert_ne!(b.attr("data-pan-x"), original_pan);
     b.click("Zoom in");
     assert_ne!(b.attr("data-zoom"), original_zoom);
-    b.click("Fit whole network");
+    b.click("Reset view");
     assert_eq!(b.attr("data-zoom"), original_zoom);
     assert_eq!(b.attr("data-pan-x"), original_pan);
     // Selecting a player in the picker centers them and reports the selection.
@@ -124,7 +124,7 @@ fn click_visible_bundle(b: &mut Browser, payload: &canvas_view::GraphPayload, fo
                 .ends_with(&format!("/edge?from={from}&to={to}"))
         );
         screenshot(b, "maravich-bundled-evidence.png", None);
-        b.click("Close evidence");
+        b.click("Back to player");
     }
 }
 
@@ -203,7 +203,7 @@ async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer(
         b.attr("data-background-edges"),
         b.attr("data-draw-ms")
     );
-    b.click("Fit whole network");
+    b.click("Reset view");
     b.click("Force-directed layout");
     b.call(json!({"op":"settled"}));
     screenshot(
@@ -248,7 +248,7 @@ async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer(
                 Some("#graph-canvas"),
             );
         }
-        b.click("Fit whole network");
+        b.click("Reset view");
         assert_eq!(b.attr("data-tier"), "macro");
         assert!(b.attr("data-ordinary-labels").parse::<usize>().unwrap() <= 10);
         screenshot(
@@ -256,7 +256,7 @@ async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer(
             &format!("maravich-{mode}-overview.png"),
             Some("#graph-canvas"),
         );
-        b.click("Zoom to selected player");
+        b.click("Focus on player");
         if mode == "force" {
             click_visible_bundle(&mut b, &payload, "maravpe01");
         }
@@ -264,7 +264,7 @@ async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer(
         b.click("Zoom out");
         assert_eq!(b.attr("data-tier"), "meso");
         assert_ranked_direct_labels(&mut b);
-        b.click("Zoom to selected player");
+        b.click("Focus on player");
         let signature = b.attr("data-layout-signature");
         assert_eq!(signature.len(), 16);
         let labels = b.attr("data-labels");
@@ -272,8 +272,8 @@ async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer(
         b.ready();
         b.click(button);
         b.call(json!({"op":"settled"}));
-        b.click("Fit whole network");
-        b.click("Zoom to selected player");
+        b.click("Reset view");
+        b.click("Focus on player");
         assert_eq!(signature, b.attr("data-layout-signature"));
         assert_eq!(labels, b.attr("data-labels"));
         let frame = b.attr("data-frame");
@@ -288,12 +288,12 @@ async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer(
     b.call(json!({"op":"select","selector":"#graph-target","value":"goodrga01"}));
     b.call(json!({"op":"ready","selector":"#graph-chain[data-state=connected]"}));
     assert!(b.text("#graph-chain").contains("degree 1"));
-    b.click("Zoom to selected player");
+    b.click("Focus on player");
     b.click("Zoom out");
     b.click("Zoom out");
     assert_ranked_direct_labels(&mut b);
-    b.click("Fit whole network");
-    b.click("Show ego network only (1–2 hops)");
+    b.click("Reset view");
+    b.click("Selected");
     while b.attr("data-tier") != "macro" {
         b.click("Zoom out");
     }
@@ -314,9 +314,9 @@ async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer(
             .contains("27 + 73 − 82 = at least 18")
     );
     screenshot(&mut b, "maravich-count-drawer.png", None);
-    b.click("Close evidence");
+    b.click("Back to player");
     b.click("Clear chain");
-    b.click("Show ego network only (1–2 hops)");
+    b.click("Selected");
     screenshot(&mut b, "maravich-ego.png", Some("#graph-canvas"));
     b.click("Reset filters");
     // The phone layout keeps the canvas and the picker.
@@ -337,8 +337,8 @@ async fn whole_network_renders_desktop_and_phone_and_selects_players_by_pointer(
     for button in ["Era lanes layout", "Force-directed layout"] {
         b.click(button);
         b.call(json!({"op":"settled"}));
-        b.click("Fit whole network");
-        b.click("Zoom to selected player");
+        b.click("Reset view");
+        b.click("Focus on player");
         click_visible_bundle(&mut b, &payload, "maravpe01");
     }
     b.click("Concentric rings layout");
@@ -423,7 +423,7 @@ async fn whole_network_keeps_all_players_and_relations_when_panning_and_zooming(
     screenshot(&mut b, "all-player-network.png", Some("#graph-canvas"));
     b.click("Zoom in");
     assert_ne!(b.attr("data-zoom"), overview_zoom);
-    b.click("Fit whole network");
+    b.click("Reset view");
     assert_eq!(b.attr("data-zoom"), overview_zoom);
     assert_eq!(b.call(json!({"op":"payload-counts"})), counts);
     assert_eq!(b.call(json!({"op":"errors"})), json!([]));
@@ -845,12 +845,12 @@ async fn explorer_pair_filters_drawer_history_and_mobile_are_reversible() {
         b.call(json!({"op":"attribute","selector":"#ego-toggle","name":"aria-pressed"})),
         "true"
     );
-    b.click("Show ego network only (1–2 hops)");
+    b.click("Full network");
     assert_eq!(
         b.call(json!({"op":"attribute","selector":"#filter-status","name":"data-visible"})),
         "6"
     );
-    b.click("Show ego network only (1–2 hops)");
+    b.click("Selected");
     b.call(json!({"op":"fill","selector":"#graph-player","value":"Player A"}));
     b.call(json!({"op":"ready","selector":"#graph-player-results [role=option]"}));
     let pan = b.attr("data-pan-x");
@@ -876,7 +876,7 @@ async fn explorer_pair_filters_drawer_history_and_mobile_are_reversible() {
     );
     assert_eq!(
         b.call(json!({"op":"attribute","selector":"#filter-status","name":"data-visible"})),
-        "5"
+        "3"
     );
     b.call(json!({"op":"click","selector":"[data-franchise='Red']"}));
     assert_eq!(
@@ -889,7 +889,7 @@ async fn explorer_pair_filters_drawer_history_and_mobile_are_reversible() {
     assert!(b.text("#filter-status").contains("No eras emphasized"));
     assert_eq!(
         b.call(json!({"op":"attribute","selector":"#filter-status","name":"data-visible"})),
-        "5"
+        "3"
     );
     assert!(b.text("#graph-chain").contains("degree 2"));
     screenshot(&mut b, "fixture-chain-filtered.png", None);
@@ -940,7 +940,7 @@ async fn explorer_pair_filters_drawer_history_and_mobile_are_reversible() {
     );
     b.call(json!({"op":"history","direction":"forward"}));
     b.call(json!({"op":"ready","selector":"#drawer-content .proof-card >> nth=0"}));
-    b.click("Close evidence");
+    b.click("Back to player");
     b.click("Clear chain");
     assert_eq!(b.text("#graph-chain"), "");
     assert_eq!(
@@ -981,7 +981,7 @@ async fn explorer_pair_filters_drawer_history_and_mobile_are_reversible() {
     let drawer = b.call(json!({"op":"box","selector":"#edge-evidence-drawer"}));
     assert!(drawer["width"].as_f64().unwrap() <= 390.0);
     screenshot(&mut b, "fixture-mobile-drawer.png", None);
-    b.click("Close evidence");
+    b.click("Back to player");
     b.call(json!({"op":"motion","value":"reduce"}));
     b.click("Force-directed layout");
     assert_ne!(
@@ -1022,7 +1022,7 @@ async fn explorer_ignores_old_search_chain_and_closed_drawer_responses_and_recov
     b.call(json!({"op":"intercept","pattern":"**/edge?from=A&to=B&view=drawer","delay":900}));
     b.call(json!({"op":"click","selector":"#graph-chain a[data-evidence]"}));
     assert!(b.text("#drawer-content").contains("Loading"));
-    b.click("Close evidence");
+    b.click("Back to player");
     b.call(json!({"op":"network-idle"}));
     assert_eq!(
         b.call(json!({"op":"count","selector":"#edge-evidence-drawer[open]"})),
@@ -1040,7 +1040,7 @@ async fn explorer_ignores_old_search_chain_and_closed_drawer_responses_and_recov
     b.click("Retry evidence");
     b.call(json!({"op":"ready","selector":"#drawer-content .proof-card >> nth=0"}));
     assert!(b.text("#drawer-content").contains("fixture:tenure:1"));
-    b.click("Close evidence");
+    b.click("Back to player");
     b.call(json!({"op":"intercept","pattern":"**/api/connection*","fail":true}));
     b.click("Connect players");
     b.call(json!({"op":"ready","selector":"#graph-chain[data-state=error]"}));
@@ -1106,7 +1106,7 @@ async fn touch_pan_pinch_cancel_and_minimap_drag_keep_selection_stable() {
         b.call(json!({"op":"count","selector":"#edge-evidence-drawer[open]"})),
         0
     );
-    b.click("Network overview");
+    b.click("Overview map");
     let map = b.call(json!({"op":"box","selector":"#graph-minimap"}));
     let mx = map["x"].as_f64().unwrap() + map["width"].as_f64().unwrap() / 2.0;
     let my = map["y"].as_f64().unwrap() + map["height"].as_f64().unwrap() / 2.0;
@@ -1180,7 +1180,7 @@ async fn small_snapshots_keep_empty_isolated_and_game_proof_states_usable() {
     b.call(json!({"op":"select","selector":"#graph-player","value":"a"}));
     b.click("Concentric rings layout");
     b.call(json!({"op":"settled"}));
-    b.click("Show ego network only (1–2 hops)");
+    b.click("Selected");
     assert!(
         b.text("#graph-selection")
             .contains("0 teammate connections")
@@ -1202,7 +1202,7 @@ async fn small_snapshots_keep_empty_isolated_and_game_proof_states_usable() {
         "66"
     );
     screenshot(&mut b, "shortened-season-and-game-witness.png", None);
-    b.click("Close evidence");
+    b.click("Back to player");
     assert_eq!(b.call(json!({"op":"errors"})), json!([]));
 }
 
@@ -1224,7 +1224,7 @@ async fn chain_framing_supersedes_animation_without_live_region_churn() {
             .len()
             <= 1
     );
-    b.call(json!({"op":"sequence","selectors":["#layout-era","#layout-concentric","#pair-form button[type=submit]"]}));
+    b.call(json!({"op":"sequence","selectors":["#layout-era","#layout-concentric","#connection-controls button[type=submit]"]}));
     b.call(json!({"op":"ready","selector":"#graph-chain[data-state=connected]"}));
     let camera = (
         b.attr("data-pan-x"),
@@ -1254,7 +1254,7 @@ async fn chain_framing_supersedes_animation_without_live_region_churn() {
         "tap must use the displayed node position"
     );
     b.call(json!({"op":"settled"}));
-    b.call(json!({"op":"select","selector":"#graph-player","value":"A"}));
+    b.call(json!({"op":"select","selector":"#graph-player","value":"A","settle":false}));
     assert_eq!(
         b.attr("data-transition"),
         "running",
@@ -1287,19 +1287,19 @@ async fn chain_framing_supersedes_animation_without_live_region_churn() {
     let drawer = b.call(json!({"op":"box","selector":"#edge-evidence-drawer"}));
     let right = drawer["x"].as_f64().unwrap() - canvas["x"].as_f64().unwrap();
     let labels: Vec<serde_json::Value> = serde_json::from_str(&b.attr("data-label-items")).unwrap();
-    for id in ["A", "B", "C"] {
+    for id in ["A", "B"] {
         let label = labels.iter().find(|l| l["id"] == id).unwrap();
         assert!(
             label["anchor"][0].as_f64().unwrap() < right - 24.0,
-            "chain node {id} must frame beside the open drawer"
+            "selected relationship endpoint {id} must frame beside the open drawer"
         );
         assert!(
             label["bounds"]["right"].as_f64().unwrap() < right,
-            "chain badge {id} must avoid the drawer"
+            "selected relationship badge {id} must avoid the drawer"
         );
     }
     screenshot(&mut b, "chain-beside-open-drawer.png", None);
-    b.click("Close evidence");
+    b.click("Back to player");
     b.call(json!({"op":"sequence","selectors":["#layout-force","[data-center-player='B']"]}));
     let labels: Vec<serde_json::Value> = serde_json::from_str(&b.attr("data-label-items")).unwrap();
     let b_label = labels.iter().find(|l| l["id"] == "B").unwrap();
@@ -1323,7 +1323,9 @@ async fn chain_framing_supersedes_animation_without_live_region_churn() {
         "settled",
         "unrelated keys keep animation alive"
     );
-    b.call(json!({"op":"sequence","selectors":["#layout-concentric","#ego-toggle"]}));
+    b.call(json!({"op":"sequence","selectors":["#layout-concentric","#scope-full"]}));
+    b.call(json!({"op":"settled"}));
+    assert_eq!(b.attr("data-scope"), "full");
     let toggled_camera = (
         b.attr("data-pan-x"),
         b.attr("data-pan-y"),
@@ -1337,13 +1339,14 @@ async fn chain_framing_supersedes_animation_without_live_region_churn() {
             b.attr("data-zoom")
         ),
         toggled_camera,
-        "ego fit supersedes the pending camera transition"
+        "full-network recovery remains stable after the deliberate camera animation"
     );
     b.click("Era lanes layout");
     b.call(json!({"op":"settled"}));
     for _ in 0..15 {
         b.click("Zoom in");
     }
+    b.click("Overview map");
     let navigation =
         b.call(json!({"op":"minimap-press","control":"#layout-force","fx":0.95,"fy":0.95}));
     assert_eq!(
@@ -1473,14 +1476,14 @@ async fn pair_url_tracks_selection_clear_and_evidence_history() {
     assert_eq!(b.call(json!({"op":"wait-url","url":pair})), pair);
     b.call(json!({"op":"history","direction":"forward"}));
     b.call(json!({"op":"ready","selector":"#drawer-content .proof-card >> nth=0"}));
-    b.click("Close evidence");
+    b.click("Back to player");
     b.call(json!({"op":"goto","url":pair}));
     b.ready();
     assert!(b.text("#graph-chain").contains("degree 1"));
     b.call(json!({"op":"fill","selector":"#graph-player","value":"not a player"}));
     assert_eq!(
-        b.call(json!({"op":"wait-url","url":format!("{}/graph?to=B", server.url)})),
-        format!("{}/graph?to=B", server.url)
+        b.call(json!({"op":"wait-url","url":format!("{}/graph?from=A&to=B", server.url)})),
+        format!("{}/graph?from=A&to=B", server.url)
     );
     b.call(json!({"op":"select","selector":"#graph-player","value":"C"}));
     assert_eq!(
@@ -1609,7 +1612,7 @@ async fn picker_focus_departure_dismisses_results_without_losing_pointer_selecti
         b.call(json!({"op":"ready","selector":format!("#{id}-option-0")}));
         b.call(json!({"op":"key","key":"ArrowDown"}));
         b.call(json!({"op":"key","key":"Tab"}));
-        assert_eq!(b.call(json!({"op":"active-id"})), format!("{id}-era"));
+        assert_eq!(b.call(json!({"op":"active-id"})), "SUMMARY");
         assert_eq!(
             b.call(json!({"op":"attribute","selector":format!("#{id}"),"name":"aria-expanded"})),
             "false"
