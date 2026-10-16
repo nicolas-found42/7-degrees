@@ -329,7 +329,15 @@ fn connection_response(state: &AppState, from: Option<&str>, to: Option<&str>) -
     match state.graph.shortest_chain(from, to).expect("players exist") {
         graph_core::Connection::Connected(chain) => {
             let degree = chain.links.len();
-            Json(serde_json::json!({"result":"connected", "path":chain.path,
+            let link_context: Vec<_> = chain.links.iter().map(|link| {
+                state.graph.edge_between(&link.from,&link.to).map(|edge| {
+                    let proof=edge.strongest_evidence();
+                    let mut text=proof.description();
+                    if proof.overlap_days.is_some() { text.push_str(" · inspect evidence for dates"); }
+                    text
+                }).unwrap_or_default()
+            }).collect();
+            Json(serde_json::json!({"result":"connected", "path":chain.path, "link_context":link_context,
                 "degree":degree, "links": chain.links.into_iter().map(|l| api_types::LinkDto {
                     from:l.from,to:l.to,team:l.team,overlap_days:l.overlap_days,minimum_shared_games:l.minimum_shared_games,
                 }).collect::<Vec<_>>(), "coverage": state.reports.as_ref().map(|r| &r.coverage)})).into_response()

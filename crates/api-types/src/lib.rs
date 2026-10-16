@@ -93,6 +93,8 @@ pub fn overlap_description(days: Option<u32>, minimum_shared_games: Option<u32>)
 pub struct ExplorerConnection {
     pub result: String,
     #[serde(default)]
+    pub link_context: Vec<String>,
+    #[serde(default)]
     pub path: Vec<String>,
     #[serde(default)]
     pub links: Vec<LinkDto>,

@@ -122,7 +122,7 @@ async fn graph_page_renders_the_whole_network_with_pair_parameters() {
     let (status, body) = get("/graph").await;
     assert_eq!(status, 200);
     assert!(body.contains("id=\"graph-canvas\""));
-    assert!(body.contains("All players · all teammate connections"));
+    assert!(body.contains("A league of connections."));
     assert!(body.contains("data-full-network=\"true\""));
     assert!(body.contains("id=\"graph-payload\""));
     // G6-style ease-of-use overlays: layout switcher, overview minimap, tooltip.
@@ -171,7 +171,7 @@ async fn graph_page_renders_the_whole_network_with_pair_parameters() {
     let (status, focused) =
         get("/graph?from=A&to=C&cursor=v1:00&limit=1&selected=0&player=B&depth=2").await;
     assert_eq!(status, 200);
-    assert!(focused.contains("All players · all teammate connections"));
+    assert!(focused.contains("A league of connections."));
     assert_eq!(focused.matches("<option value=").count(), 14);
     assert!(focused.contains("Shortest teammate chain · degree 2"));
 }
@@ -257,7 +257,7 @@ async fn present_and_missing_canvas_assets_are_isolated_and_preserve_binary_byte
         for name in ["Player A", "Player B", "Player C"] {
             assert!(body.contains(name));
         }
-        assert!(body.contains("All players · all teammate connections"));
+        assert!(body.contains("A league of connections."));
         assert!(body.contains(expected));
         assert_eq!(response(app, "/assets/not-an-asset").await.0, 404);
     }
