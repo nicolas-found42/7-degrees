@@ -1,0 +1,1044 @@
+{
+  "tool": "jev_gate",
+  "model": "typesafe/jev-1.14-20261014",
+  "provider": "openrouter",
+  "truncated": false,
+  "action": "escalate",
+  "reason_codes": [
+    "confidence_below_review",
+    "safe_to_apply_below_review",
+    "review_escalated",
+    "claim_confidence_low"
+  ],
+  "review": {
+    "mode": "per-file",
+    "action": "escalate",
+    "composite": 0.7075535714285717,
+    "safe_to_apply": 0.45,
+    "reason_codes": [
+      "confidence_below_review",
+      "safe_to_apply_below_review"
+    ],
+    "limiting": [
+      {
+        "file": "crates/app-server/src/graph_view.rs",
+        "rubrics": [
+          "test_gap"
+        ]
+      },
+      {
+        "file": "crates/app-server/src/lib.rs",
+        "rubrics": [
+          "correctness"
+        ]
+      },
+      {
+        "file": "crates/app-server/src/style.css",
+        "rubrics": [
+          "blast_radius"
+        ]
+      },
+      {
+        "file": "crates/app-server/tests/api_integration.rs",
+        "rubrics": [
+          "blast_radius"
+        ]
+      },
+      {
+        "file": "crates/app-server/tests/browser_e2e.rs",
+        "rubrics": [
+          "correctness"
+        ]
+      },
+      {
+        "file": "crates/app-server/tests/graph_view.rs",
+        "rubrics": [
+          "blast_radius"
+        ]
+      },
+      {
+        "file": "crates/app-server/tests/player_search.rs",
+        "rubrics": [
+          "spec_match",
+          "blast_radius"
+        ]
+      },
+      {
+        "file": "crates/canvas-view/src/browser.rs",
+        "rubrics": [
+          "test_gap"
+        ]
+      },
+      {
+        "file": "crates/canvas-view/src/browser/explorer.rs",
+        "rubrics": [
+          "blast_radius"
+        ]
+      },
+      {
+        "file": "crates/canvas-view/src/layout.rs",
+        "rubrics": [
+          "correctness"
+        ]
+      },
+      {
+        "file": "crates/canvas-view/src/lib.rs",
+        "rubrics": [
+          "blast_radius"
+        ]
+      },
+      {
+        "file": "crates/app-server/src/discovery.rs",
+        "rubrics": [
+          "test_gap"
+        ]
+      },
+      {
+        "file": "crates/canvas-view/src/browser/orbit.rs",
+        "rubrics": [
+          "correctness"
+        ]
+      },
+      {
+        "file": "crates/canvas-view/src/orbit.rs",
+        "rubrics": [
+          "correctness"
+        ]
+      }
+    ],
+    "weights": {
+      "correctness": 0.4,
+      "spec_match": 0.3,
+      "test_gap": 0.15,
+      "blast_radius": 0.15
+    },
+    "thresholds": {
+      "auto_accept": 0.8,
+      "review_at": 0.5,
+      "composite_floor": 0.7
+    },
+    "files": [
+      {
+        "path": "crates/app-server/src/graph_view.rs",
+        "safe_to_apply": 0.45,
+        "scores": {
+          "correctness": {
+            "score": 1.49,
+            "confidence": 0.22,
+            "probabilities": {
+              "0": 0.06,
+              "1": 0.4,
+              "2": 0.54
+            }
+          },
+          "spec_match": {
+            "score": 1.23,
+            "confidence": 0.41,
+            "probabilities": {
+              "0": 0.08,
+              "1": 0.61,
+              "2": 0.31
+            }
+          },
+          "test_gap": {
+            "score": 0.55,
+            "confidence": 0.17,
+            "probabilities": {
+              "0": 0.62,
+              "1": 0.21,
+              "2": 0.17
+            }
+          },
+          "blast_radius": {
+            "score": 1.54,
+            "confidence": 0.31,
+            "probabilities": {
+              "0": 0.12,
+              "1": 0.22,
+              "2": 0.66
+            }
+          }
+        },
+        "weights": {
+          "correctness": 0.4,
+          "spec_match": 0.3,
+          "test_gap": 0.15,
+          "blast_radius": 0.15
+        },
+        "thresholds": {
+          "auto_accept": 0.8,
+          "review_at": 0.5,
+          "composite_floor": 0.7
+        },
+        "action": "escalate",
+        "composite": 0.6257499999999999,
+        "reason_codes": [
+          "confidence_below_review",
+          "safe_to_apply_below_review"
+        ],
+        "limiting_rubrics": [
+          "test_gap"
+        ]
+      },
+      {
+        "path": "crates/app-server/src/lib.rs",
+        "safe_to_apply": 0.54,
+        "scores": {
+          "correctness": {
+            "score": 1.63,
+            "confidence": 0.43,
+            "probabilities": {
+              "0": 0.08,
+              "1": 0.22,
+              "2": 0.7
+            }
+          },
+          "spec_match": {
+            "score": 1.72,
+            "confidence": 0.58,
+            "probabilities": {
+              "0": 0.07,
+              "1": 0.14,
+              "2": 0.79
+            }
+          },
+          "test_gap": {
+            "score": 0.24,
+            "confidence": 0.64,
+            "probabilities": {
+              "0": 0.81,
+              "1": 0.14,
+              "2": 0.05
+            }
+          },
+          "blast_radius": {
+            "score": 1.83,
+            "confidence": 0.74,
+            "probabilities": {
+              "0": 0.03,
+              "1": 0.11,
+              "2": 0.86
+            }
+          }
+        },
+        "weights": {
+          "correctness": 0.4,
+          "spec_match": 0.3,
+          "test_gap": 0.15,
+          "blast_radius": 0.15
+        },
+        "thresholds": {
+          "auto_accept": 0.8,
+          "review_at": 0.5,
+          "composite_floor": 0.7
+        },
+        "action": "escalate",
+        "composite": 0.7287500000000001,
+        "reason_codes": [
+          "confidence_below_review"
+        ],
+        "limiting_rubrics": [
+          "correctness"
+        ]
+      },
+      {
+        "path": "crates/app-server/src/style.css",
+        "safe_to_apply": 0.61,
+        "scores": {
+          "correctness": {
+            "score": 1.54,
+            "confidence": 0.31,
+            "probabilities": {
+              "0": 0.05,
+              "1": 0.36,
+              "2": 0.59
+            }
+          },
+          "spec_match": {
+            "score": 1.53,
+            "confidence": 0.3,
+            "probabilities": {
+              "0": 0.08,
+              "1": 0.31,
+              "2": 0.61
+            }
+          },
+          "test_gap": {
+            "score": 0.47,
+            "confidence": 0.28,
+            "probabilities": {
+              "0": 0.67,
+              "1": 0.18,
+              "2": 0.15
+            }
+          },
+          "blast_radius": {
+            "score": 1.48,
+            "confidence": 0.2,
+            "probabilities": {
+              "0": 0.12,
+              "1": 0.29,
+              "2": 0.59
+            }
+          }
+        },
+        "weights": {
+          "correctness": 0.4,
+          "spec_match": 0.3,
+          "test_gap": 0.15,
+          "blast_radius": 0.15
+        },
+        "thresholds": {
+          "auto_accept": 0.8,
+          "review_at": 0.5,
+          "composite_floor": 0.7
+        },
+        "action": "escalate",
+        "composite": 0.6912500000000001,
+        "reason_codes": [
+          "confidence_below_review"
+        ],
+        "limiting_rubrics": [
+          "blast_radius"
+        ]
+      },
+      {
+        "path": "crates/app-server/tests/api_integration.rs",
+        "safe_to_apply": 0.6,
+        "scores": {
+          "correctness": {
+            "score": 1.6,
+            "confidence": 0.38,
+            "probabilities": {
+              "0": 0.07,
+              "1": 0.27,
+              "2": 0.66
+            }
+          },
+          "spec_match": {
+            "score": 1.5,
+            "confidence": 0.25,
+            "probabilities": {
+              "0": 0.13,
+              "1": 0.24,
+              "2": 0.63
+            }
+          },
+          "test_gap": {
+            "score": 0.41,
+            "confidence": 0.4,
+            "probabilities": {
+              "0": 0.7,
+              "1": 0.2,
+              "2": 0.1
+            }
+          },
+          "blast_radius": {
+            "score": 1.42,
+            "confidence": 0.14,
+            "probabilities": {
+              "0": 0.16,
+              "1": 0.25,
+              "2": 0.59
+            }
+          }
+        },
+        "weights": {
+          "correctness": 0.4,
+          "spec_match": 0.3,
+          "test_gap": 0.15,
+          "blast_radius": 0.15
+        },
+        "thresholds": {
+          "auto_accept": 0.8,
+          "review_at": 0.5,
+          "composite_floor": 0.7
+        },
+        "action": "escalate",
+        "composite": 0.70775,
+        "reason_codes": [
+          "confidence_below_review"
+        ],
+        "limiting_rubrics": [
+          "blast_radius"
+        ]
+      },
+      {
+        "path": "crates/app-server/tests/browser_e2e.rs",
+        "safe_to_apply": 0.54,
+        "scores": {
+          "correctness": {
+            "score": 1.54,
+            "confidence": 0.31,
+            "probabilities": {
+              "0": 0.08,
+              "1": 0.3,
+              "2": 0.62
+            }
+          },
+          "spec_match": {
+            "score": 1.58,
+            "confidence": 0.37,
+            "probabilities": {
+              "0": 0.08,
+              "1": 0.26,
+              "2": 0.66
+            }
+          },
+          "test_gap": {
+            "score": 0.37,
+            "confidence": 0.44,
+            "probabilities": {
+              "0": 0.72,
+              "1": 0.19,
+              "2": 0.09
+            }
+          },
+          "blast_radius": {
+            "score": 1.65,
+            "confidence": 0.49,
+            "probabilities": {
+              "0": 0.07,
+              "1": 0.2,
+              "2": 0.73
+            }
+          }
+        },
+        "weights": {
+          "correctness": 0.4,
+          "spec_match": 0.3,
+          "test_gap": 0.15,
+          "blast_radius": 0.15
+        },
+        "thresholds": {
+          "auto_accept": 0.8,
+          "review_at": 0.5,
+          "composite_floor": 0.7
+        },
+        "action": "escalate",
+        "composite": 0.6935,
+        "reason_codes": [
+          "confidence_below_review"
+        ],
+        "limiting_rubrics": [
+          "correctness"
+        ]
+      },
+      {
+        "path": "crates/app-server/tests/graph_view.rs",
+        "safe_to_apply": 0.52,
+        "scores": {
+          "correctness": {
+            "score": 1.56,
+            "confidence": 0.34,
+            "probabilities": {
+              "0": 0.07,
+              "1": 0.3,
+              "2": 0.63
+            }
+          },
+          "spec_match": {
+            "score": 1.58,
+            "confidence": 0.37,
+            "probabilities": {
+              "0": 0.09,
+              "1": 0.24,
+              "2": 0.67
+            }
+          },
+          "test_gap": {
+            "score": 0.44,
+            "confidence": 0.35,
+            "probabilities": {
+              "0": 0.7,
+              "1": 0.17,
+              "2": 0.13
+            }
+          },
+          "blast_radius": {
+            "score": 1.47,
+            "confidence": 0.2,
+            "probabilities": {
+              "0": 0.16,
+              "1": 0.21,
+              "2": 0.63
+            }
+          }
+        },
+        "weights": {
+          "correctness": 0.4,
+          "spec_match": 0.3,
+          "test_gap": 0.15,
+          "blast_radius": 0.15
+        },
+        "thresholds": {
+          "auto_accept": 0.8,
+          "review_at": 0.5,
+          "composite_floor": 0.7
+        },
+        "action": "escalate",
+        "composite": 0.70575,
+        "reason_codes": [
+          "confidence_below_review"
+        ],
+        "limiting_rubrics": [
+          "blast_radius"
+        ]
+      },
+      {
+        "path": "crates/app-server/tests/player_search.rs",
+        "safe_to_apply": 0.63,
+        "scores": {
+          "correctness": {
+            "score": 1.52,
+            "confidence": 0.27,
+            "probabilities": {
+              "0": 0.08,
+              "1": 0.33,
+              "2": 0.59
+            }
+          },
+          "spec_match": {
+            "score": 1.32,
+            "confidence": 0,
+            "probabilities": {
+              "0": 0.21,
+              "1": 0.26,
+              "2": 0.53
+            }
+          },
+          "test_gap": {
+            "score": 0.47,
+            "confidence": 0.3,
+            "probabilities": {
+              "0": 0.68,
+              "1": 0.17,
+              "2": 0.15
+            }
+          },
+          "blast_radius": {
+            "score": 0.86,
+            "confidence": 0,
+            "probabilities": {
+              "0": 0.48,
+              "1": 0.19,
+              "2": 0.33
+            }
+          }
+        },
+        "weights": {
+          "correctness": 0.4,
+          "spec_match": 0.3,
+          "test_gap": 0.15,
+          "blast_radius": 0.15
+        },
+        "thresholds": {
+          "auto_accept": 0.8,
+          "review_at": 0.5,
+          "composite_floor": 0.7
+        },
+        "action": "escalate",
+        "composite": 0.70225,
+        "reason_codes": [
+          "confidence_below_review"
+        ],
+        "limiting_rubrics": [
+          "spec_match",
+          "blast_radius"
+        ]
+      },
+      {
+        "path": "crates/canvas-view/src/browser.rs",
+        "safe_to_apply": 0.49,
+        "scores": {
+          "correctness": {
+            "score": 1.58,
+            "confidence": 0.35,
+            "probabilities": {
+              "0": 0.07,
+              "1": 0.29,
+              "2": 0.64
+            }
+          },
+          "spec_match": {
+            "score": 1.6,
+            "confidence": 0.41,
+            "probabilities": {
+              "0": 0.07,
+              "1": 0.25,
+              "2": 0.68
+            }
+          },
+          "test_gap": {
+            "score": 0.43,
+            "confidence": 0.34,
+            "probabilities": {
+              "0": 0.68,
+              "1": 0.2,
+              "2": 0.12
+            }
+          },
+          "blast_radius": {
+            "score": 1.78,
+            "confidence": 0.67,
+            "probabilities": {
+              "0": 0.04,
+              "1": 0.14,
+              "2": 0.82
+            }
+          }
+        },
+        "weights": {
+          "correctness": 0.4,
+          "spec_match": 0.3,
+          "test_gap": 0.15,
+          "blast_radius": 0.15
+        },
+        "thresholds": {
+          "auto_accept": 0.8,
+          "review_at": 0.5,
+          "composite_floor": 0.7
+        },
+        "action": "escalate",
+        "composite": 0.69025,
+        "reason_codes": [
+          "confidence_below_review",
+          "safe_to_apply_below_review"
+        ],
+        "limiting_rubrics": [
+          "test_gap"
+        ]
+      },
+      {
+        "path": "crates/canvas-view/src/browser/explorer.rs",
+        "safe_to_apply": 0.54,
+        "scores": {
+          "correctness": {
+            "score": 1.63,
+            "confidence": 0.46,
+            "probabilities": {
+              "0": 0.06,
+              "1": 0.24,
+              "2": 0.7
+            }
+          },
+          "spec_match": {
+            "score": 1.6,
+            "confidence": 0.38,
+            "probabilities": {
+              "0": 0.11,
+              "1": 0.19,
+              "2": 0.7
+            }
+          },
+          "test_gap": {
+            "score": 0.4,
+            "confidence": 0.4,
+            "probabilities": {
+              "0": 0.71,
+              "1": 0.18,
+              "2": 0.11
+            }
+          },
+          "blast_radius": {
+            "score": 1.49,
+            "confidence": 0.25,
+            "probabilities": {
+              "0": 0.12,
+              "1": 0.26,
+              "2": 0.62
+            }
+          }
+        },
+        "weights": {
+          "correctness": 0.4,
+          "spec_match": 0.3,
+          "test_gap": 0.15,
+          "blast_radius": 0.15
+        },
+        "thresholds": {
+          "auto_accept": 0.8,
+          "review_at": 0.5,
+          "composite_floor": 0.7
+        },
+        "action": "escalate",
+        "composite": 0.7242500000000001,
+        "reason_codes": [
+          "confidence_below_review"
+        ],
+        "limiting_rubrics": [
+          "blast_radius"
+        ]
+      },
+      {
+        "path": "crates/canvas-view/src/layout.rs",
+        "safe_to_apply": 0.57,
+        "scores": {
+          "correctness": {
+            "score": 1.62,
+            "confidence": 0.43,
+            "probabilities": {
+              "0": 0.07,
+              "1": 0.24,
+              "2": 0.69
+            }
+          },
+          "spec_match": {
+            "score": 1.62,
+            "confidence": 0.44,
+            "probabilities": {
+              "0": 0.1,
+              "1": 0.17,
+              "2": 0.73
+            }
+          },
+          "test_gap": {
+            "score": 0.36,
+            "confidence": 0.44,
+            "probabilities": {
+              "0": 0.72,
+              "1": 0.19,
+              "2": 0.09
+            }
+          },
+          "blast_radius": {
+            "score": 1.65,
+            "confidence": 0.47,
+            "probabilities": {
+              "0": 0.07,
+              "1": 0.21,
+              "2": 0.72
+            }
+          }
+        },
+        "weights": {
+          "correctness": 0.4,
+          "spec_match": 0.3,
+          "test_gap": 0.15,
+          "blast_radius": 0.15
+        },
+        "thresholds": {
+          "auto_accept": 0.8,
+          "review_at": 0.5,
+          "composite_floor": 0.7
+        },
+        "action": "escalate",
+        "composite": 0.71625,
+        "reason_codes": [
+          "confidence_below_review"
+        ],
+        "limiting_rubrics": [
+          "correctness"
+        ]
+      },
+      {
+        "path": "crates/canvas-view/src/lib.rs",
+        "safe_to_apply": 0.57,
+        "scores": {
+          "correctness": {
+            "score": 1.61,
+            "confidence": 0.43,
+            "probabilities": {
+              "0": 0.07,
+              "1": 0.24,
+              "2": 0.6900000000000001
+            }
+          },
+          "spec_match": {
+            "score": 1.65,
+            "confidence": 0.47,
+            "probabilities": {
+              "0": 0.1,
+              "1": 0.15,
+              "2": 0.75
+            }
+          },
+          "test_gap": {
+            "score": 0.32,
+            "confidence": 0.52,
+            "probabilities": {
+              "0": 0.75,
+              "1": 0.18,
+              "2": 0.07
+            }
+          },
+          "blast_radius": {
+            "score": 1.59,
+            "confidence": 0.4,
+            "probabilities": {
+              "0": 0.08,
+              "1": 0.24,
+              "2": 0.68
+            }
+          }
+        },
+        "weights": {
+          "correctness": 0.4,
+          "spec_match": 0.3,
+          "test_gap": 0.15,
+          "blast_radius": 0.15
+        },
+        "thresholds": {
+          "auto_accept": 0.8,
+          "review_at": 0.5,
+          "composite_floor": 0.7
+        },
+        "action": "escalate",
+        "composite": 0.72625,
+        "reason_codes": [
+          "confidence_below_review"
+        ],
+        "limiting_rubrics": [
+          "blast_radius"
+        ]
+      },
+      {
+        "path": "crates/app-server/src/discovery.rs",
+        "safe_to_apply": 0.55,
+        "scores": {
+          "correctness": {
+            "score": 1.62,
+            "confidence": 0.44,
+            "probabilities": {
+              "0": 0.07,
+              "1": 0.23,
+              "2": 0.7
+            }
+          },
+          "spec_match": {
+            "score": 1.68,
+            "confidence": 0.53,
+            "probabilities": {
+              "0": 0.08,
+              "1": 0.15,
+              "2": 0.77
+            }
+          },
+          "test_gap": {
+            "score": 0.38,
+            "confidence": 0.41,
+            "probabilities": {
+              "0": 0.71,
+              "1": 0.19,
+              "2": 0.1
+            }
+          },
+          "blast_radius": {
+            "score": 1.65,
+            "confidence": 0.49,
+            "probabilities": {
+              "0": 0.06,
+              "1": 0.22,
+              "2": 0.72
+            }
+          }
+        },
+        "weights": {
+          "correctness": 0.4,
+          "spec_match": 0.3,
+          "test_gap": 0.15,
+          "blast_radius": 0.15
+        },
+        "thresholds": {
+          "auto_accept": 0.8,
+          "review_at": 0.5,
+          "composite_floor": 0.7
+        },
+        "action": "escalate",
+        "composite": 0.72375,
+        "reason_codes": [
+          "confidence_below_review"
+        ],
+        "limiting_rubrics": [
+          "test_gap"
+        ]
+      },
+      {
+        "path": "crates/canvas-view/src/browser/orbit.rs",
+        "safe_to_apply": 0.57,
+        "scores": {
+          "correctness": {
+            "score": 1.6,
+            "confidence": 0.4,
+            "probabilities": {
+              "0": 0.09,
+              "1": 0.22,
+              "2": 0.69
+            }
+          },
+          "spec_match": {
+            "score": 1.73,
+            "confidence": 0.59,
+            "probabilities": {
+              "0": 0.07,
+              "1": 0.13,
+              "2": 0.8
+            }
+          },
+          "test_gap": {
+            "score": 0.33,
+            "confidence": 0.5,
+            "probabilities": {
+              "0": 0.75,
+              "1": 0.17,
+              "2": 0.08
+            }
+          },
+          "blast_radius": {
+            "score": 1.64,
+            "confidence": 0.46,
+            "probabilities": {
+              "0": 0.09,
+              "1": 0.18,
+              "2": 0.73
+            }
+          }
+        },
+        "weights": {
+          "correctness": 0.4,
+          "spec_match": 0.3,
+          "test_gap": 0.15,
+          "blast_radius": 0.15
+        },
+        "thresholds": {
+          "auto_accept": 0.8,
+          "review_at": 0.5,
+          "composite_floor": 0.7
+        },
+        "action": "escalate",
+        "composite": 0.7317500000000001,
+        "reason_codes": [
+          "confidence_below_review"
+        ],
+        "limiting_rubrics": [
+          "correctness"
+        ]
+      },
+      {
+        "path": "crates/canvas-view/src/orbit.rs",
+        "safe_to_apply": 0.55,
+        "scores": {
+          "correctness": {
+            "score": 1.64,
+            "confidence": 0.47,
+            "probabilities": {
+              "0": 0.07,
+              "1": 0.21,
+              "2": 0.72
+            }
+          },
+          "spec_match": {
+            "score": 1.8,
+            "confidence": 0.7,
+            "probabilities": {
+              "0": 0.04,
+              "1": 0.12,
+              "2": 0.84
+            }
+          },
+          "test_gap": {
+            "score": 0.28,
+            "confidence": 0.59,
+            "probabilities": {
+              "0": 0.78,
+              "1": 0.17,
+              "2": 0.05
+            }
+          },
+          "blast_radius": {
+            "score": 1.85,
+            "confidence": 0.79,
+            "probabilities": {
+              "0": 0.03,
+              "1": 0.08,
+              "2": 0.89
+            }
+          }
+        },
+        "weights": {
+          "correctness": 0.4,
+          "spec_match": 0.3,
+          "test_gap": 0.15,
+          "blast_radius": 0.15
+        },
+        "thresholds": {
+          "auto_accept": 0.8,
+          "review_at": 0.5,
+          "composite_floor": 0.7
+        },
+        "action": "escalate",
+        "composite": 0.7382500000000001,
+        "reason_codes": [
+          "confidence_below_review"
+        ],
+        "limiting_rubrics": [
+          "correctness"
+        ]
+      }
+    ]
+  },
+  "verification": {
+    "action": "escalate",
+    "summary": {
+      "verified": 4,
+      "contradicted": 0,
+      "unsupported": 0,
+      "needs_review": 1,
+      "invalid_response": 0
+    },
+    "thresholds": {
+      "auto_accept": 0.8,
+      "review_at": 0.5
+    },
+    "results": [
+      {
+        "claim": "The native canvas starts in Orbit, with animated chain/halo reflow, draggable nodes, retained start/end shortest-chain search, evidence navigation, and existing graph controls.",
+        "verdict": "verified",
+        "confidence": 0.86,
+        "probabilities": {
+          "verified": 0.91,
+          "contradicted": 0.01,
+          "unsupported": 0.08
+        },
+        "action": "auto"
+      },
+      {
+        "claim": "Manual Orbit exploration keeps the root selected, centers the current player and offers only globally shortest forward moves. Earlier teammates are unavailable, destination constraints restrict moves to shortest routes, and earlier chain steps can be revisited to rewind.",
+        "verdict": "verified",
+        "confidence": 0.82,
+        "probabilities": {
+          "verified": 0.88,
+          "contradicted": 0.04,
+          "unsupported": 0.08
+        },
+        "action": "auto"
+      },
+      {
+        "claim": "Discovery returns exact top finite shortest-distance pairs and unique direct-teammate degree leaders using the same immutable graph snapshot. Ranked pairs can load their chain; the most-connected ranking highlights its players in whole-network view.",
+        "verdict": "verified",
+        "confidence": 0.89,
+        "probabilities": {
+          "verified": 0.93,
+          "contradicted": 0.01,
+          "unsupported": 0.06
+        },
+        "action": "auto"
+      },
+      {
+        "claim": "python3 scripts/check.py --profile full completed with all ten checks exiting zero, including 144 passing Rust tests, 108 Python tests, and 20 passing actual Chromium/WASM browser journeys.",
+        "verdict": "verified",
+        "confidence": 0.11,
+        "probabilities": {
+          "verified": 0.41,
+          "contradicted": 0.22,
+          "unsupported": 0.37
+        },
+        "action": "escalate"
+      }
+    ]
+  },
+  "usage": {
+    "input_tokens": 40182,
+    "output_tokens": 1457
+  }
+}

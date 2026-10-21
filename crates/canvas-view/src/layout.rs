@@ -14,6 +14,8 @@ pub enum LayoutMode {
     /// hashing to spread nodes within each season lane.
     #[default]
     EraLane,
+    /// Chain in an inner arc, surrounding context in a quiet halo.
+    Orbit,
     /// Concentric circles arranged radially by degree of separation / hop distance
     /// from the active player, ideal for focal ego-network investigation.
     Concentric,
@@ -26,6 +28,7 @@ impl LayoutMode {
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::EraLane => "era",
+            Self::Orbit => "orbit",
             Self::Concentric => "concentric",
             Self::Force => "force",
         }
@@ -33,6 +36,7 @@ impl LayoutMode {
 
     pub fn from_str_name(name: &str) -> Option<Self> {
         match name {
+            "orbit" => Some(Self::Orbit),
             "era" | "lane" => Some(Self::EraLane),
             "concentric" | "radial" => Some(Self::Concentric),
             "force" | "spring" => Some(Self::Force),
@@ -53,6 +57,7 @@ pub fn compute_layout(
 ) -> Vec<(f64, f64)> {
     match mode {
         LayoutMode::EraLane => compute_era_lane_layout(nodes),
+        LayoutMode::Orbit => crate::orbit::layout(nodes, links, focus, path),
         LayoutMode::Concentric => {
             compute_concentric_layout(nodes, links, focus, path, full_network, hop_distances)
         }

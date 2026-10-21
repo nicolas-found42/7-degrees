@@ -322,7 +322,6 @@ async fn missing_query_parameters_are_a_bad_request() {
 async fn graph_page_is_the_only_page_and_shows_every_player() {
     let (status, html) = get_html("/").await;
     assert_eq!(status, StatusCode::OK);
-    assert!(html.contains("Graph exploration"), "graph page renders");
     assert!(html.contains(r#"data-full-network="true""#));
     assert!(
         html.contains("A league of connections."),
@@ -347,6 +346,7 @@ async fn graph_page_is_the_only_page_and_shows_every_player() {
         "id=\"layout-era\"",
         "id=\"layout-concentric\"",
         "id=\"layout-force\"",
+        "id=\"layout-orbit\"",
         "id=\"graph-minimap\"",
         "id=\"graph-tooltip\"",
     ] {
@@ -376,7 +376,7 @@ async fn graph_page_is_the_only_page_and_shows_every_player() {
     // /graph is the same page.
     let (status, again) = get_html("/graph").await;
     assert_eq!(status, StatusCode::OK);
-    assert!(again.contains("Graph exploration"));
+    assert!(again.contains("A league of connections."));
     // Query parameters are ignored: the page is always the whole network.
     let (status, focused) = get_html("/?from=A&to=C&player=B").await;
     assert_eq!(status, StatusCode::OK);
@@ -858,4 +858,63 @@ async fn credential_canary_never_reaches_served_surfaces() {
     assert_eq!(status, StatusCode::OK);
     // The served status also carries no trace of the canary.
     assert!(!body.expect("JSON body").to_string().contains("sk-canary"));
+}
+
+#[tokio::test]
+async fn discovery_ranks_finite_shortest_pairs_and_unique_direct_teammates() {
+    let app = app_server::app_with_fixture_data();
+    let mut answers = Vec::new();
+    for _ in 0..2 {
+        let response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri("/api/discovery")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let bytes = response.into_body().collect().await.unwrap().to_bytes();
+        answers.push(serde_json::from_slice::<Value>(&bytes).unwrap());
+    }
+    assert_eq!(answers[0], answers[1], "cached results remain stable");
+    let data = &answers[0];
+    let pairs = data["longest"].as_array().unwrap();
+    assert_eq!(pairs.len(), 10);
+    assert_eq!(
+        (
+            pairs[0]["from"].as_str(),
+            pairs[0]["to"].as_str(),
+            pairs[0]["degree"].as_u64()
+        ),
+        (Some("C"), Some("E"), Some(3))
+    );
+    for pair in pairs {
+        assert_ne!(pair["from"], "D");
+        assert_ne!(pair["to"], "D");
+        let (_, actual) = get(&format!(
+            "/api/connection?from={}&to={}",
+            pair["from"].as_str().unwrap(),
+            pair["to"].as_str().unwrap()
+        ))
+        .await;
+        assert_eq!(pair["degree"], actual.unwrap()["degree"]);
+    }
+    assert!(
+        pairs
+            .windows(2)
+            .all(|p| p[0]["degree"].as_u64() >= p[1]["degree"].as_u64())
+    );
+    let hubs: Vec<_> = data["hubs"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|h| (h["id"].as_str().unwrap(), h["degree"].as_u64().unwrap()))
+        .collect();
+    assert_eq!(
+        hubs,
+        vec![("B", 3), ("A", 2), ("C", 2), ("C2", 2), ("E", 1), ("D", 0)]
+    );
 }

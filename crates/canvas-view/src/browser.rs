@@ -18,6 +18,7 @@ struct CameraMove {
     from: Camera,
     to: Camera,
 }
+mod orbit;
 
 struct Transition {
     start: f64,
@@ -96,8 +97,19 @@ struct CanvasView {
     physics_time: f64,
     camera_move: Option<CameraMove>,
     overview_camera: Option<Camera>,
+    walk: Vec<usize>,
+    walk_next: Vec<usize>,
+    walk_distances: Vec<usize>,
+    walk_target_distances: Option<Vec<usize>>,
+    discovery_highlights: std::collections::HashSet<usize>,
 }
 impl CanvasView {
+    fn focus_id(&self) -> &str {
+        self.walk
+            .last()
+            .map(|&i| self.graph.nodes[i].id.as_str())
+            .unwrap_or(&self.selected)
+    }
     fn fit(&mut self) {
         let ids: Vec<_> = if self.graph.path.is_empty() {
             vec![self.selected.as_str()]
@@ -153,6 +165,10 @@ impl CanvasView {
         self.pending_layout = false;
         self.transition = None;
         self.layout = mode;
+        if mode != LayoutMode::Orbit {
+            self.walk.clear();
+            self.walk_next.clear();
+        }
         self.points = compute_layout(
             &self.graph.nodes,
             &self.graph.links,
@@ -196,6 +212,7 @@ impl CanvasView {
         if let Some(status) = self.document.get_element_by_id("canvas-status") {
             let _ = status.set_attribute("data-layout", self.layout.as_str());
             for (id, mode) in [
+                ("layout-orbit", LayoutMode::Orbit),
                 ("layout-era", LayoutMode::EraLane),
                 ("layout-concentric", LayoutMode::Concentric),
                 ("layout-force", LayoutMode::Force),
@@ -253,6 +270,7 @@ impl CanvasView {
         self.recompute_hop();
         self.trunk_plan =
             visual::TrunkPlan::new(&self.graph.nodes, &self.graph.links, &self.selected);
+
         if let Some(element) = self.document.get_element_by_id("graph-selection") {
             element.set_text_content(Some(&format!(
                 "Selected player: {} — {}; teams: {}; {} teammate connections",
@@ -276,11 +294,12 @@ impl CanvasView {
         self.hop.clear();
         self.foreground_edges.clear();
         self.focus_weights.fill(0.0);
-        let Some(&start) = self.indices.get(&self.selected) else {
+        let focus = self.focus_id().to_owned();
+        let Some(&start) = self.indices.get(&focus) else {
             return;
         };
         let mut queue = std::collections::VecDeque::from([(start, 0usize)]);
-        self.hop.insert(self.selected.clone(), 0);
+        self.hop.insert(focus.clone(), 0);
         while let Some((node, depth)) = queue.pop_front() {
             if depth >= 2 {
                 continue;
@@ -299,13 +318,9 @@ impl CanvasView {
             .iter()
             .enumerate()
             .filter_map(|(i, e)| {
-                let direct = e.from == self.selected || e.to == self.selected;
+                let direct = e.from == focus || e.to == focus;
                 if direct {
-                    let other = if e.from == self.selected {
-                        &e.to
-                    } else {
-                        &e.from
-                    };
+                    let other = if e.from == focus { &e.to } else { &e.from };
                     self.focus_weights[self.indices[other]] = e.weight;
                 }
                 let nearby = self.hop.contains_key(&e.from) && self.hop.contains_key(&e.to);
@@ -410,6 +425,10 @@ impl CanvasView {
     fn activate(&mut self, target: HitTarget) {
         match target {
             HitTarget::Node(i) => {
+                if self.layout == LayoutMode::Orbit && !self.walk.is_empty() {
+                    self.walk_to(i);
+                    return;
+                }
                 let id = self.graph.nodes[i].id.clone();
                 self.select(&id);
             }
@@ -434,8 +453,8 @@ impl CanvasView {
                     || (self.camera.scale >= 0.75
                         || (self.camera.scale >= 0.25 && e.in_visual_backbone))
                     || e.on_path
-                    || e.from == self.selected
-                    || e.to == self.selected
+                    || e.from == self.focus_id()
+                    || e.to == self.focus_id()
                     || self.edge == Some(*i)
                     || self.hovered_edge == Some(*i)
             })
@@ -454,6 +473,12 @@ impl CanvasView {
             .map(|(i, _)| i)
     }
     fn clear_highlight(&mut self) {
+        self.walk.clear();
+        self.walk_next.clear();
+        self.recompute_hop();
+        if let Some(list) = self.document.get_element_by_id("orbit-next") {
+            list.set_inner_html("");
+        }
         self.graph.path.clear();
         self.graph.degree = None;
         for e in &mut self.graph.links {
@@ -465,6 +490,9 @@ impl CanvasView {
         }
     }
     fn visible(&self, index: usize) -> bool {
+        if self.layout == LayoutMode::Orbit && !self.walk.is_empty() {
+            return self.walk.contains(&index) || self.walk_next.contains(&index);
+        }
         if !self.ego {
             return true;
         }
@@ -484,6 +512,7 @@ impl CanvasView {
             || id == &self.graph.target
             || self.graph.path.contains(id)
             || self.hovered == Some(index)
+            || self.discovery_highlights.contains(&index)
     }
     fn emphasized(&self, index: usize) -> bool {
         let n = &self.graph.nodes[index];
@@ -552,7 +581,7 @@ impl CanvasView {
         let reduced = explorer::reduced_motion();
         let micro_blend = visual::zoom_blend(self.camera.scale, 0.75, reduced);
         let meso_blend = visual::zoom_blend(self.camera.scale, 0.25, reduced);
-        self.trunks = if self.layout == LayoutMode::Concentric {
+        self.trunks = if matches!(self.layout, LayoutMode::Concentric | LayoutMode::Orbit) {
             HashMap::new()
         } else {
             self.trunk_plan
@@ -615,7 +644,15 @@ impl CanvasView {
             self.ctx.set_global_alpha(
                 (0.02 + 0.02 * meso_blend)
                     * if local { micro_blend } else { 1.0 }
-                    * if active || !matching { 0.05 } else { 1.0 },
+                    * if active || !matching {
+                        if self.layout == LayoutMode::Orbit {
+                            0.45
+                        } else {
+                            0.05
+                        }
+                    } else {
+                        1.0
+                    },
             );
             let candidates: Box<dyn Iterator<Item = usize>> = if local {
                 Box::new(0..self.graph.links.len())
@@ -662,8 +699,8 @@ impl CanvasView {
                 if e.on_path
                     || self.edge == Some(i)
                     || self.hovered_edge == Some(i)
-                    || e.from == self.selected
-                    || e.to == self.selected
+                    || e.from == self.focus_id()
+                    || e.to == self.focus_id()
                     || (self.emphasized(a) && self.emphasized(b)) != matching
                 {
                     continue;
@@ -680,13 +717,16 @@ impl CanvasView {
             if e.on_path
                 || self.edge == Some(i)
                 || self.hovered_edge == Some(i)
-                || (e.from != self.selected && e.to != self.selected)
+                || (e.from != self.focus_id() && e.to != self.focus_id())
             {
                 continue;
             }
             self.ctx.set_global_alpha(
                 (0.18 + 0.10 * (e.weight.clamp(0.1, 1.0) - 0.1) / 0.9)
-                    * if active || !self.emphasized(a) || !self.emphasized(b) {
+                    * if (active && self.walk.is_empty())
+                        || !self.emphasized(a)
+                        || !self.emphasized(b)
+                    {
                         0.05
                     } else {
                         1.0
@@ -767,11 +807,15 @@ impl CanvasView {
             let important = self.important(i);
             let alpha = if important {
                 1.0
-            } else if active
+            } else if (active && !self.walk_next.contains(&i))
                 || !self.emphasized(i)
                 || (self.layout == LayoutMode::Concentric && !self.hop.contains_key(&n.id))
             {
-                0.05
+                if self.layout == LayoutMode::Orbit {
+                    0.32
+                } else {
+                    0.05
+                }
             } else {
                 match self.hop.get(&n.id) {
                     Some(2) => 0.18,
@@ -796,7 +840,13 @@ impl CanvasView {
             self.ctx.set_global_alpha(alpha);
             self.ctx
                 .set_fill_style_str(if self.graph.path.contains(&n.id) {
-                    "#176896"
+                    if self.layout == LayoutMode::Orbit {
+                        "#f9ba74"
+                    } else {
+                        "#176896"
+                    }
+                } else if self.discovery_highlights.contains(&i) {
+                    "#7de2d1"
                 } else if n.id == self.selected {
                     "#21648b"
                 } else {
@@ -897,7 +947,10 @@ impl CanvasView {
             {
                 continue;
             }
-            if !important && (zoom_tier == ZoomTier::Macro && !self.landmarks[i]) {
+            if !important
+                && (zoom_tier == ZoomTier::Macro && !self.landmarks[i])
+                && !self.walk_next.contains(&i)
+            {
                 continue;
             }
             let logical = self.screen(self.points[i]);
@@ -1003,11 +1056,21 @@ impl CanvasView {
                 self.ctx
                     .set_fill_style_str(if important { "#ffffff" } else { "#3c505b" });
             } else {
-                self.ctx.set_stroke_style_str("#ffffff");
+                self.ctx
+                    .set_stroke_style_str(if self.layout == LayoutMode::Orbit {
+                        "#0b101e"
+                    } else {
+                        "#ffffff"
+                    });
                 self.ctx.set_line_width(3.0);
                 self.ctx.set_line_join("round");
                 let _ = self.ctx.stroke_text(&n.name, label.x, label.y);
-                self.ctx.set_fill_style_str("#0f172a");
+                self.ctx
+                    .set_fill_style_str(if self.layout == LayoutMode::Orbit {
+                        "#dce6f4"
+                    } else {
+                        "#0f172a"
+                    });
             }
             let _ = self.ctx.fill_text(&n.name, label.x, label.y);
         }
@@ -1057,6 +1120,18 @@ impl CanvasView {
                 serde_json::to_string(&sector_geometry).unwrap(),
             ),
             ("data-layout-signature", self.layout_signature.clone()),
+            ("data-focus-player", self.focus_id().to_owned()),
+            (
+                "data-ranked-players",
+                self.discovery_highlights.len().to_string(),
+            ),
+            (
+                "data-visible-players",
+                (0..self.points.len())
+                    .filter(|&i| self.visible(i))
+                    .count()
+                    .to_string(),
+            ),
             (
                 "data-label-items",
                 serde_json::to_string(&label_items).unwrap(),
@@ -1064,7 +1139,7 @@ impl CanvasView {
             (
                 "data-focus-point",
                 self.indices
-                    .get(&self.selected)
+                    .get(self.focus_id())
                     .map(|&i| {
                         serde_json::to_string(&self.viewport.css(self.screen(self.points[i])))
                             .unwrap()
@@ -1452,6 +1527,11 @@ pub fn start() -> Result<(), JsValue> {
         badge_targets: Vec::new(),
         layout_signature,
         touch_input: false,
+        walk: Vec::new(),
+        walk_next: Vec::new(),
+        walk_distances: Vec::new(),
+        walk_target_distances: None,
+        discovery_highlights: Default::default(),
     }));
     {
         let mut v = view.borrow_mut();
@@ -1465,8 +1545,10 @@ pub fn start() -> Result<(), JsValue> {
             v.focus_player();
         }
         if !v.graph.path.is_empty() {
-            let points: Vec<_> = v.graph.path.iter().map(|id| v.at(id)).collect();
-            v.frame_points(&points);
+            if v.layout != LayoutMode::Orbit {
+                let points: Vec<_> = v.graph.path.iter().map(|id| v.at(id)).collect();
+                v.frame_points(&points);
+            }
             let _ = v
                 .document
                 .get_element_by_id("graph-chain")
@@ -1532,6 +1614,7 @@ pub fn start() -> Result<(), JsValue> {
     }
     // Explicit advanced layout changes recompute the shared layout and refit.
     for (id, mode) in [
+        ("layout-orbit", LayoutMode::Orbit),
         ("layout-era", LayoutMode::EraLane),
         ("layout-concentric", LayoutMode::Concentric),
         ("layout-force", LayoutMode::Force),
@@ -1744,6 +1827,8 @@ pub fn start() -> Result<(), JsValue> {
                 explorer::set_picker(&v.document, "graph-target", "", "");
                 v.sync_pair_url();
                 v.draw();
+                drop(v);
+                explorer::request_chain(state.clone());
             }
             explorer::animate(state.clone());
         })?;
