@@ -1,0 +1,235 @@
+{
+  "generated_at": "2026-10-21T18:31:43.468938+00:00",
+  "source_commit": "c6aed5fb141476466d9d86bfb38fc5d987372685",
+  "base_url": "http://127.0.0.1:61839",
+  "endpoints": {
+    "semantic_probe": {
+      "url": "/api/query?q=who%20played%20with%20Magic%20Johnson",
+      "status": 200,
+      "elapsed_seconds": 0.008070916024735197
+    },
+    "stats": {
+      "url": "/api/stats",
+      "status": 200,
+      "elapsed_seconds": 8.833511875011027
+    },
+    "coverage": {
+      "url": "/api/coverage",
+      "status": 200,
+      "elapsed_seconds": 0.000572625023778528
+    },
+    "connection": {
+      "url": "/api/connection?from=acyqu01&to=bogutan01",
+      "status": 200,
+      "elapsed_seconds": 0.0005835840129293501
+    },
+    "diagnostics": {
+      "url": "/api/diagnostics",
+      "status": 200,
+      "elapsed_seconds": 0.2876415829814505
+    },
+    "client_beacon": {
+      "url": "/api/diagnostics/client",
+      "status": 202,
+      "elapsed_seconds": 0.0005885410064365715
+    }
+  },
+  "elapsed_seconds": {
+    "semantic_probe": 0.008070916024735197,
+    "stats": 8.833511875011027,
+    "coverage": 0.000572625023778528,
+    "connection": 0.0005835840129293501,
+    "diagnostics": 0.2876415829814505,
+    "client_beacon": 0.0005885410064365715
+  },
+  "semantic_probe": {
+    "status": "unavailable",
+    "operation": null,
+    "reason": "Semantic query interpretation is unavailable. Use deterministic player search and connection controls.",
+    "interpretation": "Semantic interpretation; graph results are deterministic",
+    "players": [],
+    "filters": {
+      "team": null,
+      "first_season": null,
+      "last_season": null
+    },
+    "data": null,
+    "evidence": [],
+    "resolutions": []
+  },
+  "stats": {
+    "components": 42,
+    "diameter": 11,
+    "histogram": {
+      "1": 101395,
+      "10": 4431,
+      "11": 21,
+      "2": 1994930,
+      "3": 4059326,
+      "4": 2610477,
+      "5": 1669401,
+      "6": 1092704,
+      "7": 747097,
+      "8": 457965,
+      "9": 86833
+    },
+    "players": 5106,
+    "unreachable_pairs": 208485
+  },
+  "coverage": {
+    "appearance_proven_edges": 99710,
+    "certified_tenures": 2270,
+    "complete": false,
+    "excluded_tenures": {
+      "cross-checked": 10221,
+      "inferred": 13340,
+      "unresolved": 4227
+    },
+    "game_witnessed_edges": 437,
+    "players_without_certified_tenure": 3516,
+    "players_without_evidenced_edge": 41,
+    "warning": "Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players."
+  },
+  "connection": {
+    "coverage": {
+      "appearance_proven_edges": 99710,
+      "certified_tenures": 2270,
+      "complete": false,
+      "excluded_tenures": {
+        "cross-checked": 10221,
+        "inferred": 13340,
+        "unresolved": 4227
+      },
+      "game_witnessed_edges": 437,
+      "players_without_certified_tenure": 3516,
+      "players_without_evidenced_edge": 41,
+      "warning": "Incomplete dated roster coverage, including 1946\u20131950 BAA evidence. Links require dated tenure overlap, an identified shared team game, or appearance counts that mathematically prove shared team games. Appearance proofs establish a relationship, but do not invent overlap dates or duration. Season-only membership, ambiguous counts and unresolved transaction brackets never create links. Degrees are exact within this evidenced graph; missing edges may shorten a historical chain or connect currently unreachable players."
+    },
+    "degree": 1,
+    "link_context": [
+      "121 overlapping roster day(s) \u00b7 inspect evidence for dates"
+    ],
+    "links": [
+      {
+        "from": "acyqu01",
+        "minimum_shared_games": null,
+        "overlap_days": 121,
+        "team": "MAVERICKS",
+        "to": "bogutan01"
+      }
+    ],
+    "path": [
+      "acyqu01",
+      "bogutan01"
+    ],
+    "result": "connected"
+  },
+  "client_beacon": {
+    "accepted": true
+  },
+  "diagnostics": {
+    "build": {
+      "commit": "c6aed5fb141476466d9d86bfb38fc5d987372685",
+      "dirty": false,
+      "mode": "reports"
+    },
+    "client_reports": [],
+    "requests": {
+      "recent": [
+        {
+          "duration_ms": 0.138208,
+          "method": "GET",
+          "path": "/api/semantic-status",
+          "request_id": "r-1",
+          "status": 200,
+          "ts": "2026-10-21T18:31:34.328Z"
+        },
+        {
+          "duration_ms": 7.458583,
+          "method": "GET",
+          "path": "/api/query",
+          "request_id": "r-2",
+          "status": 200,
+          "ts": "2026-10-21T18:31:34.336Z"
+        },
+        {
+          "duration_ms": 8832.818417,
+          "method": "GET",
+          "path": "/api/stats",
+          "request_id": "r-3",
+          "status": 200,
+          "ts": "2026-10-21T18:31:43.169Z"
+        },
+        {
+          "duration_ms": 0.05175,
+          "method": "GET",
+          "path": "/api/coverage",
+          "request_id": "r-4",
+          "status": 200,
+          "ts": "2026-10-21T18:31:43.170Z"
+        },
+        {
+          "duration_ms": 0.159291,
+          "method": "GET",
+          "path": "/api/connection",
+          "request_id": "r-5",
+          "status": 200,
+          "ts": "2026-10-21T18:31:43.171Z"
+        }
+      ],
+      "total": 5
+    },
+    "semantic": {
+      "available": false,
+      "events": [
+        {
+          "elapsed_ms": 0.0,
+          "failure": "unconfigured",
+          "outcome": "unavailable",
+          "ts": "2026-10-21T18:31:34.336Z"
+        }
+      ],
+      "state": "unconfigured"
+    },
+    "snapshot": {
+      "assets": [
+        {
+          "bytes": 46951,
+          "name": "canvas_view.js",
+          "sha256": "d8e2b26682f01467c33dc530bcd5e8e510183f0fe3b8ec4904e725771838126f"
+        },
+        {
+          "bytes": 894411,
+          "name": "canvas_view_bg.wasm",
+          "sha256": "dadf31c75dde218c9f9fe515e4482d42a4fc9d37af8088cbb17376b12e229286"
+        }
+      ],
+      "edges": 101395,
+      "players": 5106,
+      "sources": [
+        {
+          "bytes": 628020,
+          "name": "t3/player-universe.csv",
+          "sha256": "81031c7e3cf95845060119a3347d3cf37ec60c6a24b0ced9978fb7df2e7e651d"
+        },
+        {
+          "bytes": 4476444,
+          "name": "t4/tenures.csv",
+          "sha256": "2bd2106ba3c0819b1a065246950f527a4267feb5f8a2054a11318205c04a1ab1"
+        },
+        {
+          "bytes": 2383491,
+          "name": "t4/appearance-counts.csv",
+          "sha256": "4177233c011f958efc448a47c94a05dbbe0dfb836b5b6af8e42f492aaf0c3e70"
+        },
+        {
+          "bytes": 67340,
+          "name": "t4/game-witnesses.csv",
+          "sha256": "c23d9bcb6c8ca631a75ce9c1dfaa2e538ce33182d8ee417b88df8531f20ad6ab"
+        }
+      ]
+    },
+    "started_at": "2026-10-21T18:31:34.236Z",
+    "uptime_seconds": 9.222005292
+  }
+}

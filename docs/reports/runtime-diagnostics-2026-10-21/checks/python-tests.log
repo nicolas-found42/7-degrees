@@ -1,0 +1,72 @@
+...................................<checkout>/scripts/test_t4_fetch_bbr.py:43: ResourceWarning: unclosed file <_io.BufferedWriter name='/var/folders/f_/7sw_z59s17qfpkf_0jzcs4hc0000gn/T/tmpyytq8ggf/good.html'>
+  open(good, 'wb').write(VALID_PAGE)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+<checkout>/scripts/test_t4_fetch_bbr.py:44: ResourceWarning: unclosed file <_io.BufferedWriter name='/var/folders/f_/7sw_z59s17qfpkf_0jzcs4hc0000gn/T/tmpyytq8ggf/bad.html'>
+  open(bad, 'wb').write(b'<html>truncated')
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.............................................loading S1 season windows ...
+loading membership ...
+loading transaction legs ...
+{
+  "appearance-count-conflicts": 0,
+  "complete-independent-schedule-team-seasons": 0,
+  "era_classes": {
+    "2000-2025/26": {
+      "unresolved": 4
+    }
+  },
+  "intervals-absent": 4,
+  "intervals-present": 0,
+  "membership-window-missing": 4,
+  "membership-window-present": 0,
+  "membership_rows": 4,
+  "membership_rows_no_stint": 4,
+  "membership_window_missing": 4,
+  "membership_window_present": 0,
+  "rows_S1_only_supplement": 0,
+  "rows_S2": 4,
+  "s1_window_san_fixed_rows": 0,
+  "s1_window_team_seasons": 0,
+  "s1_window_unresolved_abbr_keys": 0,
+  "same-day-game-order-unresolved": 0,
+  "tenures": 4,
+  "tenures-cross-checked": 0,
+  "tenures-directly-evidenced": 0,
+  "tenures-inferred": 0,
+  "tenures-unresolved": 4
+}
+..................Checking example
+Published 1 verified receipts (success) to /var/folders/f_/7sw_z59s17qfpkf_0jzcs4hc0000gn/T/tmp5mane7pp/published
+..Checking example
+.....Checking failure
+failure failed (exit 3); see /var/folders/f_/7sw_z59s17qfpkf_0jzcs4hc0000gn/T/tmprpw8sh9_/failed/failure.log
+Checking later
+.Checking failure
+failure failed (exit 3); see /var/folders/f_/7sw_z59s17qfpkf_0jzcs4hc0000gn/T/tmpqojwfyct/failed/failure.log
+Checking later
+Published 2 verified receipts (failure) to /var/folders/f_/7sw_z59s17qfpkf_0jzcs4hc0000gn/T/tmpqojwfyct/failures/2026-10-21-example/checks
+.Checking failure
+Checking later
+later failed (exit 4); see /var/folders/f_/7sw_z59s17qfpkf_0jzcs4hc0000gn/T/tmpxy19n3_1/raw/later.log
+Published 2 verified receipts (failure) to /var/folders/f_/7sw_z59s17qfpkf_0jzcs4hc0000gn/T/tmpxy19n3_1/failures/2026-10-21-example/checks
+.Checking failure
+failure failed (exit 3); see /var/folders/f_/7sw_z59s17qfpkf_0jzcs4hc0000gn/T/tmpbci8lb8h/failed/failure.log
+Checking later
+.Checking example
+.Checking example
+.Checking example
+.Checking bytes
+Published 1 verified receipts (success) to /var/folders/f_/7sw_z59s17qfpkf_0jzcs4hc0000gn/T/tmpob09j7km/published
+..Report index matches 1 published runs
+index.json does not match the receipts in this tree
+Run: python3 scripts/report-index.py
+.....Checking example
+Published 1 verified receipts (success) to /var/folders/f_/7sw_z59s17qfpkf_0jzcs4hc0000gn/T/tmpcts4lxin/published
+.Checking example
+.Checking example
+..Checking example
+.
+----------------------------------------------------------------------
+Ran 124 tests in 2.157s
+
+OK

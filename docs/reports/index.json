@@ -1,0 +1,225 @@
+{
+  "schema_version": 1,
+  "runs": [
+    {
+      "path": "docs/reports/adversarial-teardown-2026-10-12/baseline-checks/manifest.json",
+      "run": "adversarial-teardown-2026-10-12/baseline-checks",
+      "kind": "manifest",
+      "profile": "full",
+      "source_commit": "a6382963ad83f0220f6d6cb36f49faa17c657bb3",
+      "outcome": "passed",
+      "date": "2026-10-13",
+      "checks": 10
+    },
+    {
+      "path": "docs/reports/adversarial-teardown-2026-10-12/final-checks/manifest.json",
+      "run": "adversarial-teardown-2026-10-12/final-checks",
+      "kind": "manifest",
+      "profile": "full",
+      "source_commit": "a6382963ad83f0220f6d6cb36f49faa17c657bb3",
+      "outcome": "passed",
+      "date": "2026-10-13",
+      "checks": 10
+    },
+    {
+      "path": "docs/reports/adversarial-teardown-2026-10-12/isolated-checks/manifest.json",
+      "run": "adversarial-teardown-2026-10-12/isolated-checks",
+      "kind": "manifest",
+      "profile": "full",
+      "source_commit": "a6382963ad83f0220f6d6cb36f49faa17c657bb3",
+      "outcome": "passed",
+      "date": "2026-10-13",
+      "checks": 10
+    },
+    {
+      "path": "docs/reports/adversarial-ux-2026-10-15/checks/manifest.json",
+      "run": "adversarial-ux-2026-10-15/checks",
+      "kind": "manifest",
+      "profile": "full",
+      "source_commit": "710d0bf624a3b480b4eed7aea501077d556e38a1",
+      "outcome": "passed",
+      "date": "2026-10-15",
+      "checks": 10
+    },
+    {
+      "path": "docs/reports/explorer-redesign-2026-10-15/checks/manifest.json",
+      "run": "explorer-redesign-2026-10-15/checks",
+      "kind": "manifest",
+      "profile": "full",
+      "source_commit": "d3774da83489cd1e954ad8cc032bba8d6d29c6c3",
+      "outcome": "passed",
+      "date": "2026-10-16",
+      "checks": 10
+    },
+    {
+      "path": "docs/reports/explorer-upgrade-2026-10-14/checks-delivery/manifest.json",
+      "run": "explorer-upgrade-2026-10-14/checks-delivery",
+      "kind": "manifest",
+      "profile": "full",
+      "source_commit": "dd4c8d35f988a41843eed95cd166164e76dc8039",
+      "outcome": "passed",
+      "date": "2026-10-14",
+      "checks": 10
+    },
+    {
+      "path": "docs/reports/explorer-upgrade-2026-10-14/checks-final/manifest.json",
+      "run": "explorer-upgrade-2026-10-14/checks-final",
+      "kind": "manifest",
+      "profile": "full",
+      "source_commit": "dd4c8d35f988a41843eed95cd166164e76dc8039",
+      "outcome": "passed",
+      "date": "2026-10-14",
+      "checks": 10
+    },
+    {
+      "path": "docs/reports/explorer-upgrade-2026-10-14/checks/manifest.json",
+      "run": "explorer-upgrade-2026-10-14/checks",
+      "kind": "manifest",
+      "profile": "full",
+      "source_commit": "dd4c8d35f988a41843eed95cd166164e76dc8039",
+      "outcome": "passed",
+      "date": "2026-10-14",
+      "checks": 10
+    },
+    {
+      "path": "docs/reports/explorer-workspace-2026-10-21/checks/manifest.json",
+      "run": "explorer-workspace-2026-10-21/checks",
+      "kind": "manifest",
+      "profile": "full",
+      "source_commit": "b96cb15b24054a8db0fbd85ecb19e1821102a751",
+      "outcome": "passed",
+      "date": "2026-10-21",
+      "checks": 10
+    },
+    {
+      "path": "docs/reports/final-verification/before-isolation/commands-and-hashes.json",
+      "run": "final-verification/before-isolation",
+      "kind": "commands-and-hashes",
+      "profile": null,
+      "source_commit": "59780ce8cbe2b65e45a966879408866403c2d17d",
+      "outcome": "failed",
+      "date": null,
+      "checks": 16
+    },
+    {
+      "path": "docs/reports/final-verification/commands-and-hashes.json",
+      "run": "final-verification",
+      "kind": "commands-and-hashes",
+      "profile": null,
+      "source_commit": "dbc4c78533c97052bc62b72a6cf5c09961a12c6c",
+      "outcome": "failed",
+      "date": null,
+      "checks": 16
+    },
+    {
+      "path": "docs/reports/orbit-2026-10-21/checks/manifest.json",
+      "run": "orbit-2026-10-21/checks",
+      "kind": "manifest",
+      "profile": "full",
+      "source_commit": "c22bb12a3b7f5f37bcc14db18ff2d132964a8fa1",
+      "outcome": "passed",
+      "date": "2026-10-21",
+      "checks": 10
+    },
+    {
+      "path": "docs/reports/orbit-implementation-2026-10-15/checks/manifest.json",
+      "run": "orbit-implementation-2026-10-15/checks",
+      "kind": "manifest",
+      "profile": "full",
+      "source_commit": "d8cbb22a02e2f8b3181ad5f8e34a153b9a694442",
+      "outcome": "passed",
+      "date": "2026-10-16",
+      "checks": 10
+    },
+    {
+      "path": "docs/reports/pr-player-identity-2026-10-13/checks/manifest.json",
+      "run": "pr-player-identity-2026-10-13/checks",
+      "kind": "manifest",
+      "profile": "full",
+      "source_commit": "a6382963ad83f0220f6d6cb36f49faa17c657bb3",
+      "outcome": "passed",
+      "date": "2026-10-14",
+      "checks": 10
+    },
+    {
+      "path": "docs/reports/readability-completion-2026-10-14/checks/manifest.json",
+      "run": "readability-completion-2026-10-14/checks",
+      "kind": "manifest",
+      "profile": "full",
+      "source_commit": "55a28573a8f59e57096684ee45baab7aa635ef58",
+      "outcome": "passed",
+      "date": "2026-10-15",
+      "checks": 10
+    },
+    {
+      "path": "docs/reports/readability-scaling-2026-10-14/checks/manifest.json",
+      "run": "readability-scaling-2026-10-14/checks",
+      "kind": "manifest",
+      "profile": "full",
+      "source_commit": "2b5379349c62703f86612f2a3d02c4dbd7c63e7b",
+      "outcome": "passed",
+      "date": "2026-10-15",
+      "checks": 10
+    },
+    {
+      "path": "docs/reports/retro-improvements/browser-fix-checks/manifest.json",
+      "run": "retro-improvements/browser-fix-checks",
+      "kind": "manifest",
+      "profile": "full",
+      "source_commit": "f69c143c4161d2ae8e13f8e08dad349858ed4a03",
+      "outcome": "passed",
+      "date": "2026-10-10",
+      "checks": 10
+    },
+    {
+      "path": "docs/reports/retro-improvements/checks/manifest.json",
+      "run": "retro-improvements/checks",
+      "kind": "manifest",
+      "profile": "full",
+      "source_commit": "7f510961a8c07c49a1a00cbf0335917f6c7abb7d",
+      "outcome": "passed",
+      "date": "2026-10-10",
+      "checks": 10
+    },
+    {
+      "path": "docs/reports/retro-improvements/full-chromium-checks/manifest.json",
+      "run": "retro-improvements/full-chromium-checks",
+      "kind": "manifest",
+      "profile": "full",
+      "source_commit": "c3e2cc435a3c64e459556a0e7c9cdf19132a24a8",
+      "outcome": "passed",
+      "date": "2026-10-10",
+      "checks": 10
+    },
+    {
+      "path": "docs/reports/retro-improvements/raw-checks/manifest.json",
+      "run": "retro-improvements/raw-checks",
+      "kind": "manifest",
+      "profile": "raw",
+      "source_commit": "7f510961a8c07c49a1a00cbf0335917f6c7abb7d",
+      "outcome": "passed",
+      "date": "2026-10-10",
+      "checks": 1
+    },
+    {
+      "path": "docs/reports/retro-improvements/utility-checks/manifest.json",
+      "run": "retro-improvements/utility-checks",
+      "kind": "manifest",
+      "profile": "custom",
+      "source_commit": "7f510961a8c07c49a1a00cbf0335917f6c7abb7d",
+      "outcome": "passed",
+      "date": "2026-10-10",
+      "checks": 1
+    },
+    {
+      "path": "docs/reports/runtime-diagnostics-2026-10-21/checks/manifest.json",
+      "run": "runtime-diagnostics-2026-10-21/checks",
+      "kind": "manifest",
+      "profile": "full",
+      "source_commit": "c6aed5fb141476466d9d86bfb38fc5d987372685",
+      "outcome": "passed",
+      "date": "2026-10-21",
+      "checks": 12
+    }
+  ]
+}

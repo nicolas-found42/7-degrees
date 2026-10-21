@@ -6,7 +6,11 @@
 //! logs — and with no env key the handle is [`JevState::Unconfigured`], so
 //! every judgment is a deterministic `Unavailable`.
 
-use jev_client::{EnvConfig, JevClient, JevEvaluation, JevOutcome, JevRequest, JevTransport};
+use crate::telemetry::{self, SemanticEvent, SemanticLog, SemanticReceipt};
+use jev_client::{
+    EnvConfig, JevClient, JevEvaluation, JevFailure, JevMetadata, JevOutcome, JevRequest,
+    JevTransport,
+};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 
@@ -59,6 +63,9 @@ impl HandleInner {
 #[derive(Clone)]
 pub struct JevHandle {
     inner: JevState,
+    /// The bounded history of this handle's judgments: what the semantic
+    /// provider did, with the cause of every failure.
+    log: SemanticLog,
 }
 
 impl JevHandle {
@@ -73,6 +80,7 @@ impl JevHandle {
             }
             EnvConfig::NoConfig => Self {
                 inner: JevState::Unconfigured,
+                log: SemanticLog::new(),
             },
         }
     }
@@ -88,6 +96,7 @@ impl JevHandle {
                 }),
                 degraded: Arc::new(AtomicBool::new(false)),
             },
+            log: SemanticLog::new(),
         }
     }
 
@@ -97,7 +106,13 @@ impl JevHandle {
     pub fn unconfigured() -> Self {
         Self {
             inner: JevState::Unconfigured,
+            log: SemanticLog::new(),
         }
+    }
+
+    /// The bounded judgment history of this handle.
+    pub fn semantic_log(&self) -> SemanticLog {
+        self.log.clone()
     }
 
     /// One judgment through the underlying client; `Unavailable` without a
@@ -108,10 +123,22 @@ impl JevHandle {
     /// Receipt and latency belong to the returned call, never global status state.
     pub fn judge_measured(&self, request: &JevRequest) -> JevEvaluation {
         match &self.inner {
-            JevState::Unconfigured => JevEvaluation::unavailable(),
+            JevState::Unconfigured => {
+                // The call never reached a provider, and the cause is named:
+                // an unnamed failure cannot be told apart from an outage.
+                let evaluation = JevEvaluation::failed(JevFailure::Unconfigured);
+                self.log.record(SemanticEvent::new(
+                    telemetry::now_rfc3339(),
+                    "unavailable",
+                    Some(JevFailure::Unconfigured.code()),
+                    evaluation.elapsed_ms,
+                ));
+                evaluation
+            }
             JevState::Client { handle, degraded } => {
                 let evaluation = handle.judge_measured(request);
                 degraded.store(!evaluation.outcome.is_available(), Ordering::SeqCst);
+                self.log.record(event(&evaluation));
                 evaluation
             }
         }
@@ -121,6 +148,14 @@ impl JevHandle {
         if let JevState::Client { degraded, .. } = &self.inner {
             degraded.store(true, Ordering::SeqCst);
         }
+        // The provider answered, but the application refused the reply: a
+        // distinct outcome from a provider failure, and worth its own record.
+        self.log.record(SemanticEvent::new(
+            telemetry::now_rfc3339(),
+            "rejected",
+            None,
+            0.0,
+        ));
     }
 
     /// The semantic-feature availability tuple for the status surfaces:
@@ -137,6 +172,37 @@ impl JevHandle {
     /// `true` when a provider is configured (even if currently unreachable).
     pub fn configured(&self) -> bool {
         matches!(self.inner, JevState::Client { .. })
+    }
+}
+
+/// One judgment as a telemetry event: the outcome, the named cause of a
+/// failure, the latency, and the provider receipt for the operator's log.
+fn event(evaluation: &JevEvaluation) -> SemanticEvent {
+    let mut event = SemanticEvent::new(
+        telemetry::now_rfc3339(),
+        if evaluation.outcome.is_available() {
+            "available"
+        } else {
+            "unavailable"
+        },
+        evaluation.failure.map(|failure| failure.code()),
+        evaluation.elapsed_ms,
+    );
+    event.receipt = evaluation.metadata.as_ref().map(receipt);
+    event
+}
+
+/// The provider receipt of one call. It names the provider's model and
+/// request id and stays on the server: it is written to the operator's log
+/// file and never served to a browser.
+fn receipt(metadata: &JevMetadata) -> SemanticReceipt {
+    SemanticReceipt {
+        model: metadata.model.clone(),
+        provider: metadata.provider.clone(),
+        provider_request_id: metadata.request_id.clone(),
+        input_tokens: metadata.input_tokens,
+        output_tokens: metadata.output_tokens,
+        cost_usd: metadata.cost_usd,
     }
 }
 
@@ -229,13 +295,37 @@ pub fn install_capture_logger() {
     log::set_max_level(log::LevelFilter::Debug);
 }
 
-/// A no-op in normal builds (production installs no logger here; operators
-/// point any `log` implementation at the records).
+/// A no-op in normal builds (production installs its own logger in
+/// [`init_logging`]).
 #[cfg(not(test_capture))]
 pub fn install_capture_logger() {}
 
 /// Production log level policy: records stay at `warn` or rarer and never
 /// carry credential material (the client logs only status summaries).
+///
+/// Without a logger installed the `log` facade discards every record, so a
+/// production run would keep no trace of a failed provider call. The
+/// environment logger gives those records a destination on stderr; `RUST_LOG`
+/// sets the level for an operator who wants more, and the default stays at
+/// the `warn` policy.
 pub fn init_logging() {
-    log::set_max_level(log::LevelFilter::Warn);
+    #[cfg(not(test_capture))]
+    {
+        // The environment logger owns the level: `RUST_LOG` decides, and the
+        // default stays at the `warn` policy.
+        let installed =
+            env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("warn"))
+                .format_timestamp_millis()
+                .try_init()
+                .is_ok();
+        if !installed {
+            log::set_max_level(log::LevelFilter::Warn);
+        }
+    }
+    #[cfg(test_capture)]
+    {
+        // The capture logger records everything the app emits, so its level
+        // stays at debug for the in-process proofs.
+        log::set_max_level(log::LevelFilter::Debug);
+    }
 }

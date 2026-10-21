@@ -20,9 +20,29 @@ function chromiumExecutable() {
 }
 let browser, page, cdp;
 let captureResponses = false;
+let failureCount = 0;
 const errors = [];
 const captureErrors = [];
 const responses = [], captures = [];
+// Failure evidence travels with the run: the caller names the directory.
+function artifactsDirectory() {
+  return process.env.BROWSER_E2E_ARTIFACTS || path.join(__dirname, '../target/browser-e2e');
+}
+function writeDiagnostic(file, data) {
+  try {
+    fs.mkdirSync(path.dirname(file), {recursive:true});
+    fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n');
+  } catch(writeError) { /* evidence capture never replaces the real failure */ }
+}
+// Credential material never reaches a log, a screenshot caption or stdout.
+function redact(text) {
+  let output = String(text);
+  for (const name of ['TYPESAFE_API_KEY','OPENROUTER_API_KEY']) {
+    const secret = process.env[name];
+    if (secret) output = output.split(secret).join('<redacted>');
+  }
+  return output;
+}
 function observe(surface) {
   surface.on('pageerror', e => errors.push(e.message));
   surface.on('console', e => { if(e.type()==='error') errors.push(e.text()); });
@@ -72,14 +92,9 @@ async function command(c) {
         await popup.close(); return text;
       } catch(error) {
         const link = await target().evaluate(e=>({href:e.href,target:e.target,html:e.outerHTML}));
-        let screenshot = 'tab-failure.png';
-        try {
-          const failurePath = path.join(__dirname,'../target/browser-e2e/tab-failure.png');
-          fs.mkdirSync(path.dirname(failurePath), {recursive:true});
-          await page.screenshot({path:failurePath,fullPage:true});
-          screenshot = failurePath;
-        } catch(screenshotError) { screenshot = `unavailable (${screenshotError})`; }
-        throw new Error(`${error}; clicked=${clicked}; link=${JSON.stringify(link)}; pages=${JSON.stringify(page.context().pages().map(p=>p.url()))}; screenshot=${screenshot}`);
+        const failure = new Error(`${error}; clicked=${clicked}; link=${JSON.stringify(link)}; pages=${JSON.stringify(page.context().pages().map(p=>p.url()))}`);
+        failure.linkHtml = link.html;
+        throw failure;
       }
     }
     case 'select': {
@@ -183,14 +198,28 @@ async function command(c) {
     let c;
     try { c=JSON.parse(line); process.stdout.write(JSON.stringify({ok:true,result:await command(c)})+'\n'); }
     catch(e) {
-      const diagnostic = {url:page?.url(), errors:[...errors]};
+      const currentUrl = page?.url();
+      const diagnostic = {url: currentUrl === undefined ? undefined : redact(currentUrl), errors:errors.map(redact)};
+      const directory = artifactsDirectory();
+      const stamp = `failure-${process.pid}-${Date.now()}-${++failureCount}`;
       try {
-        const directory = path.join(__dirname,'../target/browser-e2e');
         fs.mkdirSync(directory,{recursive:true});
-        diagnostic.screenshot = path.join(directory,`failure-${process.pid}-${Date.now()}.png`);
+        diagnostic.screenshot = path.join(directory,`${stamp}.png`);
         await page.screenshot({path:diagnostic.screenshot,timeout:3000});
-      } catch(captureError) { diagnostic.captureError=String(captureError); }
-      process.stdout.write(JSON.stringify({ok:false,error:String(e),diagnostic})+'\n');
+      } catch(captureError) { diagnostic.captureError=redact(String(captureError)); }
+      try {
+        const report = {
+          error: redact(String(e)),
+          url: currentUrl === undefined ? null : redact(currentUrl),
+          errors: errors.map(redact),
+          pages: page ? page.context().pages().map(p=>redact(p.url())) : [],
+          link_html: e?.linkHtml ? redact(e.linkHtml) : null,
+          screenshot: diagnostic.screenshot ?? null,
+        };
+        writeDiagnostic(path.join(directory,`${stamp}.json`), report);
+        diagnostic.diagnostic_file = path.join(directory,`${stamp}.json`);
+      } catch(reportError) { diagnostic.diagnosticReportError = redact(String(reportError)); }
+      process.stdout.write(JSON.stringify({ok:false,error:redact(String(e)),diagnostic})+'\n');
     }
     if(c?.op==='close') break;
   }

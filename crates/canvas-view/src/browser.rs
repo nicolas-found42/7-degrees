@@ -10,6 +10,7 @@ use web_sys::{
     WheelEvent,
 };
 
+mod diagnostics;
 mod explorer;
 mod workspace;
 
@@ -1380,8 +1381,67 @@ fn listen(
     callback.forget();
     Ok(())
 }
+/// Reports the failures the page itself cannot handle: an uncaught error and
+/// an unhandled promise rejection.
+///
+/// Without this the server never learns that the canvas failed; the report
+/// reaches the same diagnostics surface as the server's own records.
+fn report_global_failures() {
+    let Some(window) = web_sys::window() else {
+        return;
+    };
+    let on_error = Closure::<dyn FnMut(Event)>::new(|event: Event| {
+        let message = event
+            .dyn_ref::<web_sys::ErrorEvent>()
+            .map(|error| error.message())
+            .unwrap_or_else(|| "uncaught error".to_string());
+        let context = match event.dyn_ref::<web_sys::ErrorEvent>() {
+            Some(error) => serde_json::json!({
+                "filename": error.filename(),
+                "line": error.lineno(),
+                "column": error.colno(),
+            }),
+            None => serde_json::json!({}),
+        };
+        diagnostics::report(
+            "uncaught_error",
+            &message,
+            &diagnostics::page_path(),
+            context,
+        );
+    });
+    if window
+        .add_event_listener_with_callback("error", on_error.as_ref().unchecked_ref())
+        .is_ok()
+    {
+        on_error.forget();
+    }
+    let on_rejection = Closure::<dyn FnMut(Event)>::new(|event: Event| {
+        let reason = event
+            .dyn_ref::<web_sys::PromiseRejectionEvent>()
+            .map(|rejection| rejection.reason())
+            .unwrap_or(JsValue::NULL);
+        diagnostics::report(
+            "unhandled_rejection",
+            &diagnostics::describe_reason(&reason),
+            &diagnostics::page_path(),
+            serde_json::json!({}),
+        );
+    });
+    if window
+        .add_event_listener_with_callback(
+            "unhandledrejection",
+            on_rejection.as_ref().unchecked_ref(),
+        )
+        .is_ok()
+    {
+        on_rejection.forget();
+    }
+}
+
 #[wasm_bindgen(start)]
 pub fn start() -> Result<(), JsValue> {
+    report_global_failures();
     let document = web_sys::window()
         .ok_or("window missing")?
         .document()
