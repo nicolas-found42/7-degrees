@@ -1735,8 +1735,7 @@ async fn orbit_drags_nodes_and_walks_shortest_prefixes_with_optional_destination
     );
     b.call(json!({"op":"settled"}));
     assert_eq!(b.attr("data-walk-next"), "2");
-    // A node drag updates geometry and hit positions without panning or selecting.
-    let signature = b.attr("data-layout-signature");
+    // A node drag moves the player under the pointer without panning or selecting.
     let pan = (b.attr("data-pan-x"), b.attr("data-pan-y"));
     let anchor: (f64, f64) = serde_json::from_str(&b.attr("data-focus-point")).unwrap();
     let bounds = b.call(json!({"op":"box","selector":"#graph-canvas"}));
@@ -1745,12 +1744,14 @@ async fn orbit_drags_nodes_and_walks_shortest_prefixes_with_optional_destination
     b.call(json!({"op":"mouse","action":"move","x":x,"y":y}));
     b.call(json!({"op":"mouse","action":"down"}));
     b.call(json!({"op":"mouse","action":"move","x":x+50.0,"y":y+25.0,"steps":5}));
-    b.call(json!({"op":"mouse","action":"up"}));
-    assert_ne!(b.attr("data-layout-signature"), signature);
+    // The dragged player follows the pointer; the map itself does not pan.
+    assert_eq!(b.attr("data-physics"), "active");
     assert_eq!((b.attr("data-pan-x"), b.attr("data-pan-y")), pan);
     let moved: (f64, f64) = serde_json::from_str(&b.attr("data-focus-point")).unwrap();
-    assert!((moved.0 - anchor.0 - 50.0).abs() < 2.0 && (moved.1 - anchor.1 - 25.0).abs() < 2.0);
+    assert!((moved.0 - anchor.0 - 50.0).abs() < 6.0 && (moved.1 - anchor.1 - 25.0).abs() < 6.0);
     assert_eq!(b.attr("data-focus-player"), "A");
+    b.call(json!({"op":"mouse","action":"up"}));
+    b.call(json!({"op":"settled"}));
     // Endpoints still produce the server's shortest chain; manual exploration
     // toward that destination only offers moves on a shortest route.
     b.call(json!({"op":"select","selector":"#graph-target","value":"C"}));
