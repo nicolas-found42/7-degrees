@@ -45,7 +45,7 @@ All application UI, interaction and graph logic is Rust. Axum renders accessible
 
 Open [`/`](http://127.0.0.1:3000/) to explore the full pinned graph, including isolated players. At distant zoom levels, a deterministic visual backbone simplifies background edges; closer views reveal local edges. Proof-derived weights influence edge rendering without claiming friendship or complete roster duration. See the [UI interaction research](docs/research/ui-interaction-comparables-2026-10-15.md) and [earlier explorer verification](docs/reports/explorer-upgrade-2026-10-14/README.md).
 
-Machine-readable routes include `/api/players`, `/api/search?q=...`, `/api/resolve?q=...`, `/api/query?q=...`, `/api/rank`, `/api/graph`, `/api/edges`, `/api/edges/{player}`, `/api/neighborhood?player=acyqu01&depth=1&limit=60`, `/api/connection?from=acyqu01&to=bogutan01`, `/api/discovery`, `/api/coverage`, `/api/coverage/{player}`, `/api/stats`, and `/api/semantic-status`. `/api/discovery` returns the ten longest finite shortest pairs and the ten most connected players of the loaded snapshot; the result is computed once and cached. `/api/fixture` is a compatibility alias for the current graph summary. `/api/graph`, `/api/fixture` and `/api/edges` return edge pages: `limit` (1–5000, default 1000) and `offset` select a window, and the response carries `total_edges` and `next_offset` (null on the last page). Neighborhood depth is 1 or 2, with at most 200 nodes and an explicit truncation warning.
+Machine-readable routes include `/api/players`, `/api/search?q=...`, `/api/resolve?q=...`, `/api/query?q=...`, `/api/rank`, `/api/graph`, `/api/edges`, `/api/edges/{player}`, `/api/neighborhood?player=acyqu01&depth=1&limit=60`, `/api/connection?from=acyqu01&to=bogutan01`, `/api/discovery`, `/api/coverage`, `/api/coverage/{player}`, `/api/stats`, `/api/semantic-status`, `/api/diagnostics`, and `/api/diagnostics/client`. `/api/discovery` returns the ten longest finite shortest pairs and the ten most connected players of the loaded snapshot; the result is computed once and cached. `/api/fixture` is a compatibility alias for the current graph summary. `/api/graph`, `/api/fixture` and `/api/edges` return edge pages: `limit` (1–5000, default 1000) and `offset` select a window, and the response carries `total_edges` and `next_offset` (null on the last page). Neighborhood depth is 1 or 2, with at most 200 nodes and an explicit truncation warning.
 
 `/api/paths?from=...&to=...&limit=100&offset=0` returns equal shortest alternatives in deterministic ID order, exact decimal `total_exact`, and resumable `next_cursor`. Pass that cursor unchanged as `cursor=...`; maximum page size is 500. Numeric offsets remain compatible.
 
@@ -56,6 +56,19 @@ The server reads an existing `OPENROUTER_API_KEY` or `TYPESAFE_API_KEY` from its
 With no key or a provider failure, pages report semantic features unavailable and deterministic browsing, distances, paths, evidence and statistics remain usable. The client has one total ten-second deadline and at most two transport attempts. Semantic output cannot create players/edges or override graph calculations.
 
 The [44-case labeled experiment](docs/evaluation/README.md) separates calibration from held-out cases and measures actual wording/order variants. Held-out baseline identity resolution matched **11/11** labels; routing matched **4/8**, and ranking **0/4**. Ranking abstained three times and gave one wrong preference for a hostile request; its degree-two graph facts remained unchanged. These small stratified sets do not establish broad accuracy. Frozen thresholds come from calibration, and future tuning needs a new untouched holdout. The 132 final outcomes used 102 provider calls, 129,531 input/29,352 output tokens and $0.005440302 reported cost. Initial aborted-run spend is unknown and excluded; retained pilot/supplement chronology and failures are documented.
+
+## Runtime diagnostics
+
+Every answer of this server is a function of the code that produced it, the snapshot it loaded and the request it served. The server can still say which of those three produced a given answer:
+
+- `/api/diagnostics` reports the build that answers (commit, dirty flag, data mode), the snapshot it answers from (player and edge counts plus the SHA-256 digest of every source file and served canvas asset), the requests it served (request id, method, path without its query string, status, duration), the semantic judgments it made (outcome, the named cause of every failure, latency) and the failure reports the canvas relayed. The body carries no credential material, no provider receipt, no headers and no query strings.
+- `/api/diagnostics/client` receives one client-side failure report (`kind`, `message`, `url`, `context`) and answers `202`. The canvas posts failed fetches, unreadable responses and uncaught page errors there, so a browser failure is visible next to the server's own records.
+- `NBA_RUNTIME_LOG_PATH` names a JSONL file the server appends every runtime record to (one JSON object per line, tagged with `kind`). The file outlives the process and is the artifact that answers "what actually happened" for a run whose output is no longer on screen.
+- `RUST_LOG` sets the log level; the default keeps records at `warn` or rarer. The provider client logs only status summaries, never credentials.
+
+```sh
+NBA_RUNTIME_LOG_PATH=/tmp/7-degrees.jsonl ./scripts/run-app.sh
+```
 
 ## Verify and rebuild data
 
