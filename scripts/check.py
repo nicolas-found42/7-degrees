@@ -17,11 +17,14 @@ def commands(profile, data_dir):
         ('derived-snapshot', [python, 'scripts/verify-source-snapshot.py', '--derived-only']),
         ('historical-audit', [python, 'scripts/check-historical-audit.py']),
         ('semantic-audit', [python, 'scripts/check-semantic-evaluation.py']),
+        ('report-index', [python, 'scripts/report-index.py', '--check']),
+        ('runtime-diagnostics', [python, 'scripts/capture-runtime-diagnostics.py', '--artifacts', '{artifacts}']),
     ]
     browser = [
         ('wasm-build', ['./scripts/build-canvas.sh']),
         ('clippy-wasm', ['cargo', 'clippy', '-p', 'canvas-view', '--target', 'wasm32-unknown-unknown', '--locked', '--', '-D', 'warnings']),
-        ('browser-matrix', ['cargo', 'test', '-p', 'app-server', '--test', 'browser_e2e', '--test', 'canvas_browser', '--test', 'explorer_redesign', '--locked', '--', '--ignored', '--nocapture', '--test-threads=1']),
+        ('browser-matrix', ['cargo', 'test', '-p', 'app-server', '--test', 'browser_e2e', '--test', 'canvas_browser', '--test', 'explorer_redesign', '--locked', '--', '--ignored', '--nocapture', '--test-threads=1'],
+         {'BROWSER_E2E_ARTIFACTS': '{artifacts}'}),
     ]
     if profile == 'portable': return portable
     if profile == 'browser': return browser
