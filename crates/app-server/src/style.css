@@ -121,3 +121,15 @@ p.error { color:#923d35; background:#fcf1ec; padding:12px; border-radius:8px; }
 @media(max-width:640px) { #minimap-toggle { bottom:100px; } #graph-minimap { bottom:140px; } .map-legend { bottom:76px; } .camera-controls { left:12px; right:12px; justify-content:center; } }
 @media(max-width:640px) { #graph-help { bottom:160px; } }
 .map-heading { background:linear-gradient(90deg,#f6f5f0f5 85%,#f6f5f000); padding:0 24px 10px 0; }
+
+/* Orbit: manual shortest-chain exploration and whole-network discovery. */
+.orbit-walk { border-top:1px solid var(--line); padding:14px 0; }
+.orbit-walk > p { font-size:11px; line-height:1.5; color:var(--muted); }
+#orbit-next { display:flex; flex-wrap:wrap; gap:6px; padding:0; list-style:none; max-height:180px; overflow:auto; font-size:12px; }
+#orbit-next button { min-height:34px; padding:6px 10px; }
+.orbit-discovery { border-top:1px solid var(--line); padding:14px 0; }
+.orbit-discovery h3 { font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
+#discovery-status { font-size:11px; color:var(--muted); line-height:1.5; }
+#discovery-list { padding-left:20px; font-size:12px; }
+#discovery-list button { width:100%; text-align:left; margin:4px 0; }
+#discovery-list small { display:block; margin-top:4px; color:var(--muted); }

@@ -130,6 +130,7 @@ async fn graph_page_renders_the_whole_network_with_pair_parameters() {
         "id=\"layout-era\"",
         "id=\"layout-concentric\"",
         "id=\"layout-force\"",
+        "id=\"layout-orbit\"",
         "id=\"graph-minimap\"",
         "id=\"graph-tooltip\"",
     ] {

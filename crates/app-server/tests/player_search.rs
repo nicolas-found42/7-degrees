@@ -192,7 +192,12 @@ async fn empty_no_match_and_query_text_round_trips() {
         );
     }
     // The graph page is the only page.
-    assert!(request(app(), "/").await.1.contains("Graph exploration"));
+    assert!(
+        request(app(), "/")
+            .await
+            .1
+            .contains("A league of connections.")
+    );
 }
 
 #[tokio::test]

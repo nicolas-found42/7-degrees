@@ -166,7 +166,23 @@ impl CanvasView {
             .filter(|(i, _)| self.visible(*i))
             .map(|(_, p)| *p)
             .collect();
-        self.frame_points(&points);
+        if self.layout == LayoutMode::Orbit && !self.walk.is_empty() {
+            // Camera buttons occupy one corner, not an entire bottom strip.
+            // Label placement already reserves their actual bounds.
+            if let Some(camera) = self.viewport.frame(
+                &points,
+                Rect {
+                    left: 32.0,
+                    right: (self.viewport.width - 32.0).max(33.0),
+                    top: 40.0,
+                    bottom: (self.viewport.height - 40.0).max(41.0),
+                },
+            ) {
+                self.camera = camera;
+            }
+        } else {
+            self.frame_points(&points);
+        }
     }
     pub(super) fn frame_points(&mut self, points: &[(f64, f64)]) {
         let controls = element(&self.document, "zoom-in")
@@ -213,7 +229,12 @@ pub(super) fn request_chain(view: View) {
         v.sync_pair_url();
         let chain = element(&v.document, "graph-chain");
         if v.selected.is_empty() || v.graph.target.is_empty() {
+            if !v.selected.is_empty() && v.layout == LayoutMode::Orbit {
+                v.begin_walk();
+            }
             v.draw();
+            drop(v);
+            animate(view.clone());
             return;
         }
         chain.set_text_content(Some("Loading shortest teammate chain…"));
@@ -289,12 +310,33 @@ pub(super) fn request_chain(view: View) {
                 html.push_str("</ol>");
                 chain.set_inner_html(&html);
                 let _ = chain.set_attribute("data-state", "connected");
-                v.settle_layout();
+                if v.layout == LayoutMode::Orbit {
+                    let from = v.points.clone();
+                    let camera_from = v.camera;
+                    v.relayout(LayoutMode::Orbit);
+                    if !reduced_motion() {
+                        let to = v.points.clone();
+                        let camera_to = v.camera;
+                        v.points = from.clone();
+                        v.camera = camera_from;
+                        v.transition = Some(Transition {
+                            start: js_sys::Date::now(),
+                            from,
+                            to,
+                            camera_from,
+                            camera_to,
+                        });
+                    }
+                } else {
+                    v.settle_layout();
+                }
                 let points: Vec<_> = result.path.iter().map(|id| v.at(id)).collect();
-                if v.edge.is_none() {
-                    let from = v.camera;
-                    v.frame_points(&points);
-                    v.animate_camera_from(from);
+                if v.layout != LayoutMode::Orbit {
+                    if v.edge.is_none() {
+                        let from = v.camera;
+                        v.frame_points(&points);
+                        v.animate_camera_from(from);
+                    }
                 }
                 let _ = element(&v.document, "connection-controls").set_attribute("open", "");
             }
@@ -327,6 +369,10 @@ pub(super) fn change_layout(view: View, mode: LayoutMode) {
         let mut v = view.borrow_mut();
         let old = v.points.clone();
         let camera = v.camera;
+        if !v.walk.is_empty() {
+            v.clear_highlight();
+            recompute_chain = !v.graph.target.is_empty();
+        }
         if mode == LayoutMode::Concentric {
             if v.selected.is_empty() {
                 let default = v
@@ -396,7 +442,13 @@ pub(super) fn animate(view: View) {
             let mut v = view.borrow_mut();
             v.animation_scheduled = false;
             if let Some(t) = v.transition.take() {
-                let p = ((js_sys::Date::now() - t.start) / 250.0).clamp(0.0, 1.0);
+                let p = ((js_sys::Date::now() - t.start)
+                    / if v.layout == LayoutMode::Orbit {
+                        750.0
+                    } else {
+                        250.0
+                    })
+                .clamp(0.0, 1.0);
                 let eased = p * p * (3.0 - 2.0 * p);
                 v.points = t
                     .from
@@ -1125,6 +1177,29 @@ fn install_drawer(view: View) -> Result<(), JsValue> {
 }
 
 pub(super) fn install(view: View) -> Result<(), JsValue> {
+    install_discovery(view.clone())?;
+    let state = view.clone();
+    listen(
+        element(&view.borrow().document, "orbit-explore").as_ref(),
+        "click",
+        move |_| {
+            state.borrow_mut().begin_walk();
+            animate(state.clone());
+        },
+    )?;
+    let state = view.clone();
+    listen(view.borrow().document.as_ref(), "click", move |event| {
+        if let Some(i) = event
+            .target()
+            .and_then(|t| t.dyn_into::<web_sys::Element>().ok())
+            .and_then(|e| e.closest("[data-walk-player]").ok().flatten())
+            .and_then(|e| e.get_attribute("data-walk-player"))
+            .and_then(|i| i.parse().ok())
+        {
+            state.borrow_mut().walk_to(i);
+            animate(state.clone());
+        }
+    })?;
     let document = view.borrow().document.clone();
     install_picker(view.clone(), "graph-player")?;
     install_picker(view.clone(), "graph-target")?;
@@ -1231,6 +1306,9 @@ pub(super) fn install(view: View) -> Result<(), JsValue> {
                     v.graph.target.clear();
                     v.chain_generation += 1;
                     v.clear_highlight();
+                    if v.layout == LayoutMode::Orbit {
+                        v.relayout(LayoutMode::Orbit);
+                    }
                     set_picker(&v.document, "graph-target", "", "");
                     v.sync_pair_url();
                 }
@@ -1319,5 +1397,115 @@ pub(super) fn install(view: View) -> Result<(), JsValue> {
             .set_attribute("aria-expanded", if show { "true" } else { "false" });
     })?;
     install_drawer(view)?;
+    Ok(())
+}
+
+fn install_discovery(view: View) -> Result<(), JsValue> {
+    let document = view.borrow().document.clone();
+    let generation = Rc::new(RefCell::new(0_u64));
+    for (id, field) in [("discover-longest", "longest"), ("discover-hubs", "hubs")] {
+        let view = view.clone();
+        let generation = generation.clone();
+        let doc = document.clone();
+        listen(element(&document, id).as_ref(), "click", move |_| {
+            *generation.borrow_mut() += 1;
+            let ticket = *generation.borrow();
+            element(&doc, "discovery-status")
+                .set_text_content(Some("Computing exact rankings for this snapshot…"));
+            element(&doc, "discovery-list").set_inner_html("");
+            for button in ["discover-longest", "discover-hubs"] {
+                let _ = element(&doc, button)
+                    .set_attribute("aria-pressed", if button == id { "true" } else { "false" });
+            }
+            let view = view.clone();
+            let generation = generation.clone();
+            let doc = doc.clone();
+            spawn_local(async move {
+                let answer = fetch_text("/api/discovery").await.and_then(|text| {
+                    serde_json::from_str::<serde_json::Value>(&text)
+                        .map_err(|e| JsValue::from_str(&e.to_string()))
+                });
+                if *generation.borrow() != ticket {
+                    return;
+                }
+                match answer {
+                    Ok(data) => {
+                        {
+                            let mut v = view.borrow_mut();
+                            if field == "hubs" {
+                                // A ranking is a whole-network view, including players
+                                // outside the current manual frontier.
+                                v.chain_generation += 1;
+                                v.clear_highlight();
+                                v.ego = false;
+                                v.relayout(LayoutMode::Orbit);
+                            }
+                            v.discovery_highlights = if field == "hubs" {
+                                data["hubs"]
+                                    .as_array()
+                                    .into_iter()
+                                    .flatten()
+                                    .filter_map(|row| {
+                                        row["id"].as_str().and_then(|id| v.indices.get(id).copied())
+                                    })
+                                    .collect()
+                            } else {
+                                Default::default()
+                            };
+                        }
+                        let mut html = String::new();
+                        for row in data[field].as_array().into_iter().flatten() {
+                            if field == "longest" {
+                                let a = row["from"].as_str().unwrap_or_default();
+                                let b = row["to"].as_str().unwrap_or_default();
+                                html.push_str(&format!("<li><button type=\"button\" data-discover-from=\"{}\" data-discover-to=\"{}\">{} ↔ {}<small>{} bounces</small></button></li>",escape(a),escape(b),escape(row["from_name"].as_str().unwrap_or_default()),escape(row["to_name"].as_str().unwrap_or_default()),row["degree"]));
+                            } else {
+                                html.push_str(&format!("<li><button type=\"button\" data-discover-from=\"{}\">{}<small>{} direct teammates</small></button></li>",escape(row["id"].as_str().unwrap_or_default()),escape(row["name"].as_str().unwrap_or_default()),row["degree"]));
+                            }
+                        }
+                        element(&doc, "discovery-list").set_inner_html(&html);
+                        element(&doc, "discovery-status").set_text_content(Some(if field == "longest" { "Longest finite shortest chains. Disconnected pairs excluded; ties ordered by player ID." } else { "Most unique direct teammates in this evidenced snapshot." }));
+                    }
+                    Err(_) => element(&doc, "discovery-status").set_text_content(Some(
+                        "Unable to load rankings. Select the ranking again to retry.",
+                    )),
+                }
+                view.borrow_mut().draw();
+            });
+        })?;
+    }
+    listen(
+        element(&document, "discovery-list").as_ref(),
+        "click",
+        move |event| {
+            let Some(target) = event
+                .target()
+                .and_then(|e| e.dyn_into::<web_sys::Element>().ok())
+                .and_then(|e| e.closest("[data-discover-from]").ok().flatten())
+            else {
+                return;
+            };
+            let Some(from) = target.get_attribute("data-discover-from") else {
+                return;
+            };
+            {
+                let mut v = view.borrow_mut();
+                if !v.indices.contains_key(&from) {
+                    return;
+                }
+                v.graph.target = target.get_attribute("data-discover-to").unwrap_or_default();
+                let name = v
+                    .indices
+                    .get(&v.graph.target)
+                    .map(|&i| v.graph.nodes[i].name.clone())
+                    .unwrap_or_default();
+                set_picker(&v.document, "graph-target", &v.graph.target, &name);
+                v.select(&from);
+                v.draw();
+            }
+            request_chain(view.clone());
+            animate(view.clone());
+        },
+    )?;
     Ok(())
 }

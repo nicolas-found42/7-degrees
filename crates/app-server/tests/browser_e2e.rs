@@ -1684,3 +1684,114 @@ async fn connecting_an_incomplete_pair_explains_and_focuses_the_missing_player()
     );
     assert_eq!(b.call(json!({"op":"errors"})), json!([]));
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "actual Chromium/WASM E2E; build scripts/build-canvas.sh first"]
+async fn orbit_drags_nodes_and_walks_shortest_prefixes_with_optional_destination() {
+    let server = Server::start(app_server::app_with_fixture_data()).await;
+    let mut b = Browser::start();
+    b.call(json!({"op":"launch"}));
+    b.call(json!({"op":"goto","url":server.url}));
+    b.ready();
+    // Orbit is one layout beside the default relationship layout.
+    b.click("Orbit layout");
+    b.call(json!({"op":"settled"}));
+    assert_eq!(b.attr("data-layout"), "orbit");
+    let payload: canvas_view::GraphPayload =
+        serde_json::from_str(&b.text("#graph-payload")).unwrap();
+    let index = |id: &str| payload.nodes.iter().position(|n| n.id == id).unwrap();
+    b.call(json!({"op":"select","selector":"#graph-player","value":"A"}));
+    b.call(json!({"op":"settled"}));
+    assert_eq!(b.attr("data-focus-player"), "A");
+    assert!(b.text("#orbit-next").contains("Player B"));
+    assert!(b.text("#orbit-next").contains("Player E"));
+    b.call(
+        json!({"op":"click","selector":format!("#orbit-next [data-walk-player='{}']",index("B"))}),
+    );
+    b.call(json!({"op":"settled"}));
+    assert_eq!(b.attr("data-focus-player"), "B");
+    assert_eq!(
+        b.call(json!({"op":"attribute","selector":"#graph-player","name":"data-selected-id"})),
+        "A",
+        "start is preserved"
+    );
+    let next = b.text("#orbit-next");
+    assert!(next.contains("Player C") && next.contains("Player C2"));
+    assert!(!next.contains("Player A") && !next.contains("Player E"));
+    assert_eq!(b.attr("data-visible-players"), "4");
+    b.call(
+        json!({"op":"click","selector":format!("#orbit-next [data-walk-player='{}']",index("C"))}),
+    );
+    b.call(json!({"op":"settled"}));
+    assert_eq!(b.attr("data-chain-edges"), "2");
+    assert_eq!(
+        b.attr("data-walk-next"),
+        "0",
+        "root's earlier layers cannot be revisited"
+    );
+    // Rewinding restores the correct candidate frontier.
+    b.call(
+        json!({"op":"click","selector":format!("#graph-chain [data-walk-player='{}']",index("A"))}),
+    );
+    b.call(json!({"op":"settled"}));
+    assert_eq!(b.attr("data-walk-next"), "2");
+    // A node drag updates geometry and hit positions without panning or selecting.
+    let signature = b.attr("data-layout-signature");
+    let pan = (b.attr("data-pan-x"), b.attr("data-pan-y"));
+    let anchor: (f64, f64) = serde_json::from_str(&b.attr("data-focus-point")).unwrap();
+    let bounds = b.call(json!({"op":"box","selector":"#graph-canvas"}));
+    let x = bounds["x"].as_f64().unwrap() + anchor.0;
+    let y = bounds["y"].as_f64().unwrap() + anchor.1;
+    b.call(json!({"op":"mouse","action":"move","x":x,"y":y}));
+    b.call(json!({"op":"mouse","action":"down"}));
+    b.call(json!({"op":"mouse","action":"move","x":x+50.0,"y":y+25.0,"steps":5}));
+    b.call(json!({"op":"mouse","action":"up"}));
+    assert_ne!(b.attr("data-layout-signature"), signature);
+    assert_eq!((b.attr("data-pan-x"), b.attr("data-pan-y")), pan);
+    let moved: (f64, f64) = serde_json::from_str(&b.attr("data-focus-point")).unwrap();
+    assert!((moved.0 - anchor.0 - 50.0).abs() < 2.0 && (moved.1 - anchor.1 - 25.0).abs() < 2.0);
+    assert_eq!(b.attr("data-focus-player"), "A");
+    // Endpoints still produce the server's shortest chain; manual exploration
+    // toward that destination only offers moves on a shortest route.
+    b.call(json!({"op":"select","selector":"#graph-target","value":"C"}));
+    b.call(json!({"op":"ready","selector":"#graph-chain[data-state=connected]"}));
+    b.call(json!({"op":"settled"}));
+    assert!(b.text("#graph-chain").contains("degree 2"));
+    assert_eq!(b.attr("data-chain-edges"), "2");
+    b.click("Explore from start player");
+    b.call(json!({"op":"settled"}));
+    assert_eq!(b.attr("data-walk-next"), "1");
+    assert!(b.text("#orbit-next").contains("Player B"));
+    b.call(
+        json!({"op":"click","selector":format!("#orbit-next [data-walk-player='{}']",index("B"))}),
+    );
+    b.call(json!({"op":"settled"}));
+    assert_eq!(b.attr("data-walk-next"), "1");
+    b.call(
+        json!({"op":"click","selector":format!("#orbit-next [data-walk-player='{}']",index("C"))}),
+    );
+    b.call(json!({"op":"settled"}));
+    assert!(b.text("#orbit-next").contains("Destination reached"));
+    b.click("Most connected 10");
+    b.call(json!({"op":"ready","selector":"#discovery-list li:first-child button"}));
+    assert!(
+        b.text("#discovery-list li:first-child")
+            .contains("Player B")
+    );
+    assert!(
+        b.text("#discovery-list li:first-child")
+            .contains("3 direct teammates")
+    );
+    b.click("Longest 10");
+    b.call(json!({"op":"ready","selector":"#discovery-list li:first-child [data-discover-to]"}));
+    assert!(
+        b.text("#discovery-list li:first-child")
+            .contains("3 bounces")
+    );
+    b.call(json!({"op":"click","selector":"#discovery-list li:first-child button"}));
+    b.call(json!({"op":"ready","selector":"#graph-chain[data-state=connected]"}));
+    assert!(b.text("#graph-chain").contains("degree 3"));
+    b.call(json!({"op":"settled"}));
+    screenshot(&mut b, "orbit-chain.png", None);
+    assert_eq!(b.call(json!({"op":"errors"})), json!([]));
+}

@@ -1,6 +1,7 @@
 //! The 7-degrees local app server: Axum routes over a deterministic
 //! teammate graph, plus the minimal server-rendered UI.
 
+mod discovery;
 mod fixture_data;
 pub mod graph_view;
 mod jev;
@@ -43,6 +44,7 @@ pub use jev::install_capture_logger;
 #[derive(Clone)]
 pub struct AppState {
     graph: std::sync::Arc<graph_core::TeammateGraph>,
+    discovery: std::sync::Arc<std::sync::OnceLock<discovery::Discovery>>,
     jev: JevHandle,
     reports: Option<std::sync::Arc<report_data::ReportMetadata>>,
     canvas_assets: graph_view::CanvasAssets,
@@ -72,6 +74,7 @@ pub fn app_with_jev_and_canvas_assets(
     let graph = fixture_data::fixture_graph();
     let visual_links = std::sync::Arc::new(graph_view::visual_links(&graph));
     let state = AppState {
+        discovery: Default::default(),
         graph: std::sync::Arc::new(graph),
         visual_links,
         jev,
@@ -91,6 +94,7 @@ fn app(state: AppState) -> Router {
         .route("/graph", get(graph_view::page))
         .route("/", get(graph_view::page))
         .route("/api/neighborhood", get(graph_view::api))
+        .route("/api/discovery", get(discovery::api))
         .route("/api/network", get(graph_view::network_api))
         .route("/api/fixture", get(fixture_summary))
         .route("/api/graph", get(fixture_summary))
@@ -144,6 +148,7 @@ pub fn app_with_report_data_and_canvas_assets(
     let (graph, reports) = report_data::load(root.as_ref())?;
     let visual_links = std::sync::Arc::new(graph_view::visual_links(&graph));
     Ok(app(AppState {
+        discovery: Default::default(),
         visual_links,
         graph: std::sync::Arc::new(graph),
         jev,
