@@ -24,3 +24,6 @@ __pycache__/
 
 # Local experiment checkpoints (runner archives before a fresh/resumed live run)
 /docs/evaluation/archive/
+
+# Local review packets and screenshot exports (regenerable, never committed)
+/output/

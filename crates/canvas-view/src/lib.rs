@@ -69,6 +69,7 @@ pub struct GraphPayload {
 
 pub mod camera;
 pub mod layout;
+pub mod physics;
 pub mod visual;
 pub use layout::LayoutMode;
 

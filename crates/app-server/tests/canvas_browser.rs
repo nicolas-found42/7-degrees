@@ -121,7 +121,7 @@ async fn rust_wasm_canvas_renders_the_whole_network_and_supports_pointer_and_key
     browser.call(json!({"op":"focus","selector":"#graph-canvas"}));
     browser.call(json!({"op":"key","key":"ArrowRight"}));
     assert_ne!(browser.attr("data-pan-x"), initial_x);
-    browser.click("Fit whole network");
+    browser.click("Reset view");
     assert_eq!(browser.attr("data-pan-x"), initial_x);
     assert_eq!(browser.attr("data-zoom"), initial_zoom);
     browser.click("Concentric rings layout");
@@ -176,7 +176,7 @@ async fn rust_wasm_canvas_renders_the_whole_network_and_supports_pointer_and_key
     browser.call(json!({"op":"mouse","action":"move","x":x+w*0.5+50.0,"y":y+h*0.8+30.0,"steps":5}));
     browser.call(json!({"op":"mouse","action":"up"}));
     assert_ne!(browser.attr("data-pan-x"), initial_x);
-    browser.click("Fit whole network");
+    browser.click("Reset view");
     browser.call(json!({"op":"focus","selector":"#graph-canvas"}));
     let b = browser.call(json!({"op":"box","selector":"#graph-canvas"}));
     let (x, y, w, h) = (

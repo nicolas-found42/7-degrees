@@ -10,14 +10,14 @@ type View = Rc<RefCell<CanvasView>>;
 fn element(document: &Document, id: &str) -> web_sys::Element {
     document.get_element_by_id(id).expect("explorer contract")
 }
-fn escape(text: &str) -> String {
+pub(super) fn escape(text: &str) -> String {
     text.replace('&', "&amp;")
         .replace('<', "&lt;")
         .replace('>', "&gt;")
         .replace('"', "&quot;")
         .replace('\'', "&#39;")
 }
-fn encoded(text: &str) -> String {
+pub(super) fn encoded(text: &str) -> String {
     js_sys::encode_uri_component(text).as_string().unwrap()
 }
 async fn fetch_text(url: &str) -> Result<String, JsValue> {
@@ -117,7 +117,7 @@ impl CanvasView {
             self.franchise.as_deref().unwrap_or("all"),
             self.graph.nodes.len(),
             if self.ego {
-                "Ego network: complete 1–2 hops; active chain remains included beyond two hops."
+                "Selected view: player and direct teammates, relationship, or active chain."
             } else {
                 "Whole network visible."
             }
@@ -128,16 +128,26 @@ impl CanvasView {
         }
         let _ = status.set_attribute("data-matching", &matching.to_string());
         let _ = status.set_attribute("data-visible", &visible.to_string());
+        let _ = element(&self.document, "scope-full")
+            .set_attribute("aria-pressed", if self.ego { "false" } else { "true" });
+        element(&self.document, "scope-description").set_text_content(Some(if self.ego {
+            "Selected connections. Switch to Full network to return to your overview."
+        } else {
+            "The whole network. Start with a name, or follow your curiosity."
+        }));
         let _ = element(&self.document, "ego-toggle")
             .set_attribute("aria-pressed", if self.ego { "true" } else { "false" });
-        let _ = element(&self.document, "ego-toggle")
-            .toggle_attribute_with_force("disabled", self.selected.is_empty());
+        let _ = element(&self.document, "ego-toggle").toggle_attribute_with_force(
+            "disabled",
+            self.selected.is_empty() && self.edge.is_none(),
+        );
         for i in 0..8 {
             let _ = element(&self.document, &format!("era-{i}"))
                 .set_attribute("aria-pressed", if self.eras[i] { "true" } else { "false" });
         }
     }
     pub(super) fn settle_layout(&mut self) {
+        self.camera_move = None;
         if let Some(transition) = self.transition.take() {
             self.points = transition.to;
             self.camera = transition.camera_to;
@@ -166,7 +176,7 @@ impl CanvasView {
         let mut area = Rect {
             left: 24.0,
             right: (self.viewport.width - 24.0).max(25.0),
-            top: 58.0,
+            top: 140.0,
             bottom: (self.viewport.height - controls - 24.0).max(100.0),
         };
         // Drawer navigation itself preserves the camera. A newly loaded chain
@@ -266,10 +276,12 @@ pub(super) fn request_chain(view: View) {
                             encoded(&link.from),
                             encoded(&link.to),
                             escape(&link.team),
-                            escape(&api_types::overlap_description(
-                                link.overlap_days,
-                                link.minimum_shared_games
-                            ))
+                            escape(&result.link_context.get(i).cloned().unwrap_or_else(|| {
+                                api_types::overlap_description(
+                                    link.overlap_days,
+                                    link.minimum_shared_games,
+                                )
+                            }))
                         ));
                     }
                     html.push_str("</li>");
@@ -279,7 +291,12 @@ pub(super) fn request_chain(view: View) {
                 let _ = chain.set_attribute("data-state", "connected");
                 v.settle_layout();
                 let points: Vec<_> = result.path.iter().map(|id| v.at(id)).collect();
-                v.frame_points(&points);
+                if v.edge.is_none() {
+                    let from = v.camera;
+                    v.frame_points(&points);
+                    v.animate_camera_from(from);
+                }
+                let _ = element(&v.document, "connection-controls").set_attribute("open", "");
             }
             Ok(result) => {
                 chain.set_text_content(Some(if result.certainty.as_deref()==Some("unresolved_coverage") {"No teammate chain in this evidenced graph. Missing evidence may connect these players historically."} else {"No teammate chain in this complete synthetic fixture."}));
@@ -291,6 +308,8 @@ pub(super) fn request_chain(view: View) {
             }
         }
         v.draw();
+        drop(v);
+        animate(view.clone());
     });
 }
 
@@ -365,7 +384,9 @@ pub(super) fn change_layout(view: View, mode: LayoutMode) {
 pub(super) fn animate(view: View) {
     {
         let mut v = view.borrow_mut();
-        if v.transition.is_none() || v.animation_scheduled {
+        if (v.transition.is_none() && v.camera_move.is_none() && !v.physics.is_active())
+            || v.animation_scheduled
+        {
             return;
         }
         v.animation_scheduled = true;
@@ -374,28 +395,58 @@ pub(super) fn animate(view: View) {
         {
             let mut v = view.borrow_mut();
             v.animation_scheduled = false;
-            let Some(t) = v.transition.take() else {
-                return;
-            };
-            let p = ((js_sys::Date::now() - t.start) / 250.0).clamp(0.0, 1.0);
-            let eased = p * p * (3.0 - 2.0 * p);
-            v.points = t
-                .from
-                .iter()
-                .zip(&t.to)
-                .map(|(a, b)| (a.0 + (b.0 - a.0) * eased, a.1 + (b.1 - a.1) * eased))
-                .collect();
-            v.camera.scale =
-                t.camera_from.scale + (t.camera_to.scale - t.camera_from.scale) * eased;
-            v.camera.x = t.camera_from.x + (t.camera_to.x - t.camera_from.x) * eased;
-            v.camera.y = t.camera_from.y + (t.camera_to.y - t.camera_from.y) * eased;
-            if p < 1.0 {
-                v.transition = Some(t);
+            if let Some(t) = v.transition.take() {
+                let p = ((js_sys::Date::now() - t.start) / 250.0).clamp(0.0, 1.0);
+                let eased = p * p * (3.0 - 2.0 * p);
+                v.points = t
+                    .from
+                    .iter()
+                    .zip(&t.to)
+                    .map(|(a, b)| (a.0 + (b.0 - a.0) * eased, a.1 + (b.1 - a.1) * eased))
+                    .collect();
+                v.camera.scale =
+                    t.camera_from.scale + (t.camera_to.scale - t.camera_from.scale) * eased;
+                v.camera.x = t.camera_from.x + (t.camera_to.x - t.camera_from.x) * eased;
+                v.camera.y = t.camera_from.y + (t.camera_to.y - t.camera_from.y) * eased;
+                if p < 1.0 {
+                    v.transition = Some(t);
+                }
+            }
+            if let Some(t) = v.camera_move.take() {
+                let p = ((js_sys::Date::now() - t.start) / 240.0).clamp(0.0, 1.0);
+                let eased = p * p * (3.0 - 2.0 * p);
+                v.camera = Camera {
+                    scale: t.from.scale + (t.to.scale - t.from.scale) * eased,
+                    x: t.from.x + (t.to.x - t.from.x) * eased,
+                    y: t.from.y + (t.to.y - t.from.y) * eased,
+                };
+                if p < 1.0 {
+                    v.camera_move = Some(t);
+                }
+            }
+            if v.physics.is_active() && v.transition.is_none() {
+                let now = js_sys::Date::now();
+                let dt = if v.physics_time == 0.0 {
+                    1.0 / 60.0
+                } else {
+                    (now - v.physics_time) / 1000.0
+                };
+                v.physics_time = now;
+                let CanvasView {
+                    physics, points, ..
+                } = &mut *v;
+                if reduced_motion() && !physics.is_held() {
+                    physics.reset(points);
+                } else {
+                    physics.step(dt, points);
+                }
+            } else {
+                v.physics_time = 0.0;
             }
             v.rebuild_spatial();
             let _ = element(&v.document, "canvas-status").set_attribute(
                 "data-transition",
-                if v.transition.is_some() {
+                if v.transition.is_some() || v.camera_move.is_some() || v.physics.is_active() {
                     "running"
                 } else {
                     "settled"
@@ -479,6 +530,14 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
     input.set_value(&name);
     input.set_attribute("type", "text")?;
     input.set_attribute("autocomplete", "off")?;
+    input.set_attribute(
+        "placeholder",
+        if id == "graph-player" {
+            "Search any NBA / BAA player…"
+        } else {
+            "Find another player…"
+        },
+    )?;
     input.set_attribute("role", "combobox")?;
     input.set_attribute("aria-autocomplete", "list")?;
     input.set_attribute("aria-expanded", "false")?;
@@ -527,7 +586,13 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
             ))
             .collect::<String>()
     ));
-    parent.append_child(&era)?;
+    let filters = document.create_element("details")?;
+    filters.set_class_name("search-filters");
+    filters.set_inner_html("<summary>Narrow search</summary>");
+    let filter_body = document.create_element("div")?;
+    filters.append_child(&filter_body)?;
+    parent.append_child(&filters)?;
+    filter_body.append_child(&era)?;
     let franchise = document
         .create_element("select")?
         .dyn_into::<HtmlSelectElement>()?;
@@ -554,7 +619,7 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
             .map(|t| format!("<option value=\"{}\">{}</option>", escape(t), escape(t)))
             .collect::<String>()
     ));
-    parent.append_child(&franchise)?;
+    filter_body.append_child(&franchise)?;
     let state = Rc::new(RefCell::new(PickerState::default()));
     let reset_state = state.clone();
     let reset_input = input.clone();
@@ -609,20 +674,7 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
                 v.chain_generation += 1;
                 v.clear_highlight();
                 let _ = input.set_attribute("data-selected-id", "");
-                if id == "graph-player" {
-                    v.selected.clear();
-                    v.recompute_hop();
-                    v.trunk_plan = visual::TrunkPlan::default();
-                    v.sector_headers.clear();
-                    v.auto_focus = None;
-                    v.franchise = None;
-                    v.franchise_nodes.clear();
-                    v.ego = false;
-                    v.render_franchises();
-                    let summary = element(&v.document, "graph-selection");
-                    let _ = summary.remove_attribute("data-player");
-                    summary.set_text_content(Some("Choose a Player A search result explicitly."));
-                } else {
+                if id == "graph-target" {
                     v.graph.target.clear();
                 }
                 v.sync_pair_url();
@@ -759,6 +811,7 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
                 let _ = element(&v.document, &format!("{id}-results")).set_attribute("hidden", "");
                 if id == "graph-player" {
                     v.select(&pid);
+                    v.locate_selection();
                 } else {
                     v.graph.target = pid;
                 }
@@ -874,7 +927,7 @@ fn load_drawer(document: Document, state: Rc<RefCell<Drawer>>, url: String) {
         state.borrow_mut().return_focus = document
             .active_element()
             .and_then(|e| e.dyn_into::<HtmlElement>().ok());
-        let _ = dialog.show_modal();
+        dialog.show();
     }
     let _ = element(&document, "close-evidence")
         .dyn_into::<HtmlElement>()
@@ -927,6 +980,25 @@ fn close_drawer(document: &Document, state: &Rc<RefCell<Drawer>>) {
         .unwrap_or_else(|| element(document, "graph-canvas").dyn_into().unwrap());
     let _ = target.focus();
 }
+fn return_to_player(view: &View) {
+    let mut v = view.borrow_mut();
+    v.edge = None;
+    if v.selected.is_empty() {
+        v.set_scope(false);
+    }
+    v.sync_pair_url();
+    v.draw();
+    drop(v);
+    animate(view.clone());
+}
+
+fn edge_from_url(view: &CanvasView, url: &str) -> Option<usize> {
+    view.graph.links.iter().position(|e| {
+        url == format!("/edge?from={}&to={}", encoded(&e.from), encoded(&e.to))
+            || url == format!("/edge?from={}&to={}", encoded(&e.to), encoded(&e.from))
+    })
+}
+
 fn install_drawer(view: View) -> Result<(), JsValue> {
     let document = view.borrow().document.clone();
     let state = Rc::new(RefCell::new(Drawer {
@@ -936,6 +1008,15 @@ fn install_drawer(view: View) -> Result<(), JsValue> {
     }));
     let doc = document.clone();
     let drawer = state.clone();
+    listen(document.as_ref(), "explorer-selection", move |_| {
+        if drawer.borrow().url.is_some() {
+            close_drawer(&doc, &drawer);
+            let _ = web_sys::window().unwrap().history().unwrap().back();
+        }
+    })?;
+    let doc = document.clone();
+    let drawer = state.clone();
+    let evidence_view = view.clone();
     listen(document.as_ref(), "explorer-evidence", move |event| {
         let Some(url) = event
             .dyn_into::<web_sys::CustomEvent>()
@@ -944,6 +1025,10 @@ fn install_drawer(view: View) -> Result<(), JsValue> {
         else {
             return;
         };
+        if let Ok(mut v) = evidence_view.try_borrow_mut() {
+            v.edge = edge_from_url(&v, &url);
+            v.draw();
+        }
         let window = web_sys::window().unwrap();
         let history = window.history().unwrap();
         if drawer.borrow().url.is_some() {
@@ -996,12 +1081,28 @@ fn install_drawer(view: View) -> Result<(), JsValue> {
     ] {
         let doc = document.clone();
         let drawer = state.clone();
+        let closing_view = view.clone();
         listen(element(&document, id).as_ref(), event, move |e| {
             e.prevent_default();
             close_drawer(&doc, &drawer);
+            return_to_player(&closing_view);
             let _ = web_sys::window().unwrap().history().unwrap().back();
         })?;
     }
+    let doc = document.clone();
+    let drawer = state.clone();
+    let escape_view = view.clone();
+    listen(document.as_ref(), "keydown", move |e| {
+        if e.dyn_ref::<KeyboardEvent>()
+            .is_some_and(|e| e.key() == "Escape")
+            && drawer.borrow().url.is_some()
+        {
+            e.prevent_default();
+            close_drawer(&doc, &drawer);
+            return_to_player(&escape_view);
+            let _ = web_sys::window().unwrap().history().unwrap().back();
+        }
+    })?;
     let doc = document.clone();
     let drawer = state;
     listen(web_sys::window().unwrap().as_ref(), "popstate", move |_| {
@@ -1009,9 +1110,15 @@ fn install_drawer(view: View) -> Result<(), JsValue> {
         let url = window.location().pathname().unwrap_or_default()
             + &window.location().search().unwrap_or_default();
         if url.starts_with("/edge?") {
+            {
+                let mut v = view.borrow_mut();
+                v.edge = edge_from_url(&v, &url);
+                v.draw();
+            }
             load_drawer(doc.clone(), drawer.clone(), url);
         } else {
             close_drawer(&doc, &drawer);
+            return_to_player(&view);
         }
     })?;
     Ok(())
@@ -1021,6 +1128,9 @@ pub(super) fn install(view: View) -> Result<(), JsValue> {
     let document = view.borrow().document.clone();
     install_picker(view.clone(), "graph-player")?;
     install_picker(view.clone(), "graph-target")?;
+    if !view.borrow().graph.target.is_empty() {
+        element(&document, "connection-controls").set_attribute("open", "")?;
+    }
     let state = view.clone();
     listen(
         element(&document, "pair-form").as_ref(),
@@ -1028,8 +1138,23 @@ pub(super) fn install(view: View) -> Result<(), JsValue> {
         move |event| {
             event.prevent_default();
             {
-                let v = state.borrow();
-                let missing = if v.selected.is_empty() {
+                let mut v = state.borrow_mut();
+                if !v.selected.is_empty()
+                    && v.graph.target.is_empty()
+                    && !element(&v.document, "connection-controls").has_attribute("open")
+                {
+                    v.locate_selection();
+                    v.draw();
+                    drop(v);
+                    animate(state.clone());
+                    return;
+                }
+                let missing = if v.selected.is_empty()
+                    || element(&v.document, "graph-player")
+                        .get_attribute("data-selected-id")
+                        .unwrap_or_default()
+                        .is_empty()
+                {
                     Some(("graph-player", "Player A"))
                 } else if v.graph.target.is_empty() {
                     Some(("graph-target", "Player B"))
@@ -1113,20 +1238,13 @@ pub(super) fn install(view: View) -> Result<(), JsValue> {
                     v.eras = [true; 8];
                     v.franchise = None;
                     v.franchise_nodes.clear();
-                    v.ego = false;
                     v.render_franchises();
                 }
                 "ego-toggle" => {
-                    if v.selected.is_empty() {
+                    if v.selected.is_empty() && v.edge.is_none() {
                         return;
                     }
-                    v.settle_layout();
-                    v.ego = !v.ego;
-                    if v.ego {
-                        v.fit_visible();
-                    } else {
-                        v.fit_network();
-                    }
+                    v.set_scope(true);
                 }
                 _ => {}
             }
@@ -1134,8 +1252,8 @@ pub(super) fn install(view: View) -> Result<(), JsValue> {
             drop(v);
             if id == "random-pair" {
                 request_chain(state.clone());
-                animate(state.clone());
             }
+            animate(state.clone());
         })?;
     }
     for i in 0..8 {
@@ -1184,10 +1302,7 @@ pub(super) fn install(view: View) -> Result<(), JsValue> {
             v.draw();
         },
     )?;
-    let mobile = web_sys::window()
-        .unwrap()
-        .match_media("(max-width: 640px)")?
-        .is_some_and(|m| m.matches());
+    let mobile = true;
     let minimap = element(&document, "graph-minimap");
     let toggle = element(&document, "minimap-toggle");
     minimap.toggle_attribute_with_force("hidden", mobile)?;
@@ -1196,6 +1311,9 @@ pub(super) fn install(view: View) -> Result<(), JsValue> {
     listen(toggle.as_ref(), "click", move |_| {
         let map = element(&doc, "graph-minimap");
         let show = map.has_attribute("hidden");
+        if show {
+            let _ = element(&doc, "graph-help").set_attribute("hidden", "");
+        }
         let _ = map.toggle_attribute_with_force("hidden", !show);
         let _ = element(&doc, "minimap-toggle")
             .set_attribute("aria-expanded", if show { "true" } else { "false" });

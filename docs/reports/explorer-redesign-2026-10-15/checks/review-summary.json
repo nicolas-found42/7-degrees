@@ -1,0 +1,343 @@
+{
+  "schema_version": 1,
+  "profile": "full",
+  "source_commit": "d3774da83489cd1e954ad8cc032bba8d6d29c6c3",
+  "working_tree_status": " M README.md\n M crates/api-types/src/lib.rs\n M crates/app-server/src/graph_view.rs\n M crates/app-server/src/lib.rs\n M crates/app-server/src/prototype-fluid/visual-directions.html\n M crates/app-server/src/style.css\n M crates/app-server/tests/api_integration.rs\n M crates/app-server/tests/browser_e2e.rs\n M crates/app-server/tests/canvas_browser.rs\n M crates/app-server/tests/graph_view.rs\n M crates/canvas-view/Cargo.toml\n M crates/canvas-view/src/browser.rs\n M crates/canvas-view/src/browser/explorer.rs\n M crates/canvas-view/src/lib.rs\n M scripts/browser_driver.cjs\n M scripts/check.py\n?? crates/app-server/src/prototype-fluid/verify-ribbon.mjs\n?? crates/app-server/tests/explorer_redesign.rs\n?? crates/canvas-view/src/browser/workspace.rs\n?? crates/canvas-view/src/physics.rs\n?? crates/canvas-view/tests/drag_physics.rs\n?? docs/research/ui-interaction-comparables-2026-10-15.md\n?? output/\n",
+  "working_tree_diff_sha256": "3d6689aabcedca1a6cdc35146400081b6091757356701b6fff98183cd39a1d74",
+  "untracked_sha256": {
+    "crates/app-server/src/prototype-fluid/verify-ribbon.mjs": "11f3b12be4989eb19793a419938e85dd164a725e853ba0781cbee2666ad562c0",
+    "crates/app-server/tests/explorer_redesign.rs": "c6ee4c94db815e0b5cec719d99c90bdc0c4a35b4ab868ecb3252be5b223b52c8",
+    "crates/canvas-view/src/browser/workspace.rs": "8775da999fa34a3669ac86eff4ca62f11e5eeace30b503164afc2d63e4b2e0db",
+    "crates/canvas-view/src/physics.rs": "baa7f97aba7bc15284e9f9092f50ef065f5eb09bcbc9509a5a1fcdbdcc105956",
+    "crates/canvas-view/tests/drag_physics.rs": "963c42e268dc8a28b89b33973576a22f6534fb99d0c5d0ee1fa0ba5e09636d1c",
+    "docs/research/ui-interaction-comparables-2026-10-15.md": "f640c9ac0a96760a0fb65b59b231cc236a626e10fd7c1c73c4dbdb2d75c9661a",
+    "output/pdf/7-degrees-external-ai-review.pdf": "162c07f11d9ddb999dcfd2537d2658a69ddde5d3527e4532bc165e57904ab77d",
+    "output/pdf/review-assets/A-01-overview.json": "a2d67e3fcd180f78d93ce84dc9f82c774c8e1167954ce3404fbadce3b57845a0",
+    "output/pdf/review-assets/A-01-overview.png": "28f9ae4840f17e601f2673ddfa906b61b1ecdfacbf265e4b0dfc0ce384f56a04",
+    "output/pdf/review-assets/B-01-overview.json": "75fcfb993bca4b527ff75a063994d4b15d45ef9bddf5b6ec0845538dfaa1170e",
+    "output/pdf/review-assets/B-01-overview.png": "78e1629d20467f111a19c6a18d8aa3bdcebfe91db44e24483cd7d9b70a9d74fb",
+    "output/pdf/review-assets/B-02-hubs.json": "4d77299e51ef0565edbfe5ed7ef9445f4b5ee432431ba5a58e814c6d173f4c47",
+    "output/pdf/review-assets/B-02-hubs.png": "d794149e2991e0b58b0fa463c301e262c448566a0d3945a345de03b814a857d1",
+    "output/pdf/review-assets/C-01-overview.json": "02e10521a941f44abe426d9f22c63e06437aae7abdeb9b071b30e7e41aee4c5a",
+    "output/pdf/review-assets/C-01-overview.png": "40a48d5ca4de57db75676603c2c43d796cc98e0f5094c0fec7e9bccae45ddf1f",
+    "output/pdf/review-assets/D-01-overview.json": "40798020e5430a4f0ce47a3e9e995aa7cfed3ae5020b449278c9634f16fc0d75",
+    "output/pdf/review-assets/D-01-overview.png": "6cc1921fc3b690d8b069b1110ed81cc9c698990aeef15d15ed058c75f268e880",
+    "output/pdf/review-assets/E-01-overview.json": "fa33fd20d1e3d3240c2723c4b7dcaa0fc08cdefd161db9badc1ea544d84cdf78",
+    "output/pdf/review-assets/E-01-overview.png": "6c2af26f7bb90c069bd97760ac50edf1662bc69e1eb1172abc30fa8454c6a7d0",
+    "output/pdf/review-assets/F-01-overview.json": "5c8a20cf493a493901ce884e984518dabd455aa243e7e40439da147ff3c48103",
+    "output/pdf/review-assets/F-01-overview.png": "84e678097cccf98c0026ac8db2af763f982a8a7a51f5607b7de66af8db15a50f",
+    "output/pdf/review-assets/F-02-pippen.json": "0aa5929a0081f734b9c468baba9050e98e4282a9ddee90dae7c8a611fe56e15c",
+    "output/pdf/review-assets/F-02-pippen.png": "9a72c060ff6963a367b1f204ba079dd37d9f2bc923a3c2f8bd738fdbeee236d2",
+    "output/pdf/review-assets/F-03-wallace.json": "e33a8b90e6b90a669d415c490a45523b6d12b5a4d6589995f5fe52dc592bf085",
+    "output/pdf/review-assets/F-03-wallace.png": "8e832d1b781f0251e9431575fa3f0be5e179379269c91a25413925af31360423",
+    "output/pdf/review-assets/G-01-overview.json": "07e9d9568a10ba7f7a6b898e21f9890ce2c01eb5ab000f9a6525c0c7acc7d9c3",
+    "output/pdf/review-assets/G-01-overview.png": "c53b07ca24248d262967768e0b04de055b15c8fc269025ebc89c2edc55a16cd7",
+    "output/pdf/review-assets/H-01-overview.json": "345066b3a41b27bb6bdeb606b8d58e49c84f6a32880cd69ffc5d1001f44de962",
+    "output/pdf/review-assets/H-01-overview.png": "385e38d5d063b629b7240cbd348261b99c2d8e340387f8ef2b61a9576bd8d4f6",
+    "output/pdf/review-assets/I-01-overview.json": "9860a2733d18727bb03432ef9d693bc6e9410d9a8e679130d474393aab02ffaf",
+    "output/pdf/review-assets/I-01-overview.png": "844cb4cf6afceaea8b18ed01c6a1b1835f7ad325db2591966de8b19863d17058",
+    "output/pdf/review-assets/J-01-overview.json": "90c2e0b0538bb0beed76f3ebce9de6ff59f5d1ca7d9c39e7de8cf05acaa81590",
+    "output/pdf/review-assets/J-01-overview.png": "c2fef8d939be7371bc95c3ccd36c65ac1703feaf1e6fbae8c01abe84d6869fac",
+    "output/pdf/review-assets/J-02-explore.json": "72f74d1f26705d8e21f767b671fe5a35c28bb1200cbb3b25640bf00b669cb065",
+    "output/pdf/review-assets/J-02-explore.png": "479883e1407979b683d21c5bcc40d5dbf4b34d8c19c2ddc1649bf2c05585a976",
+    "output/pdf/review-assets/J-03-pippen.json": "db4756e37457de6eb9d8e22e8f50842b0c6b0ee8406cb478e29e54d41bfcc673",
+    "output/pdf/review-assets/J-03-pippen.png": "a31b0394ce5df2ff835b45881dca0f87659476059f1ecf72008229351c0d0f9f",
+    "output/pdf/review-assets/J-04-phone-overview-crop.png": "692b31fb11cd99d3934857011e2fb021d82abbd3566aa3af7505f3cf71313b75",
+    "output/pdf/review-assets/J-04-phone-overview.json": "fa2f8dcf1696421b9a7dd8ed9132e91dc5c69943e22ede2153c87771b0e6bb3e",
+    "output/pdf/review-assets/J-04-phone-overview.png": "15dbb37798cbbea4f5b4e10e7c79728ad846baf4673a7f2bb2380b165df349c7",
+    "output/pdf/review-assets/J-05-phone-explore-crop.png": "689567f6c6b334ac29de6c2445421d9ab2c3039b57bc6ceb838f24a09c83fa8a",
+    "output/pdf/review-assets/J-05-phone-explore.json": "2892e1edebb56dbf0a47e8f0452c4ee7586b5fec77ede5306e9e906d8eebd423",
+    "output/pdf/review-assets/J-05-phone-explore.png": "a78f6c6ea153a1d46a1af6ee1c562dc89c31bb9c3ff344f4485b5ccfcd4ba9af",
+    "output/pdf/review-assets/J-06-drag.json": "e55abaa06a8d9a4671cdfcc7c741c28cfc534f06f3375dc4089cbdeec9048917",
+    "output/pdf/review-assets/J-06-drag.png": "536e8104ea0940493d4de948fe251a78b3fb7e9052960e70aa0d9f4d15876b8b",
+    "output/pdf/review-assets/J-07-rewind.json": "e4a1c2cdb583239537d9a8959d1349bd547ac23db25ac4f0eda4d5ae0b8d3df7",
+    "output/pdf/review-assets/J-07-rewind.png": "02f9d8d5b575c6daf269045350c1fae6a5176757f422141cc438c1177d31a731",
+    "output/pdf/review-assets/J-08-new-destination.json": "e4af1573fb6cc6d1922c8e4ce98e2acbd8aac3fb0bc27476df0977d7d1706018",
+    "output/pdf/review-assets/J-08-new-destination.png": "681430d60b9b39de9450e19fd447dd56d4e1297f0afda408d1d42dc5fa5c821b",
+    "output/pdf/review-assets/J-09-same-player.json": "aca60e1d015a442f644f441729e219cf382ef8cf495cd4880805fc72af260419",
+    "output/pdf/review-assets/J-09-same-player.png": "44c5245e0ab8bd9067c184dec4e8d3bcd1527b4beff54bdce9e7c2808644f635",
+    "output/pdf/review-assets/J-10-unconnected.json": "f3326b98d1e0ea1ef1b0d810b2073b04a1627b363974b8a0ac718010626e576f",
+    "output/pdf/review-assets/J-10-unconnected.png": "ca98c7ec1f163f62086ac576d2e33421b13654682d12ca34af8980d4912b379f",
+    "output/pdf/review-assets/K-01-overview.json": "a5cb741601cb71d9f25146feea25be09fc14eaab58725fcb4c76500cd02ac328",
+    "output/pdf/review-assets/K-01-overview.png": "d09771878ee1a0ccc8ff5dfbdf6a4df889c60740dae145c335f2523cfbee3e9e",
+    "output/pdf/review-assets/K-02-explore.json": "432cd00eadad31194126825229dcf904b2ae688f5c1a325c2d805cfa289eadf3",
+    "output/pdf/review-assets/K-02-explore.png": "b899c4d227c5b6bd41905bf53d69e658734aa7277d6ca4a3cc68886ca5ff6652",
+    "output/pdf/review-assets/K-04-phone-overview-crop.png": "8cf7f5ab961e0681c1577f7b72098cf3df441dc1c14df4069017388377eea497",
+    "output/pdf/review-assets/K-04-phone-overview.json": "3966bbc679f9c65f148e42c57d55cddd83d4f15399cf26da0f7e0132d3988fa9",
+    "output/pdf/review-assets/K-04-phone-overview.png": "1bb054d3c74681aa4ad6cb0df9a2ff111ce73ba1ff84185f11b3f1e5e35a40cf",
+    "output/pdf/review-assets/K-05-phone-explore-crop.png": "c18568ae200a9deeb654638c64085981f48b13aa9dedc3eba969e55a5255b81a",
+    "output/pdf/review-assets/K-05-phone-explore.json": "58d299948567e8ab924a1bb4d2c51a710d122e92dfaa10d9065db7e8f4dbe227",
+    "output/pdf/review-assets/K-05-phone-explore.png": "712bd22131351f581b96e5b78ebc43b9a8e0b866183f6f67b486ffdccfef358f",
+    "output/pdf/review-assets/L-01-overview.json": "ff6d6b55831f88a157d3390ae7a8670b37259795882b702233fa555997895583",
+    "output/pdf/review-assets/L-01-overview.png": "b1bff5353f7ba712e9776f49a1f544e6c835e12e74d58d83aa6d87a16a7ff30d",
+    "output/pdf/review-assets/L-02-explore.json": "21609ce824039c17e5aa08a02d8d9d6e7548a901d6b0b05e99727db9e4a05d25",
+    "output/pdf/review-assets/L-02-explore.png": "783827af8f8fe7c045a5775c1726467978e85759ce41d048dfe265e7b09838ed",
+    "output/pdf/review-assets/L-04-phone-overview-crop.png": "f2e81c94c3fe113a67cc3fb8028f4f6d07abbff0e9e7431bd17cf1bd3a0e2d4c",
+    "output/pdf/review-assets/L-04-phone-overview.json": "deba00c8700f3b9c7a0cffba170750d225c73c06923566ad9705558d9402dba9",
+    "output/pdf/review-assets/L-04-phone-overview.png": "e089d7538d923811c8b017ade00978cf437f3fe7eeae052cd1769070fc3fb171",
+    "output/pdf/review-assets/L-05-phone-explore-crop.png": "b328ae0a5404573c312f7c12e712b8dd4a449509a1133f77cada91c7ca40786d",
+    "output/pdf/review-assets/L-05-phone-explore.json": "21f01aecdae65995fbbd0bddd1eeef63efb99c23664f661a8f803cc6d19c8b57",
+    "output/pdf/review-assets/L-05-phone-explore.png": "56b9eae4c15768c0dba8ce8f2d72538ed8f7cc46d9b44a1dd16792dca96b94fe",
+    "output/pdf/review-assets/P-01-production.json": "7075dd6630e64d47cab1004ef13bac80af929cf7b80dd8bb38e619e9b2e4fca5",
+    "output/pdf/review-assets/P-01-production.png": "7f7eff9f38e88b7886bf6fa3658dfb8021684b4e17b2bbc3379465e73ed18593",
+    "output/pdf/review-assets/P-02-evidence.json": "8b7e4b0dfe4e3458e7623a766325aca0cb80c6616c21b99b8a35a148eab0f01e",
+    "output/pdf/review-assets/P-02-evidence.png": "3d15172ec51206d99193156f2db29378a0937c7738e618f44de7185952312c51",
+    "output/pdf/review-assets/P-03-canvas.json": "904cd7fe59aec4b92cfe58bfff061ca581963e75d7f148dd8577bf633cd072f2",
+    "output/pdf/review-assets/P-03-canvas.png": "7d289f8f2b6c2154753798138d535c5eee9c96be9eb36d38894d91b41f5324a3",
+    "output/pdf/review-assets/README.txt": "5e3ea6c5dbe463b2550eae03f324a714702e91d7694b0d35011e990876afdc39",
+    "output/pdf/review-assets/audit-evidence.txt": "b86c9201cfe8161f582184f911230071385924366e144dea8cebd7c5b54044f7",
+    "output/pdf/review-assets/build_packet.py": "25618ca07d0890aaf39a63be3dfe5fd2d7ba2e90a6f3fe86ed2c2c4100242ade",
+    "output/pdf/review-assets/captions.json": "c3a96297fa4fc705cd6c832d5c14e79047a01074436aed3d0262615bc2f407b9",
+    "output/pdf/review-assets/manifest.json": "c1baef59c58e1a0de0cfdb4e3f7b38cc3374647bfbbcdabf367af1f09b12418d",
+    "output/pdf/review-assets/packet-checks.json": "81bd9e9a53548c8163dc59f4aee97ebebf80cb00ae7f5b28f5b16f9f8e256d80",
+    "output/pdf/review-assets/page-index.json": "9202ca88cf81e0998d4d64469d3aef625166f1a0763245ba2ce5f89849131dd9",
+    "output/pdf/review-assets/server.py": "78c24797b8706e1fe14ac581e5df992607012988f3c96685221d73d72821c61c",
+    "output/pdf/review-assets/source-verification.json": "7a13d7c8e43de2d48b3e746e3b3ef7fee3576a5c07842bfcce66d949ee89ccf0",
+    "output/pdf/review-assets/targeted-evidence.txt": "c888a12ded6cee39d3dee1d1deba7b509f4f4a5509fcb6ab9e5d47908631aa8b"
+  },
+  "started_at": "2026-10-16T03:42:34.916335+00:00",
+  "completed": true,
+  "expected_checks": [
+    "rust-workspace",
+    "python-tests",
+    "format",
+    "clippy-host",
+    "derived-snapshot",
+    "historical-audit",
+    "semantic-audit",
+    "wasm-build",
+    "clippy-wasm",
+    "browser-matrix"
+  ],
+  "finished_at": "2026-10-16T03:46:55.059726+00:00",
+  "checks": [
+    {
+      "name": "rust-workspace",
+      "argv": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-16T03:42:34.916405+00:00",
+      "finished_at": "2026-10-16T03:42:47.829587+00:00",
+      "log": "rust-workspace.log",
+      "summary": {
+        "rust_result_groups": 32,
+        "rust_totals": {
+          "passed": 140,
+          "failed": 0,
+          "ignored": 25
+        },
+        "python_result": null
+      },
+      "raw_sha256": "e4e8b556e7412b57ef1de878784a56fb0050e92308013c436010fb06fa4cfeb4",
+      "published_sha256": "7b92c5051f3da4f619d3b46c44a5d91ceb4b560e64f15c02fc1b67bccbeadef5"
+    },
+    {
+      "name": "python-tests",
+      "argv": [
+        "/opt/homebrew/opt/python@3.13/bin/python3.13",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_*.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-16T03:42:47.830179+00:00",
+      "finished_at": "2026-10-16T03:42:48.408396+00:00",
+      "log": "python-tests.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": {
+          "tests": 108,
+          "result": "OK"
+        }
+      },
+      "raw_sha256": "e4628f9afebcdbcee8b3f7c0836646533c077fa667a2a316cc689a764c632285",
+      "published_sha256": "b19667e46ff55bc1927b6843a5d3d835d80ad8869f47059bade95e4db5ad0495"
+    },
+    {
+      "name": "format",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-16T03:42:48.408640+00:00",
+      "finished_at": "2026-10-16T03:42:48.556671+00:00",
+      "log": "format.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clippy-host",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-16T03:42:48.556868+00:00",
+      "finished_at": "2026-10-16T03:42:48.810737+00:00",
+      "log": "clippy-host.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "5fd965f60312555216480e0c457bc642207b1f83000b3769c6f3f162fda79e7e",
+      "published_sha256": "6ad2d0dca3e46b4d52104ba7d03469c3a840a30ae20ab616ae7ae6f3f0706bba"
+    },
+    {
+      "name": "derived-snapshot",
+      "argv": [
+        "/opt/homebrew/opt/python@3.13/bin/python3.13",
+        "scripts/verify-source-snapshot.py",
+        "--derived-only"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-16T03:42:48.810956+00:00",
+      "finished_at": "2026-10-16T03:42:48.851626+00:00",
+      "log": "derived-snapshot.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84",
+      "published_sha256": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84"
+    },
+    {
+      "name": "historical-audit",
+      "argv": [
+        "/opt/homebrew/opt/python@3.13/bin/python3.13",
+        "scripts/check-historical-audit.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-16T03:42:48.851823+00:00",
+      "finished_at": "2026-10-16T03:42:49.176422+00:00",
+      "log": "historical-audit.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232",
+      "published_sha256": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232"
+    },
+    {
+      "name": "semantic-audit",
+      "argv": [
+        "/opt/homebrew/opt/python@3.13/bin/python3.13",
+        "scripts/check-semantic-evaluation.py"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-16T03:42:49.176652+00:00",
+      "finished_at": "2026-10-16T03:42:49.228143+00:00",
+      "log": "semantic-audit.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0",
+      "published_sha256": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0"
+    },
+    {
+      "name": "wasm-build",
+      "argv": [
+        "./scripts/build-canvas.sh"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-16T03:42:49.228341+00:00",
+      "finished_at": "2026-10-16T03:42:49.350559+00:00",
+      "log": "wasm-build.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "64d0cbd4b7e4c6329fde55978dd3d261407b55f34c21add0feebf7e0575ee531",
+      "published_sha256": "64d0cbd4b7e4c6329fde55978dd3d261407b55f34c21add0feebf7e0575ee531"
+    },
+    {
+      "name": "clippy-wasm",
+      "argv": [
+        "cargo",
+        "clippy",
+        "-p",
+        "canvas-view",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-16T03:42:49.350771+00:00",
+      "finished_at": "2026-10-16T03:42:49.697305+00:00",
+      "log": "clippy-wasm.log",
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "772cf17622f6e2c6bcce5ef6f1e45900774f0d60dbb06b944606cf3537165b6e",
+      "published_sha256": "e9e262ed9d769b624b9b153c35088c6d1d170a4922f17ae67f8cdb25bc7d0020"
+    },
+    {
+      "name": "browser-matrix",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "app-server",
+        "--test",
+        "browser_e2e",
+        "--test",
+        "canvas_browser",
+        "--test",
+        "explorer_redesign",
+        "--locked",
+        "--",
+        "--ignored",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "started_at": "2026-10-16T03:42:49.697500+00:00",
+      "finished_at": "2026-10-16T03:46:55.058962+00:00",
+      "log": "browser-matrix.log",
+      "summary": {
+        "rust_result_groups": 3,
+        "rust_totals": {
+          "passed": 22,
+          "failed": 0,
+          "ignored": 0
+        },
+        "python_result": null
+      },
+      "raw_sha256": "f13e712b8c15f064d4b59a36392aefb8b60079a6df28617b0195bfad580bc837",
+      "published_sha256": "871445d083b720af9a0409b32ad36aed56f624a2ec3522c92ca2c92c86682fab"
+    }
+  ]
+}

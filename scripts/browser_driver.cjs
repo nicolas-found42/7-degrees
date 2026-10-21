@@ -33,7 +33,16 @@ function observe(surface) {
   });
 }
 async function command(c) {
-  const target = () => { const surface = c.frame ? page.frameLocator(c.frame) : page; return c.role ? surface.getByRole(c.role, {name:c.name, exact:true}) : surface.locator(c.selector); };
+  const target = () => { const surface = c.frame ? page.frameLocator(c.frame) : page; return c.role ? surface.getByRole(c.role, {name:c.name, exact:true, includeHidden:true}) : surface.locator(c.selector); };
+  // Open the containing disclosure through its real summary before operating
+  // a control. Legacy journeys now share the progressively disclosed workspace.
+  if (['click','fill','select','focus'].includes(c.op)) {
+    const locator=target();
+    const ancestors=await locator.locator('xpath=ancestor::details').all();
+    for (const ancestor of ancestors) {
+      if (!(await ancestor.getAttribute('open') !== null)) await ancestor.locator(':scope > summary').click();
+    }
+  }
   switch (c.op) {
     case 'launch':
       captureResponses = c.captureResponses === true;
@@ -43,8 +52,8 @@ async function command(c) {
       return browser.version();
     case 'goto': await page.goto(c.url); return page.url();
     case 'viewport': await page.setViewportSize({width:c.width,height:c.height}); return true;
-    case 'ready': await target().waitFor({state:'visible'}); return true;
-    case 'click': await target().click(); return true;
+    case 'ready': await target().waitFor({state:c.selector?.startsWith('#graph-chain[data-state') ? 'attached' : 'visible'}); if(c.selector?.startsWith('#graph-chain[data-state')) await page.waitForFunction(()=>document.querySelector('#canvas-status')?.dataset.transition!=='running'); return true;
+    case 'click': await target().click(); if(['Reset view','Focus on player','Full network','Selected'].includes(c.name)) await page.waitForFunction(()=>document.querySelector('#canvas-status')?.dataset.transition!=='running'); return true;
     case 'fill': await target().fill(c.value); return true;
     case 'open-link-modified': {
       const [popup]=await Promise.all([page.context().waitForEvent('page'),target().click({modifiers:[process.platform==='darwin'?'Meta':'Control']})]);
@@ -79,6 +88,7 @@ async function command(c) {
       if(!name) throw new Error('Unknown player '+c.value);
       await target().fill(name);
       await page.locator(c.selector+'-results [data-player-id="'+c.value+'"]').click();
+      if(c.settle!==false) await page.waitForFunction(()=>document.querySelector('#canvas-status')?.dataset.transition!=='running');
       return true;
     }
     case 'input-value': return target().inputValue();
@@ -87,7 +97,7 @@ async function command(c) {
     case 'wait-url': await page.waitForURL(c.url,{timeout:5000}); return page.url();
     case 'motion': await page.emulateMedia({reducedMotion:c.value}); return true;
     case 'page-size': return page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
-    case 'sequence': for(const selector of c.selectors) await page.locator(selector).click({force:true}); return true;
+    case 'sequence': for(const selector of c.selectors) await page.locator(selector).evaluate(e=>e.click()); return true;
     case 'observe-status': await page.evaluate(()=>{window.statusAnnouncements=[];new MutationObserver(()=>window.statusAnnouncements.push(document.querySelector('#canvas-status').textContent)).observe(document.querySelector('#canvas-status'),{childList:true,subtree:true});}); return true;
     case 'status-announcements': return page.evaluate(()=>window.statusAnnouncements);
     case 'settled': await page.waitForFunction(()=>document.querySelector('#canvas-status')?.dataset.transition!=='running'); return true;

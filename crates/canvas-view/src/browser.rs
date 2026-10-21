@@ -11,6 +11,13 @@ use web_sys::{
 };
 
 mod explorer;
+mod workspace;
+
+struct CameraMove {
+    start: f64,
+    from: Camera,
+    to: Camera,
+}
 
 struct Transition {
     start: f64,
@@ -85,6 +92,10 @@ struct CanvasView {
     badge_targets: Vec<(usize, Rect)>,
     layout_signature: String,
     touch_input: bool,
+    physics: crate::physics::DragPhysics,
+    physics_time: f64,
+    camera_move: Option<CameraMove>,
+    overview_camera: Option<Camera>,
 }
 impl CanvasView {
     fn fit(&mut self) {
@@ -151,7 +162,26 @@ impl CanvasView {
             self.graph.full_network,
             &self.hop,
         );
+        self.ctx.set_font("bold 12px sans-serif");
+        self.sector_headers = crate::layout::concentric_sectors(&self.graph.links, &self.selected)
+            .into_iter()
+            .map(|sector| {
+                let name = if sector.franchise.is_empty() {
+                    "Unknown"
+                } else {
+                    &sector.franchise
+                };
+                let width = self
+                    .ctx
+                    .measure_text(name)
+                    .map(|m| m.width())
+                    .unwrap_or(90.0);
+                (sector, width)
+            })
+            .collect();
         self.layout_signature = layout_signature(&self.points);
+        self.physics = crate::physics::DragPhysics::new(&self.points);
+        self.overview_camera = None;
         self.rebuild_spatial();
         if self.graph.full_network {
             self.fit_network();
@@ -201,11 +231,9 @@ impl CanvasView {
         )
     }
     fn select(&mut self, id: &str) {
-        let animate = self.layout == LayoutMode::Concentric
-            && self.selected != id
-            && !explorer::reduced_motion();
-        let old = animate.then(|| (self.points.clone(), self.camera));
+        let camera = self.camera;
         self.settle_layout();
+        self.camera = camera;
         let Some(n) = self.graph.nodes.iter().find(|n| n.id == id).cloned() else {
             return;
         };
@@ -225,34 +253,6 @@ impl CanvasView {
         self.recompute_hop();
         self.trunk_plan =
             visual::TrunkPlan::new(&self.graph.nodes, &self.graph.links, &self.selected);
-        self.ctx.set_font("bold 12px sans-serif");
-        self.sector_headers = crate::layout::concentric_sectors(&self.graph.links, &self.selected)
-            .into_iter()
-            .map(|sector| {
-                let name = if sector.franchise.is_empty() {
-                    "Unknown"
-                } else {
-                    &sector.franchise
-                };
-                let width = self
-                    .ctx
-                    .measure_text(name)
-                    .map(|m| m.width())
-                    .unwrap_or(90.0);
-                (sector, width)
-            })
-            .collect();
-        if self.layout == LayoutMode::Concentric || self.pending_layout {
-            if changed || self.pending_layout {
-                self.ego = true;
-            }
-            self.relayout(LayoutMode::Concentric);
-        }
-        if self.ego && self.layout == LayoutMode::Concentric {
-            self.fit_visible();
-        } else {
-            self.focus_player();
-        }
         if let Some(element) = self.document.get_element_by_id("graph-selection") {
             element.set_text_content(Some(&format!(
                 "Selected player: {} — {}; teams: {}; {} teammate connections",
@@ -263,19 +263,12 @@ impl CanvasView {
             )));
             let _ = element.set_attribute("data-player", id);
         }
-        if let Some((points, camera)) = old {
-            self.transition = Some(Transition {
-                start: js_sys::Date::now(),
-                from: points.clone(),
-                to: self.points.clone(),
-                camera_from: camera,
-                camera_to: self.camera,
-            });
-            self.points = points;
-            self.camera = camera;
-            self.rebuild_spatial();
+        self.render_player();
+        if let Ok(event) = Event::new("explorer-selection") {
+            let _ = self.document.dispatch_event(&event);
         }
     }
+
     /// BFS from the selected player over the adjacency list, capped at depth 2.
     /// Client-side so selecting never waits on a server round-trip (Liu & Heer
     /// 2014: feedback under ~100 ms keeps exploration fluid).
@@ -438,6 +431,8 @@ impl CanvasView {
             .enumerate()
             .filter(|(i, e)| {
                 !full_network
+                    || (self.camera.scale >= 0.75
+                        || (self.camera.scale >= 0.25 && e.in_visual_backbone))
                     || e.on_path
                     || e.from == self.selected
                     || e.to == self.selected
@@ -470,7 +465,18 @@ impl CanvasView {
         }
     }
     fn visible(&self, index: usize) -> bool {
-        !self.ego || self.hop.contains_key(&self.graph.nodes[index].id) || self.important(index)
+        if !self.ego {
+            return true;
+        }
+        let id = &self.graph.nodes[index].id;
+        if let Some(edge) = self.edge {
+            let e = &self.graph.links[edge];
+            return id == &e.from || id == &e.to;
+        }
+        if !self.graph.path.is_empty() {
+            return self.graph.path.contains(id);
+        }
+        self.hop.get(id).is_some_and(|d| *d <= 1)
     }
     fn important(&self, index: usize) -> bool {
         let id = &self.graph.nodes[index].id;
@@ -563,7 +569,7 @@ impl CanvasView {
             "#1b9e77", "#d95f02", "#7570b3", "#e7298a", "#65a41e", "#bb8b02", "#a6761d", "#666666",
         ];
         self.ctx.set_global_alpha(1.0);
-        self.ctx.set_fill_style_str("#ffffff");
+        self.ctx.set_fill_style_str("#f6f5f0");
         self.ctx.fill_rect(0.0, 0.0, 1000.0, 600.0);
         if self.layout == LayoutMode::EraLane {
             for (i, color) in COLORS.iter().enumerate() {
@@ -645,9 +651,9 @@ impl CanvasView {
         // opacity into a solid orange field. Every two-hop curve stays included.
         for matching in [true, false] {
             self.ctx.set_global_alpha(
-                (0.04 + 0.015 * micro_blend) * if active || !matching { 0.05 } else { 1.0 },
+                (0.006 + 0.003 * micro_blend) * if active || !matching { 0.05 } else { 1.0 },
             );
-            self.ctx.set_stroke_style_str("#b04f00");
+            self.ctx.set_stroke_style_str("#21648b");
             self.ctx.set_line_width(0.5);
             self.ctx.begin_path();
             for &i in &self.foreground_edges {
@@ -686,7 +692,7 @@ impl CanvasView {
                         1.0
                     },
             );
-            self.ctx.set_stroke_style_str("#b04f00");
+            self.ctx.set_stroke_style_str("#21648b");
             self.ctx.set_line_width(0.65 + 0.85 * e.weight);
             self.ctx.begin_path();
             if self.stroke_edge(i, true) {
@@ -731,7 +737,7 @@ impl CanvasView {
         for i in highlighted {
             let e = &self.graph.links[i];
             self.ctx
-                .set_stroke_style_str(if e.on_path { "#176896" } else { "#b04f00" });
+                .set_stroke_style_str(if e.on_path { "#176896" } else { "#21648b" });
             self.ctx.set_line_width(2.2);
             self.ctx.begin_path();
             if self.stroke_edge(i, true) && e.on_path {
@@ -768,7 +774,8 @@ impl CanvasView {
                 0.05
             } else {
                 match self.hop.get(&n.id) {
-                    Some(2) => 0.55,
+                    Some(2) => 0.18,
+                    None if !self.selected.is_empty() => 0.12,
                     _ => 1.0,
                 }
             };
@@ -791,11 +798,17 @@ impl CanvasView {
                 .set_fill_style_str(if self.graph.path.contains(&n.id) {
                     "#176896"
                 } else if n.id == self.selected {
-                    "#b04f00"
+                    "#21648b"
                 } else {
-                    n.debut_season
-                        .map(|y| COLORS[(y.saturating_sub(1940) / 10).min(7) as usize])
-                        .unwrap_or("#94a3b8")
+                    if self.layout == LayoutMode::EraLane {
+                        n.debut_season
+                            .map(|y| COLORS[(y.saturating_sub(1940) / 10).min(7) as usize])
+                            .unwrap_or("#84969b")
+                    } else if self.hop.get(&n.id) == Some(&1) {
+                        "#4b7e98"
+                    } else {
+                        "#84969b"
+                    }
                 });
             self.ctx.begin_path();
             let _ = self
@@ -809,6 +822,9 @@ impl CanvasView {
             ".camera-controls",
             "#graph-minimap",
             "#minimap-toggle",
+            ".map-heading",
+            ".map-legend",
+            "#graph-help:not([hidden])",
             "#edge-evidence-drawer[open]",
         ] {
             if let Ok(Some(overlay)) = self.document.query_selector(selector) {
@@ -874,6 +890,13 @@ impl CanvasView {
                 continue;
             }
             let important = self.important(i);
+            if !important
+                && !self.selected.is_empty()
+                && self.hop.get(&n.id) != Some(&1)
+                && zoom_tier != ZoomTier::Macro
+            {
+                continue;
+            }
             if !important && (zoom_tier == ZoomTier::Macro && !self.landmarks[i]) {
                 continue;
             }
@@ -962,7 +985,8 @@ impl CanvasView {
                 }
             }
             if important || (zoom_tier == ZoomTier::Macro && self.landmarks[label.index]) {
-                self.ctx.set_fill_style_str("#172e41");
+                self.ctx
+                    .set_fill_style_str(if important { "#21648b" } else { "#fffefa" });
                 self.ctx.begin_path();
                 let _ = self.ctx.round_rect_with_f64(
                     label.bounds.left,
@@ -972,14 +996,12 @@ impl CanvasView {
                     6.0,
                 );
                 self.ctx.fill();
-                self.ctx.set_stroke_style_str(
-                    n.debut_season
-                        .map(|v| COLORS[(v.saturating_sub(1940) / 10).min(7) as usize])
-                        .unwrap_or("#94a3b8"),
-                );
+                self.ctx
+                    .set_stroke_style_str(if important { "#21648b" } else { "#cbd3cf" });
                 self.ctx.set_line_width(1.5);
                 self.ctx.stroke();
-                self.ctx.set_fill_style_str("#ffffff");
+                self.ctx
+                    .set_fill_style_str(if important { "#ffffff" } else { "#3c505b" });
             } else {
                 self.ctx.set_stroke_style_str("#ffffff");
                 self.ctx.set_line_width(3.0);
@@ -1018,6 +1040,8 @@ impl CanvasView {
                 .unwrap_or_default()
         );
         if self.transition.is_none()
+            && self.camera_move.is_none()
+            && !self.physics.is_active()
             && self.pointers.is_empty()
             && self.status_text.as_deref() != Some(text.as_str())
         {
@@ -1096,6 +1120,31 @@ impl CanvasView {
                 format!("{:.2}", js_sys::Date::now() - started),
             ),
             ("data-ready", "true".into()),
+            (
+                "data-scope",
+                if self.ego { "selected" } else { "full" }.into(),
+            ),
+            (
+                "data-physics",
+                if self.physics.is_active() {
+                    "active"
+                } else {
+                    "settled"
+                }
+                .into(),
+            ),
+            (
+                "data-transition",
+                if self.transition.is_some()
+                    || self.camera_move.is_some()
+                    || self.physics.is_active()
+                {
+                    "running"
+                } else {
+                    "settled"
+                }
+                .into(),
+            ),
             ("data-zoom", format!("{:.6}", self.camera.scale)),
             ("data-pan-x", format!("{:.2}", self.camera.x)),
             ("data-pan-y", format!("{:.2}", self.camera.y)),
@@ -1218,7 +1267,7 @@ impl CanvasView {
             mctx.set_fill_style_str(if self.graph.path.contains(&self.graph.nodes[i].id) {
                 "#176896"
             } else if self.graph.nodes[i].id == self.selected {
-                "#b04f00"
+                "#21648b"
             } else {
                 "#23405a"
             });
@@ -1235,7 +1284,7 @@ impl CanvasView {
         let vy0 = self.viewport.world((0.0, 0.0), self.camera).1;
         let vx1 = (1000.0 - self.camera.x) / self.camera.scale;
         let vy1 = self.viewport.world((1000.0, 600.0), self.camera).1;
-        mctx.set_stroke_style_str("#b04f00");
+        mctx.set_stroke_style_str("#21648b");
         mctx.set_line_width(1.5);
         mctx.stroke_rect(
             (vx0 - lo_x) / span_x * (mw - 4.0) + 2.0,
@@ -1284,20 +1333,20 @@ pub fn start() -> Result<(), JsValue> {
         .map(|w| w.device_pixel_ratio())
         .unwrap_or(1.0)
         .max(1.0);
-    canvas.set_width((1000.0 * dpr) as u32);
-    canvas.set_height((600.0 * dpr) as u32);
+    let bounds = canvas.get_bounding_client_rect();
+    canvas.set_width((bounds.width() * dpr) as u32);
+    canvas.set_height((bounds.height() * dpr) as u32);
     let ctx = canvas
         .get_context("2d")?
         .ok_or("2d canvas unavailable")?
         .dyn_into::<CanvasRenderingContext2d>()?;
-    ctx.scale(dpr, dpr)?;
-    // Initial coordinates come from the shared layout engine: the default
-    // era-lane placement is byte-identical to the long-standing canvas
-    // formula, so existing screenshots and hit-testing are preserved.
+    ctx.scale(dpr * bounds.width() / 1000.0, dpr * bounds.height() / 600.0)?;
+    // The relationship layout is computed once. Selection and camera changes
+    // never recompute it; local drag springs return to these coordinates.
     let points: Vec<(f64, f64)> = compute_layout(
         &graph.nodes,
         &graph.links,
-        LayoutMode::EraLane,
+        LayoutMode::Force,
         &graph.focus,
         &graph.path,
         graph.full_network,
@@ -1351,7 +1400,11 @@ pub fn start() -> Result<(), JsValue> {
         canvas: canvas.clone(),
         ctx,
         graph,
-        layout: LayoutMode::EraLane,
+        layout: LayoutMode::Force,
+        physics: crate::physics::DragPhysics::new(&points),
+        physics_time: 0.0,
+        camera_move: None,
+        overview_camera: None,
         points,
         indexed_links,
         adjacency,
@@ -1408,6 +1461,9 @@ pub fn start() -> Result<(), JsValue> {
             v.fit();
         }
         v.select(&selected);
+        if !selected.is_empty() {
+            v.focus_player();
+        }
         if !v.graph.path.is_empty() {
             let points: Vec<_> = v.graph.path.iter().map(|id| v.at(id)).collect();
             v.frame_points(&points);
@@ -1464,18 +1520,17 @@ pub fn start() -> Result<(), JsValue> {
                 let mut v = state.borrow_mut();
                 v.settle_layout();
                 if id == "fit-network" {
-                    v.ego = false;
-                    v.fit_network();
+                    v.reset_view();
                 } else {
-                    v.focus_player();
+                    v.locate_selection();
                 }
                 v.request_redraw();
+                drop(v);
+                explorer::animate(state.clone());
             })?;
         }
     }
-    // G6-style layout switcher: recompute coordinates through the shared
-    // layout engine, then refit. Buttons are optional; the default era-lane
-    // view renders when the page ships no switcher.
+    // Explicit advanced layout changes recompute the shared layout and refit.
     for (id, mode) in [
         ("layout-era", LayoutMode::EraLane),
         ("layout-concentric", LayoutMode::Concentric),
@@ -1485,6 +1540,12 @@ pub fn start() -> Result<(), JsValue> {
             let state = view.clone();
             listen(element.as_ref(), "click", move |_| {
                 explorer::change_layout(state.clone(), mode);
+                let _ = state
+                    .borrow()
+                    .document
+                    .get_element_by_id("advanced-controls")
+                    .unwrap()
+                    .remove_attribute("open");
             })?;
         }
     }
@@ -1536,6 +1597,9 @@ pub fn start() -> Result<(), JsValue> {
                 return;
             }
             let r = map_copy.get_bounding_client_rect();
+            if r.width() <= 0.0 || r.height() <= 0.0 {
+                return;
+            }
             let mut v = state.borrow_mut();
             let fx = ((f64::from(e.client_x()) - r.left()) / r.width() * 200.0 - 2.0) / 196.0;
             let fy = ((f64::from(e.client_y()) - r.top()) / r.height() * 120.0 - 2.0) / 116.0;
@@ -1547,6 +1611,7 @@ pub fn start() -> Result<(), JsValue> {
         })?;
     }
     explorer::install(view.clone())?;
+    workspace::install(view.clone())?;
     let state = view.clone();
     listen(canvas.as_ref(), "pointerdown", move |event| {
         let e = event.dyn_into::<PointerEvent>().unwrap();
@@ -1569,6 +1634,7 @@ pub fn start() -> Result<(), JsValue> {
             v.drag = Some((p.0, p.1, v.camera.x, v.camera.y, false));
         }
         if v.pointers.len() == 2 {
+            v.physics.release();
             v.press_target = None;
             let ps: Vec<_> = v.pointers.values().copied().collect();
             let centroid = ((ps[0].0 + ps[1].0) / 2.0, (ps[0].1 + ps[1].1) / 2.0);
@@ -1603,12 +1669,29 @@ pub fn start() -> Result<(), JsValue> {
                 let moved = moved || (p.0 - sx).hypot(p.1 - sy) > 5.0;
                 v.drag = Some((sx, sy, ox, oy, moved));
                 if moved {
-                    v.camera.x = ox + p.0 - sx;
-                    v.camera.y = oy + p.1 - sy;
+                    if let Some(HitTarget::Node(i)) = v.press_target {
+                        let world = v.viewport.world(p, v.camera);
+                        let CanvasView {
+                            physics,
+                            points,
+                            adjacency,
+                            ..
+                        } = &mut *v;
+                        if !physics.is_held() {
+                            physics.begin(i, adjacency);
+                        }
+                        physics.drag_to(world, points);
+                        v.rebuild_spatial();
+                    } else {
+                        v.camera.x = ox + p.0 - sx;
+                        v.camera.y = oy + p.1 - sy;
+                    }
                     v.gesture_moved = true;
                 }
             }
             v.draw();
+            drop(v);
+            explorer::animate(state.clone());
         } else if v.pointers.is_empty() {
             v.touch_input = false;
             let hovered = v.nearest_node(p);
@@ -1633,6 +1716,7 @@ pub fn start() -> Result<(), JsValue> {
                 return;
             }
             let old = v.selected.clone();
+            v.physics.release();
             if v.pointers.is_empty() {
                 if name == "pointerup"
                     && !v.gesture_moved
@@ -1655,9 +1739,13 @@ pub fn start() -> Result<(), JsValue> {
             let changed = v.selected != old;
             drop(v);
             if changed {
-                explorer::request_chain(state.clone());
-                explorer::animate(state.clone());
+                let mut v = state.borrow_mut();
+                v.graph.target.clear();
+                explorer::set_picker(&v.document, "graph-target", "", "");
+                v.sync_pair_url();
+                v.draw();
             }
+            explorer::animate(state.clone());
         })?;
     }
     let state = view.clone();
@@ -1673,6 +1761,7 @@ pub fn start() -> Result<(), JsValue> {
     listen(web_sys::window().unwrap().as_ref(), "resize", move |_| {
         let mut v = state.borrow_mut();
         let ids: Vec<_> = v.pointers.drain().map(|(id, _)| id).collect();
+        v.physics.release();
         v.drag = None;
         v.press_target = None;
         v.pinch = None;
@@ -1682,9 +1771,17 @@ pub fn start() -> Result<(), JsValue> {
             let _ = v.canvas.release_pointer_capture(id);
         }
         let dpr = web_sys::window().unwrap().device_pixel_ratio().max(1.0);
-        v.canvas.set_width((1000.0 * dpr) as u32);
-        v.canvas.set_height((600.0 * dpr) as u32);
-        let _ = v.ctx.set_transform(dpr, 0.0, 0.0, dpr, 0.0, 0.0);
+        let bounds = v.canvas.get_bounding_client_rect();
+        v.canvas.set_width((bounds.width() * dpr) as u32);
+        v.canvas.set_height((bounds.height() * dpr) as u32);
+        let _ = v.ctx.set_transform(
+            dpr * bounds.width() / 1000.0,
+            0.0,
+            0.0,
+            dpr * bounds.height() / 600.0,
+            0.0,
+            0.0,
+        );
         v.draw();
     })?;
     let state = view.clone();
@@ -1726,14 +1823,13 @@ pub fn start() -> Result<(), JsValue> {
             "ArrowDown" => v.camera.y -= 60.0,
             "+" | "=" => v.zoom(1.25, (500.0, 300.0)),
             "-" => v.zoom(0.8, (500.0, 300.0)),
-            "f" => {
-                v.ego = false;
-                v.fit_network();
-            }
+            "f" => v.reset_view(),
             _ => return,
         }
         e.prevent_default();
         v.request_redraw();
+        drop(v);
+        explorer::animate(state.clone());
     })?;
     Ok(())
 }
