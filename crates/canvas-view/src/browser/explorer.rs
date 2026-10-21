@@ -331,12 +331,10 @@ pub(super) fn request_chain(view: View) {
                     v.settle_layout();
                 }
                 let points: Vec<_> = result.path.iter().map(|id| v.at(id)).collect();
-                if v.layout != LayoutMode::Orbit {
-                    if v.edge.is_none() {
-                        let from = v.camera;
-                        v.frame_points(&points);
-                        v.animate_camera_from(from);
-                    }
+                if v.layout != LayoutMode::Orbit && v.edge.is_none() {
+                    let from = v.camera;
+                    v.frame_points(&points);
+                    v.animate_camera_from(from);
                 }
                 let _ = element(&v.document, "connection-controls").set_attribute("open", "");
             }
