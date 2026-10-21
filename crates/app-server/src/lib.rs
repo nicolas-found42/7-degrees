@@ -12,6 +12,7 @@ pub mod report_data;
 pub mod resolution;
 pub mod search;
 mod semantic_policy;
+pub mod telemetry;
 mod ui;
 
 use axum::{
@@ -19,11 +20,12 @@ use axum::{
     extract::{Path, Query, State},
     http::{StatusCode, Uri},
     response::{IntoResponse, Json, Response},
-    routing::get,
+    routing::{get, post},
 };
 use serde::Deserialize;
 
 use api_types::ErrorResponse;
+use telemetry::{SemanticLog, SnapshotIdentity, Telemetry};
 
 pub use jev::JevHandle;
 
@@ -49,6 +51,14 @@ pub struct AppState {
     reports: Option<std::sync::Arc<report_data::ReportMetadata>>,
     canvas_assets: graph_view::CanvasAssets,
     visual_links: std::sync::Arc<Vec<canvas_view::GraphLink>>,
+    /// What this process served, and what the semantic provider did.
+    telemetry: std::sync::Arc<Telemetry>,
+    /// The bounded judgment history of the Jev handle.
+    semantic_log: SemanticLog,
+    /// The report directory the snapshot was loaded from, when it was.
+    report_root: Option<std::path::PathBuf>,
+    /// The identity of the loaded snapshot; computed once, on first use.
+    snapshot: std::sync::Arc<std::sync::OnceLock<SnapshotIdentity>>,
 }
 
 /// The router with the fixture graph preloaded and Jev deterministically
@@ -73,6 +83,7 @@ pub fn app_with_jev_and_canvas_assets(
 ) -> Router {
     let graph = fixture_data::fixture_graph();
     let visual_links = std::sync::Arc::new(graph_view::visual_links(&graph));
+    let semantic_log = jev.semantic_log();
     let state = AppState {
         discovery: Default::default(),
         graph: std::sync::Arc::new(graph),
@@ -80,11 +91,16 @@ pub fn app_with_jev_and_canvas_assets(
         jev,
         reports: None,
         canvas_assets,
+        telemetry: std::sync::Arc::new(Telemetry::new()),
+        semantic_log,
+        report_root: None,
+        snapshot: Default::default(),
     };
     app(state)
 }
 
 fn app(state: AppState) -> Router {
+    let telemetry = state.telemetry.clone();
     Router::new()
         .route("/edge", get(provenance::page))
         .route("/sources/tenure", get(provenance::source_record))
@@ -111,8 +127,34 @@ fn app(state: AppState) -> Router {
         .route("/api/resolve", get(resolution::api))
         .route("/api/rank", get(ranking::api))
         .route("/api/semantic-status", get(semantic_status))
+        .route("/api/diagnostics", get(diagnostics))
+        .route("/api/diagnostics/client", post(diagnostics_client))
         .route("/style.css", get(style_css))
         .fallback(not_found)
+        // Every request is recorded: the method, the path without its query
+        // string, the status and the duration. No header, body or query
+        // string is ever recorded.
+        .layer(axum::middleware::from_fn(
+            move |request: axum::extract::Request, next: axum::middleware::Next| {
+                let telemetry = telemetry.clone();
+                async move {
+                    let started = std::time::Instant::now();
+                    let method = request.method().clone();
+                    let path = request.uri().path().to_string();
+                    let request_id = telemetry.next_request_id();
+                    let response = next.run(request).await;
+                    telemetry.record_request(telemetry::RequestRecord {
+                        ts: telemetry::now_rfc3339(),
+                        request_id,
+                        method: method.as_str().to_string(),
+                        path,
+                        status: response.status().as_u16(),
+                        duration_ms: started.elapsed().as_secs_f64() * 1000.0,
+                    });
+                    response
+                }
+            },
+        ))
         .with_state(state)
 }
 
@@ -147,6 +189,7 @@ pub fn app_with_report_data_and_canvas_assets(
 ) -> Result<Router, String> {
     let (graph, reports) = report_data::load(root.as_ref())?;
     let visual_links = std::sync::Arc::new(graph_view::visual_links(&graph));
+    let semantic_log = jev.semantic_log();
     Ok(app(AppState {
         discovery: Default::default(),
         visual_links,
@@ -154,6 +197,10 @@ pub fn app_with_report_data_and_canvas_assets(
         jev,
         reports: Some(std::sync::Arc::new(reports)),
         canvas_assets,
+        telemetry: std::sync::Arc::new(Telemetry::new()),
+        semantic_log,
+        report_root: Some(root.as_ref().to_path_buf()),
+        snapshot: Default::default(),
     }))
 }
 
@@ -524,10 +571,138 @@ async fn players(State(state): State<AppState>) -> Json<serde_json::Value> {
 /// material, env var names, or provider identifiers.
 async fn semantic_status(State(state): State<AppState>) -> Json<serde_json::Value> {
     let (available, reason) = state.jev.status();
+    let events = state.semantic_log.recent();
+    let last = events.last();
     Json(serde_json::json!({
         "available": available,
         "reason": reason,
+        // The newest judgment and the cause of its failure: the tuple alone
+        // cannot tell an outage apart from a missing provider.
+        "last_outcome": last.map(|event| event.outcome),
+        "last_failure": last.and_then(|event| event.failure.clone()),
+        "judgments": events.len(),
     }))
+}
+
+/// The runtime identity of this process: the build it answers for, the
+/// snapshot it answers from, the requests it served, and what the semantic
+/// provider did.
+///
+/// The body is safe to hand to a browser: it carries no credential
+/// material, no provider receipt, no request headers and no query strings.
+async fn diagnostics(State(state): State<AppState>) -> Json<serde_json::Value> {
+    let (available, reason) = state.jev.status();
+    let snapshot = state.snapshot.get_or_init(|| snapshot_identity(&state));
+    Json(serde_json::json!({
+        "build": {
+            "commit": telemetry::build_commit(),
+            "dirty": telemetry::build_dirty(),
+            "mode": if state.reports.is_some() { "reports" } else { "fixture" },
+        },
+        "started_at": state.telemetry.started_at(),
+        "uptime_seconds": state.telemetry.uptime_seconds(),
+        "requests": {
+            "total": state.telemetry.total_requests(),
+            "recent": state.telemetry.recent_requests(),
+        },
+        "snapshot": snapshot,
+        "semantic": {
+            "state": reason,
+            "available": available,
+            "events": state
+                .semantic_log
+                .recent()
+                .iter()
+                .map(|event| event.public_view())
+                .collect::<Vec<_>>(),
+        },
+        "client_reports": state.telemetry.recent_client_reports(),
+    }))
+}
+
+/// The identity of the loaded snapshot: the graph it answers from and the
+/// files that graph was built from.
+fn snapshot_identity(state: &AppState) -> SnapshotIdentity {
+    let sources = state
+        .report_root
+        .as_deref()
+        .map(report_data::source_files)
+        .unwrap_or_default();
+    let assets = state.canvas_assets.files();
+    SnapshotIdentity {
+        players: state.graph.roster.players.len(),
+        edges: state.graph.edge_count(),
+        sources: sources
+            .iter()
+            .filter_map(|(name, path)| telemetry::digest_file(path, name))
+            .collect(),
+        assets: assets
+            .iter()
+            .filter_map(|(name, path)| telemetry::digest_file(path, name))
+            .collect(),
+    }
+}
+
+/// One client-side failure report, relayed by the canvas.
+#[derive(Deserialize)]
+struct ClientReportBody {
+    #[serde(default)]
+    kind: String,
+    #[serde(default)]
+    message: String,
+    #[serde(default)]
+    url: String,
+    #[serde(default)]
+    context: serde_json::Value,
+}
+
+/// The longest client message kept; a report describes a failure, not a log.
+const CLIENT_MESSAGE_LIMIT: usize = 500;
+/// The largest client context kept, in serialized bytes.
+const CLIENT_CONTEXT_LIMIT: usize = 4096;
+
+/// Receives a client-side failure report and records it.
+///
+/// The report is stored in the bounded history and in the operator's log
+/// file; the caller only learns that the report was accepted.
+async fn diagnostics_client(
+    State(state): State<AppState>,
+    Json(body): Json<ClientReportBody>,
+) -> Response {
+    let report = telemetry::ClientReport {
+        ts: telemetry::now_rfc3339(),
+        kind: bounded(&body.kind, CLIENT_MESSAGE_LIMIT),
+        message: bounded(&body.message, CLIENT_MESSAGE_LIMIT),
+        // The URL without its query string: query strings carry user text.
+        url: body.url.split('?').next().unwrap_or_default().to_string(),
+        context: bounded_context(body.context),
+    };
+    state.telemetry.record_client_report(report);
+    (
+        StatusCode::ACCEPTED,
+        Json(serde_json::json!({"accepted": true})),
+    )
+        .into_response()
+}
+
+/// Trims one client string to its limit.
+fn bounded(text: &str, limit: usize) -> String {
+    if text.chars().count() <= limit {
+        return text.to_string();
+    }
+    let mut trimmed: String = text.chars().take(limit).collect();
+    trimmed.push('…');
+    trimmed
+}
+
+/// Keeps a client context small: an oversized context is replaced by its
+/// size rather than stored.
+fn bounded_context(context: serde_json::Value) -> serde_json::Value {
+    let text = serde_json::to_string(&context).unwrap_or_default();
+    if text.len() <= CLIENT_CONTEXT_LIMIT {
+        return context;
+    }
+    serde_json::json!({"truncated": true, "bytes": text.len()})
 }
 
 /// The UI stylesheet, authored in the server crate and served as a static

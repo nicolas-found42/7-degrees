@@ -23,7 +23,7 @@
 //! [`JevOutcome::Unavailable`](jev_client::JevOutcome::Unavailable).
 
 use crate::{
-    JevAnswer, JevClient, JevConfig, JevOutcome, JevQuestion, JevRequest, JevTransport,
+    JevAnswer, JevClient, JevConfig, JevFailure, JevOutcome, JevQuestion, JevRequest, JevTransport,
     MAX_QUESTIONS, MAX_STATE_BYTES,
 };
 use log::warn;
@@ -121,7 +121,7 @@ impl HttpJevTransport {
         .await
         .unwrap_or_else(|_| {
             warn!("Jev provider call deadline exceeded");
-            crate::JevEvaluation::unavailable()
+            crate::JevEvaluation::failed(JevFailure::DeadlineExceeded)
         });
         evaluation.elapsed_ms = start.elapsed().as_secs_f64() * 1000.0;
         evaluation
@@ -137,13 +137,13 @@ impl HttpJevTransport {
             .map(|bytes| bytes.len())
             .unwrap_or(usize::MAX);
         if state_bytes > MAX_STATE_BYTES || request.questions.is_empty() {
-            return crate::JevEvaluation::unavailable();
+            return crate::JevEvaluation::failed(JevFailure::PayloadRejected);
         }
         if request.questions.len() > MAX_QUESTIONS {
-            return crate::JevEvaluation::unavailable();
+            return crate::JevEvaluation::failed(JevFailure::PayloadRejected);
         }
         let Ok(state) = serde_json::to_value(&request.state) else {
-            return crate::JevEvaluation::unavailable();
+            return crate::JevEvaluation::failed(JevFailure::PayloadRejected);
         };
         let url = format!("{}/v1/systemone", config.base_url.trim_end_matches('/'));
         let questions = wire_questions(request);
@@ -173,19 +173,20 @@ impl HttpJevTransport {
                     warn!("Jev provider retryable status; one retry remaining");
                 }
                 Ok(response) => {
-                    warn!("Jev provider returned HTTP {}", response.status().as_u16());
-                    return crate::JevEvaluation::unavailable();
+                    let status = response.status().as_u16();
+                    warn!("Jev provider returned HTTP {status}");
+                    return crate::JevEvaluation::failed(JevFailure::ProviderHttpStatus(status));
                 }
                 Err(_) if index == 0 => {
                     warn!("Jev provider unreachable; one retry remaining");
                 }
                 Err(_) => {
                     warn!("Jev provider unreachable after one retry");
-                    return crate::JevEvaluation::unavailable();
+                    return crate::JevEvaluation::failed(JevFailure::ProviderUnreachable);
                 }
             }
         }
-        crate::JevEvaluation::unavailable()
+        crate::JevEvaluation::failed(JevFailure::ProviderUnreachable)
     }
 }
 
@@ -193,13 +194,13 @@ impl HttpJevTransport {
 const MAX_RESPONSE_BYTES: usize = 1024 * 1024;
 
 /// Reads the body in chunks, refusing a declared or streamed size over the cap.
-async fn read_capped_body(mut response: reqwest::Response) -> Option<String> {
+async fn read_capped_body(mut response: reqwest::Response) -> Result<String, JevFailure> {
     if response
         .content_length()
         .is_some_and(|length| length > MAX_RESPONSE_BYTES as u64)
     {
         warn!("Jev provider reply exceeds the size limit");
-        return None;
+        return Err(JevFailure::ReplyTooLarge);
     }
     let mut body = Vec::new();
     loop {
@@ -207,7 +208,7 @@ async fn read_capped_body(mut response: reqwest::Response) -> Option<String> {
             Ok(Some(chunk)) => {
                 if body.len() + chunk.len() > MAX_RESPONSE_BYTES {
                     warn!("Jev provider reply exceeds the size limit");
-                    return None;
+                    return Err(JevFailure::ReplyTooLarge);
                 }
                 body.extend_from_slice(&chunk);
             }
@@ -215,16 +216,17 @@ async fn read_capped_body(mut response: reqwest::Response) -> Option<String> {
             // A stream that fails midway is an incomplete reply, never a clean end.
             Err(_) => {
                 warn!("Jev provider reply ended before it was complete");
-                return None;
+                return Err(JevFailure::ReplyIncomplete);
             }
         }
     }
-    String::from_utf8(body).ok()
+    String::from_utf8(body).map_err(|_| JevFailure::MalformedEnvelope)
 }
 
 async fn parse_answers(response: reqwest::Response) -> crate::JevEvaluation {
-    let Some(text) = read_capped_body(response).await else {
-        return crate::JevEvaluation::unavailable();
+    let text = match read_capped_body(response).await {
+        Ok(text) => text,
+        Err(failure) => return crate::JevEvaluation::failed(failure),
     };
     let outcome = parse_answers_from_str(&text);
     let metadata = serde_json::from_str::<Value>(&text)
@@ -242,10 +244,12 @@ async fn parse_answers(response: reqwest::Response) -> crate::JevEvaluation {
                 .filter(|c| c.is_finite() && *c >= 0.0),
         })
         .filter(|m| m != &crate::JevMetadata::default());
+    let failure = (!outcome.is_available()).then_some(JevFailure::MalformedEnvelope);
     crate::JevEvaluation {
         outcome,
         metadata,
         elapsed_ms: 0.0,
+        failure,
     }
 }
 

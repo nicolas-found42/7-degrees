@@ -183,6 +183,48 @@ impl JevOutcome {
     }
 }
 
+/// Why one judgment could not be answered.
+///
+/// The provider seam fails soft, and a soft failure without a reason is
+/// undiagnosable: "the semantic feature was unavailable" cannot be told apart
+/// from "the provider was unreachable" or "the key was rejected". Every
+/// failure path therefore names its cause; the codes are stable so a status
+/// surface and a log can be compared across runs.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum JevFailure {
+    /// No provider is configured: the judgment was never attempted.
+    Unconfigured,
+    /// The call exceeded its total deadline.
+    DeadlineExceeded,
+    /// The provider could not be reached.
+    ProviderUnreachable,
+    /// The provider answered with a non-success HTTP status.
+    ProviderHttpStatus(u16),
+    /// The provider's reply was larger than the accepted cap.
+    ReplyTooLarge,
+    /// The provider's reply ended before it was complete.
+    ReplyIncomplete,
+    /// The provider's reply did not match the documented envelope.
+    MalformedEnvelope,
+    /// The outbound payload violated the guardrails before it was sent.
+    PayloadRejected,
+}
+impl JevFailure {
+    /// The stable machine-readable code for this failure.
+    pub fn code(&self) -> String {
+        match self {
+            JevFailure::Unconfigured => "unconfigured".to_string(),
+            JevFailure::DeadlineExceeded => "deadline_exceeded".to_string(),
+            JevFailure::ProviderUnreachable => "provider_unreachable".to_string(),
+            JevFailure::ProviderHttpStatus(status) => format!("provider_http_status_{status}"),
+            JevFailure::ReplyTooLarge => "reply_too_large".to_string(),
+            JevFailure::ReplyIncomplete => "reply_incomplete".to_string(),
+            JevFailure::MalformedEnvelope => "malformed_envelope".to_string(),
+            JevFailure::PayloadRejected => "payload_rejected".to_string(),
+        }
+    }
+}
+
 /// Optional provider receipt tied to one call; missing values remain unknown.
 #[derive(Clone, Debug, Default, PartialEq, serde::Serialize)]
 pub struct JevMetadata {
@@ -199,10 +241,22 @@ pub struct JevEvaluation {
     pub outcome: JevOutcome,
     pub metadata: Option<JevMetadata>,
     pub elapsed_ms: f64,
+    /// Why the call failed, when it did. `None` on a successful judgment and
+    /// on failures whose cause the transport could not name.
+    pub failure: Option<JevFailure>,
 }
 impl JevEvaluation {
     pub fn unavailable() -> Self {
         Self::from(JevOutcome::Unavailable)
+    }
+    /// An unavailable judgment with a named cause.
+    pub fn failed(failure: JevFailure) -> Self {
+        Self {
+            outcome: JevOutcome::Unavailable,
+            metadata: None,
+            elapsed_ms: 0.0,
+            failure: Some(failure),
+        }
     }
 }
 impl From<JevOutcome> for JevEvaluation {
@@ -211,6 +265,7 @@ impl From<JevOutcome> for JevEvaluation {
             outcome,
             metadata: None,
             elapsed_ms: 0.0,
+            failure: None,
         }
     }
 }

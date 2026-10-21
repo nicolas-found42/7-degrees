@@ -1,6 +1,7 @@
 //! Enhanced controls use the existing deterministic HTTP boundaries.
 use super::*;
 use api_types::ExplorerConnection;
+use serde_json::json;
 use wasm_bindgen_futures::{JsFuture, spawn_local};
 use web_sys::{
     HtmlDialogElement, HtmlElement, HtmlInputElement, HtmlSelectElement, MouseEvent, Response,
@@ -21,16 +22,57 @@ pub(super) fn encoded(text: &str) -> String {
     js_sys::encode_uri_component(text).as_string().unwrap()
 }
 async fn fetch_text(url: &str) -> Result<String, JsValue> {
-    let response = JsFuture::from(web_sys::window().unwrap().fetch_with_str(url))
-        .await?
-        .dyn_into::<Response>()?;
+    let window = web_sys::window().unwrap();
+    let response = match JsFuture::from(window.fetch_with_str(url)).await {
+        Ok(response) => response.dyn_into::<Response>()?,
+        Err(error) => {
+            diagnostics::report(
+                "fetch_failed",
+                &diagnostics::describe(&error),
+                url,
+                json!({}),
+            );
+            return Err(error);
+        }
+    };
     if !response.ok() {
-        return Err(JsValue::from_str(&format!("HTTP {}", response.status())));
+        let status = response.status();
+        diagnostics::report(
+            "fetch_failed",
+            &format!("HTTP {status}"),
+            url,
+            json!({ "status": status }),
+        );
+        return Err(JsValue::from_str(&format!("HTTP {status}")));
     }
-    JsFuture::from(response.text()?)
-        .await?
-        .as_string()
-        .ok_or_else(|| JsValue::from_str("response text unavailable"))
+    match JsFuture::from(response.text()?).await {
+        Ok(text) => text.as_string().ok_or_else(|| {
+            diagnostics::report(
+                "invalid_response",
+                "response text unavailable",
+                url,
+                json!({}),
+            );
+            JsValue::from_str("response text unavailable")
+        }),
+        Err(error) => {
+            diagnostics::report(
+                "fetch_failed",
+                &diagnostics::describe(&error),
+                url,
+                json!({}),
+            );
+            Err(error)
+        }
+    }
+}
+
+/// Reads one JSON answer, reporting a response the canvas cannot read.
+fn parse_json(text: &str, url: &str) -> Result<serde_json::Value, JsValue> {
+    serde_json::from_str::<serde_json::Value>(text).map_err(|error| {
+        diagnostics::report("invalid_response", &error.to_string(), url, json!({}));
+        JsValue::from_str(&error.to_string())
+    })
 }
 pub(super) fn set_picker(document: &Document, id: &str, value: &str, name: &str) {
     let picker = element(document, id);
@@ -781,10 +823,7 @@ fn install_picker(view: View, id: &'static str) -> Result<(), JsValue> {
             let state = state.clone();
             let input = input.clone();
             spawn_local(async move {
-                let answer = fetch_text(&url).await.and_then(|s| {
-                    serde_json::from_str::<serde_json::Value>(&s)
-                        .map_err(|e| JsValue::from_str(&e.to_string()))
-                });
+                let answer = fetch_text(&url).await.and_then(|s| parse_json(&s, &url));
                 let mut s = state.borrow_mut();
                 if s.generation != generation {
                     return;
@@ -1419,10 +1458,9 @@ fn install_discovery(view: View) -> Result<(), JsValue> {
             let generation = generation.clone();
             let doc = doc.clone();
             spawn_local(async move {
-                let answer = fetch_text("/api/discovery").await.and_then(|text| {
-                    serde_json::from_str::<serde_json::Value>(&text)
-                        .map_err(|e| JsValue::from_str(&e.to_string()))
-                });
+                let answer = fetch_text("/api/discovery")
+                    .await
+                    .and_then(|text| parse_json(&text, "/api/discovery"));
                 if *generation.borrow() != ticket {
                     return;
                 }

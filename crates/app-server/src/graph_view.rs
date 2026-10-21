@@ -37,6 +37,19 @@ impl CanvasAssets {
             Self::Unavailable => None,
         }
     }
+    /// The asset files this canvas serves, with their paths.
+    ///
+    /// The diagnostics surface names them with their content digests, so an
+    /// answer can be attributed to the exact bundle that produced it.
+    pub fn files(&self) -> Vec<(String, std::path::PathBuf)> {
+        match self.root() {
+            Some(root) => ["canvas_view.js", "canvas_view_bg.wasm"]
+                .into_iter()
+                .map(|name| (name.to_string(), root.join(name)))
+                .collect(),
+            None => Vec::new(),
+        }
+    }
     fn available(&self) -> bool {
         self.root().is_some_and(|root| {
             root.join("canvas_view.js").is_file() && root.join("canvas_view_bg.wasm").is_file()
@@ -333,6 +346,20 @@ pub struct ExplorerQuery {
     to: Option<String>,
 }
 
+/// The compact runtime identity of this answer: which build answers, and how
+/// large the snapshot it answers from is. The full identity, with the data
+/// digests, is served by `/api/diagnostics`.
+fn runtime_identity(state: &AppState) -> String {
+    let commit = crate::telemetry::build_commit();
+    let short: String = commit.chars().take(7).collect();
+    format!(
+        "Build <code>{}</code> · {} players · {} edges · <a href=\"/api/diagnostics\">diagnostics</a>",
+        ui::escape(&short),
+        state.graph.roster.players.len(),
+        state.graph.edge_count()
+    )
+}
+
 /// Whole-network explorer with a native GET-form fallback for exact chains.
 pub async fn page(State(state): State<AppState>, Query(query): Query<ExplorerQuery>) -> Response {
     let from = query.from.or(query.player).unwrap_or_default();
@@ -456,12 +483,13 @@ pub async fn page(State(state): State<AppState>, Query(query): Query<ExplorerQue
         StatusCode::OK,
         "7 Degrees — Graph",
         &format!(
-            r#"<header class="app-header"><a class="brand" href="/" aria-label="7 Degrees home"><span class="brand-mark">7</span><span>Degrees<span class="brand-caption">THE TEAMMATE NETWORK</span></span></a><p>Every career has a connection.</p><details class="about-network"><summary>About this network</summary><div><p class="coverage-warning">{coverage}</p>{semantic}<p>Lines represent evidenced NBA / BAA teammates, not friendship or time played together.</p></div></details></header>
+            r#"<header class="app-header"><a class="brand" href="/" aria-label="7 Degrees home"><span class="brand-mark">7</span><span>Degrees<span class="brand-caption">THE TEAMMATE NETWORK</span></span></a><p>Every career has a connection.</p><details class="about-network"><summary>About this network</summary><div><p class="coverage-warning">{coverage}</p>{semantic}<p class="runtime-identity">{identity}</p><p>Lines represent evidenced NBA / BAA teammates, not friendship or time played together.</p></div></details></header>
 <section class="graph-view" data-full-network="true" aria-label="Graph exploration"><div class="workspace-toolbar"><form method="get" action="/graph" id="pair-form"><div class="picker primary-picker"><label for="graph-player">Find a player</label><select name="from" id="graph-player"><option value="">Search the teammate network</option>{a}</select></div><button class="native-submit" type="submit">Find player</button></form><div class="scope-switch" role="group" aria-label="Network view"><button type="button" id="scope-full" aria-pressed="true">Full network</button><button type="button" id="ego-toggle" aria-pressed="false" disabled>Selected</button></div><details id="advanced-controls"><summary>Filters &amp; layout</summary><div class="advanced-panel"><h3>Layout</h3><div class="controls" aria-label="Graph layout">{layouts}</div><h3>Emphasize debut eras</h3><ul class="legend" aria-label="Debut era filters">{eras}</ul><h3>Selected player's franchises</h3><div id="franchise-filters" class="controls" aria-label="Selected player franchises"></div><button type="button" id="reset-filters">Reset filters</button><p id="filter-status" role="status">All eras emphasized; whole network visible.</p></div></details></div>
 <div class="workspace"><div class="canvas-container"><div class="map-heading"><span class="eyebrow">NBA / BAA · TEAMMATE ATLAS</span><h1>A league of connections.</h1><p id="scope-description">The whole network. Start with a name, or follow your curiosity.</p></div>{empty}<canvas id="graph-canvas" width="1000" height="600" tabindex="0" aria-label="Interactive teammate graph" aria-describedby="graph-help graph-selection">Use the player pickers to explore.</canvas><div class="map-legend"><span><i class="legend-player"></i>Player</span><span><i class="legend-line"></i>Teammates</span><span><i class="legend-selected"></i>Selected</span></div><button type="button" id="minimap-toggle" aria-expanded="false" aria-controls="graph-minimap">Overview map</button><canvas id="graph-minimap" width="200" height="120" aria-label="Network overview" hidden></canvas><div class="controls camera-controls">{camera}</div><div id="graph-help"><button type="button" id="dismiss-help" aria-label="Dismiss map guidance">×</button><strong>Dots are players. Lines connect teammates.</strong><span>Drag the background to pan; scroll to zoom. Drag a player to gently move their connections. Arrow keys pan; + / − zoom; F resets.</span></div><p id="graph-tooltip" role="status" hidden></p></div>
 <aside id="inspector" aria-label="Player and relationship details"><div id="player-content"><span class="eyebrow">YOUR STARTING POINT</span><div id="player-summary"><h2>Find your player.</h2><p>Explore the careers that cross paths. Search a name above or select a dot on the map.</p></div><p id="graph-selection" class="sr-only" role="status" data-player="{focus}">{selection}</p><div id="player-actions" hidden><button type="button" id="focus-player">Focus on player</button><button type="button" id="find-connection" class="primary">Find connection</button></div><details id="connection-controls"><summary>Connect two players</summary><div class="picker"><label for="graph-target">Connect to</label><select name="to" form="pair-form" id="graph-target"><option value="">Find another player</option>{b}</select></div><div class="controls"><button type="submit" form="pair-form" class="primary">Connect players</button><button type="button" id="clear-chain">Clear chain</button><button type="button" id="random-pair"{disabled}>Random pair</button></div></details><section id="graph-chain" aria-label="Shortest teammate chain" role="status">{chain}</section><section class="orbit-walk"><button type="button" id="orbit-explore">Explore from start player</button><p>Choose a teammate to build a shortest chain. Earlier players and their teammates are unavailable.</p><ol id="orbit-next"></ol></section><section class="orbit-discovery" aria-label="Network discoveries"><h3>Discover</h3><div class="controls"><button type="button" id="discover-longest">Longest 10</button><button type="button" id="discover-hubs">Most connected 10</button></div><p id="discovery-status" role="status">Choose a ranking to explore.</p><ol id="discovery-list"></ol></section><details id="teammates-details" hidden><summary>Teammates &amp; evidence</summary><div id="teammates-list"></div></details></div><dialog id="edge-evidence-drawer" aria-labelledby="drawer-title"><button type="button" id="close-evidence">Back to player</button><h2 id="drawer-title">Relationship evidence</h2><p id="drawer-status" role="status"></p><div id="drawer-content"></div></dialog><div class="inspector-note">One link. One shared team.<br>Decades of basketball history.</div></aside></div><footer class="workspace-footer"><p id="canvas-status" role="status" data-ready="false">{canvas_status}</p><span>7 DEGREES · EXPLORE THE GAME</span></footer><script type="application/json" id="graph-payload">{json}</script>{loader}</section>"#,
             semantic = ui::semantic_status_line(state.jev.status()),
             coverage = ui::escape(&payload.coverage),
+            identity = runtime_identity(&state),
             a = options(valid_from),
             b = options(&to),
             focus = ui::escape(valid_from),

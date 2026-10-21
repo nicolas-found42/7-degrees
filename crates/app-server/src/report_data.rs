@@ -91,6 +91,22 @@ struct TenureRow {
     departure_days: String,
 }
 
+/// The canonical data files this importer reads, in load order.
+///
+/// The diagnostics surface names them with their content digests, so an
+/// answer can be attributed to the exact snapshot that produced it.
+pub fn source_files(root: &Path) -> Vec<(String, std::path::PathBuf)> {
+    [
+        "t3/player-universe.csv",
+        "t4/tenures.csv",
+        "t4/appearance-counts.csv",
+        "t4/game-witnesses.csv",
+    ]
+    .into_iter()
+    .map(|relative| (relative.to_string(), root.join(relative)))
+    .collect()
+}
+
 pub fn load(root: &Path) -> Result<(TeammateGraph, ReportMetadata), String> {
     let players =
         std::fs::File::open(root.join("t3/player-universe.csv")).map_err(|e| e.to_string())?;
