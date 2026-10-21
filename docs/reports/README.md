@@ -26,3 +26,4 @@ fails when this index does not match the receipts in this tree.
 | `retro-improvements/full-chromium-checks` | full | passed | 2026-10-10 | `c3e2cc435a3c` | `docs/reports/retro-improvements/full-chromium-checks/manifest.json` |
 | `retro-improvements/raw-checks` | raw | passed | 2026-10-10 | `7f510961a8c0` | `docs/reports/retro-improvements/raw-checks/manifest.json` |
 | `retro-improvements/utility-checks` | custom | passed | 2026-10-10 | `7f510961a8c0` | `docs/reports/retro-improvements/utility-checks/manifest.json` |
+| `runtime-diagnostics-2026-10-21/checks` | full | passed | 2026-10-21 | `c6aed5fb1414` | `docs/reports/runtime-diagnostics-2026-10-21/checks/manifest.json` |

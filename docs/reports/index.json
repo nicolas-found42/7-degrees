@@ -210,6 +210,16 @@
       "outcome": "passed",
       "date": "2026-10-10",
       "checks": 1
+    },
+    {
+      "path": "docs/reports/runtime-diagnostics-2026-10-21/checks/manifest.json",
+      "run": "runtime-diagnostics-2026-10-21/checks",
+      "kind": "manifest",
+      "profile": "full",
+      "source_commit": "c6aed5fb141476466d9d86bfb38fc5d987372685",
+      "outcome": "passed",
+      "date": "2026-10-21",
+      "checks": 12
     }
   ]
 }

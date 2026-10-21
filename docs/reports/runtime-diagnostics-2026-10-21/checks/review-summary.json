@@ -1,0 +1,532 @@
+{
+  "schema_version": 1,
+  "profile": "full",
+  "source_commit": "c6aed5fb141476466d9d86bfb38fc5d987372685",
+  "working_tree_status": "",
+  "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "untracked_sha256": {},
+  "started_at": "2026-10-21T18:31:11.780076+00:00",
+  "completed": true,
+  "artifacts": [
+    {
+      "path": "runtime-diagnostics.artifacts/runtime-diagnostics.json",
+      "raw_sha256": "70b69294c66e0e601472934b697da060c21b0abf36d8c358f9d0cfdda9ad0947",
+      "published_sha256": "70b69294c66e0e601472934b697da060c21b0abf36d8c358f9d0cfdda9ad0947"
+    },
+    {
+      "path": "runtime-diagnostics.artifacts/runtime-request-log.jsonl",
+      "raw_sha256": "e34910498280f34663608b9088b7820679fa51a80f979bacef614a1e4ee90f5c",
+      "published_sha256": "e34910498280f34663608b9088b7820679fa51a80f979bacef614a1e4ee90f5c"
+    },
+    {
+      "path": "runtime-diagnostics.artifacts/server.log",
+      "raw_sha256": "b4e07318d6a85480354b56be970878cb2599a02327e10c7dbe2bc9cc299460ac",
+      "published_sha256": "b4e07318d6a85480354b56be970878cb2599a02327e10c7dbe2bc9cc299460ac"
+    },
+    {
+      "path": "browser-matrix.artifacts/all-player-force-network.png",
+      "raw_sha256": "4cfccd966f6cfa7c796c805e2a52592e09ebd6e7f147d20058be70806ee30e18",
+      "published_sha256": "4cfccd966f6cfa7c796c805e2a52592e09ebd6e7f147d20058be70806ee30e18"
+    },
+    {
+      "path": "browser-matrix.artifacts/all-player-network-phone.png",
+      "raw_sha256": "2852a49c75a7c0cb8b7d293fcb94a6431f71a9ce28f260a19def7bc76c19fc6e",
+      "published_sha256": "2852a49c75a7c0cb8b7d293fcb94a6431f71a9ce28f260a19def7bc76c19fc6e"
+    },
+    {
+      "path": "browser-matrix.artifacts/all-player-network.png",
+      "raw_sha256": "4cfccd966f6cfa7c796c805e2a52592e09ebd6e7f147d20058be70806ee30e18",
+      "published_sha256": "4cfccd966f6cfa7c796c805e2a52592e09ebd6e7f147d20058be70806ee30e18"
+    },
+    {
+      "path": "browser-matrix.artifacts/chain-beside-open-drawer.png",
+      "raw_sha256": "168fe174c438a3737edca9c7437625e0190e044ff31d37f94c86cd49c7606c71",
+      "published_sha256": "168fe174c438a3737edca9c7437625e0190e044ff31d37f94c86cd49c7606c71"
+    },
+    {
+      "path": "browser-matrix.artifacts/fixture-chain-filtered.png",
+      "raw_sha256": "afa258576051c7c9c6ff45c38b75d9deb9c8608cdf5fcdc9924c30f57fb63354",
+      "published_sha256": "afa258576051c7c9c6ff45c38b75d9deb9c8608cdf5fcdc9924c30f57fb63354"
+    },
+    {
+      "path": "browser-matrix.artifacts/fixture-drawer.png",
+      "raw_sha256": "f8e49c0f2bef74e25a685a0d2ec715b5bb06d58e8a4d0c57558d871c6c472ce0",
+      "published_sha256": "f8e49c0f2bef74e25a685a0d2ec715b5bb06d58e8a4d0c57558d871c6c472ce0"
+    },
+    {
+      "path": "browser-matrix.artifacts/fixture-graph.png",
+      "raw_sha256": "40e7422b2f0dab6ff1943350d2c8626fbb4b9c3fe17fe0d3583211e4fa006ded",
+      "published_sha256": "40e7422b2f0dab6ff1943350d2c8626fbb4b9c3fe17fe0d3583211e4fa006ded"
+    },
+    {
+      "path": "browser-matrix.artifacts/fixture-mobile-drawer.png",
+      "raw_sha256": "c4a7a3a9c2cfe38c43320334458746b4323af80919aa8fe8cd12cb13546afcde",
+      "published_sha256": "c4a7a3a9c2cfe38c43320334458746b4323af80919aa8fe8cd12cb13546afcde"
+    },
+    {
+      "path": "browser-matrix.artifacts/fixture-mobile-toolbar.png",
+      "raw_sha256": "b4f228d5027f25c31102972ae82b908a2b5c1ea1917f089439ad401d99f68b62",
+      "published_sha256": "b4f228d5027f25c31102972ae82b908a2b5c1ea1917f089439ad401d99f68b62"
+    },
+    {
+      "path": "browser-matrix.artifacts/historical-network.png",
+      "raw_sha256": "4cfccd966f6cfa7c796c805e2a52592e09ebd6e7f147d20058be70806ee30e18",
+      "published_sha256": "4cfccd966f6cfa7c796c805e2a52592e09ebd6e7f147d20058be70806ee30e18"
+    },
+    {
+      "path": "browser-matrix.artifacts/maravich-bundled-evidence.png",
+      "raw_sha256": "8159b74b3cc7c4ec5875e7e7b4d3681a4176953d803b44c288a97cc428b52e2e",
+      "published_sha256": "8159b74b3cc7c4ec5875e7e7b4d3681a4176953d803b44c288a97cc428b52e2e"
+    },
+    {
+      "path": "browser-matrix.artifacts/maravich-chain.png",
+      "raw_sha256": "c03a25375da990f15455849ff03bff9e0bbc0041561ad9cfbce0ff2a76b4846f",
+      "published_sha256": "c03a25375da990f15455849ff03bff9e0bbc0041561ad9cfbce0ff2a76b4846f"
+    },
+    {
+      "path": "browser-matrix.artifacts/maravich-concentric-labels.png",
+      "raw_sha256": "e6fc411c7ffeb7f8f1c24dbdfff1ba4e1c9d15ef008d4b15abdfc78b22df1bbf",
+      "published_sha256": "e6fc411c7ffeb7f8f1c24dbdfff1ba4e1c9d15ef008d4b15abdfc78b22df1bbf"
+    },
+    {
+      "path": "browser-matrix.artifacts/maravich-concentric-overview.png",
+      "raw_sha256": "b3106ca8e7055b41b83d513fe604d076fd22823aa85407c99b294c76fcfae512",
+      "published_sha256": "b3106ca8e7055b41b83d513fe604d076fd22823aa85407c99b294c76fcfae512"
+    },
+    {
+      "path": "browser-matrix.artifacts/maravich-concentric-sectors.png",
+      "raw_sha256": "89167f65855b6d4916a14f2e1493511f7ac2a44259249beccb8bedfa33a51a42",
+      "published_sha256": "89167f65855b6d4916a14f2e1493511f7ac2a44259249beccb8bedfa33a51a42"
+    },
+    {
+      "path": "browser-matrix.artifacts/maravich-count-drawer.png",
+      "raw_sha256": "6bd07f1f9b1102a174b93967164036925f0ac5785978a1a58716e055e916a385",
+      "published_sha256": "6bd07f1f9b1102a174b93967164036925f0ac5785978a1a58716e055e916a385"
+    },
+    {
+      "path": "browser-matrix.artifacts/maravich-ego.png",
+      "raw_sha256": "2fc4d43602379919c3b29a86be8a64ef76ceb41125a17e0cb035e7b4d836a815",
+      "published_sha256": "2fc4d43602379919c3b29a86be8a64ef76ceb41125a17e0cb035e7b4d836a815"
+    },
+    {
+      "path": "browser-matrix.artifacts/maravich-era-labels.png",
+      "raw_sha256": "014c69d819534695c94a0f9baa8055c243da7fc65800be90805e03db55fab870",
+      "published_sha256": "014c69d819534695c94a0f9baa8055c243da7fc65800be90805e03db55fab870"
+    },
+    {
+      "path": "browser-matrix.artifacts/maravich-era-overview.png",
+      "raw_sha256": "e9cc5af7922f368eb1930b59816e1c225ac5a150ae7f0f57afeb17b74c9314a0",
+      "published_sha256": "e9cc5af7922f368eb1930b59816e1c225ac5a150ae7f0f57afeb17b74c9314a0"
+    },
+    {
+      "path": "browser-matrix.artifacts/maravich-force-labels.png",
+      "raw_sha256": "8ea326a810067ea335efce1c926cc02cfcf4ad4847c16f951b8b5cef897a433c",
+      "published_sha256": "8ea326a810067ea335efce1c926cc02cfcf4ad4847c16f951b8b5cef897a433c"
+    },
+    {
+      "path": "browser-matrix.artifacts/maravich-force-overview.png",
+      "raw_sha256": "2b8983b98948720a83f6cffac2e2e8c4946a37df5f44d9d12bd00fd8073412bb",
+      "published_sha256": "2b8983b98948720a83f6cffac2e2e8c4946a37df5f44d9d12bd00fd8073412bb"
+    },
+    {
+      "path": "browser-matrix.artifacts/maravich-goodrich-proof.png",
+      "raw_sha256": "4867f797cd006cb28c9ac22608738bad0b32b91335544739b2032cfb2a81a3cd",
+      "published_sha256": "4867f797cd006cb28c9ac22608738bad0b32b91335544739b2032cfb2a81a3cd"
+    },
+    {
+      "path": "browser-matrix.artifacts/maravich-phone-sectors.png",
+      "raw_sha256": "f8a04c78337fece0d13153919195b591fbfc379c0c616651b3fdad22cdf16824",
+      "published_sha256": "f8a04c78337fece0d13153919195b591fbfc379c0c616651b3fdad22cdf16824"
+    },
+    {
+      "path": "browser-matrix.artifacts/orbit-chain.png",
+      "raw_sha256": "4caaf27c0bceeef3752dbfe6fa7e1b36f48171bb7b0b675844dfd512e460397d",
+      "published_sha256": "4caaf27c0bceeef3752dbfe6fa7e1b36f48171bb7b0b675844dfd512e460397d"
+    },
+    {
+      "path": "browser-matrix.artifacts/real-graph.png",
+      "raw_sha256": "c8c70c5d71eeb90c75a47045e1eb899818b713d68d3ebf85fd3eb014f87cabe6",
+      "published_sha256": "c8c70c5d71eeb90c75a47045e1eb899818b713d68d3ebf85fd3eb014f87cabe6"
+    },
+    {
+      "path": "browser-matrix.artifacts/real-slice-map.json",
+      "raw_sha256": "a2a29f25bb5ceccb7c734c29d8d0c17247c84b44fd1c6a0f468306166d89387c",
+      "published_sha256": "a2a29f25bb5ceccb7c734c29d8d0c17247c84b44fd1c6a0f468306166d89387c"
+    },
+    {
+      "path": "browser-matrix.artifacts/shortened-season-and-game-witness.png",
+      "raw_sha256": "126eb4800d3249e847ed234ccdf215463b80d15a627a9ab8e8a73298257d5ebe",
+      "published_sha256": "126eb4800d3249e847ed234ccdf215463b80d15a627a9ab8e8a73298257d5ebe"
+    },
+    {
+      "path": "browser-matrix.artifacts/six-hop-macro-ego-chain.png",
+      "raw_sha256": "f9563814f20cb7806c8ef8b441bcbc2d58e228a3a745e63913717e3799f67ca2",
+      "published_sha256": "f9563814f20cb7806c8ef8b441bcbc2d58e228a3a745e63913717e3799f67ca2"
+    }
+  ],
+  "environment": {
+    "os": "Darwin",
+    "arch": "arm64",
+    "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+    "python": "3.13.16",
+    "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+    "cargo": "cargo 1.99.0 (5f94df478 2026-08-27)",
+    "node": "v24.22.0",
+    "browser": null,
+    "env_names": [
+      "CI",
+      "OPENROUTER_API_KEY"
+    ]
+  },
+  "ci": {
+    "run_id": null,
+    "run_url": null,
+    "workflow": null,
+    "repository": null,
+    "sha": null,
+    "ref": null
+  },
+  "outcome": "passed",
+  "failed_checks": [],
+  "expected_checks": [
+    "rust-workspace",
+    "python-tests",
+    "format",
+    "clippy-host",
+    "derived-snapshot",
+    "historical-audit",
+    "semantic-audit",
+    "report-index",
+    "runtime-diagnostics",
+    "wasm-build",
+    "clippy-wasm",
+    "browser-matrix"
+  ],
+  "finished_at": "2026-10-21T18:36:12.881526+00:00",
+  "checks": [
+    {
+      "name": "rust-workspace",
+      "argv": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "status": "passed",
+      "started_at": "2026-10-21T18:31:11.904639+00:00",
+      "finished_at": "2026-10-21T18:31:25.580067+00:00",
+      "log": "rust-workspace.log",
+      "artifacts": [],
+      "summary": {
+        "rust_result_groups": 33,
+        "rust_totals": {
+          "passed": 153,
+          "failed": 0,
+          "ignored": 26
+        },
+        "python_result": null
+      },
+      "raw_sha256": "480563fb13bd0f419f8f17395ae1f35a1fc853a6308b41d12b982b7b5a8c227c",
+      "published_sha256": "a87bc17d5371074debebf7065f96ac71b3390242d694d4354612170a0eabaa97"
+    },
+    {
+      "name": "python-tests",
+      "argv": [
+        "/opt/homebrew/opt/python@3.13/bin/python3.13",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_*.py"
+      ],
+      "exit_code": 0,
+      "status": "passed",
+      "started_at": "2026-10-21T18:31:25.581000+00:00",
+      "finished_at": "2026-10-21T18:31:27.842894+00:00",
+      "log": "python-tests.log",
+      "artifacts": [],
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": {
+          "tests": 124,
+          "result": "OK"
+        }
+      },
+      "raw_sha256": "2104d0d3613875014e47cbcaab05429459ffe8f950c8b614c18f4a260104c03a",
+      "published_sha256": "a0590dcf3edfa74af932b953bb5076bea1ae67fd4eb4a7897275ecae181cf306"
+    },
+    {
+      "name": "format",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "status": "passed",
+      "started_at": "2026-10-21T18:31:27.843190+00:00",
+      "finished_at": "2026-10-21T18:31:28.060909+00:00",
+      "log": "format.log",
+      "artifacts": [],
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clippy-host",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "status": "passed",
+      "started_at": "2026-10-21T18:31:28.061230+00:00",
+      "finished_at": "2026-10-21T18:31:29.687122+00:00",
+      "log": "clippy-host.log",
+      "artifacts": [],
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "155123a6ac8626ef18bb45700237daa2a68f2d4465debc251d91ba952650c5f3",
+      "published_sha256": "d48eaaba894b7c80551b5d4d6d37a743356b0c8ab6f6041d59330ef26902a8f3"
+    },
+    {
+      "name": "derived-snapshot",
+      "argv": [
+        "/opt/homebrew/opt/python@3.13/bin/python3.13",
+        "scripts/verify-source-snapshot.py",
+        "--derived-only"
+      ],
+      "exit_code": 0,
+      "status": "passed",
+      "started_at": "2026-10-21T18:31:29.687565+00:00",
+      "finished_at": "2026-10-21T18:31:29.753604+00:00",
+      "log": "derived-snapshot.log",
+      "artifacts": [],
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84",
+      "published_sha256": "6636a01dcacdfaed76b32ebd6106d693284238519bb2c51cbda475ad5f6f2a84"
+    },
+    {
+      "name": "historical-audit",
+      "argv": [
+        "/opt/homebrew/opt/python@3.13/bin/python3.13",
+        "scripts/check-historical-audit.py"
+      ],
+      "exit_code": 0,
+      "status": "passed",
+      "started_at": "2026-10-21T18:31:29.753989+00:00",
+      "finished_at": "2026-10-21T18:31:30.188032+00:00",
+      "log": "historical-audit.log",
+      "artifacts": [],
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232",
+      "published_sha256": "87b22354412c1ba2756994f63122d946df267a6c730d747afd03e31637a96232"
+    },
+    {
+      "name": "semantic-audit",
+      "argv": [
+        "/opt/homebrew/opt/python@3.13/bin/python3.13",
+        "scripts/check-semantic-evaluation.py"
+      ],
+      "exit_code": 0,
+      "status": "passed",
+      "started_at": "2026-10-21T18:31:30.188471+00:00",
+      "finished_at": "2026-10-21T18:31:30.262220+00:00",
+      "log": "semantic-audit.log",
+      "artifacts": [],
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0",
+      "published_sha256": "9dc2589e2e23cba64596c910b97ed5967966d5dc7322ab59ae5c64730a7c66a0"
+    },
+    {
+      "name": "report-index",
+      "argv": [
+        "/opt/homebrew/opt/python@3.13/bin/python3.13",
+        "scripts/report-index.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "status": "passed",
+      "started_at": "2026-10-21T18:31:30.262626+00:00",
+      "finished_at": "2026-10-21T18:31:30.316232+00:00",
+      "log": "report-index.log",
+      "artifacts": [],
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "0900a883af6cf4e77a6748c3012d9c335520249bf000e61cd6a628a54fd737bb",
+      "published_sha256": "0900a883af6cf4e77a6748c3012d9c335520249bf000e61cd6a628a54fd737bb"
+    },
+    {
+      "name": "runtime-diagnostics",
+      "argv": [
+        "/opt/homebrew/opt/python@3.13/bin/python3.13",
+        "scripts/capture-runtime-diagnostics.py",
+        "--artifacts",
+        "{artifacts}"
+      ],
+      "exit_code": 0,
+      "status": "passed",
+      "started_at": "2026-10-21T18:31:30.316543+00:00",
+      "finished_at": "2026-10-21T18:31:43.476964+00:00",
+      "log": "runtime-diagnostics.log",
+      "artifacts": [
+        "runtime-diagnostics.artifacts/runtime-diagnostics.json",
+        "runtime-diagnostics.artifacts/runtime-request-log.jsonl",
+        "runtime-diagnostics.artifacts/server.log"
+      ],
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "ada3a271078b002193a573495f61603d1568d12849951317ac7461a946a4f464",
+      "published_sha256": "45d99d9bce4fd9596ec0d9b1e8709dbb2d26c30ae48109ff16370a875ce967c3"
+    },
+    {
+      "name": "wasm-build",
+      "argv": [
+        "./scripts/build-canvas.sh"
+      ],
+      "exit_code": 0,
+      "status": "passed",
+      "started_at": "2026-10-21T18:31:43.477215+00:00",
+      "finished_at": "2026-10-21T18:31:43.650106+00:00",
+      "log": "wasm-build.log",
+      "artifacts": [],
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "7a7bb64a28cdda9b91e6e27f41be455104d929b5d7ad6dd5beca75fc5a47f1f4",
+      "published_sha256": "7a7bb64a28cdda9b91e6e27f41be455104d929b5d7ad6dd5beca75fc5a47f1f4"
+    },
+    {
+      "name": "clippy-wasm",
+      "argv": [
+        "cargo",
+        "clippy",
+        "-p",
+        "canvas-view",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "status": "passed",
+      "started_at": "2026-10-21T18:31:43.650387+00:00",
+      "finished_at": "2026-10-21T18:31:43.840213+00:00",
+      "log": "clippy-wasm.log",
+      "artifacts": [],
+      "summary": {
+        "rust_result_groups": 0,
+        "rust_totals": null,
+        "python_result": null
+      },
+      "raw_sha256": "a41051563a4cb5fc1b1bcdd9aa0ba28ca80f7736d629d90cc138218756e8e3a9",
+      "published_sha256": "a41051563a4cb5fc1b1bcdd9aa0ba28ca80f7736d629d90cc138218756e8e3a9"
+    },
+    {
+      "name": "browser-matrix",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "app-server",
+        "--test",
+        "browser_e2e",
+        "--test",
+        "canvas_browser",
+        "--test",
+        "explorer_redesign",
+        "--locked",
+        "--",
+        "--ignored",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "status": "passed",
+      "started_at": "2026-10-21T18:31:43.840510+00:00",
+      "finished_at": "2026-10-21T18:36:12.881290+00:00",
+      "log": "browser-matrix.log",
+      "artifacts": [
+        "browser-matrix.artifacts/all-player-force-network.png",
+        "browser-matrix.artifacts/all-player-network-phone.png",
+        "browser-matrix.artifacts/all-player-network.png",
+        "browser-matrix.artifacts/chain-beside-open-drawer.png",
+        "browser-matrix.artifacts/fixture-chain-filtered.png",
+        "browser-matrix.artifacts/fixture-drawer.png",
+        "browser-matrix.artifacts/fixture-graph.png",
+        "browser-matrix.artifacts/fixture-mobile-drawer.png",
+        "browser-matrix.artifacts/fixture-mobile-toolbar.png",
+        "browser-matrix.artifacts/historical-network.png",
+        "browser-matrix.artifacts/maravich-bundled-evidence.png",
+        "browser-matrix.artifacts/maravich-chain.png",
+        "browser-matrix.artifacts/maravich-concentric-labels.png",
+        "browser-matrix.artifacts/maravich-concentric-overview.png",
+        "browser-matrix.artifacts/maravich-concentric-sectors.png",
+        "browser-matrix.artifacts/maravich-count-drawer.png",
+        "browser-matrix.artifacts/maravich-ego.png",
+        "browser-matrix.artifacts/maravich-era-labels.png",
+        "browser-matrix.artifacts/maravich-era-overview.png",
+        "browser-matrix.artifacts/maravich-force-labels.png",
+        "browser-matrix.artifacts/maravich-force-overview.png",
+        "browser-matrix.artifacts/maravich-goodrich-proof.png",
+        "browser-matrix.artifacts/maravich-phone-sectors.png",
+        "browser-matrix.artifacts/orbit-chain.png",
+        "browser-matrix.artifacts/real-graph.png",
+        "browser-matrix.artifacts/real-slice-map.json",
+        "browser-matrix.artifacts/shortened-season-and-game-witness.png",
+        "browser-matrix.artifacts/six-hop-macro-ego-chain.png"
+      ],
+      "summary": {
+        "rust_result_groups": 3,
+        "rust_totals": {
+          "passed": 23,
+          "failed": 0,
+          "ignored": 0
+        },
+        "python_result": null
+      },
+      "raw_sha256": "43832de3524005cc6ed1794ee37992b5d61880853765004d90747eb74ee2b02b",
+      "published_sha256": "a5ac153071fcdefd7a77727f1a285c0181d2b18f48569779017e6f231cb771ef"
+    }
+  ]
+}

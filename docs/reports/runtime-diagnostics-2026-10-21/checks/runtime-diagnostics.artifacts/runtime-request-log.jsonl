@@ -1,0 +1,9 @@
+{"duration_ms":0.138208,"kind":"request","method":"GET","path":"/api/semantic-status","request_id":"r-1","status":200,"ts":"2026-10-21T18:31:34.328Z"}
+{"elapsed_ms":0.0,"failure":"unconfigured","kind":"semantic","outcome":"unavailable","ts":"2026-10-21T18:31:34.336Z"}
+{"duration_ms":7.458583,"kind":"request","method":"GET","path":"/api/query","request_id":"r-2","status":200,"ts":"2026-10-21T18:31:34.336Z"}
+{"duration_ms":8832.818417,"kind":"request","method":"GET","path":"/api/stats","request_id":"r-3","status":200,"ts":"2026-10-21T18:31:43.169Z"}
+{"duration_ms":0.05175,"kind":"request","method":"GET","path":"/api/coverage","request_id":"r-4","status":200,"ts":"2026-10-21T18:31:43.170Z"}
+{"duration_ms":0.159291,"kind":"request","method":"GET","path":"/api/connection","request_id":"r-5","status":200,"ts":"2026-10-21T18:31:43.171Z"}
+{"duration_ms":287.15004100000004,"kind":"request","method":"GET","path":"/api/diagnostics","request_id":"r-6","status":200,"ts":"2026-10-21T18:31:43.458Z"}
+{"context":{"source":"scripts/capture-runtime-diagnostics.py"},"kind":"verification.capture","message":"runtime diagnostics capture","ts":"2026-10-21T18:31:43.459Z","url":"http://127.0.0.1:61839"}
+{"duration_ms":0.1225,"kind":"request","method":"POST","path":"/api/diagnostics/client","request_id":"r-7","status":202,"ts":"2026-10-21T18:31:43.459Z"}
